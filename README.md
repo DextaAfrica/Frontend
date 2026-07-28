@@ -61,6 +61,7 @@ hard-coded palette values. This keeps future Figma implementation consistent and
 
 Read [the architecture guide](docs/ARCHITECTURE.md) before adding a feature or translating a Figma screen.
 Container deployment and health-check instructions are in [the Docker guide](docs/DOCKER.md).
+Pipeline, registry, security, and deployment setup are in [the CI/CD guide](docs/CI-CD.md).
 
 ## Routes
 

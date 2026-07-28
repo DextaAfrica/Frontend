@@ -35,7 +35,7 @@ export function buttonClassName({
   return cn(base, variants[variant], sizes[size], className);
 }
 
-export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+export interface ButtonProps extends React.ComponentProps<"button"> {
   variant?: ButtonVariant;
   size?: ButtonSize;
 }

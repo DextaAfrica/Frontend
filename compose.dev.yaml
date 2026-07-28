@@ -2,16 +2,20 @@ services:
   web:
     build:
       context: .
-      dockerfile: Dockerfile.prod
-    image: maison-rouge-web:latest
+      dockerfile: Dockerfile.dev
+    image: maison-rouge-web:development
     init: true
-    restart: unless-stopped
     ports:
       - "${APP_PORT:-3000}:3000"
     environment:
-      NODE_ENV: production
+      NODE_ENV: development
       NEXT_TELEMETRY_DISABLED: "1"
+      WATCHPACK_POLLING: "${WATCHPACK_POLLING:-false}"
       NEXT_PUBLIC_APP_URL: "${NEXT_PUBLIC_APP_URL:-http://localhost:3000}"
+    volumes:
+      - .:/app
+      - node_modules:/app/node_modules
+      - next_cache:/app/.next
     healthcheck:
       test:
         [
@@ -22,21 +26,11 @@ services:
           "--spider",
           "http://127.0.0.1:3000/api/health",
         ]
-      interval: 30s
+      interval: 15s
       timeout: 5s
-      start_period: 15s
-      retries: 3
-    security_opt:
-      - no-new-privileges:true
-    cap_drop:
-      - ALL
-    read_only: true
-    tmpfs:
-      - /tmp:size=64m,mode=1777
-      - /app/.next/cache:size=128m,uid=1001,gid=1001
-    networks:
-      - frontend
+      start_period: 30s
+      retries: 5
 
-networks:
-  frontend:
-    driver: bridge
+volumes:
+  node_modules:
+  next_cache:

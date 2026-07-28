@@ -7,16 +7,24 @@ Only traced server files, optimized static assets, and `public/` media enter the
 
 Ensure Docker Desktop or another compatible Docker daemon is running, then:
 
+Development with hot reload and isolated dependency/cache volumes:
+
 ```bash
-docker compose build
-docker compose up -d
-docker compose ps
+docker compose -f compose.dev.yaml up --build
+```
+
+Production with the hardened standalone runner:
+
+```bash
+docker compose -f compose.prod.yaml build
+docker compose -f compose.prod.yaml up -d
+docker compose -f compose.prod.yaml ps
 ```
 
 The application is available at `http://localhost:3000`. Override the host port when needed:
 
 ```bash
-APP_PORT=8080 docker compose up -d
+APP_PORT=8080 docker compose -f compose.prod.yaml up -d
 ```
 
 ## Health
