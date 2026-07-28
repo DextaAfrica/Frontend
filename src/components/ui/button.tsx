@@ -8,7 +8,7 @@ export type ButtonVariant =
 export type ButtonSize = "sm" | "md" | "lg" | "icon";
 
 const base =
-  "inline-flex shrink-0 items-center justify-center gap-2 rounded-lg text-sm font-semibold transition-[color,background-color,border-color,box-shadow,transform] outline-none select-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-50 active:translate-y-px [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0";
+  "inline-flex shrink-0 items-center justify-center gap-2 rounded-[0.2rem] text-sm font-medium tracking-[0.01em] transition-[color,background-color,border-color,box-shadow,transform] outline-none select-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-50 active:translate-y-px [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0";
 const variants: Record<ButtonVariant, string> = {
   primary:
     "bg-primary text-primary-foreground shadow-sm hover:bg-primary-hover",
@@ -23,7 +23,7 @@ const variants: Record<ButtonVariant, string> = {
 const sizes: Record<ButtonSize, string> = {
   sm: "h-8 px-3 text-xs",
   md: "h-10 px-4 py-2",
-  lg: "h-12 rounded-xl px-6 text-base",
+  lg: "h-12 px-6 text-sm",
   icon: "size-10",
 };
 

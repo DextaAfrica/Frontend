@@ -14,6 +14,7 @@ export function MarketingHeading({
 }) {
   return (
     <Stack
+      data-reveal
       gap="sm"
       align={centered ? "center" : "start"}
       className={centered ? "mx-auto max-w-3xl text-center" : "max-w-3xl"}

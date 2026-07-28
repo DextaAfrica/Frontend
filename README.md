@@ -60,6 +60,7 @@ should consume names such as `bg-primary`, `text-muted-foreground`, and `border-
 hard-coded palette values. This keeps future Figma implementation consistent and inexpensive.
 
 Read [the architecture guide](docs/ARCHITECTURE.md) before adding a feature or translating a Figma screen.
+Container deployment and health-check instructions are in [the Docker guide](docs/DOCKER.md).
 
 ## Routes
 
@@ -70,3 +71,13 @@ Read [the architecture guide](docs/ARCHITECTURE.md) before adding a feature or t
 - `/lifestyle` — services, amenities, and living experience
 - `/journal` — editorial insights
 - `/contact` — enquiry form and native confirmation modal
+- `/careers` — disciplines and studio opportunities
+- `/privacy`, `/terms`, `/accessibility` — complete policy destinations
+- `/portfolio/[slug]` — statically generated development details
+- `/journal/[slug]` — statically generated editorial articles
+
+The native consent manager provides a first-visit cookie banner, optional-category preferences,
+persistent local choices, cross-tab synchronization, and a footer control for reopening settings.
+
+The newsletter lifecycle waits until cookie consent is resolved, opens after meaningful engagement,
+persists dismissal/subscription state, and posts through the internal `/api/newsletter` integration boundary.

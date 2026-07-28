@@ -36,7 +36,7 @@ export function ContactScreen() {
             </Stack>
           </Stack>
           <section
-            className="rounded-2xl border border-border bg-background p-6 shadow-sm sm:p-8"
+            className="rounded-[0.4rem] border border-border bg-background p-6 shadow-sm sm:p-8"
             aria-label="Enquiry form"
           >
             <EnquiryForm />

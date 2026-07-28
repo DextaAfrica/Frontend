@@ -1,6 +1,6 @@
 import { Grid, Page, Section, Stack } from "@/components/layout";
 import {
-  EditorialHero,
+  CinematicHero,
   MarketingHeading,
   MediaPanel,
   ProjectCard,
@@ -12,16 +12,11 @@ import { projects } from "@/data/projects";
 export function HomeScreen() {
   return (
     <Page>
-      <EditorialHero
-        eyebrow="Maison Rouge residences"
-        title="An address shaped by intention."
-        description="We create considered residences where architecture, landscape, and daily life exist in lasting harmony."
-        primary={{ label: "Explore our portfolio", href: "/portfolio" }}
-        secondary={{ label: "Discover our story", href: "/about" }}
-      />
+      <CinematicHero />
       <Section tone="surface">
         <Grid columns="two" gap="xl" className="items-center">
           <MediaPanel
+            src="/images/maison-interior.png"
             label="Architecture composed around light"
             className="min-h-[34rem]"
           />
@@ -77,6 +72,7 @@ export function HomeScreen() {
             </ButtonLink>
           </Stack>
           <MediaPanel
+            src="/images/maison-rooftop.png"
             label="A quieter expression of luxury"
             tone="dusk"
             className="min-h-[30rem]"

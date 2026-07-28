@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { cn } from "@/lib/utils";
 
 const tones = {
@@ -9,27 +10,39 @@ const tones = {
 export function MediaPanel({
   label,
   tone = "ruby",
+  src,
   className,
 }: {
   label: string;
   tone?: keyof typeof tones;
+  src?: string;
   className?: string;
 }) {
   return (
     <figure
+      data-reveal
       role="img"
       aria-label={label}
       className={cn(
-        "relative min-h-72 overflow-hidden rounded-3xl bg-gradient-to-br",
+        "media-panel relative min-h-72 overflow-hidden rounded-[0.4rem] bg-gradient-to-br",
         tones[tone],
         className,
       )}
     >
+      {src && (
+        <Image
+          src={src}
+          alt={label}
+          fill
+          sizes="(max-width: 768px) 100vw, 50vw"
+          className="object-cover transition-transform duration-[1400ms] ease-out hover:scale-105"
+        />
+      )}
       <span
         aria-hidden
-        className="absolute inset-0 bg-[linear-gradient(120deg,transparent_35%,rgba(255,255,255,.18)_50%,transparent_65%)] transition-transform duration-1000 hover:translate-x-1/3"
+        className="absolute inset-0 bg-gradient-to-t from-black/45 via-transparent to-transparent"
       />
-      <figcaption className="absolute bottom-5 left-5 text-xs font-bold tracking-[0.15em] text-white/75 uppercase">
+      <figcaption className="absolute bottom-5 left-5 text-xs font-medium tracking-[0.15em] text-white/75 uppercase">
         {label}
       </figcaption>
     </figure>

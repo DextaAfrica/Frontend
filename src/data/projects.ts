@@ -9,6 +9,7 @@ export const projects: Project[] = [
     description:
       "Private residences shaped by quiet architecture, warm materiality, and views across the lagoon.",
     tone: "ruby",
+    image: "/images/maison-hero.png",
   },
   {
     slug: "the-atelier",
@@ -18,6 +19,7 @@ export const projects: Project[] = [
     description:
       "An intimate collection where art, hospitality, and contemporary city living meet.",
     tone: "stone",
+    image: "/images/maison-interior.png",
   },
   {
     slug: "courtyard-house",
@@ -27,6 +29,7 @@ export const projects: Project[] = [
     description:
       "Garden-led homes composed around light, privacy, and effortless indoor-outdoor living.",
     tone: "dusk",
+    image: "/images/maison-rooftop.png",
   },
   {
     slug: "redwood-place",
@@ -36,5 +39,6 @@ export const projects: Project[] = [
     description:
       "A landmark residential address built around enduring value and composed simplicity.",
     tone: "light",
+    image: "/images/maison-interior.png",
   },
 ];

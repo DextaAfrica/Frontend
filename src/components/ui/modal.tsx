@@ -35,7 +35,7 @@ export function Modal({
       onClose={onClose}
       onCancel={onClose}
       className={cn(
-        "m-auto w-[min(92vw,40rem)] rounded-2xl border border-border bg-background p-0 text-foreground shadow-2xl backdrop:bg-black/65 backdrop:backdrop-blur-sm",
+        "m-auto w-[min(92vw,40rem)] rounded-[0.4rem] border border-border bg-background p-0 text-foreground shadow-2xl backdrop:bg-black/65 backdrop:backdrop-blur-sm",
         className,
       )}
       aria-labelledby="modal-title"

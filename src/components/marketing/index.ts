@@ -1,3 +1,4 @@
+export * from "./cinematic-hero";
 export * from "./editorial-hero";
 export * from "./media-panel";
 export * from "./project-card";

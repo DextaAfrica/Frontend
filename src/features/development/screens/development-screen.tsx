@@ -13,6 +13,7 @@ import {
   CardHeading,
   Text,
 } from "@/components/ui";
+import type { Project } from "@/components/marketing";
 
 const residences = [
   { name: "One bedroom", area: "72–88 m²", price: "From ₦280m" },
@@ -20,25 +21,30 @@ const residences = [
   { name: "Three bedroom", area: "210–255 m²", price: "From ₦720m" },
   { name: "Sky residence", area: "410 m²", price: "By enquiry" },
 ];
-export function DevelopmentScreen() {
+export function DevelopmentScreen({ project }: { project: Project }) {
   return (
     <Page>
       <EditorialHero
-        eyebrow="Seren Redwood · Ikoyi"
-        title="Private by nature. Remarkable by design."
-        description="A limited collection of lagoon-facing residences bringing generous space, warm modernism, and private hospitality to one of Lagos’s most established neighbourhoods."
+        eyebrow={`${project.name} · ${project.location}`}
+        title={
+          project.status === "Completed"
+            ? "An enduring expression of home."
+            : "Private by nature. Remarkable by design."
+        }
+        description={project.description}
         primary={{ label: "Register your interest", href: "/contact" }}
         secondary={{ label: "View residences", href: "#residences" }}
       />
       <Section tone="surface">
         <Grid columns="two" gap="xl" className="items-center">
           <MediaPanel
-            label="Seren Redwood arrival"
+            src={project.image}
+            label={`${project.name} arrival`}
             tone="ruby"
             className="min-h-[38rem]"
           />
           <Stack gap="lg">
-            <Badge>Now selling</Badge>
+            <Badge>{project.status}</Badge>
             <MarketingHeading
               eyebrow="The residence"
               title="Composed around how you live."
@@ -93,7 +99,7 @@ export function DevelopmentScreen() {
       </Section>
       <QuoteBlock
         quote="Privacy is the ultimate luxury: space, light, calm, and the freedom to live entirely at your own rhythm."
-        author="Seren Redwood"
+        author={project.name}
         role="Design vision"
       />
       <Section>

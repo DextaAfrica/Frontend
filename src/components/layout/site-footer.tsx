@@ -3,15 +3,17 @@ import type { Route } from "next";
 import { Container, Flex, Grid, Stack } from "@/components/layout";
 import { ButtonLink, Eyebrow, Icon, Text } from "@/components/ui";
 import { siteConfig } from "@/config/site";
+import { CookieSettingsButton } from "@/components/consent/consent-manager";
+import { NewsletterButton } from "@/features/newsletter/components/newsletter-manager";
 
 const groups = [
   { title: "Explore", links: siteConfig.navItems },
   {
     title: "Portfolio",
     links: [
-      { label: "Now selling", href: "/portfolio" },
-      { label: "Launching soon", href: "/portfolio" },
-      { label: "Completed", href: "/portfolio" },
+      { label: "Now selling", href: "/portfolio/seren-redwood" },
+      { label: "Launching soon", href: "/portfolio/the-atelier" },
+      { label: "Completed", href: "/portfolio/redwood-place" },
       { label: "Flagship residence", href: "/portfolio/seren-redwood" },
     ],
   },
@@ -20,7 +22,7 @@ const groups = [
     links: [
       { label: "Our philosophy", href: "/about" },
       { label: "Journal", href: "/journal" },
-      { label: "Careers", href: "/contact" },
+      { label: "Careers", href: "/careers" },
       { label: "Contact", href: "/contact" },
     ],
   },
@@ -102,9 +104,11 @@ export function SiteFooter() {
               reserved.
             </p>
             <nav className="flex gap-5" aria-label="Legal">
-              <Link href={"/contact" as Route}>Privacy</Link>
-              <Link href={"/contact" as Route}>Terms</Link>
-              <Link href={"/contact" as Route}>Accessibility</Link>
+              <Link href={"/privacy" as Route}>Privacy</Link>
+              <Link href={"/terms" as Route}>Terms</Link>
+              <Link href={"/accessibility" as Route}>Accessibility</Link>
+              <CookieSettingsButton className="hover:text-background" />
+              <NewsletterButton className="hover:text-background" />
             </nav>
           </Flex>
         </Stack>

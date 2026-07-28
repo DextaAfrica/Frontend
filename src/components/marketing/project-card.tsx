@@ -17,15 +17,16 @@ export interface Project {
   status: string;
   description: string;
   tone: "ruby" | "stone" | "dusk" | "light";
+  image?: string;
 }
 export function ProjectCard({ project }: { project: Project }) {
-  const href =
-    project.slug === "seren-redwood" ? "/portfolio/seren-redwood" : "/contact";
+  const href = `/portfolio/${project.slug}`;
   return (
-    <Card className="group overflow-hidden">
+    <Card data-reveal className="group overflow-hidden">
       <MediaPanel
         label={`${project.name}, ${project.location}`}
         tone={project.tone}
+        src={project.image}
         className="min-h-80 rounded-none transition-transform duration-700 group-hover:scale-[1.02]"
       />
       <CardContent className="p-6">
@@ -39,10 +40,7 @@ export function ProjectCard({ project }: { project: Project }) {
             <Text className="text-sm">{project.description}</Text>
           </Stack>
           <ButtonLink href={href} variant="link">
-            {project.slug === "seren-redwood"
-              ? "View residence"
-              : "Register interest"}{" "}
-            <Icon name="arrow-right" />
+            View residence <Icon name="arrow-right" />
           </ButtonLink>
         </Stack>
       </CardContent>

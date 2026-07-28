@@ -5,7 +5,7 @@ export function Card({ className, ...props }: React.ComponentProps<"article">) {
   return (
     <article
       className={cn(
-        "rounded-2xl border border-border bg-background shadow-xs",
+        "rounded-[0.35rem] border border-border bg-background shadow-xs transition-[transform,box-shadow,border-color] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-1 hover:border-primary/25 hover:shadow-xl",
         className,
       )}
       {...props}

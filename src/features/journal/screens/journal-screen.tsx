@@ -11,33 +11,7 @@ import {
   CardHeading,
   Text,
 } from "@/components/ui";
-
-const articles = [
-  {
-    title: "The return of warm modernism",
-    category: "Design",
-    date: "18 July 2026",
-    tone: "ruby" as const,
-  },
-  {
-    title: "Building for the Lagos climate",
-    category: "Architecture",
-    date: "03 July 2026",
-    tone: "stone" as const,
-  },
-  {
-    title: "Why landscape begins at the front door",
-    category: "Living",
-    date: "22 June 2026",
-    tone: "dusk" as const,
-  },
-  {
-    title: "Inside the material library",
-    category: "Studio",
-    date: "08 June 2026",
-    tone: "light" as const,
-  },
-];
+import { articles } from "@/data/articles";
 export function JournalScreen() {
   return (
     <Page>
@@ -72,7 +46,10 @@ export function JournalScreen() {
                       Exploring the decisions and ideas that shape enduring
                       places and more meaningful daily experiences.
                     </Text>
-                    <ButtonLink href="/contact" variant="link">
+                    <ButtonLink
+                      href={`/journal/${article.slug}`}
+                      variant="link"
+                    >
                       Read perspective
                     </ButtonLink>
                   </Stack>
