@@ -120,11 +120,13 @@ jobs:
     needs: publish
     runs-on: ubuntu-latest
     timeout-minutes: 15
-    environment: production
+    environment:
+      name: ${{ vars['DEPLOYMENT_ENVIRONMENT'] || 'production' }}
+      url: ${{ vars['PRODUCTION_URL'] }}
     env:
       IMAGE: ${{ needs.publish.outputs.image }}@${{ needs.publish.outputs.digest }}
-      DEPLOY_WEBHOOK: ${{ secrets.PRODUCTION_DEPLOY_WEBHOOK }}
-      PRODUCTION_URL: ${{ vars.PRODUCTION_URL }}
+      DEPLOY_WEBHOOK: ${{ secrets['PRODUCTION_DEPLOY_WEBHOOK'] }}
+      PRODUCTION_URL: ${{ vars['PRODUCTION_URL'] }}
     steps:
       - name: Trigger immutable deployment
         if: env.DEPLOY_WEBHOOK != ''

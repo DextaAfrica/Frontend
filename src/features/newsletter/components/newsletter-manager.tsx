@@ -74,11 +74,24 @@ export function NewsletterManager() {
     setStatus("submitting");
     const form = new FormData(event.currentTarget);
     const email = String(form.get("email") ?? "");
+    const company = String(form.get("company") ?? "");
+    const rawConsent = localStorage.getItem("maison-rouge-consent");
+    let consent: unknown = null;
+    try {
+      consent = rawConsent ? (JSON.parse(rawConsent) as unknown) : null;
+    } catch {
+      consent = null;
+    }
     try {
       const response = await fetch("/api/newsletter", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email }),
+        body: JSON.stringify({
+          email,
+          company,
+          source: "newsletter_modal",
+          consent,
+        }),
       });
       const payload = (await response.json()) as { message: string };
       if (!response.ok) throw new Error(payload.message);
@@ -134,6 +147,10 @@ export function NewsletterManager() {
                 placeholder="you@example.com"
                 className="h-12 border border-input bg-background px-4 outline-none placeholder:text-muted-foreground focus:ring-2 focus:ring-ring"
               />
+            </label>
+            <label className="sr-only" aria-hidden="true">
+              Company
+              <input name="company" tabIndex={-1} autoComplete="off" />
             </label>
             {message && (
               <p role="alert" className="text-sm text-destructive">

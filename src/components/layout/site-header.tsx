@@ -152,7 +152,7 @@ export function SiteHeader() {
           <Stack gap="lg" className="min-h-full justify-between">
             <nav aria-label="Mobile navigation">
               <Stack gap="none">
-                {siteConfig.navItems.map((item, index) => (
+                {siteConfig.navItems.map((item) => (
                   <Link
                     key={item.href}
                     href={item.href as Route}
@@ -164,13 +164,10 @@ export function SiteHeader() {
                     )}
                   >
                     <span>{item.label}</span>
-                    <span className="flex items-center gap-4 text-[0.6rem] font-medium tracking-[0.16em] text-muted-foreground uppercase">
-                      0{index + 1}
-                      <Icon
-                        name="arrow-right"
-                        className="transition-transform group-hover:translate-x-1"
-                      />
-                    </span>
+                    <Icon
+                      name="arrow-right"
+                      className="text-muted-foreground transition-transform group-hover:translate-x-1 group-hover:text-primary"
+                    />
                   </Link>
                 ))}
               </Stack>

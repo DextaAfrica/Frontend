@@ -35,7 +35,8 @@ Dependabot updates npm, Docker, and GitHub Actions dependencies weekly.
 
 Configure these repository settings:
 
-- Environment: `production`, with required reviewers for a manual approval gate.
+- Repository variable: `DEPLOYMENT_ENVIRONMENT` (optional; defaults to `production`).
+- Environment matching that name, with required reviewers for a manual approval gate.
 - Environment variable: `PRODUCTION_URL` (for example `https://example.com`).
 - Environment secret: `PRODUCTION_DEPLOY_WEBHOOK` from the chosen hosting platform.
 - Package visibility and retention rules for `ghcr.io/<owner>/<repository>`.

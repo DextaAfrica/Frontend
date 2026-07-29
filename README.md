@@ -73,7 +73,7 @@ Pipeline, registry, security, and deployment setup are in [the CI/CD guide](docs
 - `/journal` — editorial insights
 - `/contact` — enquiry form and native confirmation modal
 - `/careers` — disciplines and studio opportunities
-- `/privacy`, `/terms`, `/accessibility` — complete policy destinations
+- `/privacy`, `/terms`, `/cookies`, `/accessibility` — complete policy destinations
 - `/portfolio/[slug]` — statically generated development details
 - `/journal/[slug]` — statically generated editorial articles
 
@@ -82,3 +82,6 @@ persistent local choices, cross-tab synchronization, and a footer control for re
 
 The newsletter lifecycle waits until cookie consent is resolved, opens after meaningful engagement,
 persists dismissal/subscription state, and posts through the internal `/api/newsletter` integration boundary.
+Configure `NEWSLETTER_WEBHOOK_URL` (and, when required, `NEWSLETTER_WEBHOOK_TOKEN`) to deliver
+validated subscriptions to the production email or CRM service. The server does not expose those credentials
+to the browser.

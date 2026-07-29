@@ -106,6 +106,7 @@ export function SiteFooter() {
             <nav className="flex gap-5" aria-label="Legal">
               <Link href={"/privacy" as Route}>Privacy</Link>
               <Link href={"/terms" as Route}>Terms</Link>
+              <Link href={"/cookies" as Route}>Cookies</Link>
               <Link href={"/accessibility" as Route}>Accessibility</Link>
               <CookieSettingsButton className="hover:text-background" />
               <NewsletterButton className="hover:text-background" />

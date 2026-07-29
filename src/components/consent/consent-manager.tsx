@@ -49,9 +49,13 @@ export function ConsentManager() {
     function openPreferences() {
       const saved = localStorage.getItem(STORAGE_KEY);
       if (saved) {
-        const consent = JSON.parse(saved) as Consent;
-        setAnalytics(consent.analytics);
-        setMarketing(consent.marketing);
+        try {
+          const consent = JSON.parse(saved) as Consent;
+          setAnalytics(Boolean(consent.analytics));
+          setMarketing(Boolean(consent.marketing));
+        } catch {
+          localStorage.removeItem(STORAGE_KEY);
+        }
       }
       setPreferencesOpen(true);
     }
