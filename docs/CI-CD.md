@@ -10,13 +10,13 @@
 4. validates development and production Compose manifests;
 5. builds the production container with reusable GitHub Actions cache.
 
-Branch protection should require all three CI jobs and CodeQL before merge.
+Branch protection should require all three CI jobs before merge.
 
 ## Security
 
-`.github/workflows/codeql.yml` performs extended JavaScript/TypeScript analysis on pull requests,
-main-branch changes, and a weekly schedule. The release workflow scans the immutable published image
-for high and critical vulnerabilities and uploads SARIF results to GitHub code scanning.
+The release workflow scans the immutable published image for high and critical vulnerabilities with
+Trivy and fails the release when actionable findings are detected. Results remain in the workflow log
+because this repository does not have the GitHub Code Security product required for SARIF uploads.
 
 Dependabot updates npm, Docker, and GitHub Actions dependencies weekly.
 

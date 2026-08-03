@@ -15,7 +15,6 @@ permissions:
   packages: write
   id-token: write
   attestations: write
-  security-events: write
 
 env:
   REGISTRY: ghcr.io
@@ -104,16 +103,10 @@ jobs:
         uses: aquasecurity/trivy-action@v0.36.0
         with:
           image-ref: ${{ steps.image.outputs.name }}@${{ steps.build.outputs.digest }}
-          format: sarif
-          output: trivy-results.sarif
+          format: table
           severity: HIGH,CRITICAL
           ignore-unfixed: true
           exit-code: "1"
-      - name: Upload security findings
-        if: always()
-        uses: github/codeql-action/upload-sarif@v4
-        with:
-          sarif_file: trivy-results.sarif
 
   deploy:
     name: Deploy production
