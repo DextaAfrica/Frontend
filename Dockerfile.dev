@@ -16,7 +16,7 @@ RUN npm ci \
 COPY docker/dev-entrypoint.sh /usr/local/bin/dexta-dev-entrypoint
 RUN chmod +x /usr/local/bin/dexta-dev-entrypoint \
     && mkdir -p /app/.next \
-    && chown -R node:node /app
+    && chown -R node:node /app/.next
 
 EXPOSE 3000
 ENTRYPOINT ["dexta-dev-entrypoint"]

@@ -17,5 +17,5 @@ if [ ! -d /app/node_modules/next ] || [ "$current_lock_hash" != "$installed_lock
   printf '%s\n' "$current_lock_hash" > "$STAMPFILE"
 fi
 
-chown -R node:node /app/node_modules /app/.next
+chown -R node:node /app/.next
 exec su-exec node "$@"
