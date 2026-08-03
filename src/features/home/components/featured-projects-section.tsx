@@ -40,6 +40,7 @@ export function FeaturedProjectsSection({
             >
               <Link href={project.href} className="group block">
                 <div
+                  style={{ position: "relative" }}
                   className={
                     index === 2
                       ? "project-media project-media-wide"

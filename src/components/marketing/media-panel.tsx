@@ -25,6 +25,7 @@ export function MediaPanel({
       as="figure"
       role="img"
       aria-label={label}
+      style={{ position: "relative" }}
       className={cn(
         "media-panel relative min-h-72 overflow-hidden rounded-[0.4rem] bg-gradient-to-br",
         tones[tone],

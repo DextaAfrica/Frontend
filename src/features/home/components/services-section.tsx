@@ -236,6 +236,7 @@ export function ServicesSection({
                   data-service-card
                   data-active={isActive || undefined}
                   className="service-card relative isolate min-h-service-mobile overflow-hidden border border-service-border bg-brand-dark-elevated shadow-service-panel sm:min-h-service-tablet lg:min-h-0"
+                  style={{ position: "relative" }}
                   aria-current={isActive ? "step" : undefined}
                 >
                   <Image

@@ -29,7 +29,7 @@ export function BlogSection({
           {posts.map((post) => (
             <RevealItem as="article" key={post.id}>
               <Link href={post.href} className="group block">
-                <div className="blog-media">
+                <div className="blog-media" style={{ position: "relative" }}>
                   <Image
                     src={post.image}
                     alt=""
