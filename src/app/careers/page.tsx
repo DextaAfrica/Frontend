@@ -43,7 +43,7 @@ export default function CareersPage() {
               <Card key={role.title}>
                 <CardContent className="p-7">
                   <Stack gap="sm">
-                    <CardHeading className="text-xl">{role.title}</CardHeading>
+                    <CardHeading size="md">{role.title}</CardHeading>
                     <Text className="text-sm">{role.text}</Text>
                     <ButtonLink href="/contact" variant="link">
                       Contact the studio

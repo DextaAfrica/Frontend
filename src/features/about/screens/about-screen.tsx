@@ -69,9 +69,7 @@ export function AboutScreen() {
                     <span className="text-sm font-bold text-primary">
                       0{index + 1}
                     </span>
-                    <CardHeading className="text-2xl">
-                      {value.title}
-                    </CardHeading>
+                    <CardHeading size="lg">{value.title}</CardHeading>
                     <Text className="text-sm">{value.text}</Text>
                   </Stack>
                 </CardContent>

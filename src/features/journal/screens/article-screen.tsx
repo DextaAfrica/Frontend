@@ -21,9 +21,7 @@ export function ArticleScreen({ article }: { article: JournalArticle }) {
           {article.sections.map((section) => (
             <section key={section.title}>
               <Stack gap="sm">
-                <SectionHeading className="text-2xl sm:text-3xl">
-                  {section.title}
-                </SectionHeading>
+                <SectionHeading size="compact">{section.title}</SectionHeading>
                 <Text>{section.body}</Text>
               </Stack>
             </section>

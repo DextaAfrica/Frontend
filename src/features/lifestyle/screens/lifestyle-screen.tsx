@@ -60,7 +60,7 @@ export function LifestyleScreen() {
               <Card key={item.title}>
                 <CardContent className="p-7">
                   <Stack gap="sm">
-                    <CardHeading className="text-2xl">{item.title}</CardHeading>
+                    <CardHeading size="lg">{item.title}</CardHeading>
                     <Text className="text-sm">{item.text}</Text>
                   </Stack>
                 </CardContent>
