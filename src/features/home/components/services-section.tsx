@@ -1,11 +1,16 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useId, useRef, useState } from "react";
-import { gsap, useGSAP } from "@/lib/gsap";
+import { useId, useRef, useState } from "react";
+import type { CSSProperties } from "react";
+import { gsap, ScrollTrigger, useGSAP } from "@/lib/gsap";
 import { cn } from "@/lib/utils";
 import { isRemoteAsset } from "@/lib/media";
 import type { ServiceContent } from "../types/home-page";
+
+type ServiceSectionStyle = CSSProperties & {
+  "--service-count": number;
+};
 
 export function ServicesSection({
   services,
@@ -14,188 +19,208 @@ export function ServicesSection({
 }) {
   const sectionId = useId();
   const sectionRef = useRef<HTMLElement>(null);
-  const [activeId, setActiveId] = useState(services[0]?.id);
-  const activeService =
-    services.find((service) => service.id === activeId) ?? services[0];
-
-  const [scrubEnabled, setScrubEnabled] = useState(false);
-
-  useEffect(() => {
-    const query = window.matchMedia(
-      "(min-width: 40rem) and (prefers-reduced-motion: no-preference)",
-    );
-    const update = () => setScrubEnabled(query.matches);
-    update();
-    query.addEventListener("change", update);
-    return () => query.removeEventListener("change", update);
-  }, []);
+  const scrollTriggerRef = useRef<ScrollTrigger | null>(null);
+  const [activeIndex, setActiveIndex] = useState(0);
 
   useGSAP(
     () => {
       const section = sectionRef.current;
-      if (!section) return;
+      if (!section || services.length < 2) return;
 
-      const mm = gsap.matchMedia();
-      mm.add(
-        {
-          isDesktop: "(min-width: 40rem)",
-          reduceMotion: "(prefers-reduced-motion: reduce)",
-        },
-        (context) => {
-          const { isDesktop, reduceMotion } = context.conditions as {
-            isDesktop: boolean;
-            reduceMotion: boolean;
-          };
-          if (!isDesktop || reduceMotion) return;
+      const media = gsap.matchMedia();
 
-          const panels = gsap.utils.toArray<HTMLElement>(
-            section.querySelectorAll("[data-service-panel]"),
+      media.add(
+        "(min-width: 64rem) and (prefers-reduced-motion: no-preference)",
+        () => {
+          const cards = gsap.utils.toArray<HTMLElement>(
+            section.querySelectorAll("[data-service-card]"),
           );
-          const steps = panels.length;
-          if (steps < 2) return;
 
-          const timeline = gsap.timeline({
-            defaults: { duration: 1, ease: "power2.inOut" },
-            scrollTrigger: {
-              trigger: section,
-              start: "top bottom",
-              end: "bottom top",
-              scrub: 1,
-              onUpdate: (self) => {
-                const continuousIndex = self.progress * (steps - 1);
-                const index = Math.min(
-                  steps - 1,
-                  Math.max(0, Math.round(continuousIndex)),
-                );
-                const next = services[index];
-                setActiveId((current) =>
-                  next && current !== next.id ? next.id : current,
-                );
-              },
-            },
+          gsap.set(cards, {
+            zIndex: (index) => index + 1,
+            yPercent: (index) => (index === 0 ? 0 : 108),
+            scale: (index) => (index === 0 ? 1 : 0.985),
+            opacity: 1,
           });
 
-          for (let index = 1; index < steps; index += 1) {
-            const previous = panels[index - 1];
-            const current = panels[index];
+          const timeline = gsap.timeline({ paused: true });
+
+          for (let index = 1; index < cards.length; index += 1) {
+            const previous = cards[index - 1];
+            const current = cards[index];
             if (!previous || !current) continue;
 
             const position = index - 1;
             timeline
-              .to(previous, { opacity: 0, y: -12 }, position)
-              .to(current, { opacity: 1, y: 0 }, position);
+              .to(
+                previous,
+                {
+                  y: "calc(var(--service-stack-offset) * -1)",
+                  scale: 0.965,
+                  opacity: 0.58,
+                  duration: 1,
+                  ease: "none",
+                },
+                position,
+              )
+              .to(
+                current,
+                {
+                  yPercent: 0,
+                  scale: 1,
+                  duration: 1,
+                  ease: "none",
+                },
+                position,
+              );
           }
+
+          const trigger = ScrollTrigger.create({
+            trigger: section,
+            start: "top top",
+            end: "bottom bottom",
+            animation: timeline,
+            scrub: 0.65,
+            invalidateOnRefresh: true,
+            onUpdate: ({ progress }) => {
+              const nextIndex = Math.min(
+                services.length - 1,
+                Math.round(progress * (services.length - 1)),
+              );
+              setActiveIndex((current) =>
+                current === nextIndex ? current : nextIndex,
+              );
+            },
+          });
+
+          scrollTriggerRef.current = trigger;
+
+          return () => {
+            scrollTriggerRef.current = null;
+            trigger.kill();
+            timeline.kill();
+          };
         },
       );
 
-      return () => mm.revert();
+      return () => media.revert();
     },
     { scope: sectionRef, dependencies: [services] },
   );
 
-  const goToIndex = (index: number) => {
-    if (!scrubEnabled) {
-      setActiveId(services[index]?.id);
+  const goToService = (index: number) => {
+    const trigger = scrollTriggerRef.current;
+
+    if (!trigger) {
+      document
+        .getElementById(`${sectionId}-${services[index]?.id}`)
+        ?.scrollIntoView({ behavior: "smooth", block: "center" });
       return;
     }
 
-    const section = sectionRef.current;
-    if (!section) return;
-
-    const rect = section.getBoundingClientRect();
-    const sectionTop = rect.top + window.scrollY;
-    const startY = sectionTop - window.innerHeight;
-    const endY = sectionTop + section.offsetHeight;
     const progress = services.length > 1 ? index / (services.length - 1) : 0;
-
     window.scrollTo({
-      top: startY + progress * (endY - startY),
+      top: trigger.start + (trigger.end - trigger.start) * progress,
       behavior: "smooth",
     });
   };
 
-  if (!activeService) return null;
+  if (!services.length) return null;
 
   return (
     <section
       ref={sectionRef}
-      className="bg-brand-dark px-page-gutter py-services text-brand-light"
-      aria-label="Our services"
+      className="service-scroll-section bg-brand-dark text-brand-light"
+      style={{ "--service-count": services.length } as ServiceSectionStyle}
+      aria-labelledby={`${sectionId}-heading`}
     >
-      <div className="mx-auto w-full max-w-service-shell overflow-hidden rounded-service-group bg-brand-dark-elevated">
-        <div
-          id={`${sectionId}-${activeService.id}`}
-          className="relative min-h-service-mobile overflow-hidden rounded-service-panel border border-service-border shadow-service-panel sm:min-h-service-tablet lg:min-h-service-panel"
-          aria-live="polite"
-        >
-          {services.map((service, index) => {
-            const isActive = service.id === activeService.id;
+      <h2 id={`${sectionId}-heading`} className="sr-only">
+        Our services
+      </h2>
 
-            return (
-              <article
-                key={service.id}
-                data-service-panel
-                className={cn(
-                  "duration-service absolute inset-0 transition-[opacity,transform] ease-premium",
-                  isActive
-                    ? "z-10 translate-y-0 opacity-100"
-                    : "pointer-events-none translate-y-service opacity-0",
-                )}
-                aria-hidden={!isActive}
-              >
-                <Image
-                  src={service.image}
-                  alt=""
-                  fill
-                  priority={index === 0}
-                  sizes="(min-width: 1440px) 1406px, 100vw"
-                  unoptimized={isRemoteAsset(service.image)}
-                  className="duration-service-media scale-service-media object-cover transition-transform ease-premium"
-                />
-                <span className="service-media-overlay absolute inset-0" />
-                <h2 className="absolute top-7 right-service left-service font-serif text-section-display leading-editorial tracking-editorial sm:top-10 lg:top-12">
-                  {service.title}
-                </h2>
-                <span className="absolute top-5 right-service font-mono text-service-number leading-none tracking-service-number sm:top-8">
-                  {service.number}
-                </span>
-                <p className="absolute right-service bottom-8 left-service text-service-copy leading-editorial font-medium sm:left-auto sm:max-w-service-copy lg:bottom-12">
-                  {service.description}
-                </p>
-              </article>
-            );
-          })}
-        </div>
+      <div className="service-sticky-stage px-page-gutter py-services">
+        <div className="service-shell mx-auto grid w-full max-w-service-shell gap-3 lg:grid-cols-[minmax(0,1fr)_minmax(16rem,0.34fr)]">
+          <div className="service-card-stage">
+            {services.map((service, index) => {
+              const isActive = index === activeIndex;
 
-        <div aria-label="Choose a service">
-          {services.map((service, index) => {
-            const isActive = service.id === activeService.id;
-
-            if (isActive) return null;
-
-            return (
-              <button
-                key={service.id}
-                type="button"
-                aria-label={`View ${service.title}`}
-                className="group gap-service-row flex min-h-service-row w-full items-center rounded-service-row border border-service-border px-service text-left shadow-service-row transition-colors duration-300 hover:bg-brand-light/[0.06] focus-visible:z-20 focus-visible:ring-2 focus-visible:ring-brand-light/80 focus-visible:outline-none"
-                onClick={() => goToIndex(index)}
-              >
-                <span className="font-mono text-service-tab-number leading-none opacity-70">
-                  {service.number}
-                </span>
-                <span className="font-serif text-service-tab leading-editorial tracking-editorial">
-                  {service.title}
-                </span>
-                <span
-                  aria-hidden
-                  className="ml-auto text-service-indicator opacity-0 transition-[opacity,transform] duration-300 group-hover:translate-x-1 group-hover:opacity-100 group-focus-visible:opacity-100"
+              return (
+                <article
+                  id={`${sectionId}-${service.id}`}
+                  key={service.id}
+                  data-service-card
+                  data-active={isActive || undefined}
+                  className="service-card isolate overflow-hidden rounded-service-panel border border-service-border bg-brand-dark-elevated shadow-service-panel"
+                  aria-current={isActive ? "step" : undefined}
                 >
-                  ↗
-                </span>
-              </button>
-            );
-          })}
+                  <Image
+                    src={service.image}
+                    alt=""
+                    fill
+                    priority={index === 0}
+                    sizes="(min-width: 1440px) 1080px, (min-width: 1024px) 72vw, 100vw"
+                    unoptimized={isRemoteAsset(service.image)}
+                    className="object-cover transition-transform duration-service-media ease-premium"
+                  />
+                  <span className="service-media-overlay absolute inset-0" />
+                  <div className="service-card-content absolute inset-0 grid grid-cols-[1fr_auto] content-between gap-6 p-service">
+                    <h3 className="max-w-[18ch] font-serif text-section-display leading-editorial tracking-editorial">
+                      {service.title}
+                    </h3>
+                    <span className="font-mono text-service-number leading-none tracking-service-number">
+                      {service.number}
+                    </span>
+                    <p className="col-span-2 max-w-service-copy justify-self-end text-service-copy leading-[1.35] font-normal">
+                      {service.description}
+                    </p>
+                  </div>
+                </article>
+              );
+            })}
+          </div>
+
+          <nav
+            className="service-index rounded-service-group border border-white/10 bg-brand-dark-elevated p-2"
+            aria-label="Services"
+          >
+            <ol className="grid h-full gap-1 lg:grid-rows-[repeat(var(--service-count),minmax(0,1fr))]">
+              {services.map((service, index) => {
+                const isActive = index === activeIndex;
+
+                return (
+                  <li key={service.id}>
+                    <button
+                      type="button"
+                      onClick={() => goToService(index)}
+                      aria-current={isActive ? "step" : undefined}
+                      className={cn(
+                        "group flex min-h-16 w-full items-center gap-4 rounded-service-row border px-4 text-left transition-[color,background-color,border-color] duration-300 focus-visible:ring-2 focus-visible:ring-brand-light focus-visible:outline-none lg:h-full",
+                        isActive
+                          ? "border-primary bg-primary text-primary-foreground"
+                          : "border-transparent text-brand-light/65 hover:border-white/15 hover:bg-white/[0.04] hover:text-brand-light",
+                      )}
+                    >
+                      <span className="font-mono text-service-tab-number leading-none opacity-75">
+                        {service.number}
+                      </span>
+                      <span className="font-serif text-service-tab leading-tight">
+                        {service.title}
+                      </span>
+                      <span
+                        aria-hidden
+                        className={cn(
+                          "ml-auto transition-transform duration-300",
+                          isActive ? "translate-x-0" : "-translate-x-1 opacity-0",
+                        )}
+                      >
+                        ↗
+                      </span>
+                    </button>
+                  </li>
+                );
+              })}
+            </ol>
+          </nav>
         </div>
       </div>
     </section>

@@ -102,6 +102,7 @@
   --grid-testimonial: 4.375rem minmax(0, 1fr);
   --size-testimonial-avatar: 4.375rem;
   --transform-service-offset: 0.75rem;
+  --service-stack-offset: clamp(0.75rem, 1.4vw, 1.5rem);
   --transform-service-media-scale: 1.015;
   --shape-service-group: 1rem;
   --shape-service-panel: 0.5rem;
@@ -429,6 +430,59 @@ dialog[open]::backdrop {
     rgb(0 0 0 / 0.2) 35%,
     rgb(0 0 0 / 0.72) 100%
   );
+}
+
+.service-scroll-section {
+  position: relative;
+}
+
+.service-sticky-stage {
+  min-height: 100svh;
+}
+
+.service-card-stage {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.service-card {
+  position: relative;
+  min-height: var(--layout-service-mobile-height);
+}
+
+@media (min-width: 64rem) {
+  .service-scroll-section {
+    height: calc(100svh + (var(--service-count) - 1) * 78svh);
+  }
+
+  .service-sticky-stage {
+    position: sticky;
+    top: 0;
+    display: grid;
+    height: 100svh;
+    min-height: 42rem;
+    place-items: center;
+    overflow: clip;
+  }
+
+  .service-shell {
+    max-height: calc(100svh - (var(--space-services-y) * 2));
+  }
+
+  .service-card-stage {
+    position: relative;
+    min-height: min(
+      var(--layout-service-panel-height),
+      calc(100svh - (var(--space-services-y) * 2))
+    );
+  }
+
+  .service-card {
+    position: absolute;
+    inset: 0;
+    min-height: 0;
+    will-change: transform, opacity;
+  }
 }
 
 .newsletter-card-stack {
