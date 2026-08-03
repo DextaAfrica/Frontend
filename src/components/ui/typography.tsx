@@ -5,22 +5,29 @@ export function Heading({ className, ...props }: React.ComponentProps<"h1">) {
   return (
     <h1
       className={cn(
-        "text-4xl leading-[1.02] font-light tracking-[-0.04em] text-balance sm:text-6xl lg:text-7xl",
+        "text-4xl leading-heading font-light tracking-heading text-balance sm:text-6xl lg:text-7xl",
         className,
       )}
       {...props}
     />
   );
 }
+
+const sectionHeadingSizes = {
+  default: "text-3xl sm:text-5xl",
+  compact: "text-2xl sm:text-3xl",
+} as const;
 
 export function SectionHeading({
   className,
+  size = "default",
   ...props
-}: React.ComponentProps<"h2">) {
+}: React.ComponentProps<"h2"> & { size?: keyof typeof sectionHeadingSizes }) {
   return (
     <h2
       className={cn(
-        "text-3xl font-light tracking-[-0.03em] text-balance sm:text-5xl",
+        "font-light tracking-section-heading text-balance",
+        sectionHeadingSizes[size],
         className,
       )}
       {...props}
@@ -28,13 +35,23 @@ export function SectionHeading({
   );
 }
 
+const cardHeadingSizes = {
+  sm: "text-lg",
+  lg: "text-2xl",
+} as const;
+
 export function CardHeading({
   className,
+  size = "sm",
   ...props
-}: React.ComponentProps<"h3">) {
+}: React.ComponentProps<"h3"> & { size?: keyof typeof cardHeadingSizes }) {
   return (
     <h3
-      className={cn("text-lg font-bold tracking-tight", className)}
+      className={cn(
+        "font-semibold tracking-tight",
+        cardHeadingSizes[size],
+        className,
+      )}
       {...props}
     />
   );

@@ -1,4 +1,4 @@
-import { Section } from "@/components/layout";
+import { Section, Stack } from "@/components/layout";
 import { Reveal } from "@/components/marketing";
 import { EditorialEyebrow, EditorialHeading } from "@/components/ui";
 import { InlineNewsletterForm } from "@/features/newsletter/components/inline-newsletter-form";
@@ -14,12 +14,14 @@ export function NewsletterSection({
     <Section spacing="md" tone="surface">
       <Reveal className="relative overflow-hidden rounded-2xl bg-muted px-6 py-10 sm:px-12 sm:py-12">
         <div className="relative z-10 max-w-newsletter-copy">
-          <EditorialEyebrow className="text-muted-foreground">
-            {eyebrow}
-          </EditorialEyebrow>
-          <EditorialHeading className="text-newsletter-title mt-4 max-w-newsletter-title">
-            {title}
-          </EditorialHeading>
+          <Stack gap="lg">
+            <EditorialEyebrow className="text-muted-foreground">
+              {eyebrow}
+            </EditorialEyebrow>
+            <EditorialHeading className="max-w-newsletter-title">
+              {title}
+            </EditorialHeading>
+          </Stack>
           <InlineNewsletterForm />
         </div>
         <div aria-hidden className="newsletter-card-stack hidden md:block">

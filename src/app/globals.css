@@ -47,8 +47,11 @@
   --section-intro-height: clamp(28rem, 46.944vw, 42.25rem);
   --scroll-copy-size: clamp(1.875rem, 3.056vw, 2.75rem);
   --scroll-copy-muted-opacity: 0.31;
-  --type-hero: clamp(2.75rem, 4.306vw, 3.875rem);
+  --type-hero: clamp(3rem, 4.6vw, 4.25rem);
   --letter-spacing-hero: 0.0968em;
+  --letter-spacing-heading: -0.04em;
+  --line-height-heading: 1.02;
+  --letter-spacing-section-heading: -0.03em;
   --space-hero-bottom: clamp(3.5rem, 5.556vw, 5rem);
   --space-page: clamp(1rem, 1.181vw, 1.0625rem);
   --space-services-y: clamp(2rem, 2.639vw, 2.375rem);
@@ -186,9 +189,12 @@
   --text-testimonial-author: var(--type-testimonial-author);
   --leading-editorial: var(--line-height-editorial);
   --leading-testimonial: 1.2;
+  --leading-heading: var(--line-height-heading);
   --tracking-editorial: var(--letter-spacing-editorial);
   --tracking-editorial-label: var(--letter-spacing-editorial-label);
   --tracking-hero: var(--letter-spacing-hero);
+  --tracking-heading: var(--letter-spacing-heading);
+  --tracking-section-heading: var(--letter-spacing-section-heading);
   --tracking-service-number: var(--letter-spacing-service-number);
   --tracking-testimonial: var(--letter-spacing-testimonial);
   --tracking-testimonial-author: var(--letter-spacing-testimonial-author);

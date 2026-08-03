@@ -23,7 +23,7 @@ export function MarketingHeading({
   return (
     <Reveal>
       <Stack
-        gap="sm"
+        gap="lg"
         align={centered ? "center" : "start"}
         className={centered ? "mx-auto max-w-3xl text-center" : "max-w-3xl"}
       >
