@@ -13,8 +13,10 @@ export const tokens = {
   ],
   spacing: ["xs", "sm", "md", "lg", "xl", "2xl"],
   radius: ["sm", "md", "lg", "xl", "2xl"],
-  container: ["narrow", "default", "wide", "full"],
+  container: ["narrow", "editorial", "default", "wide", "full"],
+  typography: ["hero", "editorial", "metric", "body", "label"],
 } as const;
 
 export type ColorToken = (typeof tokens.color)[number];
 export type SpacingToken = (typeof tokens.spacing)[number];
+export type TypographyToken = (typeof tokens.typography)[number];

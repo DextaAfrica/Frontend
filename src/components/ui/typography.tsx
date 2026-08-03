@@ -63,3 +63,63 @@ export function Eyebrow({ className, ...props }: React.ComponentProps<"p">) {
     />
   );
 }
+
+export function EditorialHeading({
+  className,
+  ...props
+}: React.ComponentProps<"h2">) {
+  return (
+    <h2
+      className={cn(
+        "font-serif text-editorial leading-editorial font-normal tracking-editorial text-balance",
+        className,
+      )}
+      {...props}
+    />
+  );
+}
+
+export function EditorialEyebrow({
+  className,
+  ...props
+}: React.ComponentProps<"p">) {
+  return (
+    <p
+      className={cn(
+        "text-base font-medium tracking-editorial-label uppercase",
+        className,
+      )}
+      {...props}
+    />
+  );
+}
+
+export function HeroHeading({
+  className,
+  ...props
+}: React.ComponentProps<"h1">) {
+  return (
+    <h1
+      className={cn(
+        "font-serif text-hero leading-[1.05] font-normal tracking-hero uppercase",
+        className,
+      )}
+      {...props}
+    />
+  );
+}
+
+export function MetricValue({
+  className,
+  ...props
+}: React.ComponentProps<"p">) {
+  return (
+    <p
+      className={cn(
+        "font-serif text-metric leading-none font-normal uppercase",
+        className,
+      )}
+      {...props}
+    />
+  );
+}

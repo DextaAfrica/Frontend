@@ -5,12 +5,15 @@ import { Icon } from "@/components/ui/icon";
 import { useMounted } from "@/hooks/use-mounted";
 import { useTheme } from "@/providers/theme-provider";
 
-export function ThemeToggle() {
+export function ThemeToggle({ className }: { className?: string }) {
   const mounted = useMounted();
   const { theme, toggleTheme } = useTheme();
   if (!mounted)
     return (
-      <span aria-hidden className="size-10 rounded-lg border border-border" />
+      <span
+        aria-hidden
+        className={`size-10 rounded-lg border border-border ${className ?? ""}`}
+      />
     );
   const next = theme === "dark" ? "light" : "dark";
   return (
@@ -20,6 +23,7 @@ export function ThemeToggle() {
       onClick={toggleTheme}
       aria-label={`Switch to ${next} mode`}
       title={`Switch to ${next} mode`}
+      className={className}
     >
       <Icon name={theme === "dark" ? "sun" : "moon"} />
     </Button>

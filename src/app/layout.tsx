@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import "@fontsource/radley/400.css";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { SiteHeader } from "@/components/layout/site-header";
 import { AppShell, AppShellMain } from "@/components/layout";
@@ -16,8 +17,8 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = {
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
-    { media: "(prefers-color-scheme: dark)", color: "#0d0909" },
+    { media: "(prefers-color-scheme: light)", color: "#f8f8f7" },
+    { media: "(prefers-color-scheme: dark)", color: "#060606" },
   ],
 };
 

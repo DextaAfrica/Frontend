@@ -1,6 +1,7 @@
 "use client";
 
 import type { Route } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import * as React from "react";
@@ -9,6 +10,7 @@ import { Button, ButtonLink } from "@/components/ui/button";
 import { Icon } from "@/components/ui/icon";
 import { siteConfig } from "@/config/site";
 import { cn } from "@/lib/utils";
+import { useTheme } from "@/providers/theme-provider";
 import { Cluster } from "./cluster";
 import { Container } from "./container";
 import { Stack } from "./stack";
@@ -16,6 +18,7 @@ import { Stack } from "./stack";
 export function SiteHeader() {
   const [open, setOpen] = React.useState(false);
   const pathname = usePathname();
+  const { theme } = useTheme();
   const overlaysHero = pathname === "/" && !open;
   const menuButtonRef = React.useRef<HTMLButtonElement>(null);
   const menuRef = React.useRef<HTMLDivElement>(null);
@@ -40,6 +43,89 @@ export function SiteHeader() {
 
   function closeMenu() {
     setOpen(false);
+  }
+
+  if (pathname === "/") {
+    const landingLinks = siteConfig.navItems;
+
+    return (
+      <header className="absolute inset-x-0 top-0 z-[70] text-white">
+        <Container>
+          <div className="relative flex min-h-[6.3125rem] items-start justify-between pt-5">
+            <nav
+              className="hidden grid-cols-2 gap-x-11 gap-y-1 pt-5 text-base leading-6 md:grid"
+              aria-label="Main navigation"
+            >
+              {landingLinks.map((item) => (
+                <Link
+                  key={item.href}
+                  href={item.href as Route}
+                  className="transition-opacity hover:opacity-65"
+                >
+                  {item.label}
+                </Link>
+              ))}
+            </nav>
+
+            <Link
+              href="/"
+              aria-label="Dexta Africa home"
+              className="absolute top-[1.875rem] left-1/2 -translate-x-1/2"
+            >
+              <Image
+                src="/images/dexta-logo.svg"
+                alt="Dexta"
+                width={110}
+                height={48}
+                priority
+              />
+            </Link>
+
+            <div className="ml-auto flex items-center gap-2 pt-0.5">
+              <span className="hidden text-base sm:inline">
+                {theme === "dark" ? "Dark" : "Light"}
+              </span>
+              <ThemeToggle className="text-white hover:bg-white/10" />
+              <Button
+                ref={menuButtonRef}
+                variant="ghost"
+                size="icon"
+                className="text-white md:hidden"
+                onClick={() => setOpen((current) => !current)}
+                aria-expanded={open}
+                aria-controls="landing-mobile-navigation"
+                aria-label={open ? "Close navigation" : "Open navigation"}
+              >
+                <Icon name={open ? "close" : "menu"} />
+              </Button>
+            </div>
+          </div>
+
+          <nav
+            id="landing-mobile-navigation"
+            aria-label="Mobile navigation"
+            className={cn(
+              "grid overflow-hidden border-t border-white/20 bg-black/80 px-5 text-lg backdrop-blur-xl transition-[grid-template-rows,opacity,padding] md:hidden",
+              open
+                ? "grid-rows-[1fr] py-5 opacity-100"
+                : "pointer-events-none grid-rows-[0fr] py-0 opacity-0",
+            )}
+          >
+            <div className="flex min-h-0 flex-col gap-3 overflow-hidden">
+              {landingLinks.map((item) => (
+                <Link
+                  key={item.href}
+                  href={item.href as Route}
+                  onClick={closeMenu}
+                >
+                  {item.label}
+                </Link>
+              ))}
+            </div>
+          </nav>
+        </Container>
+      </header>
+    );
   }
 
   return (

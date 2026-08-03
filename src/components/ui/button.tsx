@@ -4,7 +4,14 @@ import * as React from "react";
 import { cn } from "@/lib/utils";
 
 export type ButtonVariant =
-  "primary" | "secondary" | "ghost" | "outline" | "destructive" | "link";
+  | "primary"
+  | "secondary"
+  | "neutral"
+  | "onMedia"
+  | "ghost"
+  | "outline"
+  | "destructive"
+  | "link";
 export type ButtonSize = "sm" | "md" | "lg" | "icon";
 
 const base =
@@ -14,6 +21,8 @@ const variants: Record<ButtonVariant, string> = {
     "bg-primary text-primary-foreground shadow-sm hover:bg-primary-hover",
   secondary:
     "border border-border bg-surface text-foreground shadow-xs hover:bg-muted",
+  neutral: "bg-foreground text-background hover:opacity-85",
+  onMedia: "bg-white text-[#141414] hover:bg-white/90",
   ghost: "text-foreground hover:bg-muted",
   outline:
     "border border-primary/35 bg-transparent text-primary hover:bg-primary-subtle",

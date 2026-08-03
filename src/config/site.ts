@@ -1,19 +1,20 @@
 export const siteConfig = {
-  name: "Maison Rouge",
+  name: "Dexta Africa",
   description:
-    "Considered spaces, enduring design, and a more meaningful way to live.",
+    "Value-driven real estate solutions that turn dreams into addresses.",
   url: process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000",
   navItems: [
-    { label: "About", href: "/about" },
-    { label: "Portfolio", href: "/portfolio" },
-    { label: "Lifestyle", href: "/lifestyle" },
-    { label: "Journal", href: "/journal" },
-    { label: "Contact", href: "/contact" },
+    { label: "Projects", href: "/portfolio" },
+    { label: "Careers", href: "/careers" },
+    { label: "Blog", href: "/journal" },
+    { label: "About us", href: "/about" },
+    { label: "Contact us", href: "/contact" },
   ],
   contact: {
-    phone: "+234 800 000 0000",
-    email: "hello@maisonrouge.example",
-    address: "12 Kingsway Road, Ikoyi, Lagos",
+    phone: "+234 811 400 0480",
+    email: "hi@dextaafrica.com",
+    address:
+      "House 6a, Block 28, Road 14, Garba Mohammed Lawal Ave, Lekki Peninsula II, Lagos, Nigeria",
   },
   social: ["Instagram", "LinkedIn", "Pinterest"],
 } as const;

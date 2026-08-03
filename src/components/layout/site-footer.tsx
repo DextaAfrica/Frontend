@@ -1,5 +1,8 @@
+"use client";
+
 import Link from "next/link";
 import type { Route } from "next";
+import { usePathname } from "next/navigation";
 import { Container, Flex, Grid, Stack } from "@/components/layout";
 import { ButtonLink, Eyebrow, Icon, Text } from "@/components/ui";
 import { siteConfig } from "@/config/site";
@@ -29,6 +32,9 @@ const groups = [
 ] as const;
 
 export function SiteFooter() {
+  const pathname = usePathname();
+  if (pathname === "/") return null;
+
   return (
     <footer className="border-t border-border bg-foreground text-background">
       <Container className="py-16 sm:py-20">

@@ -1,5 +1,5 @@
 {
-  "name": "maison-rouge-template",
+  "name": "Dexta",
   "version": "0.1.0",
   "private": true,
   "engines": {
@@ -16,6 +16,7 @@
     "check": "npm run typecheck && npm run lint && npm run format:check"
   },
   "dependencies": {
+    "@fontsource/radley": "^5.3.0",
     "next": "16.2.12",
     "react": "19.2.8",
     "react-dom": "19.2.8"

@@ -2,11 +2,12 @@ import * as React from "react";
 import { cn } from "@/lib/utils";
 
 export interface ContainerProps extends React.ComponentProps<"div"> {
-  size?: "narrow" | "default" | "wide" | "full";
+  size?: "narrow" | "editorial" | "default" | "wide" | "full";
 }
 
 const sizes = {
   narrow: "max-w-3xl",
+  editorial: "max-w-[52.9375rem]",
   default: "max-w-7xl",
   wide: "max-w-[90rem]",
   full: "max-w-none",
