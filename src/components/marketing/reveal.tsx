@@ -3,8 +3,8 @@
 import * as React from "react";
 import { gsap, useGSAP } from "@/lib/gsap";
 
-const REVEAL_FROM = { opacity: 0, y: 32 };
-const REVEAL_DURATION = 0.42;
+const REVEAL_FROM = { opacity: 0, y: 24 };
+const REVEAL_DURATION = 0.72;
 const REVEAL_EASE = "power3.out";
 
 type RevealTag = "div" | "figure" | "article" | "span" | "li";
@@ -27,6 +27,8 @@ export function Reveal({ as: Tag = "div", delay = 0, ...props }: RevealProps) {
         duration: REVEAL_DURATION,
         delay,
         ease: REVEAL_EASE,
+        force3D: true,
+        clearProps: "transform,willChange",
         scrollTrigger: {
           trigger: ref.current,
           start: "top 88%",
@@ -65,6 +67,8 @@ export function RevealGroup({
         y: 0,
         duration: REVEAL_DURATION,
         ease: REVEAL_EASE,
+        force3D: true,
+        clearProps: "transform,willChange",
         stagger,
         scrollTrigger: {
           trigger: ref.current,

@@ -17,7 +17,7 @@ const options: readonly {
 
 export function ThemeToggle({ className }: { className?: string }) {
   const mounted = useMounted();
-  const { theme, setTheme } = useTheme();
+  const { theme, resolvedTheme, setTheme } = useTheme();
 
   if (!mounted) {
     return (
@@ -36,9 +36,10 @@ export function ThemeToggle({ className }: { className?: string }) {
       role="radiogroup"
       aria-label="Website appearance"
       className={cn(
-        "grid h-9 grid-cols-3 gap-0.5 rounded-[var(--control-radius)] border border-border/70 bg-surface-elevated/90 p-0.5 text-foreground shadow-sm backdrop-blur-md",
+        "grid h-9 grid-cols-3 gap-0.5 rounded-[var(--control-radius)] border border-border bg-background/95 p-0.5 text-foreground shadow-sm backdrop-blur-md",
         className,
       )}
+      data-resolved-theme={resolvedTheme}
     >
       {options.map((option) => {
         const selected = theme === option.value;
@@ -49,14 +50,14 @@ export function ThemeToggle({ className }: { className?: string }) {
             type="button"
             role="radio"
             aria-checked={selected}
-            aria-label={option.label}
+            aria-label={`${option.label}${option.value === "system" ? `, currently ${resolvedTheme}` : ""}`}
             title={option.label}
             onClick={() => setTheme(option.value)}
             className={cn(
-              "grid min-w-8 place-items-center rounded-[calc(var(--control-radius)-1px)] transition-[color,background-color,box-shadow] duration-200 focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none",
+              "grid min-w-8 place-items-center rounded-[calc(var(--control-radius)-1px)] border transition-[color,background-color,border-color,box-shadow] duration-200 focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none",
               selected
-                ? "bg-primary text-primary-foreground shadow-sm"
-                : "text-muted-foreground hover:bg-muted hover:text-foreground",
+                ? "border-foreground bg-foreground text-background shadow-sm"
+                : "border-transparent text-foreground/65 hover:bg-muted hover:text-foreground",
             )}
           >
             <Icon name={option.icon} size={15} strokeWidth={1.8} />

@@ -28,7 +28,7 @@ export default function RootLayout({
   children,
 }: Readonly<React.PropsWithChildren>) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" data-scroll-behavior="smooth" suppressHydrationWarning>
       <head>
         <Script
           id="theme-initializer"

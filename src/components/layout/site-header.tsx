@@ -120,7 +120,7 @@ export function SiteHeader() {
               <ThemeToggle
                 className={cn(
                   overlaysHero &&
-                    "border-brand-light/25 bg-brand-dark/55 text-brand-light shadow-lg [&_button:not([aria-checked='true'])]:text-brand-light/65 [&_button:not([aria-checked='true'])]:hover:bg-brand-light/10 [&_button:not([aria-checked='true'])]:hover:text-brand-light",
+                    "border-brand-light/30 bg-brand-dark/70 text-brand-light shadow-lg [&_button:not([aria-checked='true'])]:text-brand-light/75 [&_button:not([aria-checked='true'])]:hover:bg-brand-light/10 [&_button:not([aria-checked='true'])]:hover:text-brand-light [&_button[aria-checked='true']]:border-brand-light [&_button[aria-checked='true']]:bg-brand-light [&_button[aria-checked='true']]:text-brand-dark",
                 )}
               />
               <ButtonLink
