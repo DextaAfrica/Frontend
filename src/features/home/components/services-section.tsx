@@ -45,11 +45,24 @@ export function ServicesSection({
             section.querySelectorAll("[data-service-media]"),
           );
 
+          const activeHeight = cards[0]?.getBoundingClientRect().height ?? 0;
+          const rowHeight = cards[1]?.getBoundingClientRect().height ?? 0;
+          const cardTop = (cardIndex: number, expandedIndex: number) => {
+            if (cardIndex <= expandedIndex) return cardIndex * rowHeight;
+            return (
+              expandedIndex * rowHeight +
+              activeHeight +
+              (cardIndex - expandedIndex - 1) * rowHeight
+            );
+          };
+
           gsap.set(cards, {
-            height: (index) =>
-              index === 0
-                ? "var(--service-active-height)"
-                : "var(--layout-service-row-height)",
+            position: "absolute",
+            insetInline: 0,
+            top: 0,
+            height: (index) => (index === 0 ? activeHeight : rowHeight),
+            y: (index) => cardTop(index, 0),
+            zIndex: (index) => index + 1,
           });
           gsap.set(expandedContent, {
             autoAlpha: (index) => (index === 0 ? 1 : 0),
@@ -61,6 +74,7 @@ export function ServicesSection({
           });
           gsap.set(mediaElements, {
             scale: (index) => (index === 0 ? 1 : 1.035),
+            yPercent: (index) => (index === 0 ? 0 : 3),
           });
 
           const timeline = gsap.timeline({ paused: true });
@@ -68,8 +82,6 @@ export function ServicesSection({
           for (let index = 1; index < cards.length; index += 1) {
             const previousIndex = index - 1;
             const position = previousIndex;
-            const previousCard = cards[previousIndex];
-            const currentCard = cards[index];
             const previousExpanded = expandedContent[previousIndex];
             const currentExpanded = expandedContent[index];
             const previousCollapsed = collapsedControls[previousIndex];
@@ -78,8 +90,6 @@ export function ServicesSection({
             const currentMedia = mediaElements[index];
 
             if (
-              !previousCard ||
-              !currentCard ||
               !previousExpanded ||
               !currentExpanded ||
               !previousCollapsed ||
@@ -91,24 +101,6 @@ export function ServicesSection({
             }
 
             timeline
-              .to(
-                previousCard,
-                {
-                  height: "var(--layout-service-row-height)",
-                  duration: 1,
-                  ease: "none",
-                },
-                position,
-              )
-              .to(
-                currentCard,
-                {
-                  height: "var(--service-active-height)",
-                  duration: 1,
-                  ease: "none",
-                },
-                position,
-              )
               .to(
                 previousExpanded,
                 {
@@ -151,14 +143,27 @@ export function ServicesSection({
               )
               .to(
                 previousMedia,
-                { scale: 1.035, duration: 1, ease: "none" },
+                { scale: 1.035, yPercent: -3, duration: 1, ease: "none" },
                 position,
               )
               .to(
                 currentMedia,
-                { scale: 1, duration: 1, ease: "none" },
+                { scale: 1, yPercent: 0, duration: 1, ease: "none" },
                 position,
               );
+
+            cards.forEach((card, cardIndex) => {
+              timeline.to(
+                card,
+                {
+                  height: cardIndex === index ? activeHeight : rowHeight,
+                  y: cardTop(cardIndex, index),
+                  duration: 1,
+                  ease: "none",
+                },
+                position,
+              );
+            });
           }
 
           const trigger = ScrollTrigger.create({
@@ -166,7 +171,7 @@ export function ServicesSection({
             start: "top top",
             end: "bottom bottom",
             animation: timeline,
-            scrub: 0.7,
+            scrub: 0.9,
             invalidateOnRefresh: true,
             onUpdate: ({ progress }) => {
               const nextIndex = Math.min(
@@ -267,7 +272,7 @@ export function ServicesSection({
                     tabIndex={isActive ? -1 : 0}
                     aria-label={`Show ${service.title}`}
                     onClick={() => goToService(index)}
-                    className="service-collapsed-control group absolute inset-0 hidden w-full items-center gap-5 bg-brand-dark-elevated px-service text-left text-brand-light transition-colors hover:bg-primary focus-visible:bg-primary focus-visible:ring-2 focus-visible:ring-brand-light focus-visible:outline-none focus-visible:ring-inset lg:flex"
+                    className="service-collapsed-control group absolute inset-0 hidden w-full items-center gap-5 bg-brand-dark-elevated px-service text-left text-brand-light transition-colors hover:bg-brand-light/[0.06] focus-visible:bg-brand-light/[0.08] focus-visible:ring-2 focus-visible:ring-brand-light focus-visible:outline-none focus-visible:ring-inset lg:flex"
                   >
                     <span className="font-mono text-service-tab-number leading-none opacity-60">
                       {service.number}

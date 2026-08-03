@@ -10,6 +10,7 @@ import { Button, ButtonLink } from "@/components/ui/button";
 import { Icon } from "@/components/ui/icon";
 import { Eyebrow } from "@/components/ui/typography";
 import { siteConfig } from "@/config/site";
+import { gsap, useGSAP } from "@/lib/gsap";
 import { cn } from "@/lib/utils";
 import { Cluster } from "./cluster";
 import { Container } from "./container";
@@ -20,13 +21,75 @@ export function SiteHeader() {
   const pathname = usePathname();
   const overlaysHero = pathname === "/" && !open;
   const menuButtonRef = React.useRef<HTMLButtonElement>(null);
-  const menuRef = React.useRef<HTMLDivElement>(null);
+  const panelRef = React.useRef<HTMLDivElement>(null);
+  const timelineRef = React.useRef<ReturnType<typeof gsap.timeline> | null>(
+    null,
+  );
+
+  useGSAP(
+    () => {
+      const panel = panelRef.current;
+      if (!panel) return;
+
+      const mm = gsap.matchMedia();
+      mm.add(
+        { reduceMotion: "(prefers-reduced-motion: reduce)" },
+        (context) => {
+          const { reduceMotion } = context.conditions as {
+            reduceMotion: boolean;
+          };
+          const links = gsap.utils.toArray<HTMLElement>(
+            panel.querySelectorAll("[data-menu-link]"),
+          );
+          const timeline = gsap.timeline({ paused: true });
+
+          if (reduceMotion) {
+            timeline
+              .set(panel, { autoAlpha: 1 })
+              .set(links, { opacity: 1, y: 0 });
+          } else {
+            timeline
+              .fromTo(
+                panel,
+                { autoAlpha: 0 },
+                { autoAlpha: 1, duration: 0.4, ease: "power2.out" },
+              )
+              .fromTo(
+                links,
+                { y: 24, opacity: 0 },
+                {
+                  y: 0,
+                  opacity: 1,
+                  duration: 0.5,
+                  stagger: 0.06,
+                  ease: "power3.out",
+                },
+                "-=0.25",
+              );
+          }
+
+          timelineRef.current = timeline;
+
+          return () => {
+            timelineRef.current = null;
+          };
+        },
+      );
+
+      return () => mm.revert();
+    },
+    { scope: panelRef, dependencies: [] },
+  );
+
+  React.useEffect(() => {
+    timelineRef.current?.[open ? "play" : "reverse"]();
+  }, [open]);
 
   React.useEffect(() => {
     if (!open) return;
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
-    menuRef.current?.querySelector<HTMLAnchorElement>("a")?.focus();
+    panelRef.current?.querySelector<HTMLAnchorElement>("a")?.focus();
     function handleKeyDown(event: KeyboardEvent) {
       if (event.key === "Escape") {
         setOpen(false);
@@ -44,169 +107,61 @@ export function SiteHeader() {
     setOpen(false);
   }
 
-  if (pathname === "/") {
-    const landingLinks = siteConfig.navItems;
-
-    return (
-      <header className="absolute inset-x-0 top-0 z-[70] text-white">
-        <Container>
-          <div className="relative flex min-h-[6.3125rem] items-start justify-between pt-5">
-            <nav
-              className="hidden grid-cols-2 gap-x-11 gap-y-1 pt-5 text-base leading-6 md:grid"
-              aria-label="Main navigation"
-            >
-              {landingLinks.map((item) => (
-                <Link
-                  key={item.href}
-                  href={item.href as Route}
-                  className="transition-opacity hover:opacity-65"
-                >
-                  {item.label}
-                </Link>
-              ))}
-            </nav>
-
-            <Link
-              href="/"
-              aria-label="Dexta Africa home"
-              className="absolute top-[1.875rem] left-1/2 -translate-x-1/2"
-            >
-              <Image
-                src="/images/dexta-logo.svg"
-                alt="Dexta"
-                width={110}
-                height={48}
-                priority
-              />
-            </Link>
-
-            <div className="ml-auto flex items-center gap-2 pt-0.5">
-              <ThemeToggle className="text-white hover:bg-white/10" />
-              <Button
-                ref={menuButtonRef}
-                variant="ghost"
-                size="icon"
-                className="text-white md:hidden"
-                onClick={() => setOpen((current) => !current)}
-                aria-expanded={open}
-                aria-controls="landing-mobile-navigation"
-                aria-label={open ? "Close navigation" : "Open navigation"}
-              >
-                <Icon name={open ? "close" : "menu"} />
-              </Button>
-            </div>
-          </div>
-
-          <nav
-            id="landing-mobile-navigation"
-            aria-label="Mobile navigation"
-            className={cn(
-              "grid overflow-hidden border-t border-white/20 bg-black/80 px-5 text-lg backdrop-blur-xl transition-[grid-template-rows,opacity,padding] md:hidden",
-              open
-                ? "grid-rows-[1fr] py-5 opacity-100"
-                : "pointer-events-none grid-rows-[0fr] py-0 opacity-0",
-            )}
-          >
-            <div className="flex min-h-0 flex-col gap-3 overflow-hidden">
-              {landingLinks.map((item) => (
-                <Link
-                  key={item.href}
-                  href={item.href as Route}
-                  onClick={closeMenu}
-                >
-                  {item.label}
-                </Link>
-              ))}
-            </div>
-          </nav>
-        </Container>
-      </header>
-    );
-  }
-
   return (
     <>
       <header
         className={cn(
           "top-0 z-[70] w-full border-b transition-[background-color,border-color,color] duration-300",
           overlaysHero
-            ? "absolute border-white/15 bg-gradient-to-b from-black/45 to-transparent text-white [&_button]:text-white"
+            ? "absolute border-white/15 bg-gradient-to-b from-black/45 to-transparent text-white"
             : open
               ? "fixed inset-x-0 border-border bg-background text-foreground"
               : "sticky border-border/70 bg-background/95 text-foreground backdrop-blur-xl",
         )}
       >
         <Container size="wide">
-          <div className="grid h-18 grid-cols-[minmax(0,1fr)_auto] items-center gap-3 sm:h-20 sm:grid-cols-[auto_1fr_auto] sm:gap-6">
+          <div className="flex h-18 items-center justify-between gap-4 sm:h-20">
             <Link
               href="/"
               onClick={closeMenu}
-              className="flex min-w-0 items-center gap-3 text-xs font-medium tracking-[0.16em] uppercase"
               aria-label={`${siteConfig.name} home`}
+              className="shrink-0"
             >
-              <span
-                className={cn(
-                  "grid size-9 shrink-0 place-items-center border text-[0.6rem] tracking-[0.08em]",
-                  overlaysHero
-                    ? "border-white/60 text-white"
-                    : "border-primary text-primary",
-                )}
-              >
-                DA
-              </span>
-              <span className="truncate">{siteConfig.name}</span>
+              <Image
+                src="/images/dexta-logo.svg"
+                alt={siteConfig.name}
+                width={92}
+                height={40}
+                priority
+                className={cn(!overlaysHero && "invert dark:invert-0")}
+              />
             </Link>
 
-            <nav
-              className="hidden items-center justify-center gap-6 xl:flex 2xl:gap-9"
-              aria-label="Main navigation"
-            >
-              {siteConfig.navItems.map((item) => (
-                <Link
-                  key={item.href}
-                  href={item.href as Route}
-                  aria-current={pathname === item.href ? "page" : undefined}
-                  className={cn(
-                    "border-b border-transparent py-2 text-[0.68rem] font-medium tracking-[0.16em] uppercase transition-colors",
-                    overlaysHero
-                      ? "text-white/70 hover:text-white"
-                      : "text-muted-foreground hover:text-foreground",
-                    pathname === item.href &&
-                      (overlaysHero
-                        ? "border-white text-white"
-                        : "border-primary text-foreground"),
-                  )}
-                >
-                  {item.label}
-                </Link>
-              ))}
-            </nav>
-
-            <Cluster className="justify-end gap-0.5 sm:gap-1">
-              <ThemeToggle />
+            <Cluster className="gap-2 sm:gap-3">
               <ButtonLink
                 href="/contact"
                 size="sm"
-                variant={overlaysHero ? "ghost" : "outline"}
-                className={cn(
-                  "hidden border px-4 text-[0.65rem] tracking-[0.12em] uppercase md:inline-flex",
-                  overlaysHero &&
-                    "border-white/35 text-white hover:bg-white/10",
-                )}
+                variant={overlaysHero ? "onMedia" : "primary"}
+                className="text-[0.7rem] tracking-[0.08em] uppercase"
               >
-                Enquire
+                Book Inspection
               </ButtonLink>
               <Button
                 ref={menuButtonRef}
-                variant="ghost"
-                size="icon"
-                className="xl:hidden"
+                variant={overlaysHero ? "ghost" : "secondary"}
+                size="sm"
+                className={cn(
+                  "text-[0.7rem] tracking-[0.08em] uppercase",
+                  overlaysHero &&
+                    "border-white/35 text-white hover:bg-white/10",
+                )}
                 onClick={() => setOpen((current) => !current)}
                 aria-expanded={open}
-                aria-controls="mobile-navigation"
+                aria-controls="site-navigation"
                 aria-label={open ? "Close navigation" : "Open navigation"}
               >
-                <Icon name={open ? "close" : "menu"} />
+                {open ? "Close" : "Menu"}
+                <Icon name={open ? "close" : "menu"} size={16} />
               </Button>
             </Cluster>
           </div>
@@ -214,17 +169,15 @@ export function SiteHeader() {
       </header>
 
       <div
-        ref={menuRef}
-        id="mobile-navigation"
+        ref={panelRef}
+        id="site-navigation"
         role="dialog"
         aria-modal="true"
         aria-label="Site navigation"
         aria-hidden={!open}
         className={cn(
-          "fixed inset-0 z-[60] bg-background text-foreground transition-[opacity,transform,visibility] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] xl:hidden",
-          open
-            ? "visible translate-y-0 opacity-100"
-            : "pointer-events-none invisible -translate-y-2 opacity-0",
+          "invisible fixed inset-0 z-[60] bg-background text-foreground opacity-0",
+          open ? "pointer-events-auto" : "pointer-events-none",
         )}
       >
         <Container
@@ -232,12 +185,13 @@ export function SiteHeader() {
           className="h-full overflow-y-auto pt-24 pb-8 sm:pt-28 sm:pb-10"
         >
           <Stack gap="lg" className="min-h-full justify-between">
-            <nav aria-label="Mobile navigation">
+            <nav aria-label="Site navigation links">
               <Stack gap="none">
                 {siteConfig.navItems.map((item) => (
                   <Link
                     key={item.href}
                     href={item.href as Route}
+                    data-menu-link
                     onClick={closeMenu}
                     aria-current={pathname === item.href ? "page" : undefined}
                     className={cn(
@@ -263,14 +217,17 @@ export function SiteHeader() {
                   more considered way of living.
                 </p>
               </Stack>
-              <ButtonLink
-                href="/contact"
-                size="lg"
-                onClick={closeMenu}
-                className="w-fit"
-              >
-                Arrange an appointment <Icon name="arrow-right" />
-              </ButtonLink>
+              <Cluster className="gap-3">
+                <ThemeToggle />
+                <ButtonLink
+                  href="/contact"
+                  size="lg"
+                  onClick={closeMenu}
+                  className="w-fit"
+                >
+                  Book Inspection <Icon name="arrow-right" />
+                </ButtonLink>
+              </Cluster>
             </div>
           </Stack>
         </Container>
