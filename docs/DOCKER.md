@@ -19,6 +19,11 @@ inside the volume before starting Next.js. File polling is enabled by default
 so edits made through Docker Desktop, WSL, or other bind mounts trigger Fast
 Refresh reliably.
 
+Development output under `.next` uses an ephemeral in-memory filesystem. It is
+recreated with the container, preventing stale Turbopack manifests and browser
+chunk URLs from surviving a development-server restart. The dependency volume
+remains persistent, so this does not force packages to reinstall on each run.
+
 Production with the hardened standalone runner:
 
 ```bash

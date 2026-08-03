@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import Script from "next/script";
 import "@fontsource-variable/manrope";
 import "@fontsource-variable/cormorant-garamond";
 import { SiteFooter } from "@/components/layout/site-footer";
@@ -29,7 +30,11 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-        <script dangerouslySetInnerHTML={{ __html: themeInitializer }} />
+        <Script
+          id="theme-initializer"
+          strategy="beforeInteractive"
+          dangerouslySetInnerHTML={{ __html: themeInitializer }}
+        />
       </head>
       <body className="min-h-dvh bg-background font-sans text-foreground antialiased">
         <AppProvider>
