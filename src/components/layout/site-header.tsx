@@ -87,7 +87,7 @@ export function SiteHeader() {
         className={cn(
           "top-0 z-[70] w-full border-b transition-[background-color,border-color,color] duration-300",
           overlaysHero
-            ? "absolute border-white/15 bg-gradient-to-b from-black/45 to-transparent text-white"
+            ? "absolute border-brand-light/15 bg-brand-dark/70 text-brand-light shadow-lg backdrop-blur-md"
             : open
               ? "fixed inset-x-0 border-border bg-background text-foreground"
               : isLandingPage
@@ -120,7 +120,7 @@ export function SiteHeader() {
               <ThemeToggle
                 className={cn(
                   overlaysHero &&
-                    "border-white/25 bg-black/30 text-white shadow-lg [&_button:not([aria-checked='true'])]:text-white/65 [&_button:not([aria-checked='true'])]:hover:bg-white/10 [&_button:not([aria-checked='true'])]:hover:text-white",
+                    "border-brand-light/25 bg-brand-dark/55 text-brand-light shadow-lg [&_button:not([aria-checked='true'])]:text-brand-light/65 [&_button:not([aria-checked='true'])]:hover:bg-brand-light/10 [&_button:not([aria-checked='true'])]:hover:text-brand-light",
                 )}
               />
               <ButtonLink
@@ -139,7 +139,7 @@ export function SiteHeader() {
                 className={cn(
                   "text-[0.7rem] tracking-[0.08em] uppercase",
                   overlaysHero &&
-                    "border-white/35 text-white hover:bg-white/10",
+                    "border-brand-light/35 text-brand-light hover:bg-brand-light/10",
                 )}
                 onClick={() => setOpen((current) => !current)}
                 aria-expanded={open}
@@ -162,7 +162,7 @@ export function SiteHeader() {
         aria-label="Site navigation"
         aria-hidden={!open}
         className={cn(
-          "fixed inset-0 z-[60] bg-brand-dark text-brand-light transition-opacity duration-300 ease-out",
+          "fixed inset-0 z-[60] bg-background text-foreground transition-[background-color,color,opacity] duration-300 ease-out",
           open
             ? "pointer-events-auto visible opacity-100"
             : "pointer-events-none invisible opacity-0",
@@ -183,30 +183,30 @@ export function SiteHeader() {
                     onClick={closeMenu}
                     aria-current={pathname === item.href ? "page" : undefined}
                     className={cn(
-                      "group flex items-center justify-between border-b border-white/15 py-4 text-3xl font-light tracking-[-0.035em] text-brand-light sm:py-5 sm:text-5xl",
+                      "group flex items-center justify-between border-b border-border py-4 text-3xl font-light tracking-[-0.035em] sm:py-5 sm:text-5xl",
                       pathname === item.href && "text-primary",
                     )}
                   >
                     <span>{item.label}</span>
                     <Icon
                       name="arrow-right"
-                      className="text-brand-light/50 transition-transform group-hover:translate-x-1 group-hover:text-primary"
+                      className="text-muted-foreground transition-transform group-hover:translate-x-1 group-hover:text-primary"
                     />
                   </Link>
                 ))}
               </Stack>
             </nav>
 
-            <div className="grid gap-6 border-t border-white/15 pt-6 sm:grid-cols-[1fr_auto] sm:items-end">
+            <div className="grid gap-6 border-t border-border pt-6 sm:grid-cols-[1fr_auto] sm:items-end">
               <Stack gap="sm" className="max-w-md">
                 <Eyebrow>Private appointments</Eyebrow>
-                <p className="text-sm leading-6 text-brand-light/60">
+                <p className="text-sm leading-6 text-muted-foreground">
                   Explore residences shaped by architecture, landscape, and a
                   more considered way of living.
                 </p>
               </Stack>
               <Cluster className="gap-3">
-                <ThemeToggle className="text-brand-light hover:bg-white/10" />
+                <ThemeToggle />
                 <ButtonLink
                   href="/contact"
                   size="lg"

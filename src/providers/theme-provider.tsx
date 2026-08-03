@@ -58,6 +58,20 @@ export function ThemeProvider({ children }: React.PropsWithChildren) {
     return () => media.removeEventListener("change", syncSystemTheme);
   }, [theme]);
 
+  React.useEffect(() => {
+    const syncStoredTheme = (event: StorageEvent) => {
+      if (event.key !== THEME_STORAGE_KEY) return;
+      const preference = isThemePreference(event.newValue)
+        ? event.newValue
+        : "system";
+      setThemeState(preference);
+      setResolvedTheme(applyTheme(preference));
+    };
+
+    window.addEventListener("storage", syncStoredTheme);
+    return () => window.removeEventListener("storage", syncStoredTheme);
+  }, []);
+
   const setTheme = React.useCallback((preference: ThemePreference) => {
     localStorage.setItem(THEME_STORAGE_KEY, preference);
     setThemeState(preference);
