@@ -1,7 +1,13 @@
 "use client";
 
 import Image from "next/image";
-import { useId, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
+import {
+  motion,
+  useMotionValueEvent,
+  useReducedMotion,
+  useScroll,
+} from "motion/react";
 import { cn } from "@/lib/utils";
 import { isRemoteAsset } from "@/lib/media";
 import type { ServiceContent } from "../types/home-page";
@@ -12,18 +18,64 @@ export function ServicesSection({
   services: readonly ServiceContent[];
 }) {
   const sectionId = useId();
+  const sectionRef = useRef<HTMLElement>(null);
   const [activeId, setActiveId] = useState(services[0]?.id);
   const activeService =
     services.find((service) => service.id === activeId) ?? services[0];
+
+  const reducedMotion = useReducedMotion();
+  const [pinningSupported, setPinningSupported] = useState(false);
+  const isPinned = pinningSupported && !reducedMotion;
+
+  useEffect(() => {
+    const query = window.matchMedia("(min-width: 40rem)");
+    const update = () => setPinningSupported(query.matches);
+    update();
+    query.addEventListener("change", update);
+    return () => query.removeEventListener("change", update);
+  }, []);
+
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start start", "end end"],
+  });
+
+  useMotionValueEvent(scrollYProgress, "change", (progress) => {
+    if (!isPinned) return;
+    const index = Math.min(
+      services.length - 1,
+      Math.max(0, Math.floor(progress * services.length)),
+    );
+    const next = services[index];
+    if (next) setActiveId(next.id);
+  });
+
+  const goToIndex = (index: number) => {
+    const section = sectionRef.current;
+    setActiveId(services[index]?.id);
+    if (!section || !isPinned) return;
+
+    const rect = section.getBoundingClientRect();
+    const sectionTop = rect.top + window.scrollY;
+    const scrollRange = Math.max(0, section.offsetHeight - window.innerHeight);
+    const progress = (index + 0.5) / services.length;
+
+    window.scrollTo({
+      top: sectionTop + progress * scrollRange,
+      behavior: reducedMotion ? "auto" : "smooth",
+    });
+  };
 
   if (!activeService) return null;
 
   return (
     <section
-      className="bg-brand-dark px-page-gutter py-services text-brand-light"
+      ref={sectionRef}
+      style={{ "--services-count": services.length } as React.CSSProperties}
+      className="relative bg-brand-dark px-page-gutter py-services text-brand-light motion-safe:sm:h-[calc(var(--services-count)*85vh)]"
       aria-label="Our services"
     >
-      <div className="mx-auto w-full max-w-service-shell overflow-hidden rounded-service-group bg-brand-dark-elevated">
+      <div className="relative mx-auto w-full max-w-service-shell overflow-hidden rounded-service-group bg-brand-dark-elevated motion-safe:sm:sticky motion-safe:sm:top-0">
         <div
           id={`${sectionId}-${activeService.id}`}
           className="relative min-h-service-mobile overflow-hidden rounded-service-panel border border-service-border shadow-service-panel sm:min-h-service-tablet lg:min-h-service-panel"
@@ -68,7 +120,7 @@ export function ServicesSection({
         </div>
 
         <div aria-label="Choose a service">
-          {services.map((service) => {
+          {services.map((service, index) => {
             const isActive = service.id === activeService.id;
 
             if (isActive) return null;
@@ -79,7 +131,7 @@ export function ServicesSection({
                 type="button"
                 aria-label={`View ${service.title}`}
                 className="group gap-service-row flex min-h-service-row w-full items-center rounded-service-row border border-service-border px-service text-left shadow-service-row transition-colors duration-300 hover:bg-brand-light/[0.06] focus-visible:z-20 focus-visible:ring-2 focus-visible:ring-brand-light/80 focus-visible:outline-none"
-                onClick={() => setActiveId(service.id)}
+                onClick={() => goToIndex(index)}
               >
                 <span className="font-mono text-service-tab-number leading-none opacity-70">
                   {service.number}
@@ -97,6 +149,12 @@ export function ServicesSection({
             );
           })}
         </div>
+
+        <motion.div
+          aria-hidden
+          className="pointer-events-none absolute inset-x-0 bottom-0 hidden h-px origin-left bg-brand-light/40 motion-safe:sm:block"
+          style={{ scaleX: isPinned ? scrollYProgress : 0 }}
+        />
       </div>
     </section>
   );

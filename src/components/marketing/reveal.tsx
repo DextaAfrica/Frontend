@@ -36,7 +36,7 @@ export function Reveal({
   transition,
   ...props
 }: RevealProps) {
-  const MotionTag = revealTags[as];
+  const MotionTag = revealTags[as] as typeof motion.div;
   return (
     <MotionTag
       variants={revealVariants}
@@ -76,8 +76,12 @@ export interface RevealItemProps extends MotionDivProps {
 }
 
 /** A single staggered child of RevealGroup. Must be a direct child. */
-export function RevealItem({ as = "div", transition, ...props }: RevealItemProps) {
-  const MotionTag = revealTags[as];
+export function RevealItem({
+  as = "div",
+  transition,
+  ...props
+}: RevealItemProps) {
+  const MotionTag = revealTags[as] as typeof motion.div;
   return (
     <MotionTag
       variants={revealVariants}

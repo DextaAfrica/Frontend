@@ -1,4 +1,5 @@
 import { Section } from "@/components/layout";
+import { Reveal } from "@/components/marketing";
 import { EditorialEyebrow, EditorialHeading } from "@/components/ui";
 import { InlineNewsletterForm } from "@/features/newsletter/components/inline-newsletter-form";
 
@@ -11,7 +12,7 @@ export function NewsletterSection({
 }) {
   return (
     <Section spacing="md" tone="surface">
-      <div className="relative overflow-hidden rounded-2xl bg-muted px-6 py-10 sm:px-12 sm:py-12">
+      <Reveal className="relative overflow-hidden rounded-2xl bg-muted px-6 py-10 sm:px-12 sm:py-12">
         <div className="relative z-10 max-w-newsletter-copy">
           <EditorialEyebrow className="text-muted-foreground">
             {eyebrow}
@@ -29,7 +30,7 @@ export function NewsletterSection({
             />
           ))}
         </div>
-      </div>
+      </Reveal>
     </Section>
   );
 }
