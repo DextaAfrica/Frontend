@@ -17,7 +17,7 @@ export function BlogSection({
   heading: HomePageContent["blogSection"];
 }) {
   return (
-    <Section spacing="editorial" tone="surface">
+    <Section spacing="editorial" tone="default">
       <EditorialSectionHeading
         eyebrow={heading.eyebrow}
         title={heading.title}

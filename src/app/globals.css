@@ -12,13 +12,20 @@
   --motion-service-media: 1200ms;
   --motion-ease-premium: cubic-bezier(0.22, 1, 0.36, 1);
 
-  --background: #f8f8f7;
-  --foreground: #010101;
-  --surface: #ffffff;
-  --muted: #f2f2f1;
-  --muted-foreground: #656565;
-  --border: #dbdbdb;
-  --input: #dadada;
+  --background: #eeeae3;
+  --foreground: #171512;
+  --surface: #f7f3ec;
+  --surface-elevated: #fffaf2;
+  --muted: #e5dfd5;
+  --muted-foreground: #686159;
+  --border: #d4ccbf;
+  --input: #cfc6b8;
+  --section-default:
+    radial-gradient(circle at 82% 12%, rgb(232 22 19 / 0.035), transparent 30%),
+    var(--background);
+  --section-surface:
+    linear-gradient(145deg, rgb(255 255 255 / 0.28), transparent 48%),
+    var(--surface);
 
   --primary: oklch(0.56 0.225 25);
   --primary-hover: oklch(0.5 0.215 25);
@@ -131,13 +138,20 @@
 .dark {
   color-scheme: dark;
 
-  --background: #060606;
-  --foreground: #f8f8f7;
-  --surface: #111111;
-  --muted: #1c1c1c;
-  --muted-foreground: #a7a7a7;
-  --border: #343434;
-  --input: #424242;
+  --background: #0d0c0b;
+  --foreground: #f4efe7;
+  --surface: #151310;
+  --surface-elevated: #1d1a16;
+  --muted: #24201b;
+  --muted-foreground: #aaa197;
+  --border: #39332c;
+  --input: #494138;
+  --section-default:
+    radial-gradient(circle at 82% 12%, rgb(232 22 19 / 0.075), transparent 32%),
+    var(--background);
+  --section-surface:
+    linear-gradient(145deg, rgb(255 255 255 / 0.025), transparent 48%),
+    var(--surface);
   --text-subtle: #909090;
 
   --primary: oklch(0.64 0.225 25);
@@ -157,6 +171,7 @@
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-surface: var(--surface);
+  --color-surface-elevated: var(--surface-elevated);
   --color-muted: var(--muted);
   --color-muted-foreground: var(--muted-foreground);
   --color-border: var(--border);
@@ -272,6 +287,17 @@ body {
   font-weight: 400;
   line-height: 1.6;
   text-rendering: optimizeLegibility;
+  transition:
+    color 240ms var(--motion-ease-premium),
+    background-color 240ms var(--motion-ease-premium);
+}
+
+.section-default {
+  background: var(--section-default);
+}
+
+.section-surface {
+  background: var(--section-surface);
 }
 
 [data-ui="button"],

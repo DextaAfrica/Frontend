@@ -5,10 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Icon, type IconName } from "@/components/ui/icon";
 import { useMounted } from "@/hooks/use-mounted";
 import { cn } from "@/lib/utils";
-import {
-  useTheme,
-  type ThemePreference,
-} from "@/providers/theme-provider";
+import { useTheme, type ThemePreference } from "@/providers/theme-provider";
 
 const options: readonly {
   value: ThemePreference;

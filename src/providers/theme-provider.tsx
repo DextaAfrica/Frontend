@@ -36,16 +36,17 @@ function applyTheme(theme: ThemePreference) {
 }
 
 export function ThemeProvider({ children }: React.PropsWithChildren) {
-  const [theme, setThemeState] = React.useState<ThemePreference>("system");
-  const [resolvedTheme, setResolvedTheme] =
-    React.useState<ResolvedTheme>("light");
-
-  React.useEffect(() => {
+  const [theme, setThemeState] = React.useState<ThemePreference>(() => {
+    if (typeof window === "undefined") return "system";
     const stored = localStorage.getItem(THEME_STORAGE_KEY);
-    const preference = isThemePreference(stored) ? stored : "system";
-    setThemeState(preference);
-    setResolvedTheme(applyTheme(preference));
-  }, []);
+    return isThemePreference(stored) ? stored : "system";
+  });
+  const [resolvedTheme, setResolvedTheme] = React.useState<ResolvedTheme>(() =>
+    typeof document !== "undefined" &&
+    document.documentElement.classList.contains("dark")
+      ? "dark"
+      : "light",
+  );
 
   React.useEffect(() => {
     const media = window.matchMedia("(prefers-color-scheme: dark)");

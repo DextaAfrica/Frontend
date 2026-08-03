@@ -22,7 +22,7 @@ export function TestimonialSection({
   heading: HomePageContent["testimonialSection"];
 }) {
   return (
-    <Section spacing="editorial" tone="surface">
+    <Section spacing="editorial" tone="default">
       <EditorialSectionHeading
         eyebrow={heading.eyebrow}
         title={heading.title}

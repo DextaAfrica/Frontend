@@ -12,8 +12,8 @@ const spacings: Record<Spacing, string> = {
   editorial: "py-section-editorial",
 };
 const tones: Record<Tone, string> = {
-  default: "bg-background",
-  surface: "bg-surface",
+  default: "section-default",
+  surface: "section-surface",
   brand: "bg-primary text-primary-foreground",
   inverse: "bg-foreground text-background",
   brandDark: "bg-brand-dark text-brand-light",
