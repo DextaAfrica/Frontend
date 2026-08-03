@@ -4,7 +4,6 @@ import Image from "next/image";
 import { useId, useRef, useState } from "react";
 import type { CSSProperties } from "react";
 import { gsap, ScrollTrigger, useGSAP } from "@/lib/gsap";
-import { cn } from "@/lib/utils";
 import { isRemoteAsset } from "@/lib/media";
 import type { ServiceContent } from "../types/home-page";
 
@@ -19,7 +18,6 @@ export function ServicesSection({
 }) {
   const sectionId = useId();
   const sectionRef = useRef<HTMLElement>(null);
-  const scrollTriggerRef = useRef<ScrollTrigger | null>(null);
   const [activeIndex, setActiveIndex] = useState(0);
 
   useGSAP(
@@ -93,10 +91,7 @@ export function ServicesSection({
             },
           });
 
-          scrollTriggerRef.current = trigger;
-
           return () => {
-            scrollTriggerRef.current = null;
             trigger.kill();
             timeline.kill();
           };
@@ -107,23 +102,6 @@ export function ServicesSection({
     },
     { scope: sectionRef, dependencies: [services] },
   );
-
-  const goToService = (index: number) => {
-    const trigger = scrollTriggerRef.current;
-
-    if (!trigger) {
-      document
-        .getElementById(`${sectionId}-${services[index]?.id}`)
-        ?.scrollIntoView({ behavior: "smooth", block: "center" });
-      return;
-    }
-
-    const progress = services.length > 1 ? index / (services.length - 1) : 0;
-    window.scrollTo({
-      top: trigger.start + (trigger.end - trigger.start) * progress,
-      behavior: "smooth",
-    });
-  };
 
   if (!services.length) return null;
 
@@ -139,7 +117,7 @@ export function ServicesSection({
       </h2>
 
       <div className="service-sticky-stage px-page-gutter py-services">
-        <div className="service-shell mx-auto grid w-full max-w-service-shell gap-3 lg:grid-cols-[minmax(0,1fr)_minmax(16rem,0.34fr)]">
+        <div className="service-shell mx-auto w-full max-w-service-shell">
           <div className="service-card-stage">
             {services.map((service, index) => {
               const isActive = index === activeIndex;
@@ -150,7 +128,7 @@ export function ServicesSection({
                   key={service.id}
                   data-service-card
                   data-active={isActive || undefined}
-                  className="service-card isolate overflow-hidden rounded-service-panel border border-service-border bg-brand-dark-elevated shadow-service-panel"
+                  className="service-card relative isolate min-h-service-mobile overflow-hidden rounded-service-panel border border-service-border bg-brand-dark-elevated shadow-service-panel sm:min-h-service-tablet lg:min-h-0"
                   aria-current={isActive ? "step" : undefined}
                 >
                   <Image
@@ -160,7 +138,7 @@ export function ServicesSection({
                     priority={index === 0}
                     sizes="(min-width: 1440px) 1080px, (min-width: 1024px) 72vw, 100vw"
                     unoptimized={isRemoteAsset(service.image)}
-                    className="object-cover transition-transform duration-service-media ease-premium"
+                    className="duration-service-media object-cover transition-transform ease-premium"
                   />
                   <span className="service-media-overlay absolute inset-0" />
                   <div className="service-card-content absolute inset-0 grid grid-cols-[1fr_auto] content-between gap-6 p-service">
@@ -178,49 +156,6 @@ export function ServicesSection({
               );
             })}
           </div>
-
-          <nav
-            className="service-index rounded-service-group border border-white/10 bg-brand-dark-elevated p-2"
-            aria-label="Services"
-          >
-            <ol className="grid h-full gap-1 lg:grid-rows-[repeat(var(--service-count),minmax(0,1fr))]">
-              {services.map((service, index) => {
-                const isActive = index === activeIndex;
-
-                return (
-                  <li key={service.id}>
-                    <button
-                      type="button"
-                      onClick={() => goToService(index)}
-                      aria-current={isActive ? "step" : undefined}
-                      className={cn(
-                        "group flex min-h-16 w-full items-center gap-4 rounded-service-row border px-4 text-left transition-[color,background-color,border-color] duration-300 focus-visible:ring-2 focus-visible:ring-brand-light focus-visible:outline-none lg:h-full",
-                        isActive
-                          ? "border-primary bg-primary text-primary-foreground"
-                          : "border-transparent text-brand-light/65 hover:border-white/15 hover:bg-white/[0.04] hover:text-brand-light",
-                      )}
-                    >
-                      <span className="font-mono text-service-tab-number leading-none opacity-75">
-                        {service.number}
-                      </span>
-                      <span className="font-serif text-service-tab leading-tight">
-                        {service.title}
-                      </span>
-                      <span
-                        aria-hidden
-                        className={cn(
-                          "ml-auto transition-transform duration-300",
-                          isActive ? "translate-x-0" : "-translate-x-1 opacity-0",
-                        )}
-                      >
-                        ↗
-                      </span>
-                    </button>
-                  </li>
-                );
-              })}
-            </ol>
-          </nav>
         </div>
       </div>
     </section>

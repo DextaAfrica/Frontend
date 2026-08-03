@@ -1,6 +1,5 @@
-import Image from "next/image";
 import { Container } from "@/components/layout";
-import { ButtonLink, HeroHeading } from "@/components/ui";
+import { ButtonLink, HeroHeading, Icon } from "@/components/ui";
 import { Reveal } from "./reveal";
 
 export interface CinematicHeroProps {
@@ -58,13 +57,7 @@ export function CinematicHero({
             variant="onMedia"
             className="w-hero-cta shadow-none"
           >
-            <Image
-              src="/images/dexta-arrow.svg"
-              alt=""
-              aria-hidden
-              width={20}
-              height={20}
-            />
+            <Icon name="arrow-right" />
             {ctaLabel}
           </ButtonLink>
         </Reveal>

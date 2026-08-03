@@ -6,7 +6,7 @@ import {
   RevealGroup,
   RevealItem,
 } from "@/components/marketing";
-import { ButtonLink } from "@/components/ui";
+import { ButtonLink, Icon } from "@/components/ui";
 import { isRemoteAsset } from "@/lib/media";
 import type { HomePageContent, ProjectContent } from "../types/home-page";
 
@@ -73,13 +73,7 @@ export function FeaturedProjectsSection({
         size="lg"
         className="mx-auto mt-projects w-projects-cta"
       >
-        <Image
-          src="/images/dexta-arrow.svg"
-          alt=""
-          width={20}
-          height={20}
-          className="invert dark:invert-0"
-        />
+        <Icon name="arrow-right" />
         {heading.ctaLabel}
       </ButtonLink>
     </Section>

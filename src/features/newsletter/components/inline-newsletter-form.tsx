@@ -1,8 +1,7 @@
 "use client";
 
 import * as React from "react";
-import Image from "next/image";
-import { Button } from "@/components/ui";
+import { Button, Icon } from "@/components/ui";
 import { subscribeToNewsletter } from "../api/subscribe";
 
 type SubmissionState = "idle" | "submitting" | "success" | "error";
@@ -65,13 +64,7 @@ export function InlineNewsletterForm() {
           className="w-full sm:w-newsletter-button"
           disabled={status === "submitting"}
         >
-          <Image
-            src="/images/dexta-arrow.svg"
-            alt=""
-            width={20}
-            height={20}
-            className="invert dark:invert-0"
-          />
+          <Icon name="arrow-right" />
           {status === "submitting" ? "Subscribing…" : "Subscribe"}
         </Button>
       </div>
