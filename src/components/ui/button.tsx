@@ -15,14 +15,15 @@ export type ButtonVariant =
 export type ButtonSize = "sm" | "md" | "lg" | "icon";
 
 const base =
-  "inline-flex shrink-0 items-center justify-center gap-2 rounded-[0.2rem] text-sm font-medium tracking-[0.01em] transition-[color,background-color,border-color,box-shadow,transform] outline-none select-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-50 active:translate-y-px [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0";
+  "inline-flex shrink-0 items-center justify-center gap-2 rounded-[var(--control-radius)] border border-transparent text-[0.8125rem] font-normal tracking-[0.04em] transition-[color,background-color,border-color,box-shadow,transform] duration-200 outline-none select-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-45 active:translate-y-px aria-busy:cursor-wait [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0";
 const variants: Record<ButtonVariant, string> = {
   primary:
-    "bg-primary text-primary-foreground shadow-sm hover:bg-primary-hover",
+    "border-primary bg-primary text-primary-foreground shadow-sm hover:border-primary-hover hover:bg-primary-hover",
   secondary:
     "border border-border bg-surface text-foreground shadow-xs hover:bg-muted",
   neutral: "bg-foreground text-background hover:opacity-85",
-  onMedia: "bg-brand-light text-brand-dark hover:bg-brand-light/90",
+  onMedia:
+    "border-brand-light bg-brand-light text-brand-dark hover:border-primary hover:bg-primary hover:text-primary-foreground",
   ghost: "text-foreground hover:bg-muted",
   outline:
     "border border-primary/35 bg-transparent text-primary hover:bg-primary-subtle",
@@ -30,10 +31,10 @@ const variants: Record<ButtonVariant, string> = {
   link: "h-auto rounded-none p-0 text-primary underline-offset-4 hover:underline",
 };
 const sizes: Record<ButtonSize, string> = {
-  sm: "h-8 px-3 text-xs",
-  md: "h-10 px-4 py-2",
-  lg: "h-12 px-6 text-sm",
-  icon: "size-10",
+  sm: "h-[var(--control-height-sm)] px-[var(--control-padding-sm)] text-xs",
+  md: "h-[var(--control-height-md)] px-[var(--control-padding-md)]",
+  lg: "h-[var(--control-height-lg)] px-[var(--control-padding-lg)] text-sm",
+  icon: "size-[var(--control-height-md)] p-0",
 };
 
 export function buttonClassName({
@@ -47,11 +48,15 @@ export function buttonClassName({
 export interface ButtonProps extends React.ComponentProps<"button"> {
   variant?: ButtonVariant;
   size?: ButtonSize;
+  loading?: boolean;
 }
 export function Button({
   className,
   variant,
   size,
+  loading = false,
+  disabled,
+  children,
   type = "button",
   ...props
 }: ButtonProps) {
@@ -59,9 +64,19 @@ export function Button({
     <button
       type={type}
       data-ui="button"
+      aria-busy={loading || undefined}
+      disabled={disabled || loading}
       className={buttonClassName({ variant, size, className })}
       {...props}
-    />
+    >
+      {loading && (
+        <span
+          aria-hidden
+          className="size-3.5 animate-spin rounded-full border border-current border-r-transparent"
+        />
+      )}
+      {children}
+    </button>
   );
 }
 

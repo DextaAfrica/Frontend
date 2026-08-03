@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
-import "@fontsource/radley/400.css";
+import "@fontsource-variable/manrope";
+import "@fontsource-variable/cormorant-garamond";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { SiteHeader } from "@/components/layout/site-header";
 import { AppShell, AppShellMain } from "@/components/layout";
