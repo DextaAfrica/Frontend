@@ -123,15 +123,16 @@ export function SiteHeader() {
                     "border-brand-light/30 bg-brand-dark/70 text-brand-light shadow-lg [&_button:not([aria-checked='true'])]:text-brand-light/75 [&_button:not([aria-checked='true'])]:hover:bg-brand-light/10 [&_button:not([aria-checked='true'])]:hover:text-brand-light [&_button[aria-checked='true']]:border-brand-light [&_button[aria-checked='true']]:bg-brand-light [&_button[aria-checked='true']]:text-brand-dark",
                 )}
               />
-              <ButtonLink
-                href="/contact"
-                size="sm"
-                variant={overlaysHero ? "onMedia" : "primary"}
-                className="hidden text-[0.7rem] tracking-[0.08em] uppercase sm:inline-flex"
-              >
-                <span className="sm:hidden">Book</span>
-                <span className="hidden sm:inline">Book Inspection</span>
-              </ButtonLink>
+              {!open && (
+                <ButtonLink
+                  href="/contact"
+                  size="sm"
+                  variant={overlaysHero ? "onMedia" : "primary"}
+                  className="hidden text-[0.7rem] tracking-[0.08em] uppercase sm:inline-flex"
+                >
+                  Book Inspection
+                </ButtonLink>
+              )}
               <Button
                 ref={menuButtonRef}
                 variant={overlaysHero ? "ghost" : "secondary"}
@@ -170,9 +171,9 @@ export function SiteHeader() {
       >
         <Container
           size="wide"
-          className="h-full overflow-y-auto pt-24 pb-8 sm:pt-28 sm:pb-10"
+          className="h-full overflow-y-auto pt-20 pb-[max(1.25rem,env(safe-area-inset-bottom))] sm:pt-24 sm:pb-[max(2rem,env(safe-area-inset-bottom))]"
         >
-          <Stack gap="lg" className="min-h-full justify-between">
+          <Stack gap="lg" className="min-h-full justify-between py-4 sm:py-6">
             <nav aria-label="Site navigation links">
               <Stack gap="none">
                 {siteConfig.navItems.map((item) => (
@@ -183,7 +184,7 @@ export function SiteHeader() {
                     onClick={closeMenu}
                     aria-current={pathname === item.href ? "page" : undefined}
                     className={cn(
-                      "group flex items-center justify-between border-b border-border py-4 text-3xl font-light tracking-[-0.035em] sm:py-5 sm:text-5xl",
+                      "group flex min-h-16 items-center justify-between border-b border-border py-3 text-[clamp(1.75rem,8vw,2.25rem)] leading-none font-light tracking-[-0.04em] sm:min-h-20 sm:py-4 sm:text-5xl lg:min-h-24 lg:text-6xl",
                       pathname === item.href && "text-primary",
                     )}
                   >
@@ -197,7 +198,7 @@ export function SiteHeader() {
               </Stack>
             </nav>
 
-            <div className="grid gap-6 border-t border-border pt-6 sm:grid-cols-[1fr_auto] sm:items-end">
+            <div className="grid gap-5 border-t border-border pt-5 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end sm:gap-8 sm:pt-6">
               <Stack gap="sm" className="max-w-md">
                 <Eyebrow>Private appointments</Eyebrow>
                 <p className="text-sm leading-6 text-muted-foreground">
@@ -205,17 +206,14 @@ export function SiteHeader() {
                   more considered way of living.
                 </p>
               </Stack>
-              <Cluster className="gap-3">
-                <ThemeToggle />
-                <ButtonLink
-                  href="/contact"
-                  size="lg"
-                  onClick={closeMenu}
-                  className="w-fit"
-                >
-                  Book Inspection <Icon name="arrow-right" />
-                </ButtonLink>
-              </Cluster>
+              <ButtonLink
+                href="/contact"
+                size="lg"
+                onClick={closeMenu}
+                className="w-full justify-between sm:w-auto sm:min-w-52"
+              >
+                Book Inspection <Icon name="arrow-right" />
+              </ButtonLink>
             </div>
           </Stack>
         </Container>
