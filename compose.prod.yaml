@@ -3,7 +3,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.prod
-    image: "${IMAGE_NAME:-maison-rouge-web}:${IMAGE_TAG:-latest}"
+    image: "${IMAGE_NAME:-dexta-africa-web}:${IMAGE_TAG:-latest}"
     init: true
     restart: unless-stopped
     ports:

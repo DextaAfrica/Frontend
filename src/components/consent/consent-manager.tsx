@@ -1,12 +1,13 @@
 "use client";
 
 import * as React from "react";
+import { browserEvents, browserStorage } from "@/config/browser-storage";
 import { Cluster, Stack } from "@/components/layout";
 import { Button, Modal } from "@/components/ui";
 
-const STORAGE_KEY = "maison-rouge-consent";
-const CHANGE_EVENT = "maison-consent-change";
-const OPEN_EVENT = "maison-open-cookie-settings";
+const STORAGE_KEY = browserStorage.consent;
+const CHANGE_EVENT = browserEvents.consentChanged;
+const OPEN_EVENT = browserEvents.openCookieSettings;
 type Consent = {
   necessary: true;
   analytics: boolean;

@@ -1,18 +1,21 @@
-# Maison Rouge Next.js Template
+# Dexta Africa Web Platform
 
-A production-minded Next.js foundation for building a precise red-and-white product UI.
+A production-grade, responsive real-estate platform built with Next.js, React, strict TypeScript,
+Tailwind CSS, and a feature-first design-system architecture.
 
 ## Included
 
 - Next.js App Router, React, strict TypeScript, and Tailwind CSS
-- Semantic design tokens using perceptually consistent OKLCH colors
+- Semantic Dexta design tokens with complete light and dark themes
 - Persistent native light and dark themes with flash-free initialization
 - Typed, accessible button and typography primitives
 - Layout vocabulary: Stack, Flex, Cluster, Grid, Container, Section, Page, Center, and Sidebar
 - Feature-first boundaries with thin route files and explicit public APIs
 - Seven responsive routes, metadata defaults, loading UI, 404, segment and global error boundaries
 - Native accessible dialog, SVG icon system, mobile navigation, and route/reveal motion
-- No third-party UI, icon, class-merging, animation, or theme dependencies
+- Server-side managed-content boundary with validation, caching, revalidation, and local fallbacks
+- Responsive image delivery and dedicated desktop/mobile hero media
+- Functional enquiry, newsletter, consent, health-check, and content-revalidation boundaries
 - Centralized site, font, and navigation configuration
 - ESLint, Prettier, import aliases, and one-command quality checks
 
@@ -53,6 +56,25 @@ src/
 ├── lib/            # framework-agnostic helpers (including cn)
 ├── providers/      # application-wide React providers
 └── types/          # shared TypeScript contracts
+```
+
+Homepage content follows this dependency flow:
+
+```text
+app/page.tsx
+  → features/home/server/get-home-page-content.ts
+  → validated managed content or typed local fallback
+  → HomeScreen
+  → prop-driven feature sections
+```
+
+UI components never fetch content and feature components never import CMS clients. Configure
+`CONTENT_API_URL` to serve `GET /home` using the contract in
+`src/features/home/types/home-page.ts`. Responses are cached for five minutes. A CMS can trigger
+immediate publication by sending an authorized `POST /api/revalidate` request.
+
+```http
+Authorization: Bearer <CONTENT_REVALIDATION_SECRET>
 ```
 
 Global semantic colors and typography are defined in `src/app/globals.css`. Product components

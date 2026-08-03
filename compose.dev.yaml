@@ -3,7 +3,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.dev
-    image: maison-rouge-web:development
+    image: dexta-africa-web:development
     init: true
     ports:
       - "${APP_PORT:-3000}:3000"

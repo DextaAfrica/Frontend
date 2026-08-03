@@ -4,7 +4,7 @@ import { LegalScreen } from "@/features/legal";
 
 export const metadata: Metadata = {
   title: "Privacy Policy",
-  description: "How Maison Rouge handles and protects personal data.",
+  description: "How Dexta Africa handles and protects personal data.",
 };
 
 export default function PrivacyPage() {
@@ -12,11 +12,11 @@ export default function PrivacyPage() {
     <LegalScreen
       eyebrow="Legal"
       title="Privacy, clearly explained."
-      description="This policy explains what personal data Maison Rouge collects, why we use it, and the choices available to you."
+      description="This policy explains what personal data Dexta Africa collects, why we use it, and the choices available to you."
       sections={[
         {
           title: "Who we are and the scope of this policy",
-          body: `Maison Rouge is the controller of personal data handled through this website and our property enquiry services. This policy applies when you browse our website, subscribe to updates, request information, arrange a viewing, or otherwise communicate with us. Questions may be sent to ${siteConfig.contact.email} or by post to ${siteConfig.contact.address}.`,
+          body: `Dexta Africa is the controller of personal data handled through this website and our property enquiry services. This policy applies when you browse our website, subscribe to updates, request information, arrange a viewing, or otherwise communicate with us. Questions may be sent to ${siteConfig.contact.email} or by post to ${siteConfig.contact.address}.`,
         },
         {
           title: "Information we collect",

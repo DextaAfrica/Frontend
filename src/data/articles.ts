@@ -73,7 +73,7 @@ export const articles: JournalArticle[] = [
     date: "08 June 2026",
     tone: "light",
     introduction:
-      "Every Maison Rouge project begins with a physical conversation between materials.",
+      "Every Dexta Africa project begins with a physical conversation between materials.",
     sections: [
       {
         title: "Testing in real light",

@@ -3,6 +3,7 @@
 import * as React from "react";
 import Image from "next/image";
 import { Button } from "@/components/ui";
+import { subscribeToNewsletter } from "../api/subscribe";
 
 type SubmissionState = "idle" | "submitting" | "success" | "error";
 
@@ -19,17 +20,11 @@ export function InlineNewsletterForm() {
     const data = new FormData(form);
 
     try {
-      const response = await fetch("/api/newsletter", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          email: data.get("email"),
-          company: data.get("company"),
-          source: "landing_page",
-        }),
+      await subscribeToNewsletter({
+        email: data.get("email"),
+        company: data.get("company"),
+        source: "landing_page",
       });
-      const payload = (await response.json()) as { message: string };
-      if (!response.ok) throw new Error(payload.message);
 
       form.reset();
       setStatus("success");
@@ -46,7 +41,7 @@ export function InlineNewsletterForm() {
 
   return (
     <form onSubmit={subscribe} className="mt-13" noValidate>
-      <div className="flex min-h-newsletter-input items-center rounded border border-input bg-background p-2 focus-within:ring-2 focus-within:ring-ring">
+      <div className="flex min-h-newsletter-input flex-col items-stretch gap-2 rounded border border-input bg-background p-2 focus-within:ring-2 focus-within:ring-ring sm:flex-row sm:items-center sm:gap-0">
         <label htmlFor="landing-email" className="sr-only">
           Your email address
         </label>
@@ -57,7 +52,7 @@ export function InlineNewsletterForm() {
           required
           autoComplete="email"
           placeholder="Your email address"
-          className="min-w-0 flex-1 bg-transparent px-2 text-lg outline-none placeholder:text-muted-foreground"
+          className="h-12 min-w-0 flex-1 bg-transparent px-2 text-base outline-none placeholder:text-muted-foreground sm:text-lg"
         />
         <label className="sr-only" aria-hidden="true">
           Company
@@ -67,7 +62,7 @@ export function InlineNewsletterForm() {
           type="submit"
           variant="neutral"
           size="lg"
-          className="w-newsletter-button"
+          className="w-full sm:w-newsletter-button"
           disabled={status === "submitting"}
         >
           <Image

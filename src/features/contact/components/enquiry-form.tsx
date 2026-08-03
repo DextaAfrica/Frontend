@@ -79,7 +79,7 @@ export function EnquiryForm() {
           </label>
           <label className="flex items-start gap-3 text-sm text-muted-foreground">
             <input required type="checkbox" className="mt-1 accent-primary" />I
-            consent to Maison Rouge responding to this enquiry and handling my
+            consent to Dexta Africa responding to this enquiry and handling my
             information according to its privacy policy.
           </label>
           <Button type="submit" size="lg" className="w-fit">

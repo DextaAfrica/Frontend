@@ -1,51 +1,108 @@
 "use client";
 
 import Image from "next/image";
-import { useState } from "react";
-import { services } from "../data/services";
+import { useId, useState } from "react";
+import { cn } from "@/lib/utils";
+import { isRemoteAsset } from "@/lib/media";
+import type { ServiceContent } from "../types/home-page";
 
-export function ServicesSection() {
-  const [activeIndex, setActiveIndex] = useState(0);
-  const activeService = services[activeIndex] ?? services[0];
+export function ServicesSection({
+  services,
+}: {
+  services: readonly ServiceContent[];
+}) {
+  const sectionId = useId();
+  const [activeId, setActiveId] = useState(services[0]?.id);
+  const activeService =
+    services.find((service) => service.id === activeId) ?? services[0];
+
+  if (!activeService) return null;
 
   return (
-    <section className="bg-brand-dark px-page-gutter py-services text-brand-light">
-      <div className="mx-auto max-w-services overflow-hidden rounded-2xl bg-brand-dark-elevated">
-        <article className="relative min-h-service-panel overflow-hidden rounded-lg border border-black shadow-service-panel">
-          <Image
-            key={activeService.image}
-            src={activeService.image}
-            alt=""
-            fill
-            priority={activeIndex === 0}
-            sizes="(min-width: 1440px) 1406px, 100vw"
-            className="object-cover"
-          />
-          <span className="absolute inset-0 bg-black/20" />
-          <h2 className="absolute top-12 left-[var(--space-service-inline)] font-serif tracking-[-0.0625rem] text-[var(--type-section-display)]">
-            {activeService.title}
-          </h2>
-          <span className="absolute top-8 right-[7.5%] font-mono text-[clamp(5rem,8.333vw,7.5rem)] leading-none tracking-[-0.293rem]">
-            {activeIndex + 1}
-          </span>
-          <p className="absolute right-[6%] bottom-12 max-w-[22rem] text-[clamp(1.125rem,1.667vw,1.5rem)] leading-[1.1] font-medium">
-            {activeService.description}
-          </p>
-        </article>
+    <section
+      className="bg-brand-dark px-page-gutter py-services text-brand-light"
+      aria-label="Our services"
+    >
+      <div className="mx-auto max-w-services overflow-hidden rounded-service-group bg-brand-dark-elevated">
+        <div
+          id={`${sectionId}-${activeService.id}`}
+          className="relative min-h-service-mobile overflow-hidden rounded-service-panel border border-service-border shadow-service-panel sm:min-h-service-tablet lg:min-h-service-panel"
+          aria-live="polite"
+        >
+          {services.map((service, index) => {
+            const isActive = service.id === activeService.id;
 
-        {services.map((service, index) =>
-          index === activeIndex ? null : (
-            <button
-              key={service.title}
-              type="button"
-              className="flex min-h-24 w-full items-center gap-12 rounded-2xl border border-black px-service text-left font-serif text-2xl shadow-service-row transition-colors hover:bg-white/[0.04]"
-              onClick={() => setActiveIndex(index)}
-            >
-              <span className="font-mono">{service.number}</span>
-              <span>{service.title}</span>
-            </button>
-          ),
-        )}
+            return (
+              <article
+                key={service.id}
+                className={cn(
+                  "absolute inset-0 transition-[opacity,transform] duration-service ease-premium",
+                  isActive
+                    ? "z-10 translate-y-0 opacity-100"
+                    : "pointer-events-none translate-y-service opacity-0",
+                )}
+                aria-hidden={!isActive}
+              >
+                <Image
+                  src={service.image}
+                  alt=""
+                  fill
+                  priority={index === 0}
+                  sizes="(min-width: 1440px) 1406px, 100vw"
+                  unoptimized={isRemoteAsset(service.image)}
+                  className="scale-service-media object-cover transition-transform duration-service-media ease-premium"
+                />
+                <span className="service-media-overlay absolute inset-0" />
+                <h2 className="absolute top-7 right-service left-service font-serif text-section-display leading-editorial tracking-editorial sm:top-10 lg:top-12">
+                  {service.title}
+                </h2>
+                <span className="absolute top-5 right-service font-mono text-service-number leading-none tracking-service-number sm:top-8">
+                  {service.number}
+                </span>
+                <p className="absolute right-service bottom-8 left-service text-service-copy leading-editorial font-medium sm:left-auto sm:max-w-service-copy lg:bottom-12">
+                  {service.description}
+                </p>
+              </article>
+            );
+          })}
+        </div>
+
+        <div role="tablist" aria-label="Choose a service">
+          {services.map((service) => {
+            const isActive = service.id === activeService.id;
+
+            return (
+              <button
+                key={service.id}
+                type="button"
+                role="tab"
+                aria-selected={isActive}
+                aria-controls={`${sectionId}-${service.id}`}
+                tabIndex={isActive ? 0 : -1}
+                className={cn(
+                  "group flex min-h-service-row w-full items-center gap-service-row rounded-service-row border border-service-border px-service text-left shadow-service-row transition-[background-color,color] duration-300 focus-visible:z-20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-light/80",
+                  isActive
+                    ? "bg-brand-light text-brand-dark"
+                    : "hover:bg-brand-light/[0.06]",
+                )}
+                onClick={() => setActiveId(service.id)}
+              >
+                <span className="font-mono text-service-tab-number leading-none opacity-70">
+                  {service.number}
+                </span>
+                <span className="font-serif text-service-tab leading-editorial tracking-editorial">
+                  {service.title}
+                </span>
+                <span
+                  aria-hidden
+                  className="ml-auto text-service-indicator opacity-0 transition-[opacity,transform] duration-300 group-hover:translate-x-1 group-hover:opacity-100 group-aria-selected:opacity-100"
+                >
+                  ↗
+                </span>
+              </button>
+            );
+          })}
+        </div>
       </div>
     </section>
   );

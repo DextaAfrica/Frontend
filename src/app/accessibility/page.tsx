@@ -4,7 +4,7 @@ import { LegalScreen } from "@/features/legal";
 
 export const metadata: Metadata = {
   title: "Accessibility Statement",
-  description: "Maison Rouge's commitment to an accessible digital experience.",
+  description: "Dexta Africa's commitment to an accessible digital experience.",
 };
 
 export default function AccessibilityPage() {
@@ -16,7 +16,7 @@ export default function AccessibilityPage() {
       sections={[
         {
           title: "Our commitment",
-          body: "Maison Rouge aims to provide a website that can be used by people with diverse abilities, technologies, and ways of interacting. Accessibility is considered in design, content, development, and quality assurance, and we use the Web Content Accessibility Guidelines (WCAG) 2.2 Level AA as our intended benchmark.",
+          body: "Dexta Africa aims to provide a website that can be used by people with diverse abilities, technologies, and ways of interacting. Accessibility is considered in design, content, development, and quality assurance, and we use the Web Content Accessibility Guidelines (WCAG) 2.2 Level AA as our intended benchmark.",
         },
         {
           title: "Measures we take",

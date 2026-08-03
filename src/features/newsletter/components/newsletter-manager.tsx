@@ -1,11 +1,13 @@
 "use client";
 
 import * as React from "react";
+import { browserEvents, browserStorage } from "@/config/browser-storage";
 import { Cluster, Stack } from "@/components/layout";
 import { Button, Modal } from "@/components/ui";
+import { subscribeToNewsletter } from "../api/subscribe";
 
-const STATE_KEY = "maison-rouge-newsletter";
-const OPEN_EVENT = "maison-open-newsletter";
+const STATE_KEY = browserStorage.newsletter;
+const OPEN_EVENT = browserEvents.openNewsletter;
 const THIRTY_DAYS = 30 * 24 * 60 * 60 * 1000;
 
 type NewsletterState = {
@@ -37,7 +39,7 @@ export function NewsletterManager() {
     let timer: number | undefined;
     function schedulePrompt() {
       window.clearTimeout(timer);
-      if (!localStorage.getItem("maison-rouge-consent")) return;
+      if (!localStorage.getItem(browserStorage.consent)) return;
       timer = window.setTimeout(() => {
         if (canPrompt()) setOpen(true);
       }, 10000);
@@ -48,12 +50,12 @@ export function NewsletterManager() {
       setOpen(true);
     };
     window.addEventListener(OPEN_EVENT, openNewsletter);
-    window.addEventListener("maison-consent-change", schedulePrompt);
+    window.addEventListener(browserEvents.consentChanged, schedulePrompt);
     schedulePrompt();
     return () => {
       window.clearTimeout(timer);
       window.removeEventListener(OPEN_EVENT, openNewsletter);
-      window.removeEventListener("maison-consent-change", schedulePrompt);
+      window.removeEventListener(browserEvents.consentChanged, schedulePrompt);
     };
   }, []);
 
@@ -75,7 +77,7 @@ export function NewsletterManager() {
     const form = new FormData(event.currentTarget);
     const email = String(form.get("email") ?? "");
     const company = String(form.get("company") ?? "");
-    const rawConsent = localStorage.getItem("maison-rouge-consent");
+    const rawConsent = localStorage.getItem(browserStorage.consent);
     let consent: unknown = null;
     try {
       consent = rawConsent ? (JSON.parse(rawConsent) as unknown) : null;
@@ -83,18 +85,12 @@ export function NewsletterManager() {
       consent = null;
     }
     try {
-      const response = await fetch("/api/newsletter", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          email,
-          company,
-          source: "newsletter_modal",
-          consent,
-        }),
+      await subscribeToNewsletter({
+        email,
+        company,
+        source: "newsletter_modal",
+        consent,
       });
-      const payload = (await response.json()) as { message: string };
-      if (!response.ok) throw new Error(payload.message);
       localStorage.setItem(
         STATE_KEY,
         JSON.stringify({
@@ -170,7 +166,7 @@ export function NewsletterManager() {
               </Button>
             </Cluster>
             <p className="text-xs leading-5 text-muted-foreground">
-              By subscribing, you agree to receive Maison Rouge updates.
+              By subscribing, you agree to receive Dexta Africa updates.
               Unsubscribe at any time.
             </p>
           </Stack>

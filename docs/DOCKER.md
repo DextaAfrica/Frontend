@@ -33,7 +33,7 @@ Both the image and Compose service check `/api/health`. Inspect the result direc
 
 ```bash
 curl --fail http://localhost:3000/api/health
-docker inspect --format='{{json .State.Health}}' maison-rouge-template-web-1
+docker inspect --format='{{json .State.Health}}' dexta-africa-web-1
 ```
 
 ## Production environment

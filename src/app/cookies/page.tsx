@@ -4,7 +4,7 @@ import { LegalScreen } from "@/features/legal";
 
 export const metadata: Metadata = {
   title: "Cookie Policy",
-  description: "How Maison Rouge uses cookies and browser storage.",
+  description: "How Dexta Africa uses cookies and browser storage.",
 };
 
 export default function CookiesPage() {
@@ -22,8 +22,8 @@ export default function CookiesPage() {
           title: "Strictly necessary storage",
           body: "Necessary storage supports core functions and cannot be disabled through our preference centre. The current site uses local browser storage rather than advertising cookies for these functions.",
           items: [
-            "maison-rouge-consent records necessary, analytics, and marketing choices with the date they were updated.",
-            "maison-rouge-newsletter remembers whether the newsletter invitation was dismissed or a subscription completed, preventing repeated prompts for up to 30 days after dismissal.",
+            "dexta-africa-consent records necessary, analytics, and marketing choices with the date they were updated.",
+            "dexta-africa-newsletter remembers whether the newsletter invitation was dismissed or a subscription completed, preventing repeated prompts for up to 30 days after dismissal.",
             "Theme preference storage remembers light, dark, or system appearance where you choose a setting.",
           ],
         },

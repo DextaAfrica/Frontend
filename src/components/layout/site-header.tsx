@@ -156,7 +156,7 @@ export function SiteHeader() {
                     : "border-primary text-primary",
                 )}
               >
-                MR
+                DA
               </span>
               <span className="truncate">{siteConfig.name}</span>
             </Link>

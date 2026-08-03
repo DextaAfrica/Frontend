@@ -22,7 +22,7 @@ const variants: Record<ButtonVariant, string> = {
   secondary:
     "border border-border bg-surface text-foreground shadow-xs hover:bg-muted",
   neutral: "bg-foreground text-background hover:opacity-85",
-  onMedia: "bg-white text-[#141414] hover:bg-white/90",
+  onMedia: "bg-brand-light text-brand-dark hover:bg-brand-light/90",
   ghost: "text-foreground hover:bg-muted",
   outline:
     "border border-primary/35 bg-transparent text-primary hover:bg-primary-subtle",

@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { AboutScreen } from "@/features/about";
 export const metadata: Metadata = {
   title: "About",
-  description: "Discover the philosophy and principles behind Maison Rouge.",
+  description: "Discover the philosophy and principles behind Dexta Africa.",
 };
 export default function AboutPage() {
   return <AboutScreen />;

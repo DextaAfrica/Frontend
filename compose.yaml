@@ -3,7 +3,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.prod
-    image: maison-rouge-web:latest
+    image: dexta-africa-web:latest
     init: true
     restart: unless-stopped
     ports:

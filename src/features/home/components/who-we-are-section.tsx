@@ -1,14 +1,12 @@
 import { ScrollRevealCopy } from "@/components/marketing";
-import { homeContent } from "../data/home-content";
+import type { HomeIntroContent } from "../types/home-page";
 
-export function WhoWeAreSection() {
-  const { heading, initialWordCount, paragraphs } = homeContent.whoWeAre;
-
+export function WhoWeAreSection({ content }: { content: HomeIntroContent }) {
   return (
     <ScrollRevealCopy
-      heading={heading}
-      initialWordCount={initialWordCount}
-      paragraphs={paragraphs}
+      heading={content.heading}
+      initialWordCount={content.initialWordCount}
+      paragraphs={content.paragraphs}
       className="bg-brand-dark text-brand-light"
     />
   );

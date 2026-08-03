@@ -2,7 +2,23 @@ import Image from "next/image";
 import { Container } from "@/components/layout";
 import { ButtonLink, HeroHeading } from "@/components/ui";
 
-export function CinematicHero() {
+export interface CinematicHeroProps {
+  titleLines: readonly string[];
+  ctaLabel: string;
+  ctaHref: string;
+  video: string;
+  mobileVideo?: string;
+  poster?: string;
+}
+
+export function CinematicHero({
+  titleLines,
+  ctaLabel,
+  ctaHref,
+  video,
+  mobileVideo,
+  poster,
+}: CinematicHeroProps) {
   return (
     <section className="dexta-hero relative isolate flex items-end overflow-hidden bg-black text-white">
       <video
@@ -11,20 +27,32 @@ export function CinematicHero() {
         loop
         playsInline
         preload="metadata"
+        poster={poster}
         aria-hidden="true"
         className="absolute inset-0 size-full object-cover"
       >
-        <source src="/media/91744-636709154_medium.webm" type="video/webm" />
+        {mobileVideo && (
+          <source
+            media="(max-width: 767px)"
+            src={mobileVideo}
+            type="video/webm"
+          />
+        )}
+        <source src={video} type="video/webm" />
       </video>
       <span aria-hidden className="dexta-hero-overlay absolute inset-0" />
       <Container className="relative pb-[var(--space-hero-bottom)]">
         <div className="flex max-w-3xl flex-col items-start gap-8" data-reveal>
           <HeroHeading>
-            Your partner in
-            <br /> building wealth
+            {titleLines.map((line, index) => (
+              <span key={line} className="block">
+                {line}
+                {index < titleLines.length - 1 && <br className="sr-only" />}
+              </span>
+            ))}
           </HeroHeading>
           <ButtonLink
-            href="/contact"
+            href={ctaHref}
             size="lg"
             variant="onMedia"
             className="w-hero-cta shadow-none"
@@ -36,7 +64,7 @@ export function CinematicHero() {
               width={20}
               height={20}
             />
-            Contact Sales
+            {ctaLabel}
           </ButtonLink>
         </div>
       </Container>

@@ -4,7 +4,7 @@ import { LegalScreen } from "@/features/legal";
 
 export const metadata: Metadata = {
   title: "Terms and Conditions",
-  description: "Terms governing use of the Maison Rouge website.",
+  description: "Terms governing use of the Dexta Africa website.",
 };
 
 export default function TermsPage() {
@@ -12,7 +12,7 @@ export default function TermsPage() {
     <LegalScreen
       eyebrow="Legal"
       title="Terms of use."
-      description="These terms govern access to and use of the Maison Rouge website."
+      description="These terms govern access to and use of the Dexta Africa website."
       sections={[
         {
           title: "Acceptance and eligibility",
@@ -36,7 +36,7 @@ export default function TermsPage() {
         },
         {
           title: "Intellectual property",
-          body: "Unless stated otherwise, the website, brand, copy, interface, graphics, photography, video, and other original material are owned by or licensed to Maison Rouge and protected by applicable intellectual-property law. No licence is granted except the limited right to use the site under these terms. Third-party marks remain the property of their owners.",
+          body: "Unless stated otherwise, the website, brand, copy, interface, graphics, photography, video, and other original material are owned by or licensed to Dexta Africa and protected by applicable intellectual-property law. No licence is granted except the limited right to use the site under these terms. Third-party marks remain the property of their owners.",
         },
         {
           title: "Third-party services and links",
@@ -48,7 +48,7 @@ export default function TermsPage() {
         },
         {
           title: "Liability",
-          body: "To the maximum extent permitted by law, Maison Rouge is not liable for indirect or consequential loss, lost profits, lost opportunity, or loss arising from reliance on indicative website content or third-party services. Nothing limits liability where limitation is prohibited, including liability for fraud or other liability that applicable law does not permit us to exclude.",
+          body: "To the maximum extent permitted by law, Dexta Africa is not liable for indirect or consequential loss, lost profits, lost opportunity, or loss arising from reliance on indicative website content or third-party services. Nothing limits liability where limitation is prohibited, including liability for fraud or other liability that applicable law does not permit us to exclude.",
         },
         {
           title: "Changes, suspension, and termination",

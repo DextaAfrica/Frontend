@@ -69,3 +69,28 @@ Create only folders a feature actually needs. Do not introduce empty abstraction
 - Shared components never import from features.
 - Server-only code must not be re-exported through a client component barrel.
 - Avoid broad `utils` dumping grounds; helpers should have one clear responsibility.
+
+## Managed content boundary
+
+Dynamic page content is loaded in server-only repositories under `features/*/server`. Route files call
+the repository and pass a validated domain model into the screen. View components remain prop-driven
+and must not import local fixtures, environment variables, CMS SDKs, or request clients.
+
+The homepage repository provides:
+
+- a typed `HomePageContent` domain contract;
+- runtime validation for untrusted API responses;
+- a deterministic local fallback for development and upstream outages;
+- five-minute server revalidation and a `home-page` cache tag;
+- a protected `/api/revalidate` endpoint for CMS publish webhooks.
+
+When adding a CMS, adapt its response inside the repository. Do not reshape CMS records inside React
+components. Remote media URLs are rendered without Next's host-bound loader; local assets continue to
+use Next Image optimization.
+
+## Responsive rule
+
+Figma dimensions are desktop reference measurements, never component layout instructions. Components
+must use intrinsic flow first, introduce grids at content-driven breakpoints, and reserve absolute
+positioning for media overlays where mobile alternatives are explicitly defined. Every feature must be
+checked at narrow mobile, wide mobile, tablet, laptop, and desktop widths before completion.

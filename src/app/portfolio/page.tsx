@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import { PortfolioScreen } from "@/features/portfolio";
 export const metadata: Metadata = {
   title: "Portfolio",
-  description: "Explore the Maison Rouge collection of considered residences.",
+  description:
+    "Explore Dexta Africa developments and investment opportunities.",
 };
 export default function PortfolioPage() {
   return <PortfolioScreen />;

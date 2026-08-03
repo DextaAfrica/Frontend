@@ -24,7 +24,7 @@ export function LifestyleScreen() {
   return (
     <Page>
       <EditorialHero
-        eyebrow="The Maison Rouge life"
+        eyebrow="The Dexta Africa experience"
         title="Luxury, felt rather than announced."
         description="The most meaningful amenities are those that make daily life flow beautifully—from the first coffee to the final arrival home."
       />

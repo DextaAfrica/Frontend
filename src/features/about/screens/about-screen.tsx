@@ -25,9 +25,9 @@ export function AboutScreen() {
   return (
     <Page>
       <EditorialHero
-        eyebrow="About Maison Rouge"
+        eyebrow="About Dexta Africa"
         title="We build for what endures."
-        description="Maison Rouge is an independent residential development studio bringing together architecture, craft, landscape, and hospitality."
+        description="Dexta Africa delivers value-driven real estate solutions across development, investment, and property services."
       />
       <Section tone="surface">
         <Grid columns="two" gap="xl" className="items-center">

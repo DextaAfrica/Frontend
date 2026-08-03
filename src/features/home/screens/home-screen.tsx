@@ -3,26 +3,31 @@ import { CinematicHero } from "@/components/marketing";
 import {
   BlogSection,
   FeaturedProjectsSection,
-  LandingFooter,
   NewsletterSection,
   ServicesSection,
   StatisticsSection,
   TestimonialSection,
   WhoWeAreSection,
 } from "../components";
+import type { HomePageContent } from "../types/home-page";
 
-export function HomeScreen() {
+export function HomeScreen({ content }: { content: HomePageContent }) {
   return (
     <Page>
-      <CinematicHero />
-      <WhoWeAreSection />
-      <ServicesSection />
-      <FeaturedProjectsSection />
-      <TestimonialSection />
-      <StatisticsSection />
-      <BlogSection />
-      <NewsletterSection />
-      <LandingFooter />
+      <CinematicHero {...content.hero} />
+      <WhoWeAreSection content={content.intro} />
+      <ServicesSection services={content.services} />
+      <FeaturedProjectsSection
+        projects={content.projects}
+        heading={content.projectsSection}
+      />
+      <TestimonialSection
+        testimonial={content.testimonial}
+        heading={content.testimonialSection}
+      />
+      <StatisticsSection statistics={content.statistics} />
+      <BlogSection posts={content.blog} heading={content.blogSection} />
+      <NewsletterSection {...content.newsletter} />
     </Page>
   );
 }
