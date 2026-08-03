@@ -25,28 +25,32 @@ export function TestimonialSection({
         className="max-w-testimonial-heading"
       />
 
-      <figure className="mx-auto mt-testimonial max-w-testimonial">
-        <div className="grid items-start gap-testimonial-quote sm:grid-cols-testimonial">
+      <figure className="mx-auto mt-testimonial w-full max-w-testimonial-body">
+        <blockquote className="text-testimonial leading-testimonial font-medium tracking-testimonial">
           <Image
             src={testimonial.portrait}
             alt={`Portrait of ${testimonial.author}`}
             width={70}
             height={70}
             unoptimized={isRemoteAsset(testimonial.portrait)}
-            className="size-testimonial-avatar rounded-testimonial-avatar object-cover"
+            className="mr-testimonial-quote mb-1 inline-block size-testimonial-avatar rounded-testimonial-avatar object-cover align-middle"
           />
-          <blockquote className="text-testimonial leading-testimonial font-medium tracking-testimonial">
-            “{testimonial.quote}”
-          </blockquote>
-        </div>
-        <figcaption className="mt-testimonial-meta flex flex-col items-start justify-between gap-8 border-t border-border pt-testimonial-meta sm:ml-testimonial-copy sm:flex-row sm:items-end">
-          <div className="text-testimonial-author leading-none font-light uppercase tracking-testimonial-author">
+          “{testimonial.quote}”
+        </blockquote>
+        <figcaption className="mt-testimonial-meta flex flex-col items-start justify-between gap-8 sm:flex-row sm:items-end">
+          <div className="text-testimonial-author leading-none font-light tracking-testimonial-author uppercase">
             <p>{testimonial.author}</p>
             <p className="mt-2 text-text-subtle">{testimonial.role}</p>
           </div>
-          <div className="flex items-center gap-testimonial-progress font-mono text-sm" aria-label="Testimonial 1 of 1">
+          <div
+            className="flex items-center gap-testimonial-progress font-mono text-sm"
+            aria-label="Testimonial 1 of 1"
+          >
             <span>01</span>
-            <span aria-hidden className="h-px w-testimonial-progress bg-current" />
+            <span
+              aria-hidden
+              className="h-px w-testimonial-progress bg-current"
+            />
             <span className="text-text-subtle">01</span>
           </div>
         </figcaption>

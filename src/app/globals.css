@@ -10,7 +10,7 @@
   --motion-slow: 900ms;
   --motion-service: 720ms;
   --motion-service-media: 1200ms;
-  --ease-premium: cubic-bezier(0.22, 1, 0.36, 1);
+  --motion-ease-premium: cubic-bezier(0.22, 1, 0.36, 1);
 
   --background: #f8f8f7;
   --foreground: #010101;
@@ -95,15 +95,15 @@
   --space-testimonial-meta: clamp(2.5rem, 3.472vw, 3.125rem);
   --space-testimonial-copy: calc(4.375rem + clamp(1rem, 1.667vw, 1.5rem));
   --space-testimonial-progress: 0.75rem;
-  --width-testimonial-progress: 4.125rem;
+  --layout-testimonial-progress-width: 4.125rem;
   --grid-testimonial: 4.375rem minmax(0, 1fr);
   --size-testimonial-avatar: 4.375rem;
-  --translate-service: 0.75rem;
-  --scale-service-media: 1.015;
-  --radius-service-group: 1rem;
-  --radius-service-panel: 0.5rem;
-  --radius-service-row: 1rem;
-  --radius-testimonial-avatar: 0.25rem;
+  --transform-service-offset: 0.75rem;
+  --transform-service-media-scale: 1.015;
+  --shape-service-group: 1rem;
+  --shape-service-panel: 0.5rem;
+  --shape-service-row: 1rem;
+  --shape-testimonial-avatar: 0.25rem;
   --letter-spacing-testimonial: -0.025em;
   --letter-spacing-testimonial-author: 0.01em;
   --letter-spacing-footer: 0.2em;
@@ -141,6 +141,7 @@
 }
 
 @theme inline {
+  --ease-premium: var(--motion-ease-premium);
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-surface: var(--surface);
@@ -203,11 +204,11 @@
   --spacing-projects: var(--space-projects);
   --spacing-blog-grid: var(--space-blog-grid);
   --spacing-blog-row: var(--space-blog-row);
-  --container-services: var(--width-services);
+  --container-service-shell: var(--width-services);
   --container-testimonial-heading: var(--width-testimonial-heading);
   --container-stat-copy: var(--width-stat-copy);
   --container-service-copy: var(--width-service-copy);
-  --container-testimonial: var(--width-testimonial);
+  --container-testimonial-body: var(--width-testimonial);
   --container-newsletter-copy: var(--width-newsletter-copy);
   --container-newsletter-title: var(--layout-newsletter-title);
   --width-hero-cta: var(--layout-hero-cta);
@@ -229,14 +230,14 @@
   --spacing-testimonial-copy: var(--space-testimonial-copy);
   --spacing-testimonial-progress: var(--space-testimonial-progress);
   --spacing-testimonial-avatar: var(--size-testimonial-avatar);
-  --width-testimonial-progress: var(--width-testimonial-progress);
+  --width-testimonial-progress: var(--layout-testimonial-progress-width);
   --grid-template-columns-testimonial: var(--grid-testimonial);
-  --translate-service: var(--translate-service);
-  --scale-service-media: var(--scale-service-media);
-  --radius-service-group: var(--radius-service-group);
-  --radius-service-panel: var(--radius-service-panel);
-  --radius-service-row: var(--radius-service-row);
-  --radius-testimonial-avatar: var(--radius-testimonial-avatar);
+  --translate-service: var(--transform-service-offset);
+  --scale-service-media: var(--transform-service-media-scale);
+  --radius-service-group: var(--shape-service-group);
+  --radius-service-panel: var(--shape-service-panel);
+  --radius-service-row: var(--shape-service-row);
+  --radius-testimonial-avatar: var(--shape-testimonial-avatar);
   --duration-service: var(--motion-service);
   --duration-service-media: var(--motion-service-media);
   --shadow-service-panel: var(--elevation-service-panel);
@@ -258,7 +259,7 @@ body {
 [data-ui="button"],
 [data-ui="button-link"] {
   transition-duration: var(--motion-fast);
-  transition-timing-function: var(--ease-premium);
+  transition-timing-function: var(--motion-ease-premium);
 }
 
 [data-ui="button"]:hover:not(:disabled),
@@ -273,7 +274,7 @@ body {
 
 [data-ui="button"] svg,
 [data-ui="button-link"] svg {
-  transition: transform var(--motion-fast) var(--ease-premium);
+  transition: transform var(--motion-fast) var(--motion-ease-premium);
 }
 
 [data-ui="button"]:hover svg,
@@ -282,7 +283,7 @@ body {
 }
 
 dialog[open] {
-  animation: modal-enter var(--motion-base) var(--ease-premium) both;
+  animation: modal-enter var(--motion-base) var(--motion-ease-premium) both;
 }
 
 dialog[open]::backdrop {
@@ -319,7 +320,7 @@ dialog[open]::backdrop {
   color: var(--primary);
   font-size: 0.72rem;
   letter-spacing: 0.16em;
-  animation: loader-mark 1.2s var(--ease-premium) both;
+  animation: loader-mark 1.2s var(--motion-ease-premium) both;
 }
 
 .app-loader__name {
@@ -345,7 +346,7 @@ dialog[open]::backdrop {
   width: 45%;
   height: 100%;
   background: var(--primary);
-  animation: loader-track 1.4s var(--ease-premium) infinite;
+  animation: loader-track 1.4s var(--motion-ease-premium) infinite;
 }
 
 [data-reveal] {
@@ -503,7 +504,7 @@ dialog[open]::backdrop {
 }
 
 .route-enter {
-  animation: route-enter var(--motion-base) var(--ease-premium) both;
+  animation: route-enter var(--motion-base) var(--motion-ease-premium) both;
 }
 .reveal {
   animation: reveal 700ms cubic-bezier(0.22, 1, 0.36, 1) both;

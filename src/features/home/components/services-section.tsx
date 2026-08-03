@@ -23,7 +23,7 @@ export function ServicesSection({
       className="bg-brand-dark px-page-gutter py-services text-brand-light"
       aria-label="Our services"
     >
-      <div className="mx-auto max-w-services overflow-hidden rounded-service-group bg-brand-dark-elevated">
+      <div className="mx-auto w-full max-w-service-shell overflow-hidden rounded-service-group bg-brand-dark-elevated">
         <div
           id={`${sectionId}-${activeService.id}`}
           className="relative min-h-service-mobile overflow-hidden rounded-service-panel border border-service-border shadow-service-panel sm:min-h-service-tablet lg:min-h-service-panel"
@@ -36,7 +36,7 @@ export function ServicesSection({
               <article
                 key={service.id}
                 className={cn(
-                  "absolute inset-0 transition-[opacity,transform] duration-service ease-premium",
+                  "duration-service absolute inset-0 transition-[opacity,transform] ease-premium",
                   isActive
                     ? "z-10 translate-y-0 opacity-100"
                     : "pointer-events-none translate-y-service opacity-0",
@@ -50,7 +50,7 @@ export function ServicesSection({
                   priority={index === 0}
                   sizes="(min-width: 1440px) 1406px, 100vw"
                   unoptimized={isRemoteAsset(service.image)}
-                  className="scale-service-media object-cover transition-transform duration-service-media ease-premium"
+                  className="duration-service-media scale-service-media object-cover transition-transform ease-premium"
                 />
                 <span className="service-media-overlay absolute inset-0" />
                 <h2 className="absolute top-7 right-service left-service font-serif text-section-display leading-editorial tracking-editorial sm:top-10 lg:top-12">
@@ -67,24 +67,18 @@ export function ServicesSection({
           })}
         </div>
 
-        <div role="tablist" aria-label="Choose a service">
+        <div aria-label="Choose a service">
           {services.map((service) => {
             const isActive = service.id === activeService.id;
+
+            if (isActive) return null;
 
             return (
               <button
                 key={service.id}
                 type="button"
-                role="tab"
-                aria-selected={isActive}
-                aria-controls={`${sectionId}-${service.id}`}
-                tabIndex={isActive ? 0 : -1}
-                className={cn(
-                  "group flex min-h-service-row w-full items-center gap-service-row rounded-service-row border border-service-border px-service text-left shadow-service-row transition-[background-color,color] duration-300 focus-visible:z-20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-light/80",
-                  isActive
-                    ? "bg-brand-light text-brand-dark"
-                    : "hover:bg-brand-light/[0.06]",
-                )}
+                aria-label={`View ${service.title}`}
+                className="group gap-service-row flex min-h-service-row w-full items-center rounded-service-row border border-service-border px-service text-left shadow-service-row transition-colors duration-300 hover:bg-brand-light/[0.06] focus-visible:z-20 focus-visible:ring-2 focus-visible:ring-brand-light/80 focus-visible:outline-none"
                 onClick={() => setActiveId(service.id)}
               >
                 <span className="font-mono text-service-tab-number leading-none opacity-70">
@@ -95,7 +89,7 @@ export function ServicesSection({
                 </span>
                 <span
                   aria-hidden
-                  className="ml-auto text-service-indicator opacity-0 transition-[opacity,transform] duration-300 group-hover:translate-x-1 group-hover:opacity-100 group-aria-selected:opacity-100"
+                  className="ml-auto text-service-indicator opacity-0 transition-[opacity,transform] duration-300 group-hover:translate-x-1 group-hover:opacity-100 group-focus-visible:opacity-100"
                 >
                   ↗
                 </span>
