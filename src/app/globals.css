@@ -69,7 +69,7 @@
   --letter-spacing-section-heading: -0.03em;
   --space-hero-bottom: clamp(3.5rem, 5.556vw, 5rem);
   --space-page: clamp(1rem, 1.181vw, 1.0625rem);
-  --space-services-y: clamp(2rem, 2.639vw, 2.375rem);
+  --space-services-y: clamp(1.5rem, 2vw, 2rem);
   --space-service-inline: clamp(1.5rem, 5.694vw, 5.125rem);
   --type-section-display: clamp(1.65rem, 2.45vw, 2.25rem);
   --type-editorial: clamp(2.15rem, 3.55vw, 3.25rem);
@@ -87,7 +87,7 @@
   --layout-newsletter-card-width: 19.4375rem;
   --layout-newsletter-card-height: 10.375rem;
   --layout-newsletter-input-height: 4.0625rem;
-  --layout-service-panel-height: 40.1875rem;
+  --layout-service-panel-height: 43rem;
   --layout-stat-card-height: 20.375rem;
   --layout-service-mobile-height: 32rem;
   --layout-service-tablet-height: 36rem;

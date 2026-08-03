@@ -111,21 +111,21 @@ export function ServicesSection({
                 currentCollapsed,
                 {
                   autoAlpha: 0,
-                  y: -10,
-                  duration: 0.4,
+                  y: -6,
+                  duration: 0.18,
                   ease: "none",
                 },
-                position,
+                position + 0.78,
               )
               .to(
                 currentExpanded,
                 {
                   autoAlpha: 1,
                   y: 0,
-                  duration: 0.55,
+                  duration: 0.2,
                   ease: "none",
                 },
-                position + 0.45,
+                position + 0.8,
               )
               .to(
                 currentImage,
@@ -161,10 +161,10 @@ export function ServicesSection({
             scrub: 1,
             invalidateOnRefresh: true,
             onUpdate: ({ progress }) => {
-              const next = Math.min(
-                services.length - 1,
-                Math.round(progress * (services.length - 1)),
+              const completedTransitions = Math.floor(
+                progress * (services.length - 1) + 0.0001,
               );
+              const next = Math.min(services.length - 1, completedTransitions);
               setActiveIndex((current) => (current === next ? current : next));
             },
           });
@@ -260,7 +260,7 @@ export function ServicesSection({
                     tabIndex={isActive ? -1 : 0}
                     aria-label={`Show ${service.title}`}
                     onClick={() => goToService(index)}
-                    className="service-collapsed-control group absolute inset-0 hidden w-full items-center gap-5 bg-gradient-to-r from-black/45 via-black/15 to-transparent px-service text-left text-brand-light transition-colors [text-shadow:0_1px_12px_rgb(0_0_0/0.65)] hover:from-black/55 hover:via-black/20 focus-visible:ring-2 focus-visible:ring-brand-light focus-visible:outline-none focus-visible:ring-inset lg:flex"
+                    className="service-collapsed-control group absolute inset-x-0 bottom-0 hidden h-service-row w-full items-center gap-5 bg-gradient-to-r from-black/45 via-black/15 to-transparent px-service text-left text-brand-light transition-colors [text-shadow:0_1px_12px_rgb(0_0_0/0.65)] hover:from-black/55 hover:via-black/20 focus-visible:ring-2 focus-visible:ring-brand-light focus-visible:outline-none focus-visible:ring-inset lg:flex"
                   >
                     <span className="font-mono text-service-tab-number leading-none opacity-60">
                       {service.number}

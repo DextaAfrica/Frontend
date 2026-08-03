@@ -18,16 +18,20 @@ import { Stack } from "./stack";
 
 export function SiteHeader() {
   const [open, setOpen] = React.useState(false);
+  const [scrolled, setScrolled] = React.useState(false);
   const pathname = usePathname();
-  const overlaysHero = pathname === "/" && !open;
+  const isLandingPage = pathname === "/";
+  const overlaysHero = isLandingPage && !open && !scrolled;
   const menuButtonRef = React.useRef<HTMLButtonElement>(null);
   const panelRef = React.useRef<HTMLDivElement>(null);
 
-  // Panel open/close itself is driven purely by `open` + CSS below, so the
-  // menu always shows even if this animation setup fails for any reason.
-  // GSAP is only responsible for the nav-link stagger, as pure polish.
+  // Links are always at full opacity in their resting DOM/CSS state, so
+  // there's no "stuck invisible" state possible: the whole panel is already
+  // hidden via CSS when closed, and this only ever plays an entrance while
+  // opening, never one that could leave links mid-fade if it's interrupted.
   useGSAP(
     () => {
+      if (!open) return;
       const panel = panelRef.current;
       if (!panel) return;
       const links = gsap.utils.toArray<HTMLElement>(
@@ -35,41 +39,25 @@ export function SiteHeader() {
       );
       if (!links.length) return;
 
-      if (!open) {
-        gsap.set(links, { y: 24, opacity: 0 });
+      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
         return;
       }
 
-      const mm = gsap.matchMedia();
-      mm.add(
-        { reduceMotion: "(prefers-reduced-motion: reduce)" },
-        (context) => {
-          const { reduceMotion } = context.conditions as {
-            reduceMotion: boolean;
-          };
-
-          if (reduceMotion) {
-            gsap.set(links, { y: 0, opacity: 1 });
-          } else {
-            gsap.fromTo(
-              links,
-              { y: 24, opacity: 0 },
-              {
-                y: 0,
-                opacity: 1,
-                duration: 0.5,
-                stagger: 0.06,
-                ease: "power3.out",
-              },
-            );
-          }
-        },
+      gsap.fromTo(
+        links,
+        { y: 24, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.5, stagger: 0.06, ease: "power3.out" },
       );
-
-      return () => mm.revert();
     },
     { scope: panelRef, dependencies: [open] },
   );
+
+  React.useEffect(() => {
+    const updateScrolledState = () => setScrolled(window.scrollY > 32);
+    updateScrolledState();
+    window.addEventListener("scroll", updateScrolledState, { passive: true });
+    return () => window.removeEventListener("scroll", updateScrolledState);
+  }, [pathname]);
 
   React.useEffect(() => {
     if (!open) return;
@@ -102,7 +90,9 @@ export function SiteHeader() {
             ? "absolute border-white/15 bg-gradient-to-b from-black/45 to-transparent text-white"
             : open
               ? "fixed inset-x-0 border-border bg-background text-foreground"
-              : "sticky border-border/70 bg-background/95 text-foreground backdrop-blur-xl",
+              : isLandingPage
+                ? "fixed inset-x-0 border-border/70 bg-background/95 text-foreground shadow-sm backdrop-blur-xl"
+                : "sticky border-border/70 bg-background/95 text-foreground backdrop-blur-xl",
         )}
       >
         <Container size="wide">
@@ -193,7 +183,7 @@ export function SiteHeader() {
                     onClick={closeMenu}
                     aria-current={pathname === item.href ? "page" : undefined}
                     className={cn(
-                      "group flex items-center justify-between border-b border-white/15 py-4 text-3xl font-light tracking-[-0.035em] sm:py-5 sm:text-5xl",
+                      "group flex items-center justify-between border-b border-white/15 py-4 text-3xl font-light tracking-[-0.035em] text-brand-light sm:py-5 sm:text-5xl",
                       pathname === item.href && "text-primary",
                     )}
                   >
