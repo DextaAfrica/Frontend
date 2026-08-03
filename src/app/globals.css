@@ -33,7 +33,7 @@
 
   --radius: 0.625rem;
   --font-sans:
-    "Avenir Next", Avenir, "Helvetica Neue", Helvetica, Arial, sans-serif;
+    "Helvetica Neue", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   --font-serif: "Radley", Iowan Old Style, Baskerville, Times New Roman, serif;
   --font-mono: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
 
@@ -45,9 +45,9 @@
   --text-subtle: #969696;
 
   --section-intro-height: clamp(28rem, 46.944vw, 42.25rem);
-  --scroll-copy-size: clamp(1.875rem, 3.056vw, 2.75rem);
+  --scroll-copy-size: clamp(1.5rem, 2.45vw, 2.25rem);
   --scroll-copy-muted-opacity: 0.31;
-  --type-hero: clamp(3rem, 4.6vw, 4.25rem);
+  --type-hero: clamp(2.35rem, 3.75vw, 3.5rem);
   --letter-spacing-hero: 0.0968em;
   --letter-spacing-heading: -0.04em;
   --line-height-heading: 1.02;
@@ -56,9 +56,9 @@
   --space-page: clamp(1rem, 1.181vw, 1.0625rem);
   --space-services-y: clamp(2rem, 2.639vw, 2.375rem);
   --space-service-inline: clamp(1.5rem, 5.694vw, 5.125rem);
-  --type-section-display: clamp(2rem, 3.056vw, 2.75rem);
-  --type-editorial: clamp(2.75rem, 4.444vw, 4rem);
-  --type-metric: clamp(4.5rem, 6.585vw, 5.927rem);
+  --type-section-display: clamp(1.65rem, 2.45vw, 2.25rem);
+  --type-editorial: clamp(2.15rem, 3.55vw, 3.25rem);
+  --type-metric: clamp(3.5rem, 5.25vw, 4.75rem);
   --line-height-editorial: 1.1;
   --letter-spacing-editorial: -0.075rem;
   --letter-spacing-editorial-label: 0.2625rem;
@@ -85,13 +85,13 @@
   --width-newsletter-copy: 33.25rem;
   --layout-newsletter-stack-width: 43rem;
   --layout-newsletter-stack-height: 18rem;
-  --type-service-number: clamp(4rem, 8.333vw, 7.5rem);
-  --type-service-copy: clamp(1.125rem, 1.667vw, 1.5rem);
-  --type-service-tab: clamp(1.125rem, 1.667vw, 1.5rem);
+  --type-service-number: clamp(3rem, 6.65vw, 6rem);
+  --type-service-copy: clamp(1rem, 1.4vw, 1.25rem);
+  --type-service-tab: clamp(1rem, 1.4vw, 1.25rem);
   --type-service-tab-number: clamp(0.875rem, 1.111vw, 1rem);
   --type-service-indicator: 1.25rem;
-  --type-testimonial: clamp(1.5rem, 2.222vw, 2rem);
-  --type-testimonial-author: clamp(1.125rem, 1.667vw, 1.5rem);
+  --type-testimonial: clamp(1.25rem, 1.8vw, 1.625rem);
+  --type-testimonial-author: clamp(1rem, 1.4vw, 1.25rem);
   --letter-spacing-service-number: -0.293rem;
   --space-testimonial: clamp(5rem, 8vw, 7rem);
   --space-testimonial-quote: clamp(1rem, 1.667vw, 1.5rem);
@@ -259,6 +259,9 @@ html {
 }
 
 body {
+  font-size: 0.9375rem;
+  font-weight: 400;
+  line-height: 1.6;
   text-rendering: optimizeLegibility;
 }
 
@@ -333,7 +336,7 @@ dialog[open]::backdrop {
   position: relative;
   margin-top: 1.5rem;
   font-size: 0.65rem;
-  font-weight: 500;
+  font-weight: 400;
   letter-spacing: 0.28em;
   text-transform: uppercase;
 }

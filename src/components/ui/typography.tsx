@@ -5,7 +5,7 @@ export function Heading({ className, ...props }: React.ComponentProps<"h1">) {
   return (
     <h1
       className={cn(
-        "text-4xl leading-heading font-light tracking-heading text-balance sm:text-6xl lg:text-7xl",
+        "text-3xl leading-heading font-light tracking-heading text-balance sm:text-5xl lg:text-6xl",
         className,
       )}
       {...props}
@@ -14,8 +14,8 @@ export function Heading({ className, ...props }: React.ComponentProps<"h1">) {
 }
 
 const sectionHeadingSizes = {
-  default: "text-3xl sm:text-5xl",
-  compact: "text-2xl sm:text-3xl",
+  default: "text-2xl sm:text-4xl",
+  compact: "text-xl sm:text-2xl",
 } as const;
 
 export function SectionHeading({
@@ -36,9 +36,9 @@ export function SectionHeading({
 }
 
 const cardHeadingSizes = {
-  sm: "text-lg",
-  md: "text-xl",
-  lg: "text-2xl",
+  sm: "text-base",
+  md: "text-lg",
+  lg: "text-xl",
 } as const;
 
 export function CardHeading({
@@ -49,7 +49,7 @@ export function CardHeading({
   return (
     <h3
       className={cn(
-        "font-semibold tracking-tight",
+        "font-medium tracking-tight",
         cardHeadingSizes[size],
         className,
       )}
@@ -62,7 +62,7 @@ export function Text({ className, ...props }: React.ComponentProps<"p">) {
   return (
     <p
       className={cn(
-        "text-base leading-7 text-muted-foreground sm:text-lg",
+        "text-[0.9375rem] leading-6 text-muted-foreground sm:text-base",
         className,
       )}
       {...props}
@@ -111,7 +111,7 @@ export function EditorialEyebrow({
   return (
     <p
       className={cn(
-        "text-base font-medium tracking-editorial-label uppercase",
+        "text-sm font-normal tracking-editorial-label uppercase",
         className,
       )}
       {...props}
