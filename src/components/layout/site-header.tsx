@@ -106,7 +106,7 @@ export function SiteHeader() {
         )}
       >
         <Container size="wide">
-          <div className="flex h-18 items-center justify-between gap-4 sm:h-20">
+          <div className="flex h-16 items-center justify-between gap-3 sm:h-20 sm:gap-4">
             <Link
               href="/"
               onClick={closeMenu}
@@ -116,27 +116,31 @@ export function SiteHeader() {
               <Image
                 src="/images/dexta-logo.svg"
                 alt={siteConfig.name}
-                width={92}
-                height={40}
+                width={110}
+                height={48}
                 priority
-                className={cn(!overlaysHero && "invert dark:invert-0")}
+                className={cn(
+                  "h-7 w-auto sm:h-9",
+                  !overlaysHero && "invert dark:invert-0",
+                )}
               />
             </Link>
 
-            <Cluster className="gap-2 sm:gap-3">
+            <Cluster className="gap-1.5 sm:gap-3">
               <ThemeToggle
                 className={cn(
                   overlaysHero &&
-                    "border-white/35 bg-black/25 text-white shadow-lg ring-1 ring-black/10 hover:border-white/60 hover:bg-black/40",
+                    "border-white/25 bg-black/30 text-white shadow-lg [&_button:not([aria-checked='true'])]:text-white/65 [&_button:not([aria-checked='true'])]:hover:bg-white/10 [&_button:not([aria-checked='true'])]:hover:text-white",
                 )}
               />
               <ButtonLink
                 href="/contact"
                 size="sm"
                 variant={overlaysHero ? "onMedia" : "primary"}
-                className="text-[0.7rem] tracking-[0.08em] uppercase"
+                className="hidden text-[0.7rem] tracking-[0.08em] uppercase sm:inline-flex"
               >
-                Book Inspection
+                <span className="sm:hidden">Book</span>
+                <span className="hidden sm:inline">Book Inspection</span>
               </ButtonLink>
               <Button
                 ref={menuButtonRef}
@@ -168,8 +172,10 @@ export function SiteHeader() {
         aria-label="Site navigation"
         aria-hidden={!open}
         className={cn(
-          "invisible fixed inset-0 z-[60] bg-background text-foreground opacity-0",
-          open ? "pointer-events-auto" : "pointer-events-none",
+          "fixed inset-0 z-[60] bg-brand-dark text-brand-light transition-opacity duration-300 ease-out",
+          open
+            ? "pointer-events-auto visible opacity-100"
+            : "pointer-events-none invisible opacity-0",
         )}
       >
         <Container
@@ -187,30 +193,30 @@ export function SiteHeader() {
                     onClick={closeMenu}
                     aria-current={pathname === item.href ? "page" : undefined}
                     className={cn(
-                      "group flex items-center justify-between border-b border-border py-4 text-3xl font-light tracking-[-0.035em] sm:py-5 sm:text-5xl",
+                      "group flex items-center justify-between border-b border-white/15 py-4 text-3xl font-light tracking-[-0.035em] sm:py-5 sm:text-5xl",
                       pathname === item.href && "text-primary",
                     )}
                   >
                     <span>{item.label}</span>
                     <Icon
                       name="arrow-right"
-                      className="text-muted-foreground transition-transform group-hover:translate-x-1 group-hover:text-primary"
+                      className="text-brand-light/50 transition-transform group-hover:translate-x-1 group-hover:text-primary"
                     />
                   </Link>
                 ))}
               </Stack>
             </nav>
 
-            <div className="grid gap-6 border-t border-border pt-6 sm:grid-cols-[1fr_auto] sm:items-end">
+            <div className="grid gap-6 border-t border-white/15 pt-6 sm:grid-cols-[1fr_auto] sm:items-end">
               <Stack gap="sm" className="max-w-md">
                 <Eyebrow>Private appointments</Eyebrow>
-                <p className="text-sm leading-6 text-muted-foreground">
+                <p className="text-sm leading-6 text-brand-light/60">
                   Explore residences shaped by architecture, landscape, and a
                   more considered way of living.
                 </p>
               </Stack>
               <Cluster className="gap-3">
-                <ThemeToggle />
+                <ThemeToggle className="text-brand-light hover:bg-white/10" />
                 <ButtonLink
                   href="/contact"
                   size="lg"

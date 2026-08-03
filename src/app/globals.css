@@ -488,7 +488,10 @@ dialog[open]::backdrop {
   .service-scroll-section {
     --service-active-height: min(
       var(--layout-service-panel-height),
-      calc(100svh - (var(--space-services-y) * 2))
+      calc(
+        100svh - (var(--space-services-y) * 2) -
+          ((var(--service-count) - 1) * var(--layout-service-row-height))
+      )
     );
     height: calc(100svh + (var(--service-count) - 1) * 78svh);
   }
@@ -510,15 +513,18 @@ dialog[open]::backdrop {
   .service-card-stage {
     position: relative;
     display: block;
-    height: var(--service-active-height);
+    height: calc(
+      var(--service-active-height) +
+        ((var(--service-count) - 1) * var(--layout-service-row-height))
+    );
     overflow: hidden;
     border-radius: var(--shape-service-group);
   }
 
   .service-card {
     position: absolute !important;
-    inset: 0;
-    height: 100%;
+    inset-inline: 0;
+    top: 0;
     min-height: 0;
     will-change: transform, opacity;
   }
@@ -527,8 +533,24 @@ dialog[open]::backdrop {
     will-change: transform, opacity;
   }
 
+  .service-card:first-child {
+    height: var(--service-active-height);
+  }
+
   .service-card:not(:first-child) {
-    transform: translateY(105%);
+    height: var(--layout-service-row-height);
+    transform: translateY(
+      calc(
+        var(--service-active-height) +
+          ((var(--service-index) - 1) * var(--layout-service-row-height))
+      )
+    );
+  }
+
+  .service-card:first-child .service-collapsed-control,
+  .service-card:not(:first-child) .service-expanded-content {
+    visibility: hidden;
+    opacity: 0;
   }
 }
 
@@ -556,6 +578,15 @@ dialog[open]::backdrop {
     inset: auto;
     min-height: var(--layout-service-tablet-height);
     transform: none !important;
+  }
+
+  .service-expanded-content {
+    visibility: visible !important;
+    opacity: 1 !important;
+  }
+
+  .service-collapsed-control {
+    display: none;
   }
 }
 
