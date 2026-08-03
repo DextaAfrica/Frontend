@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { Container } from "@/components/layout";
 import { ButtonLink, HeroHeading } from "@/components/ui";
+import { Reveal } from "./reveal";
 
 export interface CinematicHeroProps {
   titleLines: readonly string[];
@@ -42,7 +43,7 @@ export function CinematicHero({
       </video>
       <span aria-hidden className="dexta-hero-overlay absolute inset-0" />
       <Container className="relative pb-[var(--space-hero-bottom)]">
-        <div className="flex max-w-3xl flex-col items-start gap-8" data-reveal>
+        <Reveal className="flex max-w-3xl flex-col items-start gap-8">
           <HeroHeading>
             {titleLines.map((line, index) => (
               <span key={line} className="block">
@@ -66,7 +67,7 @@ export function CinematicHero({
             />
             {ctaLabel}
           </ButtonLink>
-        </div>
+        </Reveal>
       </Container>
     </section>
   );

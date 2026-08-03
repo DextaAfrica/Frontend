@@ -7,6 +7,7 @@ import {
   SectionHeading,
   Text,
 } from "@/components/ui";
+import { Reveal } from "./reveal";
 
 export function MarketingHeading({
   eyebrow,
@@ -20,16 +21,17 @@ export function MarketingHeading({
   centered?: boolean;
 }) {
   return (
-    <Stack
-      data-reveal
-      gap="sm"
-      align={centered ? "center" : "start"}
-      className={centered ? "mx-auto max-w-3xl text-center" : "max-w-3xl"}
-    >
-      <Eyebrow>{eyebrow}</Eyebrow>
-      <SectionHeading>{title}</SectionHeading>
-      {description && <Text>{description}</Text>}
-    </Stack>
+    <Reveal>
+      <Stack
+        gap="sm"
+        align={centered ? "center" : "start"}
+        className={centered ? "mx-auto max-w-3xl text-center" : "max-w-3xl"}
+      >
+        <Eyebrow>{eyebrow}</Eyebrow>
+        <SectionHeading>{title}</SectionHeading>
+        {description && <Text>{description}</Text>}
+      </Stack>
+    </Reveal>
   );
 }
 

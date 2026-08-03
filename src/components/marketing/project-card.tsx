@@ -9,6 +9,7 @@ import {
   Text,
 } from "@/components/ui";
 import { MediaPanel } from "./media-panel";
+import { Reveal } from "./reveal";
 
 export interface Project {
   slug: string;
@@ -22,28 +23,30 @@ export interface Project {
 export function ProjectCard({ project }: { project: Project }) {
   const href = `/portfolio/${project.slug}`;
   return (
-    <Card data-reveal className="group overflow-hidden">
-      <MediaPanel
-        label={`${project.name}, ${project.location}`}
-        tone={project.tone}
-        src={project.image}
-        className="min-h-80 rounded-none transition-transform duration-700 group-hover:scale-[1.02]"
-      />
-      <CardContent className="p-6">
-        <Stack gap="md">
-          <Badge>{project.status}</Badge>
-          <Stack gap="xs">
-            <CardHeading className="text-2xl">{project.name}</CardHeading>
-            <p className="text-xs font-bold tracking-[0.12em] text-primary uppercase">
-              {project.location}
-            </p>
-            <Text className="text-sm">{project.description}</Text>
+    <Reveal>
+      <Card className="group overflow-hidden">
+        <MediaPanel
+          label={`${project.name}, ${project.location}`}
+          tone={project.tone}
+          src={project.image}
+          className="min-h-80 rounded-none transition-transform duration-700 group-hover:scale-[1.02]"
+        />
+        <CardContent className="p-6">
+          <Stack gap="md">
+            <Badge>{project.status}</Badge>
+            <Stack gap="xs">
+              <CardHeading className="text-2xl">{project.name}</CardHeading>
+              <p className="text-xs font-bold tracking-[0.12em] text-primary uppercase">
+                {project.location}
+              </p>
+              <Text className="text-sm">{project.description}</Text>
+            </Stack>
+            <ButtonLink href={href} variant="link">
+              View residence <Icon name="arrow-right" />
+            </ButtonLink>
           </Stack>
-          <ButtonLink href={href} variant="link">
-            View residence <Icon name="arrow-right" />
-          </ButtonLink>
-        </Stack>
-      </CardContent>
-    </Card>
+        </CardContent>
+      </Card>
+    </Reveal>
   );
 }

@@ -3,5 +3,6 @@ export * from "./editorial-hero";
 export * from "./media-panel";
 export * from "./project-card";
 export * from "./quote-block";
+export * from "./reveal";
 export * from "./section-heading";
 export * from "./scroll-reveal-copy";

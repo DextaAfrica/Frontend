@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { cn } from "@/lib/utils";
+import { Reveal } from "./reveal";
 
 const tones = {
   ruby: "from-red-950 via-red-800 to-orange-300",
@@ -19,8 +20,8 @@ export function MediaPanel({
   className?: string;
 }) {
   return (
-    <figure
-      data-reveal
+    <Reveal
+      as="figure"
       role="img"
       aria-label={label}
       className={cn(
@@ -45,6 +46,6 @@ export function MediaPanel({
       <figcaption className="absolute bottom-5 left-5 text-xs font-medium tracking-[0.15em] text-white/75 uppercase">
         {label}
       </figcaption>
-    </figure>
+    </Reveal>
   );
 }
