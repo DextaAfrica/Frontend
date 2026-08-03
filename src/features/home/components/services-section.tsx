@@ -2,12 +2,7 @@
 
 import Image from "next/image";
 import { useEffect, useId, useRef, useState } from "react";
-import {
-  motion,
-  useMotionValueEvent,
-  useReducedMotion,
-  useScroll,
-} from "motion/react";
+import { gsap, useGSAP } from "@/lib/gsap";
 import { cn } from "@/lib/utils";
 import { isRemoteAsset } from "@/lib/media";
 import type { ServiceContent } from "../types/home-page";
@@ -23,46 +18,95 @@ export function ServicesSection({
   const activeService =
     services.find((service) => service.id === activeId) ?? services[0];
 
-  const reducedMotion = useReducedMotion();
-  const [pinningSupported, setPinningSupported] = useState(false);
-  const isPinned = pinningSupported && !reducedMotion;
+  const [scrubEnabled, setScrubEnabled] = useState(false);
 
   useEffect(() => {
-    const query = window.matchMedia("(min-width: 40rem)");
-    const update = () => setPinningSupported(query.matches);
+    const query = window.matchMedia(
+      "(min-width: 40rem) and (prefers-reduced-motion: no-preference)",
+    );
+    const update = () => setScrubEnabled(query.matches);
     update();
     query.addEventListener("change", update);
     return () => query.removeEventListener("change", update);
   }, []);
 
-  const { scrollYProgress } = useScroll({
-    target: sectionRef,
-    offset: ["start start", "end end"],
-  });
+  useGSAP(
+    () => {
+      const section = sectionRef.current;
+      if (!section) return;
 
-  useMotionValueEvent(scrollYProgress, "change", (progress) => {
-    if (!isPinned) return;
-    const index = Math.min(
-      services.length - 1,
-      Math.max(0, Math.floor(progress * services.length)),
-    );
-    const next = services[index];
-    if (next) setActiveId(next.id);
-  });
+      const mm = gsap.matchMedia();
+      mm.add(
+        {
+          isDesktop: "(min-width: 40rem)",
+          reduceMotion: "(prefers-reduced-motion: reduce)",
+        },
+        (context) => {
+          const { isDesktop, reduceMotion } = context.conditions as {
+            isDesktop: boolean;
+            reduceMotion: boolean;
+          };
+          if (!isDesktop || reduceMotion) return;
+
+          const panels = gsap.utils.toArray<HTMLElement>(
+            section.querySelectorAll("[data-service-panel]"),
+          );
+          const steps = panels.length;
+          if (steps < 2) return;
+
+          const timeline = gsap.timeline({
+            defaults: { duration: 1, ease: "power2.inOut" },
+            scrollTrigger: {
+              trigger: section,
+              start: "top bottom",
+              end: "bottom top",
+              scrub: 1,
+              onUpdate: (self) => {
+                const continuousIndex = self.progress * (steps - 1);
+                const index = Math.min(
+                  steps - 1,
+                  Math.max(0, Math.round(continuousIndex)),
+                );
+                const next = services[index];
+                setActiveId((current) =>
+                  next && current !== next.id ? next.id : current,
+                );
+              },
+            },
+          });
+
+          for (let index = 1; index < steps; index += 1) {
+            const position = index - 1;
+            timeline
+              .to(panels[index - 1], { opacity: 0, y: -12 }, position)
+              .to(panels[index], { opacity: 1, y: 0 }, position);
+          }
+        },
+      );
+
+      return () => mm.revert();
+    },
+    { scope: sectionRef, dependencies: [services] },
+  );
 
   const goToIndex = (index: number) => {
+    if (!scrubEnabled) {
+      setActiveId(services[index]?.id);
+      return;
+    }
+
     const section = sectionRef.current;
-    setActiveId(services[index]?.id);
-    if (!section || !isPinned) return;
+    if (!section) return;
 
     const rect = section.getBoundingClientRect();
     const sectionTop = rect.top + window.scrollY;
-    const scrollRange = Math.max(0, section.offsetHeight - window.innerHeight);
-    const progress = (index + 0.5) / services.length;
+    const startY = sectionTop - window.innerHeight;
+    const endY = sectionTop + section.offsetHeight;
+    const progress = services.length > 1 ? index / (services.length - 1) : 0;
 
     window.scrollTo({
-      top: sectionTop + progress * scrollRange,
-      behavior: reducedMotion ? "auto" : "smooth",
+      top: startY + progress * (endY - startY),
+      behavior: "smooth",
     });
   };
 
@@ -71,11 +115,10 @@ export function ServicesSection({
   return (
     <section
       ref={sectionRef}
-      style={{ "--services-count": services.length } as React.CSSProperties}
-      className="relative bg-brand-dark px-page-gutter py-services text-brand-light motion-safe:sm:h-[calc(var(--services-count)*85vh)]"
+      className="bg-brand-dark px-page-gutter py-services text-brand-light"
       aria-label="Our services"
     >
-      <div className="relative mx-auto w-full max-w-service-shell overflow-hidden rounded-service-group bg-brand-dark-elevated motion-safe:sm:sticky motion-safe:sm:top-0">
+      <div className="mx-auto w-full max-w-service-shell overflow-hidden rounded-service-group bg-brand-dark-elevated">
         <div
           id={`${sectionId}-${activeService.id}`}
           className="relative min-h-service-mobile overflow-hidden rounded-service-panel border border-service-border shadow-service-panel sm:min-h-service-tablet lg:min-h-service-panel"
@@ -87,6 +130,7 @@ export function ServicesSection({
             return (
               <article
                 key={service.id}
+                data-service-panel
                 className={cn(
                   "duration-service absolute inset-0 transition-[opacity,transform] ease-premium",
                   isActive
@@ -149,12 +193,6 @@ export function ServicesSection({
             );
           })}
         </div>
-
-        <motion.div
-          aria-hidden
-          className="pointer-events-none absolute inset-x-0 bottom-0 hidden h-px origin-left bg-brand-light/40 motion-safe:sm:block"
-          style={{ scaleX: isPinned ? scrollYProgress : 0 }}
-        />
       </div>
     </section>
   );

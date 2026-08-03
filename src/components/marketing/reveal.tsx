@@ -1,92 +1,89 @@
 "use client";
 
 import * as React from "react";
-import { motion, type Transition, type Variants } from "motion/react";
+import { gsap, useGSAP } from "@/lib/gsap";
 
-const revealTransition: Transition = {
-  duration: 0.42,
-  ease: [0.22, 1, 0.36, 1],
-};
+const REVEAL_FROM = { opacity: 0, y: 32 };
+const REVEAL_DURATION = 0.42;
+const REVEAL_EASE = "power3.out";
 
-const revealVariants: Variants = {
-  hidden: { opacity: 0, y: 32 },
-  visible: { opacity: 1, y: 0 },
-};
+type RevealTag = "div" | "figure" | "article" | "span" | "li";
 
-const revealTags = {
-  div: motion.div,
-  figure: motion.figure,
-  article: motion.article,
-  span: motion.span,
-  li: motion.li,
-} as const;
-
-type RevealTag = keyof typeof revealTags;
-type MotionDivProps = React.ComponentProps<typeof motion.div>;
-
-export interface RevealProps extends MotionDivProps {
-  delay?: number;
+export interface RevealProps extends React.HTMLAttributes<HTMLElement> {
   as?: RevealTag;
+  delay?: number;
 }
 
 /** Fades and slides an element in the first time it enters the viewport. */
-export function Reveal({
-  as = "div",
-  delay = 0,
-  transition,
-  ...props
-}: RevealProps) {
-  const MotionTag = revealTags[as] as typeof motion.div;
-  return (
-    <MotionTag
-      variants={revealVariants}
-      initial="hidden"
-      whileInView="visible"
-      viewport={{ once: true, margin: "-10% 0px" }}
-      transition={{ ...revealTransition, delay, ...transition }}
-      {...props}
-    />
-  );
+export function Reveal({ as: Tag = "div", delay = 0, ...props }: RevealProps) {
+  const ref = React.useRef<HTMLElement>(null);
+
+  useGSAP(() => {
+    const mm = gsap.matchMedia();
+    mm.add("(prefers-reduced-motion: no-preference)", () => {
+      gsap.fromTo(ref.current, REVEAL_FROM, {
+        opacity: 1,
+        y: 0,
+        duration: REVEAL_DURATION,
+        delay,
+        ease: REVEAL_EASE,
+        scrollTrigger: {
+          trigger: ref.current,
+          start: "top 88%",
+          once: true,
+        },
+      });
+    });
+    return () => mm.revert();
+  }, [delay]);
+
+  return <Tag ref={ref as never} {...props} />;
 }
 
-export interface RevealGroupProps extends MotionDivProps {
+export interface RevealGroupProps extends React.HTMLAttributes<HTMLElement> {
+  as?: RevealTag;
   /** Seconds between each child's reveal. */
   stagger?: number;
 }
 
-/** Reveals its RevealItem children in sequence as the group enters the viewport. */
+/** Reveals its [data-reveal-item] children in sequence as the group enters the viewport. */
 export function RevealGroup({
+  as: Tag = "div",
   stagger = 0.12,
-  transition,
   ...props
 }: RevealGroupProps) {
-  return (
-    <motion.div
-      initial="hidden"
-      whileInView="visible"
-      viewport={{ once: true, margin: "-10% 0px" }}
-      transition={{ staggerChildren: stagger, ...transition }}
-      {...props}
-    />
-  );
+  const ref = React.useRef<HTMLElement>(null);
+
+  useGSAP(() => {
+    const mm = gsap.matchMedia();
+    mm.add("(prefers-reduced-motion: no-preference)", () => {
+      const items = ref.current?.querySelectorAll("[data-reveal-item]");
+      if (!items?.length) return;
+
+      gsap.fromTo(items, REVEAL_FROM, {
+        opacity: 1,
+        y: 0,
+        duration: REVEAL_DURATION,
+        ease: REVEAL_EASE,
+        stagger,
+        scrollTrigger: {
+          trigger: ref.current,
+          start: "top 88%",
+          once: true,
+        },
+      });
+    });
+    return () => mm.revert();
+  }, [stagger]);
+
+  return <Tag ref={ref as never} {...props} />;
 }
 
-export interface RevealItemProps extends MotionDivProps {
+export type RevealItemProps = React.HTMLAttributes<HTMLElement> & {
   as?: RevealTag;
-}
+};
 
-/** A single staggered child of RevealGroup. Must be a direct child. */
-export function RevealItem({
-  as = "div",
-  transition,
-  ...props
-}: RevealItemProps) {
-  const MotionTag = revealTags[as] as typeof motion.div;
-  return (
-    <MotionTag
-      variants={revealVariants}
-      transition={{ ...revealTransition, ...transition }}
-      {...props}
-    />
-  );
+/** A single staggered child of RevealGroup. Must be a direct or nested descendant. */
+export function RevealItem({ as: Tag = "div", ...props }: RevealItemProps) {
+  return <Tag data-reveal-item {...props} />;
 }
