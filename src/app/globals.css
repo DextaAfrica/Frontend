@@ -488,14 +488,8 @@ dialog[open]::backdrop {
   .service-scroll-section {
     --service-active-height: min(
       var(--layout-service-panel-height),
-      calc(
-        100svh - (var(--space-services-y) * 2) -
-          ((var(--service-count) - 1) * var(--layout-service-row-height))
-      )
+      calc(100svh - (var(--space-services-y) * 2))
     );
-  }
-
-  .service-scroll-section {
     height: calc(100svh + (var(--service-count) - 1) * 78svh);
   }
 
@@ -516,42 +510,52 @@ dialog[open]::backdrop {
   .service-card-stage {
     position: relative;
     display: block;
-    height: calc(
-      var(--service-active-height) +
-        ((var(--service-count) - 1) * var(--layout-service-row-height))
-    );
+    height: var(--service-active-height);
     overflow: hidden;
     border-radius: var(--shape-service-group);
   }
 
   .service-card {
+    position: absolute !important;
+    inset: 0;
+    height: 100%;
     min-height: 0;
-    border-radius: 0;
-    will-change: height;
+    will-change: transform, opacity;
   }
 
-  .service-card + .service-card {
-    border-top: 0;
-  }
-
-  .service-card:first-child {
-    height: var(--service-active-height);
-  }
-
-  .service-card:not(:first-child) {
-    height: var(--layout-service-row-height);
-  }
-
-  .service-expanded-content,
-  .service-collapsed-control,
   [data-service-media] {
     will-change: transform, opacity;
   }
 
-  .service-card:first-child .service-collapsed-control,
-  .service-card:not(:first-child) .service-expanded-content {
-    visibility: hidden;
-    opacity: 0;
+  .service-card:not(:first-child) {
+    transform: translateY(105%);
+  }
+}
+
+@media (min-width: 64rem) and (prefers-reduced-motion: reduce) {
+  .service-scroll-section {
+    height: auto;
+  }
+
+  .service-sticky-stage {
+    position: relative;
+    height: auto;
+    min-height: 0;
+    overflow: visible;
+  }
+
+  .service-card-stage {
+    display: grid;
+    height: auto;
+    gap: 0.75rem;
+    overflow: visible;
+  }
+
+  .service-card {
+    position: relative !important;
+    inset: auto;
+    min-height: var(--layout-service-tablet-height);
+    transform: none !important;
   }
 }
 

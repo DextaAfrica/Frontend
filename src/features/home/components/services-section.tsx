@@ -3,7 +3,6 @@
 import Image from "next/image";
 import { useId, useRef, useState } from "react";
 import type { CSSProperties } from "react";
-import { Icon } from "@/components/ui";
 import { gsap, ScrollTrigger, useGSAP } from "@/lib/gsap";
 import { isRemoteAsset } from "@/lib/media";
 import type { ServiceContent } from "../types/home-page";
@@ -19,7 +18,6 @@ export function ServicesSection({
 }) {
   const sectionId = useId();
   const sectionRef = useRef<HTMLElement>(null);
-  const scrollTriggerRef = useRef<ScrollTrigger | null>(null);
   const [activeIndex, setActiveIndex] = useState(0);
 
   useGSAP(
@@ -35,135 +33,102 @@ export function ServicesSection({
           const cards = gsap.utils.toArray<HTMLElement>(
             section.querySelectorAll("[data-service-card]"),
           );
-          const expandedContent = gsap.utils.toArray<HTMLElement>(
-            section.querySelectorAll("[data-service-expanded]"),
-          );
-          const collapsedControls = gsap.utils.toArray<HTMLElement>(
-            section.querySelectorAll("[data-service-collapsed]"),
-          );
-          const mediaElements = gsap.utils.toArray<HTMLElement>(
+          const images = gsap.utils.toArray<HTMLElement>(
             section.querySelectorAll("[data-service-media]"),
           );
-
-          const activeHeight = cards[0]?.getBoundingClientRect().height ?? 0;
-          const rowHeight = cards[1]?.getBoundingClientRect().height ?? 0;
-          const cardTop = (cardIndex: number, expandedIndex: number) => {
-            if (cardIndex <= expandedIndex) return cardIndex * rowHeight;
-            return (
-              expandedIndex * rowHeight +
-              activeHeight +
-              (cardIndex - expandedIndex - 1) * rowHeight
-            );
-          };
+          const overlays = gsap.utils.toArray<HTMLElement>(
+            section.querySelectorAll("[data-service-overlay]"),
+          );
 
           gsap.set(cards, {
-            position: "absolute",
-            insetInline: 0,
-            top: 0,
-            height: (index) => (index === 0 ? activeHeight : rowHeight),
-            y: (index) => cardTop(index, 0),
             zIndex: (index) => index + 1,
+            yPercent: (index) => (index === 0 ? 0 : 105),
+            scale: 1,
+            opacity: 1,
+            transformOrigin: "50% 0%",
           });
-          gsap.set(expandedContent, {
-            autoAlpha: (index) => (index === 0 ? 1 : 0),
-            y: (index) => (index === 0 ? 0 : 18),
+          gsap.set(images, {
+            scale: (index) => (index === 0 ? 1 : 1.055),
+            yPercent: (index) => (index === 0 ? 0 : 5),
           });
-          gsap.set(collapsedControls, {
-            autoAlpha: (index) => (index === 0 ? 0 : 1),
-            y: 0,
-          });
-          gsap.set(mediaElements, {
-            scale: (index) => (index === 0 ? 1 : 1.035),
-            yPercent: (index) => (index === 0 ? 0 : 3),
+          gsap.set(overlays, {
+            opacity: (index) => (index === 0 ? 1 : 0.82),
           });
 
           const timeline = gsap.timeline({ paused: true });
 
           for (let index = 1; index < cards.length; index += 1) {
-            const previousIndex = index - 1;
-            const position = previousIndex;
-            const previousExpanded = expandedContent[previousIndex];
-            const currentExpanded = expandedContent[index];
-            const previousCollapsed = collapsedControls[previousIndex];
-            const currentCollapsed = collapsedControls[index];
-            const previousMedia = mediaElements[previousIndex];
-            const currentMedia = mediaElements[index];
+            const position = index - 1;
+            const previousCard = cards[index - 1];
+            const currentCard = cards[index];
+            const previousImage = images[index - 1];
+            const currentImage = images[index];
+            const previousOverlay = overlays[index - 1];
+            const currentOverlay = overlays[index];
 
             if (
-              !previousExpanded ||
-              !currentExpanded ||
-              !previousCollapsed ||
-              !currentCollapsed ||
-              !previousMedia ||
-              !currentMedia
+              !previousCard ||
+              !currentCard ||
+              !previousImage ||
+              !currentImage ||
+              !previousOverlay ||
+              !currentOverlay
             ) {
               continue;
             }
 
             timeline
               .to(
-                previousExpanded,
+                previousCard,
                 {
-                  autoAlpha: 0,
-                  y: -18,
-                  duration: 0.45,
-                  ease: "none",
-                },
-                position,
-              )
-              .to(
-                previousCollapsed,
-                {
-                  autoAlpha: 1,
-                  y: 0,
-                  duration: 0.45,
-                  ease: "none",
-                },
-                position + 0.55,
-              )
-              .to(
-                currentCollapsed,
-                {
-                  autoAlpha: 0,
-                  y: -12,
-                  duration: 0.35,
-                  ease: "none",
-                },
-                position,
-              )
-              .to(
-                currentExpanded,
-                {
-                  autoAlpha: 1,
-                  y: 0,
-                  duration: 0.55,
-                  ease: "none",
-                },
-                position + 0.45,
-              )
-              .to(
-                previousMedia,
-                { scale: 1.035, yPercent: -3, duration: 1, ease: "none" },
-                position,
-              )
-              .to(
-                currentMedia,
-                { scale: 1, yPercent: 0, duration: 1, ease: "none" },
-                position,
-              );
-
-            cards.forEach((card, cardIndex) => {
-              timeline.to(
-                card,
-                {
-                  height: cardIndex === index ? activeHeight : rowHeight,
-                  y: cardTop(cardIndex, index),
+                  scale: 0.985,
+                  opacity: 0.72,
                   duration: 1,
                   ease: "none",
                 },
                 position,
+              )
+              .to(
+                previousImage,
+                {
+                  scale: 1.04,
+                  yPercent: -2,
+                  duration: 1,
+                  ease: "none",
+                },
+                position,
+              )
+              .to(
+                previousOverlay,
+                { opacity: 1.15, duration: 1, ease: "none" },
+                position,
+              )
+              .to(
+                currentCard,
+                {
+                  yPercent: 0,
+                  scale: 1,
+                  opacity: 1,
+                  duration: 1,
+                  ease: "none",
+                },
+                position,
+              )
+              .to(
+                currentImage,
+                {
+                  scale: 1,
+                  yPercent: 0,
+                  duration: 1,
+                  ease: "none",
+                },
+                position,
+              )
+              .to(
+                currentOverlay,
+                { opacity: 1, duration: 1, ease: "none" },
+                position,
               );
-            });
           }
 
           const trigger = ScrollTrigger.create({
@@ -171,7 +136,7 @@ export function ServicesSection({
             start: "top top",
             end: "bottom bottom",
             animation: timeline,
-            scrub: 0.9,
+            scrub: 1,
             invalidateOnRefresh: true,
             onUpdate: ({ progress }) => {
               const nextIndex = Math.min(
@@ -184,10 +149,7 @@ export function ServicesSection({
             },
           });
 
-          scrollTriggerRef.current = trigger;
-
           return () => {
-            scrollTriggerRef.current = null;
             trigger.kill();
             timeline.kill();
           };
@@ -198,17 +160,6 @@ export function ServicesSection({
     },
     { scope: sectionRef, dependencies: [services] },
   );
-
-  const goToService = (index: number) => {
-    const trigger = scrollTriggerRef.current;
-    if (!trigger) return;
-
-    const progress = services.length > 1 ? index / (services.length - 1) : 0;
-    window.scrollTo({
-      top: trigger.start + (trigger.end - trigger.start) * progress,
-      behavior: "smooth",
-    });
-  };
 
   if (!services.length) return null;
 
@@ -235,7 +186,7 @@ export function ServicesSection({
                   key={service.id}
                   data-service-card
                   data-active={isActive || undefined}
-                  className="service-card relative isolate min-h-service-mobile overflow-hidden border border-service-border bg-brand-dark-elevated shadow-service-panel sm:min-h-service-tablet lg:min-h-0"
+                  className="service-card relative isolate min-h-service-mobile overflow-hidden rounded-service-panel border border-service-border bg-brand-dark-elevated shadow-service-panel sm:min-h-service-tablet lg:min-h-0"
                   style={{ position: "relative" }}
                   aria-current={isActive ? "step" : undefined}
                 >
@@ -249,13 +200,12 @@ export function ServicesSection({
                     unoptimized={isRemoteAsset(service.image)}
                     className="object-cover"
                   />
-                  <span className="service-media-overlay absolute inset-0" />
+                  <span
+                    data-service-overlay
+                    className="service-media-overlay absolute inset-0"
+                  />
 
-                  <div
-                    data-service-expanded
-                    className="service-expanded-content absolute inset-0 grid grid-cols-[1fr_auto] content-between gap-6 p-service"
-                    aria-hidden={!isActive}
-                  >
+                  <div className="absolute inset-0 grid grid-cols-[1fr_auto] content-between gap-6 p-service">
                     <h3 className="max-w-[18ch] font-serif text-section-display leading-editorial tracking-editorial">
                       {service.title}
                     </h3>
@@ -266,26 +216,6 @@ export function ServicesSection({
                       {service.description}
                     </p>
                   </div>
-
-                  <button
-                    data-service-collapsed
-                    type="button"
-                    tabIndex={isActive ? -1 : 0}
-                    aria-label={`Show ${service.title}`}
-                    onClick={() => goToService(index)}
-                    className="service-collapsed-control group absolute inset-0 hidden w-full items-center gap-5 bg-brand-dark-elevated px-service text-left text-brand-light transition-colors hover:bg-brand-light/[0.06] focus-visible:bg-brand-light/[0.08] focus-visible:ring-2 focus-visible:ring-brand-light focus-visible:outline-none focus-visible:ring-inset lg:flex"
-                  >
-                    <span className="font-mono text-service-tab-number leading-none opacity-60">
-                      {service.number}
-                    </span>
-                    <span className="font-serif text-service-tab leading-tight">
-                      {service.title}
-                    </span>
-                    <Icon
-                      name="arrow-right"
-                      className="ml-auto opacity-50 transition-[opacity,transform] duration-300 group-hover:translate-x-1 group-hover:opacity-100"
-                    />
-                  </button>
                 </article>
               );
             })}

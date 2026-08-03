@@ -22,14 +22,23 @@ export function SiteHeader() {
   const overlaysHero = pathname === "/" && !open;
   const menuButtonRef = React.useRef<HTMLButtonElement>(null);
   const panelRef = React.useRef<HTMLDivElement>(null);
-  const timelineRef = React.useRef<ReturnType<typeof gsap.timeline> | null>(
-    null,
-  );
 
+  // Panel open/close itself is driven purely by `open` + CSS below, so the
+  // menu always shows even if this animation setup fails for any reason.
+  // GSAP is only responsible for the nav-link stagger, as pure polish.
   useGSAP(
     () => {
       const panel = panelRef.current;
       if (!panel) return;
+      const links = gsap.utils.toArray<HTMLElement>(
+        panel.querySelectorAll("[data-menu-link]"),
+      );
+      if (!links.length) return;
+
+      if (!open) {
+        gsap.set(links, { y: 24, opacity: 0 });
+        return;
+      }
 
       const mm = gsap.matchMedia();
       mm.add(
@@ -38,52 +47,29 @@ export function SiteHeader() {
           const { reduceMotion } = context.conditions as {
             reduceMotion: boolean;
           };
-          const links = gsap.utils.toArray<HTMLElement>(
-            panel.querySelectorAll("[data-menu-link]"),
-          );
-          const timeline = gsap.timeline({ paused: true });
 
           if (reduceMotion) {
-            timeline
-              .set(panel, { autoAlpha: 1 })
-              .set(links, { opacity: 1, y: 0 });
+            gsap.set(links, { y: 0, opacity: 1 });
           } else {
-            timeline
-              .fromTo(
-                panel,
-                { autoAlpha: 0 },
-                { autoAlpha: 1, duration: 0.4, ease: "power2.out" },
-              )
-              .fromTo(
-                links,
-                { y: 24, opacity: 0 },
-                {
-                  y: 0,
-                  opacity: 1,
-                  duration: 0.5,
-                  stagger: 0.06,
-                  ease: "power3.out",
-                },
-                "-=0.25",
-              );
+            gsap.fromTo(
+              links,
+              { y: 24, opacity: 0 },
+              {
+                y: 0,
+                opacity: 1,
+                duration: 0.5,
+                stagger: 0.06,
+                ease: "power3.out",
+              },
+            );
           }
-
-          timelineRef.current = timeline;
-
-          return () => {
-            timelineRef.current = null;
-          };
         },
       );
 
       return () => mm.revert();
     },
-    { scope: panelRef, dependencies: [] },
+    { scope: panelRef, dependencies: [open] },
   );
-
-  React.useEffect(() => {
-    timelineRef.current?.[open ? "play" : "reverse"]();
-  }, [open]);
 
   React.useEffect(() => {
     if (!open) return;
