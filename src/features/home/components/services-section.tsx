@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useId, useRef, useState } from "react";
 import type { CSSProperties } from "react";
 import { gsap, ScrollTrigger, useGSAP } from "@/lib/gsap";
+import { Icon } from "@/components/ui";
 import { isRemoteAsset } from "@/lib/media";
 import type { ServiceContent } from "../types/home-page";
 
@@ -18,6 +19,7 @@ export function ServicesSection({
 }) {
   const sectionId = useId();
   const sectionRef = useRef<HTMLElement>(null);
+  const scrollTriggerRef = useRef<ScrollTrigger | null>(null);
   const [activeIndex, setActiveIndex] = useState(0);
 
   useGSAP(
@@ -91,7 +93,10 @@ export function ServicesSection({
             },
           });
 
+          scrollTriggerRef.current = trigger;
+
           return () => {
+            scrollTriggerRef.current = null;
             trigger.kill();
             timeline.kill();
           };
@@ -102,6 +107,17 @@ export function ServicesSection({
     },
     { scope: sectionRef, dependencies: [services] },
   );
+
+  const goToService = (index: number) => {
+    const trigger = scrollTriggerRef.current;
+    if (!trigger) return;
+
+    const progress = services.length > 1 ? index / (services.length - 1) : 0;
+    window.scrollTo({
+      top: trigger.start + (trigger.end - trigger.start) * progress,
+      behavior: "smooth",
+    });
+  };
 
   if (!services.length) return null;
 
@@ -156,6 +172,36 @@ export function ServicesSection({
               );
             })}
           </div>
+
+          <nav
+            className="service-index hidden overflow-hidden rounded-b-service-group lg:block"
+            aria-label="Choose a service"
+          >
+            {services.map((service, index) => {
+              const isActive = index === activeIndex;
+              if (isActive) return null;
+
+              return (
+                <button
+                  key={service.id}
+                  type="button"
+                  onClick={() => goToService(index)}
+                  className="group flex min-h-service-row w-full items-center gap-5 border border-t-0 border-service-border bg-brand-dark-elevated px-service text-left text-brand-light transition-colors duration-300 hover:bg-primary focus-visible:z-20 focus-visible:bg-primary focus-visible:ring-2 focus-visible:ring-brand-light focus-visible:outline-none"
+                >
+                  <span className="font-mono text-service-tab-number leading-none opacity-60">
+                    {service.number}
+                  </span>
+                  <span className="font-serif text-service-tab leading-tight">
+                    {service.title}
+                  </span>
+                  <Icon
+                    name="arrow-right"
+                    className="ml-auto opacity-50 transition-[opacity,transform] duration-300 group-hover:translate-x-1 group-hover:opacity-100 group-focus-visible:translate-x-1 group-focus-visible:opacity-100"
+                  />
+                </button>
+              );
+            })}
+          </nav>
         </div>
       </div>
     </section>

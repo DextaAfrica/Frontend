@@ -64,8 +64,8 @@ export function InlineNewsletterForm() {
           className="w-full sm:w-newsletter-button"
           disabled={status === "submitting"}
         >
-          <Icon name="arrow-right" />
           {status === "submitting" ? "Subscribing…" : "Subscribe"}
+          <Icon name="arrow-right" />
         </Button>
       </div>
       {message && (

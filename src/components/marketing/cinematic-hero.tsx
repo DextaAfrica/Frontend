@@ -57,8 +57,8 @@ export function CinematicHero({
             variant="onMedia"
             className="w-hero-cta shadow-none"
           >
-            <Icon name="arrow-right" />
             {ctaLabel}
+            <Icon name="arrow-right" />
           </ButtonLink>
         </Reveal>
       </Container>

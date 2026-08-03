@@ -73,8 +73,8 @@ export function FeaturedProjectsSection({
         size="lg"
         className="mx-auto mt-projects w-projects-cta"
       >
-        <Icon name="arrow-right" />
         {heading.ctaLabel}
+        <Icon name="arrow-right" />
       </ButtonLink>
     </Section>
   );
