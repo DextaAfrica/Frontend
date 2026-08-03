@@ -11,7 +11,6 @@ import { Icon } from "@/components/ui/icon";
 import { Eyebrow } from "@/components/ui/typography";
 import { siteConfig } from "@/config/site";
 import { cn } from "@/lib/utils";
-import { useTheme } from "@/providers/theme-provider";
 import { Cluster } from "./cluster";
 import { Container } from "./container";
 import { Stack } from "./stack";
@@ -19,7 +18,6 @@ import { Stack } from "./stack";
 export function SiteHeader() {
   const [open, setOpen] = React.useState(false);
   const pathname = usePathname();
-  const { theme } = useTheme();
   const overlaysHero = pathname === "/" && !open;
   const menuButtonRef = React.useRef<HTMLButtonElement>(null);
   const menuRef = React.useRef<HTMLDivElement>(null);
@@ -83,9 +81,6 @@ export function SiteHeader() {
             </Link>
 
             <div className="ml-auto flex items-center gap-2 pt-0.5">
-              <span className="hidden text-base sm:inline">
-                {theme === "dark" ? "Dark" : "Light"}
-              </span>
               <ThemeToggle className="text-white hover:bg-white/10" />
               <Button
                 ref={menuButtonRef}

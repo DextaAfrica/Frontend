@@ -1,6 +1,7 @@
 import {
   ArrowRight,
   Building2,
+  Monitor,
   Mail,
   MapPin,
   Menu,
@@ -18,6 +19,7 @@ export type IconName =
   | "arrow-right"
   | "architecture"
   | "moon"
+  | "system"
   | "sun"
   | "palette"
   | "menu"
@@ -35,6 +37,7 @@ const icons: Record<IconName, LucideIcon> = {
   "arrow-right": ArrowRight,
   architecture: Building2,
   moon: Moon,
+  system: Monitor,
   sun: Sun,
   palette: Palette,
   menu: Menu,
