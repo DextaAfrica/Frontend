@@ -8,6 +8,7 @@ import * as React from "react";
 import { ThemeToggle } from "@/components/theme/theme-toggle";
 import { Button, ButtonLink } from "@/components/ui/button";
 import { Icon } from "@/components/ui/icon";
+import { Eyebrow } from "@/components/ui/typography";
 import { siteConfig } from "@/config/site";
 import { cn } from "@/lib/utils";
 import { useTheme } from "@/providers/theme-provider";
@@ -261,9 +262,7 @@ export function SiteHeader() {
 
             <div className="grid gap-6 border-t border-border pt-6 sm:grid-cols-[1fr_auto] sm:items-end">
               <Stack gap="sm" className="max-w-md">
-                <p className="text-[0.65rem] font-medium tracking-[0.18em] text-primary uppercase">
-                  Private appointments
-                </p>
+                <Eyebrow>Private appointments</Eyebrow>
                 <p className="text-sm leading-6 text-muted-foreground">
                   Explore residences shaped by architecture, landscape, and a
                   more considered way of living.

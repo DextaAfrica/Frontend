@@ -1,5 +1,5 @@
 import { Section, Stack } from "@/components/layout";
-import { Icon } from "@/components/ui";
+import { Eyebrow, Icon } from "@/components/ui";
 import { Reveal } from "./reveal";
 
 export function QuoteBlock({
@@ -23,9 +23,9 @@ export function QuoteBlock({
           <blockquote className="text-2xl leading-tight font-medium text-balance sm:text-4xl">
             “{quote}”
           </blockquote>
-          <p className="text-xs tracking-[0.14em] text-background/55 uppercase">
+          <Eyebrow className="text-background/55">
             {author} · {role}
-          </p>
+          </Eyebrow>
         </Stack>
       </Reveal>
     </Section>

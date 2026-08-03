@@ -5,6 +5,7 @@ import {
   Card,
   CardContent,
   CardHeading,
+  Eyebrow,
   Icon,
   Text,
 } from "@/components/ui";
@@ -35,10 +36,8 @@ export function ProjectCard({ project }: { project: Project }) {
           <Stack gap="md">
             <Badge>{project.status}</Badge>
             <Stack gap="xs">
-              <CardHeading className="text-2xl">{project.name}</CardHeading>
-              <p className="text-xs font-bold tracking-[0.12em] text-primary uppercase">
-                {project.location}
-              </p>
+              <CardHeading size="lg">{project.name}</CardHeading>
+              <Eyebrow>{project.location}</Eyebrow>
               <Text className="text-sm">{project.description}</Text>
             </Stack>
             <ButtonLink href={href} variant="link">

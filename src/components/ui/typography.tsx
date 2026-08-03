@@ -69,9 +69,16 @@ export function Text({ className, ...props }: React.ComponentProps<"p">) {
   );
 }
 
-export function Eyebrow({ className, ...props }: React.ComponentProps<"p">) {
+const eyebrowTags = { p: "p", figcaption: "figcaption", span: "span" } as const;
+
+export function Eyebrow({
+  className,
+  as = "p",
+  ...props
+}: React.ComponentProps<"p"> & { as?: keyof typeof eyebrowTags }) {
+  const Tag = eyebrowTags[as];
   return (
-    <p
+    <Tag
       className={cn(
         "text-xs font-medium tracking-[0.2em] text-primary uppercase",
         className,

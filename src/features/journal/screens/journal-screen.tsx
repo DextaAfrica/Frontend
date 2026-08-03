@@ -9,6 +9,7 @@ import {
   Card,
   CardContent,
   CardHeading,
+  Eyebrow,
   Text,
 } from "@/components/ui";
 import { articles } from "@/data/articles";
@@ -36,12 +37,10 @@ export function JournalScreen() {
                 />
                 <CardContent className="p-6">
                   <Stack gap="sm">
-                    <p className="text-xs font-bold tracking-[0.12em] text-primary uppercase">
+                    <Eyebrow>
                       {article.category} · {article.date}
-                    </p>
-                    <CardHeading className="text-2xl">
-                      {article.title}
-                    </CardHeading>
+                    </Eyebrow>
+                    <CardHeading size="lg">{article.title}</CardHeading>
                     <Text className="text-sm">
                       Exploring the decisions and ideas that shape enduring
                       places and more meaningful daily experiences.

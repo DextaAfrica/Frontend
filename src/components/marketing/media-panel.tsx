@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { cn } from "@/lib/utils";
+import { Eyebrow } from "@/components/ui";
 import { Reveal } from "./reveal";
 
 const tones = {
@@ -43,9 +44,12 @@ export function MediaPanel({
         aria-hidden
         className="absolute inset-0 bg-gradient-to-t from-black/45 via-transparent to-transparent"
       />
-      <figcaption className="absolute bottom-5 left-5 text-xs font-medium tracking-[0.15em] text-white/75 uppercase">
+      <Eyebrow
+        as="figcaption"
+        className="absolute bottom-5 left-5 text-white/75"
+      >
         {label}
-      </figcaption>
+      </Eyebrow>
     </Reveal>
   );
 }
