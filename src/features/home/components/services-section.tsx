@@ -76,10 +76,14 @@ export function ServicesSection({
           });
 
           for (let index = 1; index < steps; index += 1) {
+            const previous = panels[index - 1];
+            const current = panels[index];
+            if (!previous || !current) continue;
+
             const position = index - 1;
             timeline
-              .to(panels[index - 1], { opacity: 0, y: -12 }, position)
-              .to(panels[index], { opacity: 1, y: 0 }, position);
+              .to(previous, { opacity: 0, y: -12 }, position)
+              .to(current, { opacity: 1, y: 0 }, position);
           }
         },
       );
