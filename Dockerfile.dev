@@ -7,10 +7,17 @@ ENV NODE_ENV=development \
     HOSTNAME=0.0.0.0 \
     PORT=3000
 
-COPY package.json package-lock.json ./
-RUN npm ci
-RUN mkdir -p /app/.next && chown -R node:node /app
+RUN apk add --no-cache su-exec
 
-USER node
+COPY package.json package-lock.json ./
+RUN npm ci \
+    && sha256sum package-lock.json | cut -d ' ' -f 1 > node_modules/.dexta-package-lock.sha256
+
+COPY docker/dev-entrypoint.sh /usr/local/bin/dexta-dev-entrypoint
+RUN chmod +x /usr/local/bin/dexta-dev-entrypoint \
+    && mkdir -p /app/.next \
+    && chown -R node:node /app
+
 EXPOSE 3000
+ENTRYPOINT ["dexta-dev-entrypoint"]
 CMD ["npm", "run", "dev", "--", "--hostname", "0.0.0.0"]

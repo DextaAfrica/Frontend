@@ -460,6 +460,16 @@ dialog[open]::backdrop {
 
 @media (min-width: 64rem) {
   .service-scroll-section {
+    --service-active-height: min(
+      var(--layout-service-panel-height),
+      calc(
+        100svh - (var(--space-services-y) * 2) -
+          ((var(--service-count) - 1) * var(--layout-service-row-height))
+      )
+    );
+  }
+
+  .service-scroll-section {
     height: calc(100svh + (var(--service-count) - 1) * 78svh);
   }
 
@@ -478,21 +488,46 @@ dialog[open]::backdrop {
   }
 
   .service-card-stage {
-    position: relative;
-    min-height: min(
-      var(--layout-service-panel-height),
-      calc(
-        100svh - (var(--space-services-y) * 2) -
-          ((var(--service-count) - 1) * var(--layout-service-row-height))
-      )
+    display: flex;
+    height: calc(
+      var(--service-active-height) +
+        ((var(--service-count) - 1) * var(--layout-service-row-height))
     );
+    flex-direction: column;
+    gap: 0;
+    overflow: hidden;
+    border-radius: var(--shape-service-group);
   }
 
   .service-card {
-    position: absolute;
-    inset: 0;
+    flex: 0 0 auto;
     min-height: 0;
+    border-radius: 0;
+    will-change: height;
+  }
+
+  .service-card + .service-card {
+    border-top: 0;
+  }
+
+  .service-card:first-child {
+    height: var(--service-active-height);
+  }
+
+  .service-card:not(:first-child) {
+    height: var(--layout-service-row-height);
+  }
+
+  .service-expanded-content,
+  .service-collapsed-control,
+  [data-service-media] {
     will-change: transform, opacity;
+  }
+
+  .service-card:first-child .service-collapsed-control,
+  .service-card:not(:first-child) .service-expanded-content {
+    visibility: hidden;
+    opacity: 0;
   }
 }
 

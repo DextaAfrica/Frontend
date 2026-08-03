@@ -13,6 +13,12 @@ Development with hot reload and isolated dependency/cache volumes:
 docker compose -f compose.dev.yaml up --build
 ```
 
+The development container compares the mounted `package-lock.json` with the
+dependency volume on every start. When dependencies change, it runs `npm ci`
+inside the volume before starting Next.js. File polling is enabled by default
+so edits made through Docker Desktop, WSL, or other bind mounts trigger Fast
+Refresh reliably.
+
 Production with the hardened standalone runner:
 
 ```bash
