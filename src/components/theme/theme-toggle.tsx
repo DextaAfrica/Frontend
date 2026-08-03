@@ -19,7 +19,7 @@ const options: readonly {
 
 export function ThemeToggle({ className }: { className?: string }) {
   const mounted = useMounted();
-  const { theme, resolvedTheme, setTheme } = useTheme();
+  const { theme, setTheme } = useTheme();
   const [open, setOpen] = React.useState(false);
   const rootRef = React.useRef<HTMLDivElement>(null);
 
@@ -53,21 +53,26 @@ export function ThemeToggle({ className }: { className?: string }) {
     );
   }
 
-  const activeIcon =
-    theme === "system" ? "system" : resolvedTheme === "dark" ? "moon" : "sun";
-
   return (
     <div ref={rootRef} className="relative">
       <Button
         variant="ghost"
         size="icon"
         onClick={() => setOpen((current) => !current)}
-        aria-label="Choose color theme"
+        aria-label="Change website appearance"
         aria-haspopup="menu"
         aria-expanded={open}
-        className={className}
+        title="Change appearance"
+        className={cn(
+          "border-border/80 bg-surface-elevated/90 text-foreground shadow-sm backdrop-blur-md hover:border-primary/40 hover:bg-muted",
+          className,
+        )}
       >
-        <Icon name={activeIcon} />
+        <Icon name="palette" />
+        <span
+          aria-hidden
+          className="absolute top-1.5 right-1.5 size-1.5 rounded-full bg-primary ring-2 ring-surface-elevated"
+        />
       </Button>
 
       <div

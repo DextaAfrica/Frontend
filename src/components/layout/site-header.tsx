@@ -138,6 +138,12 @@ export function SiteHeader() {
             </Link>
 
             <Cluster className="gap-2 sm:gap-3">
+              <ThemeToggle
+                className={cn(
+                  overlaysHero &&
+                    "border-white/35 bg-black/25 text-white shadow-lg ring-1 ring-black/10 hover:border-white/60 hover:bg-black/40",
+                )}
+              />
               <ButtonLink
                 href="/contact"
                 size="sm"
