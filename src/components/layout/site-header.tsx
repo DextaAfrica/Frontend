@@ -96,7 +96,7 @@ export function SiteHeader() {
         )}
       >
         <Container size="wide">
-          <div className="flex h-16 items-center justify-between gap-3 sm:h-20 sm:gap-4">
+          <div className="flex h-16 flex-nowrap items-center justify-between gap-2 sm:h-20 sm:gap-4">
             <Link
               href="/"
               onClick={closeMenu}
@@ -125,23 +125,20 @@ export function SiteHeader() {
               />
               {!open && (
                 <ButtonLink
-                  href="/contact"
+                  href={siteConfig.navigation.appointmentHref}
                   size="sm"
                   variant={overlaysHero ? "onMedia" : "primary"}
-                  className="hidden text-[0.7rem] tracking-[0.08em] uppercase sm:inline-flex"
+                  className="header-booking hidden text-[0.7rem] tracking-[0.08em] uppercase md:inline-flex"
                 >
-                  Book Inspection
+                  {siteConfig.navigation.appointmentCta}
                 </ButtonLink>
               )}
               <Button
                 ref={menuButtonRef}
-                variant={overlaysHero ? "ghost" : "secondary"}
+                variant="secondary"
                 size="sm"
-                className={cn(
-                  "text-[0.7rem] tracking-[0.08em] uppercase",
-                  overlaysHero &&
-                    "border-brand-light/35 text-brand-light hover:bg-brand-light/10",
-                )}
+                data-on-media={overlaysHero || undefined}
+                className="header-menu-trigger shrink-0 text-[0.7rem] tracking-[0.08em] uppercase"
                 onClick={() => setOpen((current) => !current)}
                 aria-expanded={open}
                 aria-controls="site-navigation"
@@ -200,19 +197,19 @@ export function SiteHeader() {
 
             <div className="grid gap-5 border-t border-border pt-5 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end sm:gap-8 sm:pt-6">
               <Stack gap="sm" className="max-w-md">
-                <Eyebrow>Private appointments</Eyebrow>
+                <Eyebrow>{siteConfig.navigation.appointmentEyebrow}</Eyebrow>
                 <p className="text-sm leading-6 text-muted-foreground">
-                  Explore residences shaped by architecture, landscape, and a
-                  more considered way of living.
+                  {siteConfig.navigation.appointmentDescription}
                 </p>
               </Stack>
               <ButtonLink
-                href="/contact"
+                href={siteConfig.navigation.appointmentHref}
                 size="lg"
                 onClick={closeMenu}
                 className="w-full justify-between sm:w-auto sm:min-w-52"
               >
-                Book Inspection <Icon name="arrow-right" />
+                {siteConfig.navigation.appointmentCta}{" "}
+                <Icon name="arrow-right" />
               </ButtonLink>
             </div>
           </Stack>

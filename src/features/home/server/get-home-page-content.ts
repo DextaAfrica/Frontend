@@ -42,7 +42,6 @@ function isHomePageContent(value: unknown): value is HomePageContent {
     isOptionalString(value.hero.poster) &&
     isRecord(value.intro) &&
     isString(value.intro.heading) &&
-    typeof value.intro.initialWordCount === "number" &&
     isStringArray(value.intro.paragraphs) &&
     isObjectArray(value.services, isService) &&
     hasStrings(value.projectsSection, [
@@ -50,6 +49,7 @@ function isHomePageContent(value: unknown): value is HomePageContent {
       "title",
       "ctaLabel",
       "ctaHref",
+      "cardCtaLabel",
     ]) &&
     isObjectArray(value.projects, isProject) &&
     hasStrings(value.testimonialSection, ["eyebrow", "title"]) &&
@@ -68,7 +68,19 @@ function isService(value: unknown) {
 }
 
 function isProject(value: unknown) {
-  return hasStrings(value, ["id", "name", "location", "image", "href"]);
+  return (
+    isRecord(value) &&
+    hasStrings(value, [
+      "id",
+      "number",
+      "name",
+      "location",
+      "status",
+      "image",
+      "href",
+    ]) &&
+    (value.layout === "feature" || value.layout === "compact")
+  );
 }
 
 function isTestimonial(value: unknown) {

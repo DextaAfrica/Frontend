@@ -13,8 +13,6 @@ concurrency:
 permissions:
   contents: read
   packages: write
-  id-token: write
-  attestations: write
 
 env:
   REGISTRY: ghcr.io
@@ -93,12 +91,6 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha,scope=release
           cache-to: type=gha,mode=max,scope=release
-      - name: Generate signed build provenance
-        uses: actions/attest@v4
-        with:
-          subject-name: ${{ steps.image.outputs.name }}
-          subject-digest: ${{ steps.build.outputs.digest }}
-          push-to-registry: true
       - name: Scan published image
         uses: aquasecurity/trivy-action@v0.36.0
         with:
@@ -131,7 +123,7 @@ jobs:
             "${DEPLOY_WEBHOOK}"
       - name: Explain provider setup when no webhook exists
         if: env.DEPLOY_WEBHOOK == ''
-        run: echo "Image published and attested. Configure PRODUCTION_DEPLOY_WEBHOOK on the production environment to enable deployment."
+        run: echo "Image published. Configure PRODUCTION_DEPLOY_WEBHOOK on the production environment to enable deployment."
       - name: Verify production health
         if: env.PRODUCTION_URL != '' && env.DEPLOY_WEBHOOK != ''
         run: curl --fail-with-body --retry 8 --retry-delay 10 "${PRODUCTION_URL%/}/api/health"
