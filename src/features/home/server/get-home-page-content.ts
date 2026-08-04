@@ -42,7 +42,6 @@ function isHomePageContent(value: unknown): value is HomePageContent {
     isOptionalString(value.hero.poster) &&
     isRecord(value.intro) &&
     isString(value.intro.heading) &&
-    typeof value.intro.initialWordCount === "number" &&
     isStringArray(value.intro.paragraphs) &&
     isObjectArray(value.services, isService) &&
     hasStrings(value.projectsSection, [

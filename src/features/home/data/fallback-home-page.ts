@@ -11,7 +11,6 @@ export const fallbackHomePageContent = {
   },
   intro: {
     heading: "Who we are",
-    initialWordCount: 5,
     paragraphs: [
       "From site to skyline, Dexta Africa delivers value-driven real estate solutions that turn dreams into addresses.",
       "Whether you're investing, living, or learning, we have the right opportunity for you.",
@@ -32,7 +31,7 @@ export const fallbackHomePageContent = {
       title: "Site and Service",
       description:
         "We identify, prepare, and deliver strategically located land with the infrastructure needed for lasting value.",
-      image: "/images/dexta-residential.jpg",
+      image: "/images/service-site-and-service.png",
     },
     {
       id: "hospitality-development",
@@ -40,7 +39,7 @@ export const fallbackHomePageContent = {
       title: "Hospitality Development",
       description:
         "We create considered hospitality destinations shaped around place, experience, and sustainable commercial returns.",
-      image: "/images/dexta-residential.jpg",
+      image: "/images/project-olumo.jpg",
     },
   ],
   projectsSection: {

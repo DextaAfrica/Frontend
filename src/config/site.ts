@@ -10,6 +10,13 @@ export const siteConfig = {
     { label: "About us", href: "/about" },
     { label: "Contact us", href: "/contact" },
   ],
+  navigation: {
+    appointmentEyebrow: "Private appointments",
+    appointmentDescription:
+      "Explore residences shaped by architecture, landscape, and a more considered way of living.",
+    appointmentCta: "Book Inspection",
+    appointmentHref: "/contact",
+  },
   contact: {
     phone: "+234 811 400 0480",
     email: "hi@dextaafrica.com",

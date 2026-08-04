@@ -59,9 +59,9 @@
   --service-border: #000000;
   --text-subtle: #969696;
 
-  --section-intro-height: clamp(28rem, 46.944vw, 42.25rem);
+  --section-intro-height: clamp(22rem, 32vw, 28rem);
   --scroll-copy-size: clamp(1.5rem, 2.45vw, 2.25rem);
-  --scroll-copy-muted-opacity: 0.31;
+  --scroll-copy-muted-opacity: 0.48;
   --type-hero: clamp(2.35rem, 3.75vw, 3.5rem);
   --letter-spacing-hero: 0.0968em;
   --letter-spacing-heading: -0.04em;
@@ -87,10 +87,12 @@
   --layout-newsletter-card-width: 19.4375rem;
   --layout-newsletter-card-height: 10.375rem;
   --layout-newsletter-input-height: 4.0625rem;
-  --layout-service-panel-height: 43rem;
+  --layout-service-panel-height: 38rem;
   --layout-stat-card-height: 20.375rem;
-  --layout-service-mobile-height: 32rem;
-  --layout-service-tablet-height: 36rem;
+  --layout-service-mobile-height: 28rem;
+  --layout-service-tablet-height: 32rem;
+  --layout-service-scroll-travel: 44svh;
+  --layout-service-scroll-travel-desktop: 54svh;
   --layout-service-row-height: clamp(5rem, 6.736vw, 6.0625rem);
   --width-services: 87.875rem;
   --width-testimonial-heading: 32.8125rem;
@@ -468,93 +470,123 @@ dialog[open]::backdrop {
 
 .service-scroll-section {
   position: relative;
+  --service-active-height: clamp(
+    24rem,
+    calc(
+      100svh - (var(--space-services-y) * 2) -
+        ((var(--service-count) - 1) * var(--layout-service-row-height))
+    ),
+    var(--layout-service-mobile-height)
+  );
+  height: calc(
+    var(--service-active-height) +
+      ((var(--service-count) - 1) * var(--layout-service-row-height)) +
+      (var(--space-services-y) * 2) +
+      ((var(--service-count) - 1) * var(--layout-service-scroll-travel))
+  );
 }
 
 .service-sticky-stage {
-  min-height: 100svh;
+  position: sticky;
+  top: 0;
+  display: grid;
+  height: calc(
+    var(--service-active-height) +
+      ((var(--service-count) - 1) * var(--layout-service-row-height)) +
+      (var(--space-services-y) * 2)
+  );
+  min-height: 0;
+  place-items: center;
+  overflow: clip;
+}
+
+.service-shell {
+  max-height: calc(100svh - (var(--space-services-y) * 2));
 }
 
 .service-card-stage {
-  display: grid;
-  gap: 0.75rem;
+  position: relative;
+  height: calc(
+    var(--service-active-height) +
+      ((var(--service-count) - 1) * var(--layout-service-row-height))
+  );
+  overflow: hidden;
+  border-radius: var(--shape-service-group);
 }
 
 .service-card {
-  position: relative;
-  min-height: var(--layout-service-mobile-height);
+  position: absolute !important;
+  inset-inline: 0;
+  top: 0;
+  min-height: 0;
+  transform-origin: 50% 0%;
+  will-change: transform, opacity;
+}
+
+[data-service-media] {
+  will-change: transform, opacity;
+}
+
+.service-card:first-child {
+  height: var(--service-active-height);
+}
+
+.service-card:not(:first-child) {
+  height: var(--layout-service-row-height);
+  transform: translateY(
+    calc(
+      var(--service-active-height) +
+        ((var(--service-index) - 1) * var(--layout-service-row-height))
+    )
+  );
+}
+
+.service-card:first-child .service-collapsed-control,
+.service-card:not(:first-child) .service-expanded-content {
+  visibility: hidden;
+  opacity: 0;
+}
+
+@media (max-width: 63.999rem) {
+  .header-booking {
+    display: none !important;
+  }
+}
+
+@media (max-width: 29.999rem) {
+  .service-expanded-content {
+    padding: clamp(1.25rem, 5vw, 1.75rem);
+  }
+
+  .service-expanded-content p {
+    max-width: min(100%, 20rem);
+  }
 }
 
 @media (min-width: 64rem) {
   .service-scroll-section {
-    --service-active-height: min(
-      var(--layout-service-panel-height),
+    --service-active-height: clamp(
+      24rem,
       calc(
         100svh - (var(--space-services-y) * 2) -
           ((var(--service-count) - 1) * var(--layout-service-row-height))
-      )
+      ),
+      var(--layout-service-panel-height)
     );
-    height: calc(100svh + (var(--service-count) - 1) * 78svh);
-  }
-
-  .service-sticky-stage {
-    position: sticky;
-    top: 0;
-    display: grid;
-    height: 100svh;
-    min-height: 42rem;
-    place-items: center;
-    overflow: clip;
-  }
-
-  .service-shell {
-    max-height: calc(100svh - (var(--space-services-y) * 2));
-  }
-
-  .service-card-stage {
-    position: relative;
-    display: block;
     height: calc(
       var(--service-active-height) +
-        ((var(--service-count) - 1) * var(--layout-service-row-height))
+        ((var(--service-count) - 1) * var(--layout-service-row-height)) +
+        (var(--space-services-y) * 2) +
+        (
+          (var(--service-count) - 1) *
+            var(--layout-service-scroll-travel-desktop)
+        )
     );
-    overflow: hidden;
-    border-radius: var(--shape-service-group);
-  }
-
-  .service-card {
-    position: absolute !important;
-    inset-inline: 0;
-    top: 0;
-    min-height: 0;
-    will-change: transform, opacity;
-  }
-
-  [data-service-media] {
-    will-change: transform, opacity;
-  }
-
-  .service-card:first-child {
-    height: var(--service-active-height);
-  }
-
-  .service-card:not(:first-child) {
-    height: var(--layout-service-row-height);
-    transform: translateY(
-      calc(
-        var(--service-active-height) +
-          ((var(--service-index) - 1) * var(--layout-service-row-height))
-      )
-    );
-  }
-
-  .service-card:first-child .service-collapsed-control,
-  .service-card:not(:first-child) .service-expanded-content {
-    visibility: hidden;
-    opacity: 0;
+    min-height: 42rem;
   }
 }
 
-@media (min-width: 64rem) and (prefers-reduced-motion: reduce) {
+@media (prefers-reduced-motion: reduce) {
   .service-scroll-section {
     height: auto;
   }

@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import { Container } from "@/components/layout";
+import { homeMotion } from "@/config/home-motion";
 import { cn } from "@/lib/utils";
 
 export interface ScrollRevealCopyProps extends Omit<
@@ -28,6 +29,7 @@ export function ScrollRevealCopy({
     if (!stage) return;
 
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const motion = homeMotion.intro;
     let frame = 0;
     let currentProgress = 0;
     let targetProgress = 0;
@@ -46,16 +48,18 @@ export function ScrollRevealCopy({
         }
 
         const animatedIndex = index - initialWordCount;
-        const start = (animatedIndex / animatedWords) * 0.72;
+        const start = (animatedIndex / animatedWords) * motion.revealSpan;
         const linearProgress = Math.min(
           1,
-          Math.max(0, (progress - start) / 0.28),
+          Math.max(0, (progress - start) / motion.wordTransitionSpan),
         );
         const easedProgress =
           linearProgress * linearProgress * (3 - 2 * linearProgress);
 
-        word.style.opacity = String(0.2 + easedProgress * 0.8);
-        word.style.transform = `translateY(${(1 - easedProgress) * 0.045}em)`;
+        word.style.opacity = String(
+          motion.mutedOpacity + easedProgress * (1 - motion.mutedOpacity),
+        );
+        word.style.transform = `translateY(${(1 - easedProgress) * motion.wordOffsetEm}em)`;
       });
     };
 
@@ -68,8 +72,8 @@ export function ScrollRevealCopy({
       }
 
       const bounds = stage.getBoundingClientRect();
-      const revealStart = window.innerHeight * 0.82;
-      const revealEnd = -bounds.height * 0.12;
+      const revealStart = window.innerHeight * motion.viewportStart;
+      const revealEnd = -bounds.height * motion.sectionEnd;
       const distance = revealStart - revealEnd;
       targetProgress = Math.min(
         1,
@@ -79,11 +83,11 @@ export function ScrollRevealCopy({
 
     const render = () => {
       const difference = targetProgress - currentProgress;
-      currentProgress += difference * 0.2;
+      currentProgress += difference * motion.smoothing;
 
       paint(currentProgress);
 
-      if (Math.abs(difference) > 0.0005) {
+      if (Math.abs(difference) > motion.settleThreshold) {
         frame = window.requestAnimationFrame(render);
       } else {
         currentProgress = targetProgress;

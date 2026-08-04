@@ -9,7 +9,6 @@ export interface HomeHeroContent {
 
 export interface HomeIntroContent {
   heading: string;
-  initialWordCount: number;
   paragraphs: readonly string[];
 }
 
