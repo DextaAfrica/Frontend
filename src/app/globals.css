@@ -545,6 +545,59 @@ dialog[open]::backdrop {
   );
 }
 
+/* Header controls own their contrast instead of inheriting it from the page. */
+.header-menu-trigger {
+  border-color: var(--border) !important;
+  background: var(--surface-elevated) !important;
+  color: var(--foreground) !important;
+  box-shadow: 0 1px 3px rgb(0 0 0 / 0.14);
+}
+
+.header-menu-trigger:hover,
+.header-menu-trigger[aria-expanded="true"] {
+  border-color: color-mix(
+    in srgb,
+    var(--foreground) 42%,
+    var(--border)
+  ) !important;
+  background: var(--muted) !important;
+  color: var(--foreground) !important;
+}
+
+.header-menu-trigger[data-on-media="true"] {
+  border-color: color-mix(
+    in srgb,
+    var(--brand-light) 42%,
+    transparent
+  ) !important;
+  background: color-mix(in srgb, var(--brand-dark) 86%, transparent) !important;
+  color: var(--brand-light) !important;
+  box-shadow: 0 2px 12px rgb(0 0 0 / 0.32);
+}
+
+.header-menu-trigger[data-on-media="true"]:hover {
+  border-color: color-mix(
+    in srgb,
+    var(--brand-light) 68%,
+    transparent
+  ) !important;
+  background: color-mix(in srgb, var(--brand-dark) 72%, transparent) !important;
+  color: var(--brand-light) !important;
+}
+
+.header-menu-trigger:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+@media (forced-colors: active) {
+  .header-menu-trigger {
+    border-color: ButtonText !important;
+    background: ButtonFace !important;
+    color: ButtonText !important;
+  }
+}
+
 .service-scroll-section {
   position: relative;
   isolation: isolate;

@@ -135,13 +135,10 @@ export function SiteHeader() {
               )}
               <Button
                 ref={menuButtonRef}
-                variant={overlaysHero ? "ghost" : "secondary"}
+                variant="secondary"
                 size="sm"
-                className={cn(
-                  "shrink-0 text-[0.7rem] tracking-[0.08em] uppercase",
-                  overlaysHero &&
-                    "border-brand-light/35 text-brand-light hover:bg-brand-light/10",
-                )}
+                data-on-media={overlaysHero || undefined}
+                className="header-menu-trigger shrink-0 text-[0.7rem] tracking-[0.08em] uppercase"
                 onClick={() => setOpen((current) => !current)}
                 aria-expanded={open}
                 aria-controls="site-navigation"
