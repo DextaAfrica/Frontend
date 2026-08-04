@@ -22,11 +22,16 @@ export interface ServiceContent {
 
 export interface ProjectContent {
   id: string;
+  number: string;
   name: string;
   location: string;
+  status: string;
   image: string;
   href: string;
+  layout: ProjectLayout;
 }
+
+export type ProjectLayout = "feature" | "compact";
 
 export interface TestimonialContent {
   id: string;
@@ -58,6 +63,7 @@ export interface HomePageContent {
   projectsSection: SectionHeadingContent & {
     ctaLabel: string;
     ctaHref: string;
+    cardCtaLabel: string;
   };
   projects: readonly ProjectContent[];
   testimonialSection: SectionHeadingContent;

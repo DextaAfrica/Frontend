@@ -29,173 +29,204 @@ export function ServicesSection({
       const media = gsap.matchMedia();
       const motion = homeMotion.services;
 
-      media.add(motion.enabledMedia, () => {
-        const cards = gsap.utils.toArray<HTMLElement>(
-          section.querySelectorAll("[data-service-card]"),
-        );
-        const expanded = gsap.utils.toArray<HTMLElement>(
-          section.querySelectorAll("[data-service-expanded]"),
-        );
-        const collapsed = gsap.utils.toArray<HTMLElement>(
-          section.querySelectorAll("[data-service-collapsed]"),
-        );
-        const images = gsap.utils.toArray<HTMLElement>(
-          section.querySelectorAll("[data-service-media]"),
-        );
-        const firstCard = cards[0];
-        const secondCard = cards[1];
-        if (!firstCard || !secondCard) return;
+      media.add(
+        {
+          motion: motion.enabledMedia,
+          compact: motion.compactMedia,
+        },
+        (context) => {
+          const conditions = context.conditions as
+            { motion?: boolean; compact?: boolean } | undefined;
+          if (!conditions?.motion) return;
+          const profile = conditions.compact ? motion.compact : motion.wide;
+          const cards = gsap.utils.toArray<HTMLElement>(
+            section.querySelectorAll("[data-service-card]"),
+          );
+          const expanded = gsap.utils.toArray<HTMLElement>(
+            section.querySelectorAll("[data-service-expanded]"),
+          );
+          const collapsed = gsap.utils.toArray<HTMLElement>(
+            section.querySelectorAll("[data-service-collapsed]"),
+          );
+          const images = gsap.utils.toArray<HTMLElement>(
+            section.querySelectorAll("[data-service-media]"),
+          );
+          const firstCard = cards[0];
+          const secondCard = cards[1];
+          if (!firstCard || !secondCard) return;
 
-        const activeHeight = firstCard.getBoundingClientRect().height;
-        const rowHeight = secondCard.getBoundingClientRect().height;
-        const layoutFor = (cardIndex: number, active: number) => {
-          if (cardIndex < active) {
-            return { height: rowHeight, y: cardIndex * rowHeight };
-          }
-          if (cardIndex === active) {
-            return { height: activeHeight, y: active * rowHeight };
-          }
-          return {
-            height: rowHeight,
-            y:
-              active * rowHeight +
-              activeHeight +
-              (cardIndex - active - 1) * rowHeight,
+          let activeHeight = 0;
+          let rowHeight = 0;
+          const measureCards = () => {
+            activeHeight = firstCard.getBoundingClientRect().height;
+            rowHeight = secondCard.getBoundingClientRect().height;
           };
-        };
+          measureCards();
 
-        gsap.set(cards, {
-          position: "absolute",
-          insetInline: 0,
-          top: 0,
-          zIndex: (index) => index + 1,
-          scale: 1,
-          opacity: 1,
-          transformOrigin: "50% 0%",
-          height: (index) => layoutFor(index, 0).height,
-          y: (index) => layoutFor(index, 0).y,
-        });
-        gsap.set(expanded, {
-          autoAlpha: (index) => (index === 0 ? 1 : 0),
-          y: (index) => (index === 0 ? 0 : 16),
-        });
-        gsap.set(collapsed, {
-          autoAlpha: (index) => (index === 0 ? 0 : 1),
-        });
-        gsap.set(images, {
-          scale: (index) => (index === 0 ? 1 : motion.mediaScale),
-          yPercent: (index) => (index === 0 ? 0 : motion.mediaOffsetPercent),
-        });
+          const layoutFor = (cardIndex: number, active: number) => {
+            if (cardIndex < active) {
+              return { height: rowHeight, y: cardIndex * rowHeight };
+            }
+            if (cardIndex === active) {
+              return { height: activeHeight, y: active * rowHeight };
+            }
+            return {
+              height: rowHeight,
+              y:
+                active * rowHeight +
+                activeHeight +
+                (cardIndex - active - 1) * rowHeight,
+            };
+          };
 
-        const timeline = gsap.timeline({ paused: true });
+          gsap.set(cards, {
+            position: "absolute",
+            insetInline: 0,
+            top: 0,
+            zIndex: (index) => index + 1,
+            scale: 1,
+            opacity: 1,
+            transformOrigin: "50% 0%",
+            height: (index) => layoutFor(index, 0).height,
+            y: (index) => layoutFor(index, 0).y,
+          });
+          gsap.set(expanded, {
+            autoAlpha: (index) => (index === 0 ? 1 : 0),
+            y: (index) => (index === 0 ? 0 : 16),
+          });
+          gsap.set(collapsed, {
+            autoAlpha: (index) => (index === 0 ? 0 : 1),
+          });
+          gsap.set(images, {
+            force3D: true,
+            scale: (index) => (index === 0 ? 1 : profile.mediaScale),
+            yPercent: (index) => (index === 0 ? 0 : profile.mediaOffsetPercent),
+          });
 
-        for (let nextIndex = 1; nextIndex < cards.length; nextIndex += 1) {
-          const position = nextIndex - 1;
-          const previousExpanded = expanded[nextIndex - 1];
-          const previousCollapsed = collapsed[nextIndex - 1];
-          const currentExpanded = expanded[nextIndex];
-          const currentCollapsed = collapsed[nextIndex];
-          const currentImage = images[nextIndex];
-          if (
-            !previousExpanded ||
-            !previousCollapsed ||
-            !currentExpanded ||
-            !currentCollapsed ||
-            !currentImage
-          ) {
-            continue;
+          const timeline = gsap.timeline({ paused: true });
+
+          for (let nextIndex = 1; nextIndex < cards.length; nextIndex += 1) {
+            const position = nextIndex - 1;
+            const previousExpanded = expanded[nextIndex - 1];
+            const previousCollapsed = collapsed[nextIndex - 1];
+            const currentExpanded = expanded[nextIndex];
+            const currentCollapsed = collapsed[nextIndex];
+            const previousImage = images[nextIndex - 1];
+            const currentImage = images[nextIndex];
+            if (
+              !previousExpanded ||
+              !previousCollapsed ||
+              !currentExpanded ||
+              !currentCollapsed ||
+              !previousImage ||
+              !currentImage
+            ) {
+              continue;
+            }
+
+            timeline
+              .to(
+                previousExpanded,
+                {
+                  autoAlpha: 0,
+                  y: -6,
+                  duration: motion.contentTransition,
+                  ease: "none",
+                },
+                position + motion.collapsedExitAt,
+              )
+              .to(
+                previousCollapsed,
+                {
+                  autoAlpha: 1,
+                  y: 0,
+                  duration: motion.contentTransition,
+                  ease: "none",
+                },
+                position + motion.collapsedExitAt,
+              )
+              .to(
+                currentCollapsed,
+                {
+                  autoAlpha: 0,
+                  y: -6,
+                  duration: motion.contentTransition,
+                  ease: "none",
+                },
+                position + motion.collapsedExitAt,
+              )
+              .to(
+                currentExpanded,
+                {
+                  autoAlpha: 1,
+                  y: 0,
+                  duration: motion.contentTransition,
+                  ease: "none",
+                },
+                position + motion.expandedEnterAt,
+              )
+              .to(
+                previousImage,
+                {
+                  scale: profile.mediaExitScale,
+                  yPercent: profile.mediaExitPercent,
+                  duration: motion.cardTransition,
+                  ease: "none",
+                },
+                position,
+              )
+              .to(
+                currentImage,
+                {
+                  scale: 1,
+                  yPercent: 0,
+                  duration: motion.cardTransition,
+                  ease: "none",
+                },
+                position,
+              );
+
+            cards.forEach((card, cardIndex) => {
+              timeline.to(
+                card,
+                {
+                  height: () => layoutFor(cardIndex, nextIndex).height,
+                  y: () => layoutFor(cardIndex, nextIndex).y,
+                  duration: motion.cardTransition,
+                  ease: "none",
+                },
+                position,
+              );
+            });
           }
 
-          timeline
-            .to(
-              previousExpanded,
-              {
-                autoAlpha: 0,
-                y: -6,
-                duration: motion.contentTransition,
-                ease: "none",
-              },
-              position + motion.collapsedExitAt,
-            )
-            .to(
-              previousCollapsed,
-              {
-                autoAlpha: 1,
-                y: 0,
-                duration: motion.contentTransition,
-                ease: "none",
-              },
-              position + motion.collapsedExitAt,
-            )
-            .to(
-              currentCollapsed,
-              {
-                autoAlpha: 0,
-                y: -6,
-                duration: motion.contentTransition,
-                ease: "none",
-              },
-              position + motion.collapsedExitAt,
-            )
-            .to(
-              currentExpanded,
-              {
-                autoAlpha: 1,
-                y: 0,
-                duration: motion.contentTransition,
-                ease: "none",
-              },
-              position + 0.8,
-            )
-            .to(
-              currentImage,
-              {
-                scale: 1,
-                yPercent: 0,
-                duration: motion.cardTransition,
-                ease: "none",
-              },
-              position,
-            );
+          ScrollTrigger.addEventListener("refreshInit", measureCards);
 
-          cards.forEach((card, cardIndex) => {
-            const layout = layoutFor(cardIndex, nextIndex);
-            timeline.to(
-              card,
-              {
-                height: layout.height,
-                y: layout.y,
-                duration: motion.cardTransition,
-                ease: "none",
-              },
-              position,
-            );
+          const trigger = ScrollTrigger.create({
+            trigger: section,
+            start: motion.start,
+            end: motion.end,
+            animation: timeline,
+            scrub: profile.scrub,
+            invalidateOnRefresh: true,
+            onUpdate: ({ progress }) => {
+              const completedTransitions = Math.floor(
+                progress * (services.length - 1) + 0.0001,
+              );
+              const next = Math.min(services.length - 1, completedTransitions);
+              setActiveIndex((current) => (current === next ? current : next));
+            },
           });
-        }
+          scrollTriggerRef.current = trigger;
 
-        const trigger = ScrollTrigger.create({
-          trigger: section,
-          start: motion.start,
-          end: motion.end,
-          animation: timeline,
-          scrub: motion.scrub,
-          invalidateOnRefresh: true,
-          onUpdate: ({ progress }) => {
-            const completedTransitions = Math.floor(
-              progress * (services.length - 1) + 0.0001,
-            );
-            const next = Math.min(services.length - 1, completedTransitions);
-            setActiveIndex((current) => (current === next ? current : next));
-          },
-        });
-        scrollTriggerRef.current = trigger;
-
-        return () => {
-          scrollTriggerRef.current = null;
-          trigger.kill();
-          timeline.kill();
-        };
-      });
+          return () => {
+            ScrollTrigger.removeEventListener("refreshInit", measureCards);
+            scrollTriggerRef.current = null;
+            trigger.kill();
+            timeline.kill();
+          };
+        },
+      );
 
       return () => media.revert();
     },
@@ -240,7 +271,7 @@ export function ServicesSection({
                   key={service.id}
                   data-service-card
                   data-active={isActive || undefined}
-                  className="service-card relative isolate min-h-service-mobile overflow-hidden bg-brand-dark-elevated shadow-service-panel sm:min-h-service-tablet lg:min-h-0"
+                  className="service-card relative isolate min-h-service-mobile overflow-hidden bg-black sm:min-h-service-tablet lg:min-h-0"
                   style={
                     {
                       position: "relative",
@@ -282,7 +313,7 @@ export function ServicesSection({
                     tabIndex={isActive ? -1 : 0}
                     aria-label={`Show ${service.title}`}
                     onClick={() => goToService(index)}
-                    className="service-collapsed-control group absolute inset-x-0 bottom-0 flex h-service-row w-full items-center gap-5 px-service text-left text-brand-light transition-colors hover:bg-brand-dark-elevated focus-visible:ring-2 focus-visible:ring-brand-light focus-visible:outline-none focus-visible:ring-inset"
+                    className="service-collapsed-control group absolute inset-x-0 bottom-0 isolate flex h-service-row w-full items-center gap-5 !bg-black px-service text-left text-brand-light transition-colors hover:!bg-brand-dark-elevated focus-visible:ring-2 focus-visible:ring-brand-light focus-visible:outline-none focus-visible:ring-inset"
                   >
                     <span className="font-mono text-service-tab-number leading-none opacity-60">
                       {service.number}

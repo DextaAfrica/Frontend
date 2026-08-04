@@ -49,6 +49,7 @@ function isHomePageContent(value: unknown): value is HomePageContent {
       "title",
       "ctaLabel",
       "ctaHref",
+      "cardCtaLabel",
     ]) &&
     isObjectArray(value.projects, isProject) &&
     hasStrings(value.testimonialSection, ["eyebrow", "title"]) &&
@@ -67,7 +68,19 @@ function isService(value: unknown) {
 }
 
 function isProject(value: unknown) {
-  return hasStrings(value, ["id", "name", "location", "image", "href"]);
+  return (
+    isRecord(value) &&
+    hasStrings(value, [
+      "id",
+      "number",
+      "name",
+      "location",
+      "status",
+      "image",
+      "href",
+    ]) &&
+    (value.layout === "feature" || value.layout === "compact")
+  );
 }
 
 function isTestimonial(value: unknown) {

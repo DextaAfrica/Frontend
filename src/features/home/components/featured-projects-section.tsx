@@ -1,6 +1,5 @@
 import Image from "next/image";
-import Link from "next/link";
-import { Grid, Section } from "@/components/layout";
+import { Section } from "@/components/layout";
 import {
   EditorialSectionHeading,
   RevealGroup,
@@ -8,7 +7,17 @@ import {
 } from "@/components/marketing";
 import { ButtonLink, Icon } from "@/components/ui";
 import { isRemoteAsset } from "@/lib/media";
-import type { HomePageContent, ProjectContent } from "../types/home-page";
+import { cn } from "@/lib/utils";
+import type {
+  HomePageContent,
+  ProjectContent,
+  ProjectLayout,
+} from "../types/home-page";
+
+const projectLayouts: Record<ProjectLayout, string> = {
+  feature: "project-card-feature md:col-span-7 md:row-span-2",
+  compact: "project-card-compact md:col-span-5",
+};
 
 export function FeaturedProjectsSection({
   projects,
@@ -24,59 +33,72 @@ export function FeaturedProjectsSection({
         title={heading.title}
       />
 
-      <RevealGroup>
-        <Grid columns="two" gap="sm" className="mt-14 gap-y-projects">
-          {projects.map((project, index) => (
-            <RevealItem
-              as="article"
-              key={project.id}
-              className={
-                index === 1
-                  ? "md:col-start-2 md:mt-24"
-                  : index === 2
-                    ? "md:col-span-2"
-                    : undefined
-              }
-            >
-              <Link href={project.href} className="group block">
-                <div
-                  style={{ position: "relative" }}
-                  className={
-                    index === 2
-                      ? "project-media project-media-wide"
-                      : "project-media"
-                  }
-                >
-                  <Image
-                    src={project.image}
-                    alt={project.name}
-                    fill
-                    sizes={
-                      index === 2 ? "86vw" : "(min-width: 768px) 43vw, 100vw"
-                    }
-                    unoptimized={isRemoteAsset(project.image)}
-                    className="object-cover transition-transform duration-700 ease-[var(--ease-premium)] group-hover:scale-[1.015]"
-                  />
+      <RevealGroup className="project-mosaic mt-14 grid gap-project-grid md:grid-cols-12 md:grid-rows-2">
+        {projects.map((project) => (
+          <RevealItem
+            as="article"
+            key={project.id}
+            className={cn("min-h-0", projectLayouts[project.layout])}
+          >
+            <div className="group project-card relative size-full overflow-hidden bg-muted focus-within:ring-2 focus-within:ring-ring">
+              <Image
+                src={project.image}
+                alt={project.name}
+                fill
+                sizes={
+                  project.layout === "feature"
+                    ? "(min-width: 768px) 55vw, 100vw"
+                    : "(min-width: 768px) 40vw, 100vw"
+                }
+                unoptimized={isRemoteAsset(project.image)}
+                className="duration-project-media object-cover transition-transform ease-premium group-hover:scale-project-media group-focus-visible:scale-project-media"
+              />
+              <span
+                aria-hidden
+                className="project-card-shade absolute inset-0 bg-gradient-to-t from-black/55 via-transparent to-black/25"
+              />
+              <div className="absolute inset-x-0 top-0 z-10 flex items-start justify-between gap-5 p-project-card text-white">
+                <span className="font-mono text-xs tracking-project-index text-white/75">
+                  {project.number}
+                </span>
+                <span className="border border-white/35 bg-black/35 px-3 py-1.5 text-[0.6875rem] tracking-project-status uppercase backdrop-blur-md">
+                  {project.status}
+                </span>
+              </div>
+              <div className="project-card-panel absolute inset-x-0 bottom-0 z-10 bg-brand-light p-project-card text-brand-dark">
+                <span className="mb-4 block h-px w-divider bg-brand-dark" />
+                <div className="flex flex-col items-start justify-between gap-5 sm:flex-row sm:items-end sm:gap-6">
+                  <div>
+                    <h3 className="font-serif text-project-title leading-editorial tracking-editorial">
+                      {project.name}
+                    </h3>
+                    <p className="mt-2 text-sm text-brand-dark/65">
+                      {project.location}
+                    </p>
+                  </div>
+                  <ButtonLink
+                    href={project.href}
+                    variant="primary"
+                    size="sm"
+                    className="project-card-action shrink-0"
+                    aria-label={`${heading.cardCtaLabel}: ${project.name}`}
+                  >
+                    {heading.cardCtaLabel}
+                    <Icon name="arrow-right" />
+                  </ButtonLink>
                 </div>
-                <div className="mt-4 flex flex-col justify-between gap-2 text-sm leading-tight sm:flex-row sm:gap-6 sm:text-base sm:leading-none">
-                  <h3 className="font-medium">{project.name}</h3>
-                  <p className="text-right">{project.location}</p>
-                </div>
-              </Link>
-            </RevealItem>
-          ))}
-        </Grid>
+              </div>
+            </div>
+          </RevealItem>
+        ))}
       </RevealGroup>
 
-      <ButtonLink
-        href={heading.ctaHref}
-        variant="neutral"
-        size="lg"
-        className="mx-auto mt-projects w-projects-cta"
-      >
-        {heading.ctaLabel}
-        <Icon name="arrow-right" />
-      </ButtonLink>
+      <div className="mt-projects flex justify-end">
+        <ButtonLink href={heading.ctaHref} variant="neutral" size="lg">
+          {heading.ctaLabel}
+          <Icon name="arrow-right" />
+        </ButtonLink>
+      </div>
     </Section>
   );
 }
