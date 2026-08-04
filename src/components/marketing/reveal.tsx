@@ -1,0 +1,93 @@
+"use client";
+
+import * as React from "react";
+import { gsap, useGSAP } from "@/lib/gsap";
+
+const REVEAL_FROM = { opacity: 0, y: 24 };
+const REVEAL_DURATION = 0.72;
+const REVEAL_EASE = "power3.out";
+
+type RevealTag = "div" | "figure" | "article" | "span" | "li";
+
+export interface RevealProps extends React.HTMLAttributes<HTMLElement> {
+  as?: RevealTag;
+  delay?: number;
+}
+
+/** Fades and slides an element in the first time it enters the viewport. */
+export function Reveal({ as: Tag = "div", delay = 0, ...props }: RevealProps) {
+  const ref = React.useRef<HTMLElement>(null);
+
+  useGSAP(() => {
+    const mm = gsap.matchMedia();
+    mm.add("(prefers-reduced-motion: no-preference)", () => {
+      gsap.fromTo(ref.current, REVEAL_FROM, {
+        opacity: 1,
+        y: 0,
+        duration: REVEAL_DURATION,
+        delay,
+        ease: REVEAL_EASE,
+        force3D: true,
+        clearProps: "transform,willChange",
+        scrollTrigger: {
+          trigger: ref.current,
+          start: "top 88%",
+          once: true,
+        },
+      });
+    });
+    return () => mm.revert();
+  }, [delay]);
+
+  return <Tag ref={ref as never} {...props} />;
+}
+
+export interface RevealGroupProps extends React.HTMLAttributes<HTMLElement> {
+  as?: RevealTag;
+  /** Seconds between each child's reveal. */
+  stagger?: number;
+}
+
+/** Reveals its [data-reveal-item] children in sequence as the group enters the viewport. */
+export function RevealGroup({
+  as: Tag = "div",
+  stagger = 0.12,
+  ...props
+}: RevealGroupProps) {
+  const ref = React.useRef<HTMLElement>(null);
+
+  useGSAP(() => {
+    const mm = gsap.matchMedia();
+    mm.add("(prefers-reduced-motion: no-preference)", () => {
+      const items = ref.current?.querySelectorAll("[data-reveal-item]");
+      if (!items?.length) return;
+
+      gsap.fromTo(items, REVEAL_FROM, {
+        opacity: 1,
+        y: 0,
+        duration: REVEAL_DURATION,
+        ease: REVEAL_EASE,
+        force3D: true,
+        clearProps: "transform,willChange",
+        stagger,
+        scrollTrigger: {
+          trigger: ref.current,
+          start: "top 88%",
+          once: true,
+        },
+      });
+    });
+    return () => mm.revert();
+  }, [stagger]);
+
+  return <Tag ref={ref as never} {...props} />;
+}
+
+export type RevealItemProps = React.HTMLAttributes<HTMLElement> & {
+  as?: RevealTag;
+};
+
+/** A single staggered child of RevealGroup. Must be a direct or nested descendant. */
+export function RevealItem({ as: Tag = "div", ...props }: RevealItemProps) {
+  return <Tag data-reveal-item {...props} />;
+}

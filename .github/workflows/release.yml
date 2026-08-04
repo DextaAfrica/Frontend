@@ -1,0 +1,137 @@
+name: Build, Secure and Release
+
+on:
+  push:
+    branches: [main]
+    tags: ["v*.*.*"]
+  workflow_dispatch:
+
+concurrency:
+  group: release-production
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  packages: write
+  id-token: write
+  attestations: write
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  verify:
+    name: Verify release source
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - name: Set up Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: "22"
+          cache: npm
+      - name: Install locked dependencies
+        run: npm ci
+      - name: Run quality gates
+        run: npm run check
+      - name: Build application
+        run: npm run build
+
+  publish:
+    name: Publish verified image
+    needs: verify
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    outputs:
+      digest: ${{ steps.build.outputs.digest }}
+      image: ${{ steps.image.outputs.name }}
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - name: Normalize image name
+        id: image
+        shell: bash
+        run: echo "name=${REGISTRY}/${IMAGE_NAME,,}" >> "$GITHUB_OUTPUT"
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v4
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v4
+      - name: Authenticate to GHCR
+        uses: docker/login-action@v4
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Generate image metadata
+        id: meta
+        uses: docker/metadata-action@v6
+        with:
+          images: ${{ steps.image.outputs.name }}
+          tags: |
+            type=sha,prefix=sha-
+            type=ref,event=tag
+            type=raw,value=latest,enable={{is_default_branch}}
+          labels: |
+            org.opencontainers.image.title=Maison Rouge Web
+            org.opencontainers.image.description=Maison Rouge production website
+      - name: Build and push multi-platform image
+        id: build
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: Dockerfile.prod
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha,scope=release
+          cache-to: type=gha,mode=max,scope=release
+      - name: Generate signed build provenance
+        uses: actions/attest@v4
+        with:
+          subject-name: ${{ steps.image.outputs.name }}
+          subject-digest: ${{ steps.build.outputs.digest }}
+          push-to-registry: true
+      - name: Scan published image
+        uses: aquasecurity/trivy-action@v0.36.0
+        with:
+          image-ref: ${{ steps.image.outputs.name }}@${{ steps.build.outputs.digest }}
+          format: table
+          severity: HIGH,CRITICAL
+          ignore-unfixed: true
+          exit-code: "1"
+
+  deploy:
+    name: Deploy production
+    needs: publish
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    environment:
+      name: ${{ vars['DEPLOYMENT_ENVIRONMENT'] || 'production' }}
+      url: ${{ vars['PRODUCTION_URL'] }}
+    env:
+      IMAGE: ${{ needs.publish.outputs.image }}@${{ needs.publish.outputs.digest }}
+      DEPLOY_WEBHOOK: ${{ secrets['PRODUCTION_DEPLOY_WEBHOOK'] }}
+      PRODUCTION_URL: ${{ vars['PRODUCTION_URL'] }}
+    steps:
+      - name: Trigger immutable deployment
+        if: env.DEPLOY_WEBHOOK != ''
+        run: |
+          curl --fail-with-body --retry 3 \
+            --request POST \
+            --header 'Content-Type: application/json' \
+            --data "{\"image\":\"${IMAGE}\",\"sha\":\"${GITHUB_SHA}\"}" \
+            "${DEPLOY_WEBHOOK}"
+      - name: Explain provider setup when no webhook exists
+        if: env.DEPLOY_WEBHOOK == ''
+        run: echo "Image published and attested. Configure PRODUCTION_DEPLOY_WEBHOOK on the production environment to enable deployment."
+      - name: Verify production health
+        if: env.PRODUCTION_URL != '' && env.DEPLOY_WEBHOOK != ''
+        run: curl --fail-with-body --retry 8 --retry-delay 10 "${PRODUCTION_URL%/}/api/health"
