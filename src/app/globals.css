@@ -59,7 +59,7 @@
   --service-border: #000000;
   --text-subtle: #969696;
 
-  --section-intro-height: clamp(22rem, 32vw, 28rem);
+  --section-intro-height: clamp(26rem, 35vw, 32rem);
   --scroll-copy-size: clamp(1.5rem, 2.45vw, 2.25rem);
   --scroll-copy-muted-opacity: 0.48;
   --type-hero: clamp(2.35rem, 3.75vw, 3.5rem);
@@ -87,10 +87,10 @@
   --layout-newsletter-card-width: 19.4375rem;
   --layout-newsletter-card-height: 10.375rem;
   --layout-newsletter-input-height: 4.0625rem;
-  --layout-service-panel-height: 38rem;
+  --layout-service-panel-height: 40rem;
   --layout-stat-card-height: 20.375rem;
-  --layout-service-mobile-height: 28rem;
-  --layout-service-tablet-height: 32rem;
+  --layout-service-mobile-height: 30rem;
+  --layout-service-tablet-height: 34rem;
   --layout-service-scroll-travel: 44svh;
   --layout-service-scroll-travel-desktop: 54svh;
   --layout-service-row-height: clamp(5rem, 6.736vw, 6.0625rem);
@@ -545,6 +545,18 @@ dialog[open]::backdrop {
 .service-card:not(:first-child) .service-expanded-content {
   visibility: hidden;
   opacity: 0;
+}
+
+.service-collapsed-control {
+  background: var(--brand-dark);
+}
+
+.service-collapsed-control::before {
+  position: absolute;
+  inset: 0;
+  border-block: 1px solid rgb(255 255 255 / 0.1);
+  pointer-events: none;
+  content: "";
 }
 
 @media (max-width: 63.999rem) {
