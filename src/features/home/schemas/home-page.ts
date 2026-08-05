@@ -26,6 +26,7 @@ export const homePageContentSchema = z.object({
       z.object({
         id: nonEmptyString,
         number: nonEmptyString,
+        label: nonEmptyString,
         title: nonEmptyString,
         description: nonEmptyString,
         image: nonEmptyString,

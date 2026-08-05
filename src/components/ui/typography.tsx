@@ -62,7 +62,7 @@ export function Text({ className, ...props }: React.ComponentProps<"p">) {
   return (
     <p
       className={cn(
-        "text-[0.9375rem] leading-6 text-muted-foreground sm:text-base",
+        "text-body-small leading-6 text-muted-foreground sm:text-base",
         className,
       )}
       {...props}
@@ -81,7 +81,7 @@ export function Eyebrow({
   return (
     <Tag
       className={cn(
-        "text-xs font-medium tracking-[0.2em] text-primary uppercase",
+        "text-xs font-medium tracking-eyebrow text-primary uppercase",
         className,
       )}
       {...props}

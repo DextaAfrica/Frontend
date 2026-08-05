@@ -140,7 +140,7 @@ export function NewsletterManager() {
       onClose={close}
       title="A more considered perspective."
       description="Private previews, architectural stories, and new addresses—shared occasionally."
-      className="w-[min(94vw,52rem)]"
+      className="w-[min(var(--layout-dialog-wide-viewport-width),var(--container-dialog-wide))]"
     >
       <span aria-hidden className="h-px w-16 bg-primary" />
       {status === "success" ? (

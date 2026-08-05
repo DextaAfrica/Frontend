@@ -27,7 +27,7 @@ export function MediaPanel({
       aria-label={label}
       style={{ position: "relative" }}
       className={cn(
-        "media-panel relative min-h-72 overflow-hidden rounded-[0.4rem] bg-gradient-to-br",
+        "media-panel relative min-h-72 overflow-hidden rounded-panel bg-gradient-to-br",
         tones[tone],
         className,
       )}
@@ -47,7 +47,7 @@ export function MediaPanel({
       />
       <Eyebrow
         as="figcaption"
-        className="absolute bottom-5 left-5 text-white/75"
+        className="absolute bottom-5 left-5 text-on-media-muted"
       >
         {label}
       </Eyebrow>

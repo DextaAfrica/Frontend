@@ -5,7 +5,7 @@ export const fallbackHomePageContent = {
     titleLines: ["Your partner in", "building wealth"],
     ctaLabel: "Contact Sales",
     ctaHref: "/contact",
-    video: "/media/91744-636709154_medium.webm",
+    video: "/media/dexta-hero-desktop.webm",
     mobileVideo: "/media/dexta-hero-mobile.webm",
     poster: "/images/dexta-hero-poster.jpg",
   },
@@ -19,7 +19,8 @@ export const fallbackHomePageContent = {
   services: [
     {
       id: "residential-development",
-      number: "1",
+      number: "01",
+      label: "Building the future",
       title: "Residential Development",
       description:
         "From acquisition to construction, through to marketing and sales, we transform your vision into reality.",
@@ -27,19 +28,21 @@ export const fallbackHomePageContent = {
     },
     {
       id: "site-and-service",
-      number: "2.",
-      title: "Site and Service",
+      number: "02",
+      label: "Land with purpose",
+      title: "Site and Service Development",
       description:
-        "We identify, prepare, and deliver strategically located land with the infrastructure needed for lasting value.",
+        "Offering strategically located sites with top-tier services, ensuring fully serviced plots that meet standards.",
       image: "/images/service-site-and-service.png",
     },
     {
       id: "hospitality-development",
-      number: "3.",
+      number: "03",
+      label: "Investment meets lifestyle",
       title: "Hospitality Development",
       description:
-        "We create considered hospitality destinations shaped around place, experience, and sustainable commercial returns.",
-      image: "/images/project-olumo.jpg",
+        "We design and manage world-class hospitality spaces that are perfect for modern travelers and investors.",
+      image: "/images/service-hospitality.jpg",
     },
   ],
   projectsSection: {

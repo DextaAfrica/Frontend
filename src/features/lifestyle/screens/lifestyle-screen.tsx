@@ -33,7 +33,7 @@ export function LifestyleScreen() {
           <MediaPanel
             label="Morning light, considered interiors"
             tone="light"
-            className="min-h-[36rem]"
+            className="min-h-lifestyle-hero"
           />
           <Stack gap="lg">
             <MarketingHeading
@@ -71,12 +71,12 @@ export function LifestyleScreen() {
             <MediaPanel
               label="Private dining"
               tone="ruby"
-              className="min-h-[28rem]"
+              className="min-h-lifestyle-media"
             />
             <MediaPanel
               label="Restorative landscapes"
               tone="dusk"
-              className="min-h-[28rem]"
+              className="min-h-lifestyle-media"
             />
           </Grid>
         </Stack>

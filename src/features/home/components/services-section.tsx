@@ -271,7 +271,7 @@ export function ServicesSection({
                   key={service.id}
                   data-service-card
                   data-active={isActive || undefined}
-                  className="service-card relative isolate min-h-service-mobile overflow-hidden bg-black sm:min-h-service-tablet lg:min-h-0"
+                  className="service-card relative isolate min-h-service-mobile overflow-hidden bg-brand-dark sm:min-h-service-tablet lg:min-h-0"
                   style={
                     {
                       position: "relative",
@@ -296,13 +296,18 @@ export function ServicesSection({
                     data-service-expanded
                     className="service-expanded-content absolute inset-0 grid grid-cols-[1fr_auto] content-between gap-6 p-service"
                   >
-                    <h3 className="max-w-[18ch] font-serif text-section-display leading-editorial tracking-editorial">
-                      {service.title}
-                    </h3>
+                    <div>
+                      <p className="mb-4 font-mono text-service-label tracking-service-label uppercase">
+                        ({service.number}) {service.label}
+                      </p>
+                      <h3 className="max-w-[18ch] text-service-title leading-service-title font-medium tracking-service-title">
+                        {service.title}
+                      </h3>
+                    </div>
                     <span className="font-mono text-service-number leading-none tracking-service-number">
                       {service.number}
                     </span>
-                    <p className="col-span-2 max-w-service-copy justify-self-end text-service-copy leading-[1.35] font-normal">
+                    <p className="col-span-2 max-w-service-copy justify-self-end text-service-copy leading-service-copy font-normal">
                       {service.description}
                     </p>
                   </div>
@@ -313,12 +318,15 @@ export function ServicesSection({
                     tabIndex={isActive ? -1 : 0}
                     aria-label={`Show ${service.title}`}
                     onClick={() => goToService(index)}
-                    className="service-collapsed-control group absolute inset-x-0 bottom-0 isolate flex h-service-row w-full items-center gap-5 !bg-black px-service text-left text-brand-light transition-colors hover:!bg-brand-dark-elevated focus-visible:ring-2 focus-visible:ring-brand-light focus-visible:outline-none focus-visible:ring-inset"
+                    className="service-collapsed-control group absolute inset-x-0 bottom-0 isolate flex h-service-row w-full items-center gap-5 bg-brand-dark px-service text-left text-brand-light transition-colors hover:bg-brand-dark-elevated focus-visible:ring-2 focus-visible:ring-brand-light focus-visible:outline-none focus-visible:ring-inset"
                   >
                     <span className="font-mono text-service-tab-number leading-none opacity-60">
                       {service.number}
                     </span>
-                    <span className="font-serif text-service-tab leading-tight">
+                    <span className="font-mono text-xs tracking-service-label uppercase">
+                      {service.label}
+                    </span>
+                    <span className="text-service-tab leading-tight">
                       {service.title}
                     </span>
                     <Icon

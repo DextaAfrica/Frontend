@@ -21,7 +21,7 @@ export function CinematicHero({
   poster,
 }: CinematicHeroProps) {
   return (
-    <section className="dexta-hero relative isolate flex items-end overflow-hidden bg-black text-white">
+    <section className="dexta-hero relative isolate flex items-end overflow-hidden bg-brand-dark text-on-media">
       <HeroVideo video={video} mobileVideo={mobileVideo} poster={poster} />
       <span aria-hidden className="dexta-hero-overlay absolute inset-0" />
       <Container className="relative pb-[var(--space-hero-bottom)]">

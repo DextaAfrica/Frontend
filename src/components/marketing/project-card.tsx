@@ -30,7 +30,7 @@ export function ProjectCard({ project }: { project: Project }) {
           label={`${project.name}, ${project.location}`}
           tone={project.tone}
           src={project.image}
-          className="min-h-80 rounded-none transition-transform duration-700 group-hover:scale-[1.02]"
+          className="min-h-80 rounded-none transition-transform duration-700 group-hover:scale-project-media"
         />
         <CardContent className="p-6">
           <Stack gap="md">

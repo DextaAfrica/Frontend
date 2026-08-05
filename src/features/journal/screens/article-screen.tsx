@@ -16,7 +16,7 @@ export function ArticleScreen({ article }: { article: JournalArticle }) {
           <MediaPanel
             label={article.title}
             tone={article.tone}
-            className="min-h-[26rem]"
+            className="min-h-article-media"
           />
           {article.sections.map((section) => (
             <section key={section.title}>

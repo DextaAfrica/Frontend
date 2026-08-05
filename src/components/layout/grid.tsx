@@ -8,7 +8,7 @@ const columnsMap: Record<Columns, string> = {
   two: "grid-cols-1 md:grid-cols-2",
   three: "grid-cols-1 md:grid-cols-2 lg:grid-cols-3",
   four: "grid-cols-1 sm:grid-cols-2 lg:grid-cols-4",
-  auto: "grid-cols-[repeat(auto-fit,minmax(min(100%,18rem),1fr))]",
+  auto: "grid-cols-[repeat(auto-fit,minmax(min(100%,var(--layout-grid-card-min)),1fr))]",
 };
 const gaps: Record<Gap, string> = {
   sm: "gap-3",

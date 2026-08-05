@@ -20,10 +20,7 @@ export function EditorialHero({
 }: EditorialHeroProps) {
   return (
     <Section spacing="lg" className={cn("overflow-hidden", className)}>
-      <span
-        aria-hidden
-        className="absolute inset-0 bg-[radial-gradient(circle_at_78%_18%,var(--color-primary-subtle),transparent_38%)]"
-      />
+      <span aria-hidden className="editorial-hero-glow absolute inset-0" />
       <Stack gap="lg" align="start" className="enter-fade relative max-w-4xl">
         <Stack gap="sm" align="start">
           <Eyebrow>{eyebrow}</Eyebrow>

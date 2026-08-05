@@ -24,7 +24,7 @@ export function ThemeToggle({ className }: { className?: string }) {
       <span
         aria-hidden
         className={cn(
-          "block h-9 w-[6.625rem] rounded-[var(--control-radius)] border border-border/70 bg-surface-elevated/80",
+          "block h-9 w-[var(--layout-theme-toggle-width)] rounded-[var(--control-radius)] border border-border/70 bg-surface-elevated/80",
           className,
         )}
       />

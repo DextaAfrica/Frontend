@@ -43,7 +43,9 @@ export function EnquiryForm() {
       setStatus("success");
     } catch (error) {
       setStatus("error");
-      setInvalidFields(error instanceof ApiRequestError && error.status === 422);
+      setInvalidFields(
+        error instanceof ApiRequestError && error.status === 422,
+      );
       setMessage(
         error instanceof Error
           ? error.message

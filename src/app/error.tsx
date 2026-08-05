@@ -11,7 +11,7 @@ export default function ErrorBoundary({
   reset: () => void;
 }) {
   return (
-    <Center className="min-h-[65vh] px-5 text-center">
+    <Center className="min-h-page-state px-5 text-center">
       <Stack align="center" gap="md" className="max-w-xl">
         <Stack gap="lg" align="center">
           <Eyebrow>Something went wrong</Eyebrow>

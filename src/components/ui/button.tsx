@@ -15,19 +15,20 @@ export type ButtonVariant =
 export type ButtonSize = "sm" | "md" | "lg" | "icon";
 
 const base =
-  "inline-flex shrink-0 items-center justify-center gap-2 rounded-[var(--control-radius)] border border-transparent text-[0.8125rem] font-normal tracking-[0.04em] transition-[color,background-color,border-color,box-shadow,transform] duration-200 outline-none select-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-45 active:translate-y-px aria-busy:cursor-wait [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0";
+  "inline-flex shrink-0 items-center justify-center gap-2 rounded-[var(--control-radius)] border border-transparent text-control font-normal tracking-control shadow-[var(--control-shadow)] transition-[color,background-color,border-color,box-shadow,transform] duration-200 outline-none select-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:pointer-events-none disabled:border-control-disabled disabled:bg-control-disabled disabled:text-control-disabled-foreground disabled:shadow-none active:translate-y-px aria-busy:cursor-wait [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0";
 const variants: Record<ButtonVariant, string> = {
   primary:
     "border-primary bg-primary text-primary-foreground shadow-sm hover:border-primary-hover hover:bg-primary-hover",
   secondary:
-    "border border-border bg-surface text-foreground shadow-xs hover:bg-muted",
+    "border border-border bg-surface-elevated text-foreground hover:border-input hover:bg-control-hover active:bg-control-pressed",
   neutral: "bg-foreground text-background hover:opacity-85",
   onMedia:
     "border-brand-light bg-brand-light text-brand-dark hover:border-primary hover:bg-primary hover:text-primary-foreground",
-  ghost: "text-foreground hover:bg-muted",
+  ghost:
+    "shadow-none text-foreground hover:bg-control-hover active:bg-control-pressed",
   outline:
     "border border-primary/35 bg-transparent text-primary hover:bg-primary-subtle",
-  destructive: "bg-destructive text-white shadow-sm hover:opacity-90",
+  destructive: "bg-destructive text-destructive-foreground hover:brightness-90",
   link: "h-auto rounded-none p-0 text-primary underline-offset-4 hover:underline",
 };
 const sizes: Record<ButtonSize, string> = {
