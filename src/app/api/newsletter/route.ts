@@ -1,24 +1,19 @@
-const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+import { newsletterSubscriptionSchema } from "@/features/newsletter/schemas/subscription";
 
 export async function POST(request: Request) {
-  const body = (await request.json().catch(() => null)) as {
-    email?: unknown;
-    company?: unknown;
-    source?: unknown;
-    consent?: unknown;
-  } | null;
-  if (typeof body?.company === "string" && body.company.length > 0) {
-    return Response.json(
-      { message: "Subscription received." },
-      { status: 202 },
-    );
-  }
-  const email =
-    typeof body?.email === "string" ? body.email.trim().toLowerCase() : "";
-  if (!EMAIL_PATTERN.test(email) || email.length > 254) {
+  const subscription = newsletterSubscriptionSchema.safeParse(
+    await request.json().catch(() => null),
+  );
+  if (!subscription.success) {
     return Response.json(
       { message: "Enter a valid email address." },
       { status: 422 },
+    );
+  }
+  if (subscription.data.company.length > 0) {
+    return Response.json(
+      { message: "Subscription received." },
+      { status: 202 },
     );
   }
 
@@ -33,9 +28,9 @@ export async function POST(request: Request) {
 
   const payload = {
     event: "newsletter.subscribed",
-    email,
-    source: typeof body?.source === "string" ? body.source : "website",
-    consent: typeof body?.consent === "object" ? body.consent : null,
+    email: subscription.data.email,
+    source: subscription.data.source,
+    consent: subscription.data.consent,
     subscribedAt: new Date().toISOString(),
   };
 

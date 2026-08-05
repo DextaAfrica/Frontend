@@ -1,7 +1,7 @@
 # Dexta Africa Web Platform
 
 A production-grade, responsive real-estate platform built with Next.js, React, strict TypeScript,
-Tailwind CSS, and a feature-first design-system architecture.
+Tailwind CSS, and a feature-first architecture.
 
 ## Included
 
@@ -9,15 +9,15 @@ Tailwind CSS, and a feature-first design-system architecture.
 - Semantic Dexta design tokens with complete light and dark themes
 - Persistent native light and dark themes with flash-free initialization
 - Typed, accessible button and typography primitives
-- Layout vocabulary: Stack, Flex, Cluster, Grid, Container, Section, Page, Center, and Sidebar
+- Focused layout vocabulary: Stack, Cluster, Grid, Container, Section, Page, and Center
 - Feature-first boundaries with thin route files and explicit public APIs
-- Seven responsive routes, metadata defaults, loading UI, 404, segment and global error boundaries
+- Responsive routes, metadata defaults, loading UI, 404, segment and global error boundaries
 - Native accessible dialog, SVG icon system, mobile navigation, and route/reveal motion
 - Server-side managed-content boundary with validation, caching, revalidation, and local fallbacks
 - Responsive image delivery and dedicated desktop/mobile hero media
 - Functional enquiry, newsletter, consent, health-check, and content-revalidation boundaries
-- Centralized site, font, and navigation configuration
-- ESLint, Prettier, import aliases, and one-command quality checks
+- Centralized site and navigation configuration
+- Runtime schemas, colocated unit tests, ESLint, Prettier, and one-command quality checks
 
 ## Start developing
 
@@ -36,8 +36,10 @@ npm run dev          # development server
 npm run build        # production build
 npm run typecheck    # TypeScript validation
 npm run lint         # ESLint validation
+npm run test         # automated tests
+npm run test:watch   # tests in watch mode
 npm run format       # format the project
-npm run check        # all non-build quality checks
+npm run check        # types, lint, tests, and formatting
 ```
 
 ## Make workflows
@@ -48,7 +50,7 @@ workflows. Run `make help` to see every command.
 ```bash
 make install         # deterministic local dependency install
 make dev             # local development at http://localhost:3000
-make verify          # typecheck, lint, format check, and production build
+make verify          # types, lint, tests, formatting, and production build
 
 make dev-up          # Docker development with hot reload
 make prod            # build and start the hardened production container
@@ -72,14 +74,12 @@ src/
 ├── components/
 │   ├── layout/     # reusable geometry and application shells
 │   ├── theme/      # theme controls
-│   └── ui/         # reusable design-system primitives
-├── config/         # product, navigation, and font configuration
-├── design-system/  # typed token contracts
+│   └── ui/         # reusable interface primitives
+├── config/         # product, navigation, storage, and motion configuration
 ├── features/       # domain-focused screens and feature components
 ├── hooks/          # reusable React hooks
 ├── lib/            # framework-agnostic helpers (including cn)
-├── providers/      # application-wide React providers
-└── types/          # shared TypeScript contracts
+└── providers/      # application-wide React providers
 ```
 
 Homepage content follows this dependency flow:
@@ -131,3 +131,7 @@ persists dismissal/subscription state, and posts through the internal `/api/news
 Configure `NEWSLETTER_WEBHOOK_URL` (and, when required, `NEWSLETTER_WEBHOOK_TOKEN`) to deliver
 validated subscriptions to the production email or CRM service. The server does not expose those credentials
 to the browser.
+
+Contact enquiries use the same server-only boundary. Configure `CONTACT_WEBHOOK_URL` and optionally
+`CONTACT_WEBHOOK_TOKEN`; without a delivery integration, the form reports that the service is unavailable
+instead of displaying a false success state.

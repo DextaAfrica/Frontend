@@ -54,10 +54,12 @@ Set production values through the deployment platform or an uncommitted `.env` f
 ```env
 NEXT_PUBLIC_APP_URL=https://example.com
 APP_PORT=3000
+CONTACT_WEBHOOK_URL=https://crm.example.com/hooks/contact
+NEWSLETTER_WEBHOOK_URL=https://crm.example.com/hooks/newsletter
 ```
 
-Do not bake secrets into the image. Server-only CRM credentials for the newsletter integration should
-be injected at runtime and consumed only by `src/app/api/newsletter/route.ts`.
+Do not bake secrets into the image. Content, contact, and newsletter credentials
+are forwarded by Compose from the runtime environment and remain server-only.
 
 ## Security properties
 

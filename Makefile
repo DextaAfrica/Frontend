@@ -16,7 +16,7 @@ PROD_COMPOSE := $(DOCKER) compose -f compose.prod.yaml
 
 export APP_PORT IMAGE_NAME IMAGE_TAG
 
-.PHONY: help doctor install dev build start lint typecheck format format-check check verify \
+.PHONY: help doctor install dev build start lint typecheck test test-watch format format-check check verify \
 	dev-build dev-up dev-down dev-restart dev-logs dev-shell dev-status \
 	prod-build prod-up prod prod-down prod-restart prod-logs prod-shell prod-status \
 	config-dev config-prod health clean clean-all
@@ -48,13 +48,19 @@ lint: doctor ## Run ESLint with zero warnings allowed
 typecheck: doctor ## Validate TypeScript without emitting files
 	$(NPM) run typecheck
 
+test: doctor ## Run the automated test suite once
+	$(NPM) run test
+
+test-watch: doctor ## Run tests continuously while developing
+	$(NPM) run test:watch
+
 format: doctor ## Format supported project files
 	$(NPM) run format
 
 format-check: doctor ## Check formatting without changing files
 	$(NPM) run format:check
 
-check: doctor ## Run type, lint, and formatting checks
+check: doctor ## Run types, lint, tests, and formatting checks
 	$(NPM) run check
 
 verify: check build ## Run every pre-release quality gate
@@ -117,4 +123,3 @@ clean: ## Remove generated local build and coverage output
 
 clean-all: dev-down prod-down ## Remove containers and the development dependency volume
 	$(DEV_COMPOSE) down --volumes --remove-orphans
-

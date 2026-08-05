@@ -3,19 +3,49 @@
 import * as React from "react";
 import { Grid, Stack } from "@/components/layout";
 import { Button, Modal } from "@/components/ui";
+import { submitEnquiry } from "../api/submit-enquiry";
 
 const fieldClass =
   "h-12 w-full rounded-lg border border-input bg-background px-4 text-sm outline-none transition-shadow placeholder:text-muted-foreground focus:ring-2 focus:ring-ring";
 export function EnquiryForm() {
-  const [submitted, setSubmitted] = React.useState(false);
+  const [status, setStatus] = React.useState<
+    "idle" | "submitting" | "success" | "error"
+  >("idle");
+  const [message, setMessage] = React.useState("");
+
+  async function submit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setStatus("submitting");
+    setMessage("");
+    const form = event.currentTarget;
+    const data = new FormData(form);
+
+    try {
+      await submitEnquiry({
+        firstName: data.get("firstName"),
+        lastName: data.get("lastName"),
+        email: data.get("email"),
+        phone: data.get("phone"),
+        interest: data.get("interest"),
+        message: data.get("message"),
+        consent: data.get("consent") === "on",
+        company: data.get("company"),
+      });
+      form.reset();
+      setStatus("success");
+    } catch (error) {
+      setStatus("error");
+      setMessage(
+        error instanceof Error
+          ? error.message
+          : "Your enquiry could not be submitted.",
+      );
+    }
+  }
+
   return (
     <>
-      <form
-        onSubmit={(event) => {
-          event.preventDefault();
-          setSubmitted(true);
-        }}
-      >
+      <form onSubmit={submit}>
         <Stack gap="md">
           <Grid columns="two" gap="sm">
             <label className="grid gap-2 text-sm font-semibold">
@@ -59,7 +89,12 @@ export function EnquiryForm() {
           </label>
           <label className="grid gap-2 text-sm font-semibold">
             Area of interest
-            <select name="interest" className={fieldClass} defaultValue="">
+            <select
+              required
+              name="interest"
+              className={fieldClass}
+              defaultValue=""
+            >
               <option value="" disabled>
                 Select an option
               </option>
@@ -72,31 +107,51 @@ export function EnquiryForm() {
           <label className="grid gap-2 text-sm font-semibold">
             Your message
             <textarea
+              required
               name="message"
               rows={5}
               className={`${fieldClass} h-auto py-3`}
             />
           </label>
           <label className="flex items-start gap-3 text-sm text-muted-foreground">
-            <input required type="checkbox" className="mt-1 accent-primary" />I
-            consent to Dexta Africa responding to this enquiry and handling my
+            <input
+              required
+              name="consent"
+              type="checkbox"
+              className="mt-1 accent-primary"
+            />
+            I consent to Dexta Africa responding to this enquiry and handling my
             information according to its privacy policy.
           </label>
-          <Button type="submit" size="lg" className="w-fit">
-            Submit enquiry
+          <label className="sr-only" aria-hidden="true">
+            Company
+            <input name="company" tabIndex={-1} autoComplete="off" />
+          </label>
+          {message && (
+            <p role="alert" className="text-sm text-destructive">
+              {message}
+            </p>
+          )}
+          <Button
+            type="submit"
+            size="lg"
+            className="w-fit"
+            disabled={status === "submitting"}
+          >
+            {status === "submitting" ? "Submitting…" : "Submit enquiry"}
           </Button>
         </Stack>
       </form>
       <Modal
-        open={submitted}
-        onClose={() => setSubmitted(false)}
+        open={status === "success"}
+        onClose={() => setStatus("idle")}
         title="Thank you for getting in touch"
         description="Your enquiry has been received."
       >
         <p className="text-muted-foreground">
           A member of our private client team will respond shortly.
         </p>
-        <Button onClick={() => setSubmitted(false)} className="w-fit">
+        <Button onClick={() => setStatus("idle")} className="w-fit">
           Close
         </Button>
       </Modal>
