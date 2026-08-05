@@ -24,7 +24,7 @@ export function EditorialHero({
         aria-hidden
         className="absolute inset-0 bg-[radial-gradient(circle_at_78%_18%,var(--color-primary-subtle),transparent_38%)]"
       />
-      <Stack gap="lg" align="start" className="reveal relative max-w-4xl">
+      <Stack gap="lg" align="start" className="enter-fade relative max-w-4xl">
         <Stack gap="sm" align="start">
           <Eyebrow>{eyebrow}</Eyebrow>
           <Heading>{title}</Heading>

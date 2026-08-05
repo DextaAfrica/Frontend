@@ -5,6 +5,7 @@ import { LegalScreen } from "@/features/legal";
 export const metadata: Metadata = {
   title: "Privacy Policy",
   description: "How Dexta Africa handles and protects personal data.",
+  alternates: { canonical: "/privacy" },
 };
 
 export default function PrivacyPage() {

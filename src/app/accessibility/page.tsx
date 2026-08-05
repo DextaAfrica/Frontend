@@ -5,6 +5,7 @@ import { LegalScreen } from "@/features/legal";
 export const metadata: Metadata = {
   title: "Accessibility Statement",
   description: "Dexta Africa's commitment to an accessible digital experience.",
+  alternates: { canonical: "/accessibility" },
 };
 
 export default function AccessibilityPage() {

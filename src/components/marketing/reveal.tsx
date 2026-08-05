@@ -17,6 +17,9 @@ export interface RevealProps extends React.HTMLAttributes<HTMLElement> {
 /** Fades and slides an element in the first time it enters the viewport. */
 export function Reveal({ as: Tag = "div", delay = 0, ...props }: RevealProps) {
   const ref = React.useRef<HTMLElement>(null);
+  const setRef = React.useCallback((node: HTMLElement | null) => {
+    ref.current = node;
+  }, []);
 
   useGSAP(() => {
     const mm = gsap.matchMedia();
@@ -39,7 +42,7 @@ export function Reveal({ as: Tag = "div", delay = 0, ...props }: RevealProps) {
     return () => mm.revert();
   }, [delay]);
 
-  return <Tag ref={ref as never} {...props} />;
+  return <Tag ref={setRef} {...props} />;
 }
 
 export interface RevealGroupProps extends React.HTMLAttributes<HTMLElement> {
@@ -55,6 +58,9 @@ export function RevealGroup({
   ...props
 }: RevealGroupProps) {
   const ref = React.useRef<HTMLElement>(null);
+  const setRef = React.useCallback((node: HTMLElement | null) => {
+    ref.current = node;
+  }, []);
 
   useGSAP(() => {
     const mm = gsap.matchMedia();
@@ -80,7 +86,7 @@ export function RevealGroup({
     return () => mm.revert();
   }, [stagger]);
 
-  return <Tag ref={ref as never} {...props} />;
+  return <Tag ref={setRef} {...props} />;
 }
 
 export type RevealItemProps = React.HTMLAttributes<HTMLElement> & {

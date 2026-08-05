@@ -5,6 +5,7 @@ import { LegalScreen } from "@/features/legal";
 export const metadata: Metadata = {
   title: "Cookie Policy",
   description: "How Dexta Africa uses cookies and browser storage.",
+  alternates: { canonical: "/cookies" },
 };
 
 export default function CookiesPage() {

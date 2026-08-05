@@ -1,5 +1,6 @@
 import { Container } from "@/components/layout";
 import { ButtonLink, HeroHeading, Icon } from "@/components/ui";
+import { HeroVideo } from "./hero-video";
 import { Reveal } from "./reveal";
 
 export interface CinematicHeroProps {
@@ -21,25 +22,7 @@ export function CinematicHero({
 }: CinematicHeroProps) {
   return (
     <section className="dexta-hero relative isolate flex items-end overflow-hidden bg-black text-white">
-      <video
-        autoPlay
-        muted
-        loop
-        playsInline
-        preload="metadata"
-        poster={poster}
-        aria-hidden="true"
-        className="absolute inset-0 size-full object-cover"
-      >
-        {mobileVideo && (
-          <source
-            media="(max-width: 767px)"
-            src={mobileVideo}
-            type="video/webm"
-          />
-        )}
-        <source src={video} type="video/webm" />
-      </video>
+      <HeroVideo video={video} mobileVideo={mobileVideo} poster={poster} />
       <span aria-hidden className="dexta-hero-overlay absolute inset-0" />
       <Container className="relative pb-[var(--space-hero-bottom)]">
         <Reveal className="flex max-w-3xl flex-col items-start gap-8">
