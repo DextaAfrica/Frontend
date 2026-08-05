@@ -1,6 +1,21 @@
 import { enquirySchema } from "@/features/contact/schemas/enquiry";
+import { getClientIp, rateLimit } from "@/lib/rate-limit";
 
 export async function POST(request: Request) {
+  const { allowed, retryAfterSeconds } = rateLimit(
+    `enquiry:${getClientIp(request)}`,
+    { windowMs: 10 * 60_000, max: 5 },
+  );
+  if (!allowed) {
+    return Response.json(
+      { message: "Too many enquiries submitted. Please try again shortly." },
+      {
+        status: 429,
+        headers: { "Retry-After": String(retryAfterSeconds) },
+      },
+    );
+  }
+
   const enquiry = enquirySchema.safeParse(
     await request.json().catch(() => null),
   );

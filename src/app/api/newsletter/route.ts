@@ -1,6 +1,21 @@
 import { newsletterSubscriptionSchema } from "@/features/newsletter/schemas/subscription";
+import { getClientIp, rateLimit } from "@/lib/rate-limit";
 
 export async function POST(request: Request) {
+  const { allowed, retryAfterSeconds } = rateLimit(
+    `newsletter:${getClientIp(request)}`,
+    { windowMs: 10 * 60_000, max: 5 },
+  );
+  if (!allowed) {
+    return Response.json(
+      { message: "Too many attempts. Please try again shortly." },
+      {
+        status: 429,
+        headers: { "Retry-After": String(retryAfterSeconds) },
+      },
+    );
+  }
+
   const subscription = newsletterSubscriptionSchema.safeParse(
     await request.json().catch(() => null),
   );
