@@ -5,6 +5,7 @@ import { LegalScreen } from "@/features/legal";
 export const metadata: Metadata = {
   title: "Terms and Conditions",
   description: "Terms governing use of the Dexta Africa website.",
+  alternates: { canonical: "/terms" },
 };
 
 export default function TermsPage() {
