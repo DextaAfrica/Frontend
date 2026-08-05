@@ -4,6 +4,12 @@ const nextConfig: NextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
   output: "standalone",
+  images: {
+    formats: ["image/avif", "image/webp"],
+    // Every image today ships from /public. Add the CMS/CDN host here
+    // (as a remotePattern) the day content actually starts serving one.
+    remotePatterns: [],
+  },
   async headers() {
     return [
       {
