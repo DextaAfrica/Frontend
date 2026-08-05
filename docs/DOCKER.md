@@ -19,6 +19,11 @@ inside the volume before starting Next.js. File polling is enabled by default
 so edits made through Docker Desktop, WSL, or other bind mounts trigger Fast
 Refresh reliably.
 
+The entrypoint also verifies that Next.js's platform-specific Linux SWC binary
+is present and repairs stale volumes when necessary. Dependencies and the build
+cache are owned by the unprivileged runtime user, allowing Next.js to create a
+fallback compiler directory without granting the application root privileges.
+
 Development output under `.next` uses an ephemeral in-memory filesystem. It is
 recreated with the container, preventing stale Turbopack manifests and browser
 chunk URLs from surviving a development-server restart. The dependency volume
