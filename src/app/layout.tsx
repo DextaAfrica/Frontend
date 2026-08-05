@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import { headers } from "next/headers";
 import Script from "next/script";
 import "@fontsource-variable/manrope";
 import "@fontsource-variable/cormorant-garamond";
