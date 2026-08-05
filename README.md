@@ -40,6 +40,30 @@ npm run format       # format the project
 npm run check        # all non-build quality checks
 ```
 
+## Make workflows
+
+The project includes a single task runner for both local and containerized
+workflows. Run `make help` to see every command.
+
+```bash
+make install         # deterministic local dependency install
+make dev             # local development at http://localhost:3000
+make verify          # typecheck, lint, format check, and production build
+
+make dev-up          # Docker development with hot reload
+make prod            # build and start the hardened production container
+make prod-status     # inspect production status and health
+make prod-logs       # follow production logs
+make health          # call the running app's health endpoint
+```
+
+Settings can be overridden per command, for example:
+
+```bash
+make dev APP_PORT=3001
+make prod APP_PORT=8080 IMAGE_TAG=v1.0.0
+```
+
 ## Structure
 
 ```text
