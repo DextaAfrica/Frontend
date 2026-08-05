@@ -58,6 +58,7 @@
   --brand-accent: #e81613;
   --service-border: #000000;
   --text-subtle: #666666;
+  --stat-value-glow: none;
 
   --section-intro-height: clamp(26rem, 35vw, 32rem);
   --scroll-copy-size: clamp(1.5rem, 2.45vw, 2.25rem);
@@ -176,6 +177,7 @@
   --success-subtle: oklch(0.25 0.05 150);
   --warning: oklch(0.78 0.15 80);
   --warning-subtle: oklch(0.27 0.05 70);
+  --stat-value-glow: 0 0 28px oklch(from var(--primary) l c h / 0.55);
 }
 
 @theme inline {

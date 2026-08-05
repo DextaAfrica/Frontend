@@ -98,16 +98,22 @@ export const fallbackHomePageContent = {
       id: "clients",
       value: "150+",
       copy: "Satisfied Clients who trusted us with their real estate journey.",
+      highlight: "Clients",
+      image: "/images/dexta-residential.jpg",
     },
     {
       id: "partners",
       value: "12+",
       copy: "Partners delivering value through strong collaborations.",
+      highlight: "Partners",
+      image: "/images/maison-interior.png",
     },
     {
       id: "projects",
       value: "03+",
       copy: "Completed Projects built with quality, purpose, and precision.",
+      highlight: "Projects",
+      image: "/images/project-kingsway.jpg",
     },
   ],
   blogSection: {

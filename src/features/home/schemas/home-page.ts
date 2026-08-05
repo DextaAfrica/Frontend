@@ -65,6 +65,8 @@ export const homePageContentSchema = z.object({
         id: nonEmptyString,
         value: nonEmptyString,
         copy: nonEmptyString,
+        highlight: nonEmptyString,
+        image: nonEmptyString,
       }),
     )
     .min(1),
