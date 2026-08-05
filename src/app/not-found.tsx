@@ -4,7 +4,7 @@ import { Eyebrow, Heading, Text } from "@/components/ui";
 
 export default function NotFound() {
   return (
-    <Container className="grid min-h-[65vh] place-items-center py-20 text-center">
+    <Container className="grid min-h-page-state place-items-center py-20 text-center">
       <Stack gap="lg" align="center">
         <Stack gap="lg" align="center">
           <Eyebrow>404</Eyebrow>

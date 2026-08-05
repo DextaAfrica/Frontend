@@ -4,7 +4,11 @@ import * as React from "react";
 import { browserEvents, browserStorage } from "@/config/browser-storage";
 import { Cluster, Stack } from "@/components/layout";
 import { Button, Modal } from "@/components/ui";
+import { readBrowserStorage, writeBrowserStorage } from "@/lib/browser-storage";
+import { ApiRequestError } from "@/lib/api-error";
 import { subscribeToNewsletter } from "../api/subscribe";
+
+const ERROR_ID = "newsletter-modal-error";
 
 const STATE_KEY = browserStorage.newsletter;
 const OPEN_EVENT = browserEvents.openNewsletter;
@@ -15,31 +19,48 @@ type NewsletterState = {
   updatedAt: number;
 };
 
+function parseNewsletterState(value: string | null): NewsletterState | null {
+  if (!value) return null;
+  try {
+    const state: unknown = JSON.parse(value);
+    if (
+      typeof state !== "object" ||
+      state === null ||
+      !("status" in state) ||
+      (state.status !== "dismissed" && state.status !== "subscribed") ||
+      !("updatedAt" in state) ||
+      typeof state.updatedAt !== "number" ||
+      !Number.isFinite(state.updatedAt)
+    ) {
+      return null;
+    }
+    return state as NewsletterState;
+  } catch {
+    return null;
+  }
+}
+
 export function NewsletterManager() {
   const [open, setOpen] = React.useState(false);
   const [status, setStatus] = React.useState<
     "idle" | "submitting" | "success" | "error"
   >("idle");
   const [message, setMessage] = React.useState("");
+  const [invalidField, setInvalidField] = React.useState(false);
 
   React.useEffect(() => {
     function canPrompt() {
-      const raw = localStorage.getItem(STATE_KEY);
-      if (!raw) return true;
-      try {
-        const saved = JSON.parse(raw) as NewsletterState;
-        return (
-          saved.status !== "subscribed" &&
-          Date.now() - saved.updatedAt > THIRTY_DAYS
-        );
-      } catch {
-        return true;
-      }
+      const saved = parseNewsletterState(readBrowserStorage(STATE_KEY));
+      if (!saved) return true;
+      return (
+        saved.status !== "subscribed" &&
+        Date.now() - saved.updatedAt > THIRTY_DAYS
+      );
     }
     let timer: number | undefined;
     function schedulePrompt() {
       window.clearTimeout(timer);
-      if (!localStorage.getItem(browserStorage.consent)) return;
+      if (!readBrowserStorage(browserStorage.consent)) return;
       timer = window.setTimeout(() => {
         if (canPrompt()) setOpen(true);
       }, 10000);
@@ -47,6 +68,7 @@ export function NewsletterManager() {
     const openNewsletter = () => {
       setStatus("idle");
       setMessage("");
+      setInvalidField(false);
       setOpen(true);
     };
     window.addEventListener(OPEN_EVENT, openNewsletter);
@@ -62,7 +84,7 @@ export function NewsletterManager() {
   function close() {
     setOpen(false);
     if (status !== "success")
-      localStorage.setItem(
+      writeBrowserStorage(
         STATE_KEY,
         JSON.stringify({
           status: "dismissed",
@@ -74,10 +96,11 @@ export function NewsletterManager() {
   async function subscribe(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setStatus("submitting");
+    setInvalidField(false);
     const form = new FormData(event.currentTarget);
     const email = String(form.get("email") ?? "");
     const company = String(form.get("company") ?? "");
-    const rawConsent = localStorage.getItem(browserStorage.consent);
+    const rawConsent = readBrowserStorage(browserStorage.consent);
     let consent: unknown = null;
     try {
       consent = rawConsent ? (JSON.parse(rawConsent) as unknown) : null;
@@ -91,7 +114,7 @@ export function NewsletterManager() {
         source: "newsletter_modal",
         consent,
       });
-      localStorage.setItem(
+      writeBrowserStorage(
         STATE_KEY,
         JSON.stringify({
           status: "subscribed",
@@ -106,6 +129,7 @@ export function NewsletterManager() {
           ? error.message
           : "Subscription could not be completed.",
       );
+      setInvalidField(error instanceof ApiRequestError && error.status === 422);
       setStatus("error");
     }
   }
@@ -116,7 +140,7 @@ export function NewsletterManager() {
       onClose={close}
       title="A more considered perspective."
       description="Private previews, architectural stories, and new addresses—shared occasionally."
-      className="w-[min(94vw,52rem)]"
+      className="w-[min(var(--layout-dialog-wide-viewport-width),var(--container-dialog-wide))]"
     >
       <span aria-hidden className="h-px w-16 bg-primary" />
       {status === "success" ? (
@@ -141,6 +165,8 @@ export function NewsletterManager() {
                 required
                 autoComplete="email"
                 placeholder="you@example.com"
+                aria-invalid={invalidField}
+                aria-describedby={invalidField ? ERROR_ID : undefined}
                 className="h-12 border border-input bg-background px-4 outline-none placeholder:text-muted-foreground focus:ring-2 focus:ring-ring"
               />
             </label>
@@ -148,11 +174,9 @@ export function NewsletterManager() {
               Company
               <input name="company" tabIndex={-1} autoComplete="off" />
             </label>
-            {message && (
-              <p role="alert" className="text-sm text-destructive">
-                {message}
-              </p>
-            )}
+            <p id={ERROR_ID} role="alert" className="text-sm text-destructive">
+              {message}
+            </p>
             <Cluster>
               <Button
                 type="submit"

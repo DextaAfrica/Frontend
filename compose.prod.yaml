@@ -3,6 +3,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.prod
+      args:
+        NEXT_PUBLIC_APP_URL: "${NEXT_PUBLIC_APP_URL:-http://localhost:3000}"
     image: "${IMAGE_NAME:-dexta-africa-web}:${IMAGE_TAG:-latest}"
     init: true
     restart: unless-stopped
@@ -12,6 +14,13 @@ services:
       NODE_ENV: production
       NEXT_TELEMETRY_DISABLED: "1"
       NEXT_PUBLIC_APP_URL: "${NEXT_PUBLIC_APP_URL:-http://localhost:3000}"
+      CONTENT_API_URL: "${CONTENT_API_URL:-}"
+      CONTENT_API_TOKEN: "${CONTENT_API_TOKEN:-}"
+      CONTENT_REVALIDATION_SECRET: "${CONTENT_REVALIDATION_SECRET:-}"
+      NEWSLETTER_WEBHOOK_URL: "${NEWSLETTER_WEBHOOK_URL:-}"
+      NEWSLETTER_WEBHOOK_TOKEN: "${NEWSLETTER_WEBHOOK_TOKEN:-}"
+      CONTACT_WEBHOOK_URL: "${CONTACT_WEBHOOK_URL:-}"
+      CONTACT_WEBHOOK_TOKEN: "${CONTACT_WEBHOOK_TOKEN:-}"
     healthcheck:
       test:
         [

@@ -1,5 +1,7 @@
 "use client";
 
+import { THEME_COLORS } from "@/config/theme";
+
 export default function GlobalError({
   reset,
 }: {
@@ -19,7 +21,7 @@ export default function GlobalError({
           }}
         >
           <section style={{ maxWidth: 560, textAlign: "center" }}>
-            <p style={{ color: "#b91c1c", fontWeight: 700 }}>
+            <p style={{ color: THEME_COLORS.destructive, fontWeight: 700 }}>
               APPLICATION ERROR
             </p>
             <h1>We couldn’t load the experience.</h1>
@@ -30,8 +32,8 @@ export default function GlobalError({
                 border: 0,
                 borderRadius: 8,
                 padding: "12px 18px",
-                background: "#b91c1c",
-                color: "white",
+                background: THEME_COLORS.destructive,
+                color: THEME_COLORS.destructiveForeground,
                 fontWeight: 700,
               }}
             >

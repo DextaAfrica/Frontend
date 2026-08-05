@@ -45,7 +45,7 @@ export function SiteFooter() {
           </div>
         </div>
 
-        <div className="mt-16 flex flex-col gap-5 border-t border-white/50 pt-8 tracking-footer-copy sm:flex-row sm:items-center sm:justify-between">
+        <div className="mt-16 flex flex-col gap-5 border-t border-on-media-border pt-8 tracking-footer-copy sm:flex-row sm:items-center sm:justify-between">
           <p>{siteConfig.legal.registration}</p>
           <div className="flex flex-wrap gap-4">
             <CookieSettingsButton />

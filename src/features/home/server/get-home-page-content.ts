@@ -1,13 +1,18 @@
 import "server-only";
 
 import { fallbackHomePageContent } from "../data/fallback-home-page";
+import { homePageContentSchema } from "../schemas/home-page";
 import type { HomePageContent } from "../types/home-page";
+import { recordContentSourceResult } from "./content-source-state";
 
 const REVALIDATE_SECONDS = 300;
 
 export async function getHomePageContent(): Promise<HomePageContent> {
   const endpoint = process.env.CONTENT_API_URL;
-  if (!endpoint) return fallbackHomePageContent;
+  if (!endpoint) {
+    recordContentSourceResult("unconfigured");
+    return fallbackHomePageContent;
+  }
 
   try {
     const response = await fetch(`${endpoint.replace(/\/$/, "")}/home`, {
@@ -19,109 +24,22 @@ export async function getHomePageContent(): Promise<HomePageContent> {
 
     if (!response.ok)
       throw new Error(`Content API returned ${response.status}`);
-    const content: unknown = await response.json();
-    if (!isHomePageContent(content)) {
+    const content = homePageContentSchema.safeParse(await response.json());
+    if (!content.success) {
       throw new Error("Content API returned an invalid homepage payload");
     }
-    return content;
+    recordContentSourceResult("cms");
+    return content.data;
   } catch (error) {
-    console.error("Unable to load managed homepage content", error);
+    const message = error instanceof Error ? error.message : String(error);
+    console.error(
+      JSON.stringify({
+        event: "home_page_content_fallback",
+        message,
+        timestamp: new Date().toISOString(),
+      }),
+    );
+    recordContentSourceResult("fallback", message);
     return fallbackHomePageContent;
   }
-}
-
-function isHomePageContent(value: unknown): value is HomePageContent {
-  if (!isRecord(value)) return false;
-  return (
-    isRecord(value.hero) &&
-    isStringArray(value.hero.titleLines) &&
-    isString(value.hero.ctaLabel) &&
-    isString(value.hero.ctaHref) &&
-    isString(value.hero.video) &&
-    isOptionalString(value.hero.mobileVideo) &&
-    isOptionalString(value.hero.poster) &&
-    isRecord(value.intro) &&
-    isString(value.intro.heading) &&
-    isStringArray(value.intro.paragraphs) &&
-    isObjectArray(value.services, isService) &&
-    hasStrings(value.projectsSection, [
-      "eyebrow",
-      "title",
-      "ctaLabel",
-      "ctaHref",
-      "cardCtaLabel",
-    ]) &&
-    isObjectArray(value.projects, isProject) &&
-    hasStrings(value.testimonialSection, ["eyebrow", "title"]) &&
-    isTestimonial(value.testimonial) &&
-    isObjectArray(value.statistics, isStatistic) &&
-    hasStrings(value.blogSection, ["eyebrow", "title"]) &&
-    isObjectArray(value.blog, isBlogPost) &&
-    isRecord(value.newsletter) &&
-    isString(value.newsletter.eyebrow) &&
-    isString(value.newsletter.title)
-  );
-}
-
-function isService(value: unknown) {
-  return hasStrings(value, ["id", "number", "title", "description", "image"]);
-}
-
-function isProject(value: unknown) {
-  return (
-    isRecord(value) &&
-    hasStrings(value, [
-      "id",
-      "number",
-      "name",
-      "location",
-      "status",
-      "image",
-      "href",
-    ]) &&
-    (value.layout === "feature" || value.layout === "compact")
-  );
-}
-
-function isTestimonial(value: unknown) {
-  return hasStrings(value, ["id", "quote", "author", "role", "portrait"]);
-}
-
-function isStatistic(value: unknown) {
-  return hasStrings(value, ["id", "value", "copy"]);
-}
-
-function isBlogPost(value: unknown) {
-  return hasStrings(value, [
-    "id",
-    "title",
-    "image",
-    "href",
-    "publishedAt",
-    "readingTime",
-  ]);
-}
-
-function hasStrings(value: unknown, keys: readonly string[]) {
-  return isRecord(value) && keys.every((key) => isString(value[key]));
-}
-
-function isObjectArray(value: unknown, validate: (entry: unknown) => boolean) {
-  return Array.isArray(value) && value.length > 0 && value.every(validate);
-}
-
-function isRecord(value: unknown): value is Record<string, unknown> {
-  return typeof value === "object" && value !== null;
-}
-
-function isString(value: unknown): value is string {
-  return typeof value === "string" && value.length > 0;
-}
-
-function isOptionalString(value: unknown) {
-  return value === undefined || isString(value);
-}
-
-function isStringArray(value: unknown): value is string[] {
-  return Array.isArray(value) && value.length > 0 && value.every(isString);
 }

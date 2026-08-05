@@ -41,7 +41,7 @@ export function DevelopmentScreen({ project }: { project: Project }) {
             src={project.image}
             label={`${project.name} arrival`}
             tone="ruby"
-            className="min-h-[38rem]"
+            className="min-h-development-hero"
           />
           <Stack gap="lg">
             <Badge>{project.status}</Badge>

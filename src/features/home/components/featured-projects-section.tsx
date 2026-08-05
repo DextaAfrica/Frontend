@@ -57,11 +57,11 @@ export function FeaturedProjectsSection({
                 aria-hidden
                 className="project-card-shade absolute inset-0 bg-gradient-to-t from-black/55 via-transparent to-black/25"
               />
-              <div className="absolute inset-x-0 top-0 z-10 flex items-start justify-between gap-5 p-project-card text-white">
-                <span className="font-mono text-xs tracking-project-index text-white/75">
+              <div className="absolute inset-x-0 top-0 z-10 flex items-start justify-between gap-5 p-project-card text-on-media">
+                <span className="font-mono text-xs tracking-project-index text-on-media-muted">
                   {project.number}
                 </span>
-                <span className="border border-white/35 bg-black/35 px-3 py-1.5 text-[0.6875rem] tracking-project-status uppercase backdrop-blur-md">
+                <span className="border border-on-media-border bg-on-media-surface px-3 py-1.5 text-status tracking-project-status uppercase backdrop-blur-md">
                   {project.status}
                 </span>
               </div>

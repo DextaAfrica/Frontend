@@ -4,6 +4,11 @@ import * as React from "react";
 import { browserEvents, browserStorage } from "@/config/browser-storage";
 import { Cluster, Stack } from "@/components/layout";
 import { Button, Modal } from "@/components/ui";
+import {
+  readBrowserStorage,
+  removeBrowserStorage,
+  writeBrowserStorage,
+} from "@/lib/browser-storage";
 
 const STORAGE_KEY = browserStorage.consent;
 const CHANGE_EVENT = browserEvents.consentChanged;
@@ -15,6 +20,30 @@ type Consent = {
   updatedAt: string;
 };
 
+function parseConsent(value: string | null): Consent | null {
+  if (!value) return null;
+  try {
+    const consent: unknown = JSON.parse(value);
+    if (
+      typeof consent !== "object" ||
+      consent === null ||
+      !("necessary" in consent) ||
+      consent.necessary !== true ||
+      !("analytics" in consent) ||
+      typeof consent.analytics !== "boolean" ||
+      !("marketing" in consent) ||
+      typeof consent.marketing !== "boolean" ||
+      !("updatedAt" in consent) ||
+      typeof consent.updatedAt !== "string"
+    ) {
+      return null;
+    }
+    return consent as Consent;
+  } catch {
+    return null;
+  }
+}
+
 function subscribe(callback: () => void) {
   window.addEventListener(CHANGE_EVENT, callback);
   window.addEventListener("storage", callback);
@@ -24,7 +53,7 @@ function subscribe(callback: () => void) {
   };
 }
 function hasSavedConsent() {
-  return localStorage.getItem(STORAGE_KEY) !== null;
+  return parseConsent(readBrowserStorage(STORAGE_KEY)) !== null;
 }
 function saveConsent(analytics: boolean, marketing: boolean) {
   const consent: Consent = {
@@ -33,7 +62,7 @@ function saveConsent(analytics: boolean, marketing: boolean) {
     marketing,
     updatedAt: new Date().toISOString(),
   };
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(consent));
+  writeBrowserStorage(STORAGE_KEY, JSON.stringify(consent));
   window.dispatchEvent(new Event(CHANGE_EVENT));
 }
 
@@ -48,15 +77,12 @@ export function ConsentManager() {
   const [marketing, setMarketing] = React.useState(false);
   React.useEffect(() => {
     function openPreferences() {
-      const saved = localStorage.getItem(STORAGE_KEY);
-      if (saved) {
-        try {
-          const consent = JSON.parse(saved) as Consent;
-          setAnalytics(Boolean(consent.analytics));
-          setMarketing(Boolean(consent.marketing));
-        } catch {
-          localStorage.removeItem(STORAGE_KEY);
-        }
+      const consent = parseConsent(readBrowserStorage(STORAGE_KEY));
+      if (consent) {
+        setAnalytics(consent.analytics);
+        setMarketing(consent.marketing);
+      } else {
+        removeBrowserStorage(STORAGE_KEY);
       }
       setPreferencesOpen(true);
     }
@@ -73,7 +99,7 @@ export function ConsentManager() {
       {!consentSaved && (
         <aside
           aria-label="Cookie consent"
-          className="fixed inset-x-3 bottom-3 z-[80] border border-border bg-background p-5 text-foreground shadow-2xl sm:right-5 sm:bottom-5 sm:left-auto sm:max-w-xl sm:p-6"
+          className="fixed inset-x-3 bottom-3 z-[var(--layer-notice)] border border-border bg-surface-elevated p-5 text-foreground shadow-2xl sm:right-5 sm:bottom-5 sm:left-auto sm:max-w-xl sm:p-6"
         >
           <Stack gap="md">
             <Stack gap="xs">

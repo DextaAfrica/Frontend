@@ -5,7 +5,7 @@
 `.github/workflows/ci.yml` runs on pull requests and pushes to `main` and `develop`:
 
 1. installs exactly from `package-lock.json`;
-2. validates TypeScript, ESLint, and formatting;
+2. validates TypeScript, ESLint, unit tests, and formatting;
 3. creates and verifies the Next.js standalone production build;
 4. validates development and production Compose manifests;
 5. builds the production container with reusable GitHub Actions cache.

@@ -85,7 +85,7 @@ export function SiteHeader() {
     <>
       <header
         className={cn(
-          "top-0 z-[70] w-full border-b transition-[background-color,border-color,color] duration-300",
+          "top-0 z-[var(--layer-header)] w-full border-b transition-[background-color,border-color,color] duration-300",
           overlaysHero
             ? "absolute border-brand-light/15 bg-brand-dark/70 text-brand-light shadow-lg backdrop-blur-md"
             : open
@@ -128,7 +128,7 @@ export function SiteHeader() {
                   href={siteConfig.navigation.appointmentHref}
                   size="sm"
                   variant={overlaysHero ? "onMedia" : "primary"}
-                  className="header-booking hidden text-[0.7rem] tracking-[0.08em] uppercase md:inline-flex"
+                  className="header-booking hidden text-control-compact tracking-control-compact uppercase md:inline-flex"
                 >
                   {siteConfig.navigation.appointmentCta}
                 </ButtonLink>
@@ -138,7 +138,7 @@ export function SiteHeader() {
                 variant="secondary"
                 size="sm"
                 data-on-media={overlaysHero || undefined}
-                className="header-menu-trigger shrink-0 text-[0.7rem] tracking-[0.08em] uppercase"
+                className="header-menu-trigger shrink-0 text-control-compact tracking-control-compact uppercase"
                 onClick={() => setOpen((current) => !current)}
                 aria-expanded={open}
                 aria-controls="site-navigation"
@@ -160,7 +160,7 @@ export function SiteHeader() {
         aria-label="Site navigation"
         aria-hidden={!open}
         className={cn(
-          "fixed inset-0 z-[60] bg-background text-foreground transition-[background-color,color,opacity] duration-300 ease-out",
+          "fixed inset-0 z-[var(--layer-navigation)] bg-background text-foreground transition-[background-color,color,opacity] duration-300 ease-out",
           open
             ? "pointer-events-auto visible opacity-100"
             : "pointer-events-none invisible opacity-0",
@@ -168,7 +168,7 @@ export function SiteHeader() {
       >
         <Container
           size="wide"
-          className="h-full overflow-y-auto pt-20 pb-[max(1.25rem,env(safe-area-inset-bottom))] sm:pt-24 sm:pb-[max(2rem,env(safe-area-inset-bottom))]"
+          className="site-navigation-scroll h-full overflow-y-auto pt-20 sm:pt-24"
         >
           <Stack gap="lg" className="min-h-full justify-between py-4 sm:py-6">
             <nav aria-label="Site navigation links">
@@ -181,7 +181,7 @@ export function SiteHeader() {
                     onClick={closeMenu}
                     aria-current={pathname === item.href ? "page" : undefined}
                     className={cn(
-                      "group flex min-h-16 items-center justify-between border-b border-border py-3 text-[clamp(1.75rem,8vw,2.25rem)] leading-none font-light tracking-[-0.04em] sm:min-h-20 sm:py-4 sm:text-5xl lg:min-h-24 lg:text-6xl",
+                      "group flex min-h-16 items-center justify-between border-b border-border py-3 text-navigation-display leading-none font-light tracking-navigation-display sm:min-h-20 sm:py-4 sm:text-5xl lg:min-h-24 lg:text-6xl",
                       pathname === item.href && "text-primary",
                     )}
                   >

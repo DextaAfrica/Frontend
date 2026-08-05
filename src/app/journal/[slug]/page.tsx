@@ -15,7 +15,16 @@ export async function generateMetadata({
   const { slug } = await params;
   const article = articles.find((item) => item.slug === slug);
   return article
-    ? { title: article.title, description: article.introduction }
+    ? {
+        title: article.title,
+        description: article.introduction,
+        alternates: { canonical: `/journal/${slug}` },
+        openGraph: {
+          title: article.title,
+          description: article.introduction,
+          type: "article",
+        },
+      }
     : {};
 }
 export default async function ArticlePage({ params }: ArticlePageProps) {

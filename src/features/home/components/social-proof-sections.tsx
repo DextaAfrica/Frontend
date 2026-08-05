@@ -6,13 +6,13 @@ import {
   RevealGroup,
   RevealItem,
 } from "@/components/marketing";
-import { MetricValue } from "@/components/ui";
 import { isRemoteAsset } from "@/lib/media";
 import type {
   HomePageContent,
   StatisticContent,
   TestimonialContent,
 } from "../types/home-page";
+import { StatCard } from "./stat-card";
 
 export function TestimonialSection({
   testimonial,
@@ -75,16 +75,13 @@ export function StatisticsSection({
   return (
     <Section spacing="lg" tone="surface">
       <RevealGroup className="grid border-y border-border md:grid-cols-3">
-        {statistics.map((stat) => (
+        {statistics.map((stat, index) => (
           <RevealItem
             as="article"
             key={stat.id}
-            className="flex min-h-56 flex-col justify-between gap-10 border-b border-border px-6 py-7 last:border-b-0 sm:px-8 md:min-h-stat-card md:border-r md:border-b-0 md:last:border-r-0"
+            className="border-b border-border last:border-b-0 md:border-r md:border-b-0 md:last:border-r-0"
           >
-            <MetricValue>{stat.value}</MetricValue>
-            <p className="max-w-stat-copy text-2xl leading-[1.2] text-muted-foreground">
-              {stat.copy}
-            </p>
+            <StatCard stat={stat} priority={index === 0} />
           </RevealItem>
         ))}
       </RevealGroup>

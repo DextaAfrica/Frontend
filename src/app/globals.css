@@ -8,8 +8,6 @@
   --motion-fast: 180ms;
   --motion-base: 420ms;
   --motion-slow: 900ms;
-  --motion-service: 720ms;
-  --motion-service-media: 1200ms;
   --motion-ease-premium: cubic-bezier(0.22, 1, 0.36, 1);
 
   --background: #eeeae3;
@@ -20,6 +18,12 @@
   --muted-foreground: #686159;
   --border: #d4ccbf;
   --input: #cfc6b8;
+  --control-hover: #ddd6ca;
+  --control-pressed: #cec5b7;
+  --control-disabled: #e2dcd2;
+  --control-disabled-foreground: #8d857b;
+  --control-shadow: 0 1px 2px rgb(40 32 24 / 0.08);
+  --card-shadow: 0 12px 32px rgb(40 32 24 / 0.08);
   --section-default:
     radial-gradient(circle at 82% 12%, rgb(232 22 19 / 0.035), transparent 30%),
     var(--background);
@@ -37,6 +41,17 @@
   --success-subtle: oklch(0.95 0.04 150);
   --warning: oklch(0.55 0.14 70);
   --warning-subtle: oklch(0.96 0.05 80);
+  --destructive-foreground: oklch(0.99 0.005 20);
+
+  /* Theme-invariant colors for content rendered directly over photography. */
+  --on-media: #ffffff;
+  --on-media-muted: rgb(255 255 255 / 0.75);
+  --on-media-border: rgb(255 255 255 / 0.35);
+  --on-media-surface: rgb(0 0 0 / 0.35);
+  --backdrop: rgb(0 0 0 / 0.65);
+  --mist-strong: rgb(255 255 255 / 0.7);
+  --mist-medium: rgb(255 255 255 / 0.6);
+  --mist-soft: rgb(255 255 255 / 0.5);
 
   --radius: 0.625rem;
   --control-radius: 0.25rem;
@@ -46,6 +61,15 @@
   --control-padding-sm: 0.875rem;
   --control-padding-md: 1.125rem;
   --control-padding-lg: 1.5rem;
+  --type-control: 0.8125rem;
+  --type-control-compact: 0.7rem;
+  --type-status: 0.6875rem;
+  --type-body-small: 0.9375rem;
+  --type-navigation-display: clamp(1.75rem, 8vw, 2.25rem);
+  --letter-spacing-control: 0.04em;
+  --letter-spacing-control-compact: 0.08em;
+  --letter-spacing-eyebrow: 0.2em;
+  --letter-spacing-navigation-display: -0.04em;
   --font-sans:
     "Manrope Variable", "Helvetica Neue", "Segoe UI", Arial, sans-serif;
   --font-serif:
@@ -57,7 +81,8 @@
   --brand-light: #f8f8f7;
   --brand-accent: #e81613;
   --service-border: #000000;
-  --text-subtle: #969696;
+  --text-subtle: #666666;
+  --stat-value-glow: none;
 
   --section-intro-height: clamp(26rem, 35vw, 32rem);
   --scroll-copy-size: clamp(1.5rem, 2.45vw, 2.25rem);
@@ -91,29 +116,50 @@
   --layout-newsletter-card-width: 19.4375rem;
   --layout-newsletter-card-height: 10.375rem;
   --layout-newsletter-input-height: 4.0625rem;
-  --layout-service-panel-height: 40rem;
+  --layout-page-state-min-height: 65vh;
+  --layout-article-media-min-height: 26rem;
+  --layout-lifestyle-hero-min-height: 36rem;
+  --layout-lifestyle-media-min-height: 28rem;
+  --layout-development-hero-min-height: 38rem;
+  --layout-about-media-min-height: 34rem;
+  --layout-grid-card-min: 18rem;
+  --layout-theme-toggle-width: 6.625rem;
+  --layout-dialog-viewport-width: 92vw;
+  --layout-dialog-wide-viewport-width: 94vw;
+  --layout-safe-area-mobile: 1.25rem;
+  --layout-safe-area-tablet: 2rem;
+  --layout-service-panel-height: clamp(42rem, 61vw, 53rem);
   --layout-stat-card-height: 20.375rem;
-  --layout-service-mobile-height: 30rem;
-  --layout-service-tablet-height: 34rem;
-  --layout-service-scroll-travel: 44svh;
-  --layout-service-scroll-travel-desktop: 54svh;
-  --layout-service-row-height: clamp(5rem, 6.736vw, 6.0625rem);
-  --width-services: 87.875rem;
+  --layout-service-mobile-height: 34rem;
+  --layout-service-tablet-height: 38rem;
+  --layout-service-scroll-travel: 52svh;
+  --layout-service-scroll-travel-desktop: 64svh;
+  --layout-service-row-height: clamp(5.25rem, 6.5vw, 6.25rem);
+  --width-services: 90rem;
   --width-testimonial-heading: 32.8125rem;
   --width-stat-copy: 21.6875rem;
   --width-service-copy: 22rem;
   --width-testimonial: 56.1875rem;
   --width-newsletter-copy: 33.25rem;
+  --width-container-editorial: 52.9375rem;
+  --width-container-wide: 90rem;
+  --width-modal: 40rem;
+  --width-dialog-wide: 52rem;
   --layout-newsletter-stack-width: 43rem;
   --layout-newsletter-stack-height: 18rem;
-  --type-service-number: clamp(3rem, 6.65vw, 6rem);
+  --type-service-title: clamp(2rem, 3.333vw, 3rem);
   --type-service-copy: clamp(1rem, 1.4vw, 1.25rem);
+  --type-service-label: 0.875rem;
+  --type-service-number: clamp(3rem, 6.65vw, 6rem);
   --type-service-tab: clamp(1rem, 1.4vw, 1.25rem);
   --type-service-tab-number: clamp(0.875rem, 1.111vw, 1rem);
-  --type-service-indicator: 1.25rem;
   --type-testimonial: clamp(1.25rem, 1.8vw, 1.625rem);
   --type-testimonial-author: clamp(1rem, 1.4vw, 1.25rem);
+  --letter-spacing-service-title: -0.06397rem;
+  --letter-spacing-service-label: -0.0427rem;
   --letter-spacing-service-number: -0.293rem;
+  --line-height-service-title: 1.2;
+  --line-height-service-copy: 1.1;
   --space-testimonial: clamp(5rem, 8vw, 7rem);
   --space-testimonial-quote: clamp(1rem, 1.667vw, 1.5rem);
   --space-testimonial-meta: clamp(2.5rem, 3.472vw, 3.125rem);
@@ -122,12 +168,9 @@
   --layout-testimonial-progress-width: 4.125rem;
   --grid-testimonial: 4.375rem minmax(0, 1fr);
   --size-testimonial-avatar: 4.375rem;
-  --transform-service-offset: 0.75rem;
-  --service-stack-offset: clamp(0.75rem, 1.4vw, 1.5rem);
-  --transform-service-media-scale: 1.015;
   --shape-service-group: 1rem;
   --shape-service-panel: 0.5rem;
-  --shape-service-row: 1rem;
+  --shape-panel: 0.4rem;
   --shape-testimonial-avatar: 0.25rem;
   --letter-spacing-testimonial: -0.025em;
   --letter-spacing-testimonial-author: 0.01em;
@@ -145,6 +188,9 @@
   --elevation-service-row: 0 8px 24px rgb(0 0 0 / 0.56);
   --motion-project-media: 900ms;
   --transform-project-media-scale: 1.025;
+  --layer-navigation: 60;
+  --layer-header: 70;
+  --layer-notice: 80;
 }
 
 .dark {
@@ -158,6 +204,12 @@
   --muted-foreground: #aaa197;
   --border: #39332c;
   --input: #494138;
+  --control-hover: #2c2721;
+  --control-pressed: #383129;
+  --control-disabled: #211e1a;
+  --control-disabled-foreground: #756d64;
+  --control-shadow: 0 1px 2px rgb(0 0 0 / 0.4);
+  --card-shadow: 0 16px 40px rgb(0 0 0 / 0.28);
   --section-default:
     radial-gradient(circle at 82% 12%, rgb(232 22 19 / 0.075), transparent 32%),
     var(--background);
@@ -176,6 +228,7 @@
   --success-subtle: oklch(0.25 0.05 150);
   --warning: oklch(0.78 0.15 80);
   --warning-subtle: oklch(0.27 0.05 70);
+  --stat-value-glow: 0 0 28px oklch(from var(--primary) l c h / 0.55);
 }
 
 @theme inline {
@@ -188,6 +241,10 @@
   --color-muted-foreground: var(--muted-foreground);
   --color-border: var(--border);
   --color-input: var(--input);
+  --color-control-hover: var(--control-hover);
+  --color-control-pressed: var(--control-pressed);
+  --color-control-disabled: var(--control-disabled);
+  --color-control-disabled-foreground: var(--control-disabled-foreground);
   --color-primary: var(--primary);
   --color-primary-hover: var(--primary-hover);
   --color-primary-foreground: var(--primary-foreground);
@@ -198,6 +255,15 @@
   --color-success-subtle: var(--success-subtle);
   --color-warning: var(--warning);
   --color-warning-subtle: var(--warning-subtle);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-on-media: var(--on-media);
+  --color-on-media-muted: var(--on-media-muted);
+  --color-on-media-border: var(--on-media-border);
+  --color-on-media-surface: var(--on-media-surface);
+  --color-backdrop: var(--backdrop);
+  --color-mist-strong: var(--mist-strong);
+  --color-mist-medium: var(--mist-medium);
+  --color-mist-soft: var(--mist-soft);
   --color-brand-dark: var(--brand-dark);
   --color-brand-dark-elevated: var(--brand-dark-elevated);
   --color-brand-light: var(--brand-light);
@@ -217,22 +283,36 @@
   --text-hero: var(--type-hero);
   --text-metric: var(--type-metric);
   --text-section-display: var(--type-section-display);
-  --text-service-number: var(--type-service-number);
+  --text-service-title: var(--type-service-title);
   --text-service-copy: var(--type-service-copy);
+  --text-service-label: var(--type-service-label);
+  --text-service-number: var(--type-service-number);
   --text-service-tab: var(--type-service-tab);
   --text-service-tab-number: var(--type-service-tab-number);
-  --text-service-indicator: var(--type-service-indicator);
+  --text-control: var(--type-control);
+  --text-control-compact: var(--type-control-compact);
+  --text-status: var(--type-status);
+  --text-body-small: var(--type-body-small);
+  --text-navigation-display: var(--type-navigation-display);
   --text-testimonial: var(--type-testimonial);
   --text-testimonial-author: var(--type-testimonial-author);
   --leading-editorial: var(--line-height-editorial);
   --leading-testimonial: 1.2;
+  --leading-service-title: var(--line-height-service-title);
+  --leading-service-copy: var(--line-height-service-copy);
   --leading-heading: var(--line-height-heading);
   --tracking-editorial: var(--letter-spacing-editorial);
   --tracking-editorial-label: var(--letter-spacing-editorial-label);
   --tracking-hero: var(--letter-spacing-hero);
   --tracking-heading: var(--letter-spacing-heading);
   --tracking-section-heading: var(--letter-spacing-section-heading);
+  --tracking-service-title: var(--letter-spacing-service-title);
+  --tracking-service-label: var(--letter-spacing-service-label);
   --tracking-service-number: var(--letter-spacing-service-number);
+  --tracking-control: var(--letter-spacing-control);
+  --tracking-control-compact: var(--letter-spacing-control-compact);
+  --tracking-eyebrow: var(--letter-spacing-eyebrow);
+  --tracking-navigation-display: var(--letter-spacing-navigation-display);
   --tracking-testimonial: var(--letter-spacing-testimonial);
   --tracking-testimonial-author: var(--letter-spacing-testimonial-author);
   --tracking-footer: var(--letter-spacing-footer);
@@ -252,6 +332,10 @@
   --spacing-blog-grid: var(--space-blog-grid);
   --spacing-blog-row: var(--space-blog-row);
   --container-service-shell: var(--width-services);
+  --container-editorial: var(--width-container-editorial);
+  --container-wide: var(--width-container-wide);
+  --container-modal: var(--width-modal);
+  --container-dialog-wide: var(--width-dialog-wide);
   --container-testimonial-heading: var(--width-testimonial-heading);
   --container-stat-copy: var(--width-stat-copy);
   --container-service-copy: var(--width-service-copy);
@@ -265,6 +349,12 @@
   --height-newsletter-card: var(--layout-newsletter-card-height);
   --height-newsletter-input: var(--layout-newsletter-input-height);
   --height-service-panel: var(--layout-service-panel-height);
+  --min-height-page-state: var(--layout-page-state-min-height);
+  --min-height-article-media: var(--layout-article-media-min-height);
+  --min-height-lifestyle-hero: var(--layout-lifestyle-hero-min-height);
+  --min-height-lifestyle-media: var(--layout-lifestyle-media-min-height);
+  --min-height-development-hero: var(--layout-development-hero-min-height);
+  --min-height-about-media: var(--layout-about-media-min-height);
   --height-stat-card: var(--layout-stat-card-height);
   --height-service-mobile: var(--layout-service-mobile-height);
   --height-service-tablet: var(--layout-service-tablet-height);
@@ -279,18 +369,13 @@
   --spacing-testimonial-avatar: var(--size-testimonial-avatar);
   --width-testimonial-progress: var(--layout-testimonial-progress-width);
   --grid-template-columns-testimonial: var(--grid-testimonial);
-  --translate-service: var(--transform-service-offset);
-  --scale-service-media: var(--transform-service-media-scale);
   --radius-service-group: var(--shape-service-group);
   --radius-service-panel: var(--shape-service-panel);
-  --radius-service-row: var(--shape-service-row);
+  --radius-panel: var(--shape-panel);
   --radius-testimonial-avatar: var(--shape-testimonial-avatar);
-  --duration-service: var(--motion-service);
-  --duration-service-media: var(--motion-service-media);
   --duration-project-media: var(--motion-project-media);
   --scale-project-media: var(--transform-project-media-scale);
   --shadow-service-panel: var(--elevation-service-panel);
-  --shadow-service-row: var(--elevation-service-row);
 }
 
 * {
@@ -317,6 +402,48 @@ body {
 
 .section-surface {
   background: var(--section-surface);
+}
+
+.editorial-hero-glow {
+  background: radial-gradient(
+    circle at 78% 18%,
+    var(--primary-subtle),
+    transparent 38%
+  );
+}
+
+.site-navigation-scroll {
+  padding-bottom: max(
+    var(--layout-safe-area-mobile),
+    env(safe-area-inset-bottom)
+  );
+}
+
+.stat-mist-primary {
+  top: -20%;
+  left: 10%;
+  background: var(--mist-strong);
+}
+
+.stat-mist-secondary {
+  top: 30%;
+  right: -10%;
+  background: var(--mist-medium);
+}
+
+.stat-mist-tertiary {
+  bottom: -15%;
+  left: 35%;
+  background: var(--mist-soft);
+}
+
+@media (min-width: 40rem) {
+  .site-navigation-scroll {
+    padding-bottom: max(
+      var(--layout-safe-area-tablet),
+      env(safe-area-inset-bottom)
+    );
+  }
 }
 
 [data-ui="button"],
@@ -537,14 +664,6 @@ dialog[open]::backdrop {
   border-radius: var(--radius-lg);
 }
 
-.service-media-overlay {
-  background: linear-gradient(
-    to bottom,
-    rgb(0 0 0 / 0.2) 35%,
-    rgb(0 0 0 / 0.72) 100%
-  );
-}
-
 /* Header controls own their contrast instead of inheriting it from the page. */
 .header-menu-trigger {
   border-color: var(--border) !important;
@@ -602,9 +721,9 @@ dialog[open]::backdrop {
   position: relative;
   isolation: isolate;
   overflow: clip;
-  background: #000;
+  background: var(--brand-dark);
   --service-active-height: clamp(
-    24rem,
+    28rem,
     calc(
       100svh - (var(--space-services-y) * 2) -
         ((var(--service-count) - 1) * var(--layout-service-row-height))
@@ -631,13 +750,15 @@ dialog[open]::backdrop {
   min-height: 0;
   place-items: center;
   overflow: clip;
-  background: #000;
+  background: var(--brand-dark);
 }
 
 .service-shell {
+  width: 100%;
   max-height: calc(100svh - (var(--space-services-y) * 2));
   overflow: hidden;
-  background: #000;
+  border-radius: var(--shape-service-group) var(--shape-service-group) 0 0;
+  background: var(--brand-dark);
 }
 
 .service-card-stage {
@@ -647,7 +768,7 @@ dialog[open]::backdrop {
       ((var(--service-count) - 1) * var(--layout-service-row-height))
   );
   overflow: hidden;
-  background: #000;
+  background: var(--brand-dark);
 }
 
 .service-card {
@@ -656,17 +777,32 @@ dialog[open]::backdrop {
   top: 0;
   min-height: 0;
   overflow: hidden;
-  background: #000;
+  border: 1px solid var(--service-border);
+  background: var(--brand-dark);
+  box-shadow: var(--elevation-service-panel);
   transform-origin: 50% 0%;
+  contain: paint;
   will-change: transform, opacity;
 }
 
 [data-service-media] {
+  z-index: 0;
+  backface-visibility: hidden;
   will-change: transform, opacity;
+}
+
+.service-media-overlay {
+  z-index: 1;
+  background: linear-gradient(
+    to bottom,
+    transparent 0%,
+    rgb(0 0 0 / 0.72) 100%
+  );
 }
 
 .service-card:first-child {
   height: var(--service-active-height);
+  border-radius: var(--shape-service-panel) var(--shape-service-panel) 0 0;
 }
 
 .service-card:not(:first-child) {
@@ -685,9 +821,45 @@ dialog[open]::backdrop {
   opacity: 0;
 }
 
+.service-expanded-content {
+  z-index: 2;
+}
+
+.service-expanded-content {
+  container-type: inline-size;
+}
+
+.service-expanded-content > div {
+  align-self: start;
+  max-width: min(68cqw, 42rem);
+}
+
+.service-expanded-content > p {
+  align-self: end;
+  margin-bottom: clamp(0rem, 2vh, 1.5rem);
+}
+
 .service-collapsed-control {
   z-index: 3;
-  background: #000 !important;
+  inset-inline: -1px;
+  width: calc(100% + 2px);
+  border-top: 1px solid var(--service-border);
+  background: var(--brand-dark) !important;
+  box-shadow: var(--elevation-service-row);
+  backface-visibility: hidden;
+}
+
+.service-collapsed-control::before {
+  position: absolute;
+  z-index: -1;
+  inset: -2px;
+  background: var(--brand-dark);
+  content: "";
+}
+
+.service-collapsed-control:hover::before,
+.service-collapsed-control:focus-visible::before {
+  background: var(--brand-dark-elevated);
 }
 
 @media (max-width: 63.999rem) {
@@ -709,7 +881,7 @@ dialog[open]::backdrop {
 @media (min-width: 64rem) {
   .service-scroll-section {
     --service-active-height: clamp(
-      24rem,
+      28rem,
       calc(
         100svh - (var(--space-services-y) * 2) -
           ((var(--service-count) - 1) * var(--layout-service-row-height))
@@ -725,7 +897,7 @@ dialog[open]::backdrop {
             var(--layout-service-scroll-travel-desktop)
         )
     );
-    min-height: 42rem;
+    min-height: 48rem;
   }
 }
 
@@ -794,12 +966,6 @@ dialog[open]::backdrop {
   right: 24.5rem;
 }
 
-@media (min-width: 64rem) {
-  .service-media-overlay {
-    background: rgb(0 0 0 / 0.2);
-  }
-}
-
 .scroll-reveal-word {
   display: inline-block;
   margin-inline-end: 0.24em;
@@ -826,11 +992,8 @@ dialog[open]::backdrop {
 .route-enter {
   animation: route-enter var(--motion-base) var(--motion-ease-premium) both;
 }
-.reveal {
-  animation: reveal 700ms cubic-bezier(0.22, 1, 0.36, 1) both;
-}
-.reveal-delay {
-  animation-delay: 140ms;
+.enter-fade {
+  animation: enter-fade 700ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 @keyframes route-enter {
@@ -894,7 +1057,7 @@ dialog[open]::backdrop {
     transform: translateX(260%);
   }
 }
-@keyframes reveal {
+@keyframes enter-fade {
   from {
     opacity: 0;
     transform: translateY(24px);

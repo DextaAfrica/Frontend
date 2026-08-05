@@ -3,6 +3,7 @@ export const siteConfig = {
   description:
     "Value-driven real estate solutions that turn dreams into addresses.",
   url: process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000",
+  ogImage: "/images/dexta-hero-poster.jpg",
   navItems: [
     { label: "Projects", href: "/portfolio" },
     { label: "Careers", href: "/careers" },

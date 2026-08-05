@@ -7,9 +7,9 @@ export interface ContainerProps extends React.ComponentProps<"div"> {
 
 const sizes = {
   narrow: "max-w-3xl",
-  editorial: "max-w-[52.9375rem]",
+  editorial: "max-w-editorial",
   default: "max-w-7xl",
-  wide: "max-w-[90rem]",
+  wide: "max-w-wide",
   full: "max-w-none",
 } as const;
 

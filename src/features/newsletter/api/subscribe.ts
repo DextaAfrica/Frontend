@@ -1,3 +1,5 @@
+import { ApiRequestError } from "@/lib/api-error";
+
 export interface NewsletterSubscriptionInput {
   email: FormDataEntryValue | string | null;
   company?: FormDataEntryValue | string | null;
@@ -16,7 +18,10 @@ export async function subscribeToNewsletter(
   const payload = (await response.json()) as { message?: string };
 
   if (!response.ok) {
-    throw new Error(payload.message ?? "Subscription could not be completed.");
+    throw new ApiRequestError(
+      payload.message ?? "Subscription could not be completed.",
+      response.status,
+    );
   }
 
   return payload.message;

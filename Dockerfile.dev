@@ -8,8 +8,9 @@ ENV NODE_ENV=development \
 RUN apk add --no-cache su-exec
 
 COPY package.json package-lock.json ./
-RUN npm ci \
-    && sha256sum package-lock.json | cut -d ' ' -f 1 > node_modules/.dexta-package-lock.sha256
+RUN npm ci --include=optional \
+    && sha256sum package-lock.json | cut -d ' ' -f 1 > node_modules/.dexta-package-lock.sha256 \
+    && chown -R node:node node_modules
 
 COPY docker/dev-entrypoint.sh /usr/local/bin/dexta-dev-entrypoint
 RUN chmod +x /usr/local/bin/dexta-dev-entrypoint \

@@ -51,7 +51,7 @@ export function AboutScreen() {
           <MediaPanel
             label="The studio at work"
             tone="stone"
-            className="min-h-[34rem]"
+            className="min-h-about-media"
           />
         </Grid>
       </Section>

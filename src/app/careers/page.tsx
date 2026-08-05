@@ -8,7 +8,12 @@ import {
   CardHeading,
   Text,
 } from "@/components/ui";
-export const metadata: Metadata = { title: "Careers" };
+export const metadata: Metadata = {
+  title: "Careers",
+  description:
+    "Join a multidisciplinary team building thoughtful, exacting real estate across Nigeria.",
+  alternates: { canonical: "/careers" },
+};
 const roles = [
   {
     title: "Design & Architecture",

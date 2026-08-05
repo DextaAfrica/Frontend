@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { DevelopmentScreen } from "@/features/development";
+import { siteConfig } from "@/config/site";
 import { projects } from "@/data/projects";
 
 interface ProjectPageProps {
@@ -15,7 +16,16 @@ export async function generateMetadata({
   const { slug } = await params;
   const project = projects.find((item) => item.slug === slug);
   return project
-    ? { title: project.name, description: project.description }
+    ? {
+        title: project.name,
+        description: project.description,
+        alternates: { canonical: `/portfolio/${slug}` },
+        openGraph: {
+          title: project.name,
+          description: project.description,
+          images: [{ url: project.image ?? siteConfig.ogImage }],
+        },
+      }
     : {};
 }
 export default async function ProjectPage({ params }: ProjectPageProps) {

@@ -19,6 +19,11 @@ inside the volume before starting Next.js. File polling is enabled by default
 so edits made through Docker Desktop, WSL, or other bind mounts trigger Fast
 Refresh reliably.
 
+The entrypoint also verifies that Next.js's platform-specific Linux SWC binary
+is present and repairs stale volumes when necessary. Dependencies and the build
+cache are owned by the unprivileged runtime user, allowing Next.js to create a
+fallback compiler directory without granting the application root privileges.
+
 Development output under `.next` uses an ephemeral in-memory filesystem. It is
 recreated with the container, preventing stale Turbopack manifests and browser
 chunk URLs from surviving a development-server restart. The dependency volume
@@ -54,10 +59,14 @@ Set production values through the deployment platform or an uncommitted `.env` f
 ```env
 NEXT_PUBLIC_APP_URL=https://example.com
 APP_PORT=3000
+CONTACT_WEBHOOK_URL=https://crm.example.com/hooks/contact
+NEWSLETTER_WEBHOOK_URL=https://crm.example.com/hooks/newsletter
 ```
 
-Do not bake secrets into the image. Server-only CRM credentials for the newsletter integration should
-be injected at runtime and consumed only by `src/app/api/newsletter/route.ts`.
+Do not bake secrets into the image. Content, contact, and newsletter credentials
+are forwarded by Compose from the runtime environment and remain server-only.
+`NEXT_PUBLIC_APP_URL` is intentionally supplied both as a production build
+argument and at runtime because Next.js embeds public metadata during compilation.
 
 ## Security properties
 
