@@ -4,6 +4,7 @@ import * as React from "react";
 import { browserEvents, browserStorage } from "@/config/browser-storage";
 import { Cluster, Stack } from "@/components/layout";
 import { Button, Modal } from "@/components/ui";
+import { readBrowserStorage, writeBrowserStorage } from "@/lib/browser-storage";
 import { subscribeToNewsletter } from "../api/subscribe";
 
 const STATE_KEY = browserStorage.newsletter;
@@ -15,6 +16,27 @@ type NewsletterState = {
   updatedAt: number;
 };
 
+function parseNewsletterState(value: string | null): NewsletterState | null {
+  if (!value) return null;
+  try {
+    const state: unknown = JSON.parse(value);
+    if (
+      typeof state !== "object" ||
+      state === null ||
+      !("status" in state) ||
+      (state.status !== "dismissed" && state.status !== "subscribed") ||
+      !("updatedAt" in state) ||
+      typeof state.updatedAt !== "number" ||
+      !Number.isFinite(state.updatedAt)
+    ) {
+      return null;
+    }
+    return state as NewsletterState;
+  } catch {
+    return null;
+  }
+}
+
 export function NewsletterManager() {
   const [open, setOpen] = React.useState(false);
   const [status, setStatus] = React.useState<
@@ -24,22 +46,17 @@ export function NewsletterManager() {
 
   React.useEffect(() => {
     function canPrompt() {
-      const raw = localStorage.getItem(STATE_KEY);
-      if (!raw) return true;
-      try {
-        const saved = JSON.parse(raw) as NewsletterState;
-        return (
-          saved.status !== "subscribed" &&
-          Date.now() - saved.updatedAt > THIRTY_DAYS
-        );
-      } catch {
-        return true;
-      }
+      const saved = parseNewsletterState(readBrowserStorage(STATE_KEY));
+      if (!saved) return true;
+      return (
+        saved.status !== "subscribed" &&
+        Date.now() - saved.updatedAt > THIRTY_DAYS
+      );
     }
     let timer: number | undefined;
     function schedulePrompt() {
       window.clearTimeout(timer);
-      if (!localStorage.getItem(browserStorage.consent)) return;
+      if (!readBrowserStorage(browserStorage.consent)) return;
       timer = window.setTimeout(() => {
         if (canPrompt()) setOpen(true);
       }, 10000);
@@ -62,7 +79,7 @@ export function NewsletterManager() {
   function close() {
     setOpen(false);
     if (status !== "success")
-      localStorage.setItem(
+      writeBrowserStorage(
         STATE_KEY,
         JSON.stringify({
           status: "dismissed",
@@ -77,7 +94,7 @@ export function NewsletterManager() {
     const form = new FormData(event.currentTarget);
     const email = String(form.get("email") ?? "");
     const company = String(form.get("company") ?? "");
-    const rawConsent = localStorage.getItem(browserStorage.consent);
+    const rawConsent = readBrowserStorage(browserStorage.consent);
     let consent: unknown = null;
     try {
       consent = rawConsent ? (JSON.parse(rawConsent) as unknown) : null;
@@ -91,7 +108,7 @@ export function NewsletterManager() {
         source: "newsletter_modal",
         consent,
       });
-      localStorage.setItem(
+      writeBrowserStorage(
         STATE_KEY,
         JSON.stringify({
           status: "subscribed",

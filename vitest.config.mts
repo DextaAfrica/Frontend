@@ -9,6 +9,11 @@ export default defineConfig({
   },
   test: {
     environment: "node",
-    include: ["src/**/*.test.ts"],
+    environmentOptions: {
+      jsdom: {
+        url: "http://localhost:3000",
+      },
+    },
+    include: ["src/**/*.test.{ts,tsx}"],
   },
 });

@@ -60,6 +60,8 @@ NEWSLETTER_WEBHOOK_URL=https://crm.example.com/hooks/newsletter
 
 Do not bake secrets into the image. Content, contact, and newsletter credentials
 are forwarded by Compose from the runtime environment and remain server-only.
+`NEXT_PUBLIC_APP_URL` is intentionally supplied both as a production build
+argument and at runtime because Next.js embeds public metadata during compilation.
 
 ## Security properties
 

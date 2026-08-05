@@ -71,6 +71,18 @@ Create only folders a feature actually needs. Do not introduce empty abstraction
 - Server-only code must not be re-exported through a client component barrel.
 - Avoid broad `utils` dumping grounds; helpers should have one clear responsibility.
 
+## Server and client rendering
+
+- Components are server components unless they require browser state, effects, or event handlers.
+- A client component must produce the same markup during SSR and its first browser render. Browser
+  storage, media queries, viewport measurements, dates, and random values are read only after hydration.
+- Browser-only infrastructure is marked with `"use client"`; secret-bearing repositories are marked
+  with `server-only`. Client modules never import server repositories or environment secrets.
+- Theme paint happens in the pre-hydration initializer, while React theme state starts from a stable
+  server snapshot and synchronizes after hydration.
+- `useId` supplies stable accessible IDs for reusable interactive primitives; hard-coded document IDs
+  are reserved for true singletons.
+
 ## Managed content boundary
 
 Dynamic page content is loaded in server-only repositories under `features/*/server`. Route files call

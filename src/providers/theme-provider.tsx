@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import { THEME_STORAGE_KEY } from "@/config/theme";
+import { readBrowserStorage, writeBrowserStorage } from "@/lib/browser-storage";
 
 export type ThemePreference = "light" | "dark" | "system";
 export type ResolvedTheme = "light" | "dark";
@@ -13,6 +14,7 @@ interface ThemeContextValue {
 }
 
 const ThemeContext = React.createContext<ThemeContextValue | null>(null);
+const THEME_CHANGE_EVENT = "dexta:theme-change";
 
 function isThemePreference(value: string | null): value is ThemePreference {
   return value === "light" || value === "dark" || value === "system";
@@ -35,47 +37,51 @@ function applyTheme(theme: ThemePreference) {
   return resolved;
 }
 
+function getThemeSnapshot(): ThemePreference {
+  const stored = readBrowserStorage(THEME_STORAGE_KEY);
+  return isThemePreference(stored) ? stored : "system";
+}
+
+function getResolvedThemeSnapshot(): ResolvedTheme {
+  return resolveTheme(getThemeSnapshot());
+}
+
+function subscribeToTheme(callback: () => void) {
+  const media = window.matchMedia("(prefers-color-scheme: dark)");
+  const syncTheme = () => {
+    applyTheme(getThemeSnapshot());
+    callback();
+  };
+  const syncStoredTheme = (event: StorageEvent) => {
+    if (event.key === THEME_STORAGE_KEY) syncTheme();
+  };
+
+  window.addEventListener(THEME_CHANGE_EVENT, syncTheme);
+  window.addEventListener("storage", syncStoredTheme);
+  media.addEventListener("change", syncTheme);
+  return () => {
+    window.removeEventListener(THEME_CHANGE_EVENT, syncTheme);
+    window.removeEventListener("storage", syncStoredTheme);
+    media.removeEventListener("change", syncTheme);
+  };
+}
+
 export function ThemeProvider({ children }: React.PropsWithChildren) {
-  const [theme, setThemeState] = React.useState<ThemePreference>(() => {
-    if (typeof window === "undefined") return "system";
-    const stored = localStorage.getItem(THEME_STORAGE_KEY);
-    return isThemePreference(stored) ? stored : "system";
-  });
-  const [resolvedTheme, setResolvedTheme] = React.useState<ResolvedTheme>(() =>
-    typeof document !== "undefined" &&
-    document.documentElement.classList.contains("dark")
-      ? "dark"
-      : "light",
+  const theme = React.useSyncExternalStore<ThemePreference>(
+    subscribeToTheme,
+    getThemeSnapshot,
+    () => "system",
+  );
+  const resolvedTheme = React.useSyncExternalStore<ResolvedTheme>(
+    subscribeToTheme,
+    getResolvedThemeSnapshot,
+    () => "light",
   );
 
-  React.useEffect(() => {
-    const media = window.matchMedia("(prefers-color-scheme: dark)");
-    const syncSystemTheme = () => {
-      if (theme === "system") setResolvedTheme(applyTheme("system"));
-    };
-
-    media.addEventListener("change", syncSystemTheme);
-    return () => media.removeEventListener("change", syncSystemTheme);
-  }, [theme]);
-
-  React.useEffect(() => {
-    const syncStoredTheme = (event: StorageEvent) => {
-      if (event.key !== THEME_STORAGE_KEY) return;
-      const preference = isThemePreference(event.newValue)
-        ? event.newValue
-        : "system";
-      setThemeState(preference);
-      setResolvedTheme(applyTheme(preference));
-    };
-
-    window.addEventListener("storage", syncStoredTheme);
-    return () => window.removeEventListener("storage", syncStoredTheme);
-  }, []);
-
   const setTheme = React.useCallback((preference: ThemePreference) => {
-    localStorage.setItem(THEME_STORAGE_KEY, preference);
-    setThemeState(preference);
-    setResolvedTheme(applyTheme(preference));
+    writeBrowserStorage(THEME_STORAGE_KEY, preference);
+    applyTheme(preference);
+    window.dispatchEvent(new Event(THEME_CHANGE_EVENT));
   }, []);
 
   const value = React.useMemo(
