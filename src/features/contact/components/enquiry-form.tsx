@@ -3,20 +3,28 @@
 import * as React from "react";
 import { Grid, Stack } from "@/components/layout";
 import { Button, Modal } from "@/components/ui";
+import { ApiRequestError } from "@/lib/api-error";
 import { submitEnquiry } from "../api/submit-enquiry";
 
 const fieldClass =
   "h-12 w-full rounded-lg border border-input bg-background px-4 text-sm outline-none transition-shadow placeholder:text-muted-foreground focus:ring-2 focus:ring-ring";
+const ERROR_ID = "enquiry-form-error";
+
 export function EnquiryForm() {
   const [status, setStatus] = React.useState<
     "idle" | "submitting" | "success" | "error"
   >("idle");
   const [message, setMessage] = React.useState("");
+  // A 422 means specific fields failed validation; anything else (network,
+  // 502/503 from the delivery webhook) isn't a field problem, so the
+  // inputs shouldn't be marked invalid for it.
+  const [invalidFields, setInvalidFields] = React.useState(false);
 
   async function submit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setStatus("submitting");
     setMessage("");
+    setInvalidFields(false);
     const form = event.currentTarget;
     const data = new FormData(form);
 
@@ -35,6 +43,7 @@ export function EnquiryForm() {
       setStatus("success");
     } catch (error) {
       setStatus("error");
+      setInvalidFields(error instanceof ApiRequestError && error.status === 422);
       setMessage(
         error instanceof Error
           ? error.message
@@ -54,6 +63,8 @@ export function EnquiryForm() {
                 required
                 name="firstName"
                 autoComplete="given-name"
+                aria-invalid={invalidFields}
+                aria-describedby={invalidFields ? ERROR_ID : undefined}
                 className={fieldClass}
               />
             </label>
@@ -63,6 +74,8 @@ export function EnquiryForm() {
                 required
                 name="lastName"
                 autoComplete="family-name"
+                aria-invalid={invalidFields}
+                aria-describedby={invalidFields ? ERROR_ID : undefined}
                 className={fieldClass}
               />
             </label>
@@ -74,6 +87,8 @@ export function EnquiryForm() {
               type="email"
               name="email"
               autoComplete="email"
+              aria-invalid={invalidFields}
+              aria-describedby={invalidFields ? ERROR_ID : undefined}
               className={fieldClass}
             />
           </label>
@@ -84,6 +99,8 @@ export function EnquiryForm() {
               type="tel"
               name="phone"
               autoComplete="tel"
+              aria-invalid={invalidFields}
+              aria-describedby={invalidFields ? ERROR_ID : undefined}
               className={fieldClass}
             />
           </label>
@@ -92,6 +109,8 @@ export function EnquiryForm() {
             <select
               required
               name="interest"
+              aria-invalid={invalidFields}
+              aria-describedby={invalidFields ? ERROR_ID : undefined}
               className={fieldClass}
               defaultValue=""
             >
@@ -110,6 +129,8 @@ export function EnquiryForm() {
               required
               name="message"
               rows={5}
+              aria-invalid={invalidFields}
+              aria-describedby={invalidFields ? ERROR_ID : undefined}
               className={`${fieldClass} h-auto py-3`}
             />
           </label>
@@ -118,6 +139,8 @@ export function EnquiryForm() {
               required
               name="consent"
               type="checkbox"
+              aria-invalid={invalidFields}
+              aria-describedby={invalidFields ? ERROR_ID : undefined}
               className="mt-1 accent-primary"
             />
             I consent to Dexta Africa responding to this enquiry and handling my
@@ -127,11 +150,9 @@ export function EnquiryForm() {
             Company
             <input name="company" tabIndex={-1} autoComplete="off" />
           </label>
-          {message && (
-            <p role="alert" className="text-sm text-destructive">
-              {message}
-            </p>
-          )}
+          <p id={ERROR_ID} role="alert" className="text-sm text-destructive">
+            {message}
+          </p>
           <Button
             type="submit"
             size="lg"

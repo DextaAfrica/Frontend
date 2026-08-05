@@ -1,3 +1,5 @@
+import { ApiRequestError } from "@/lib/api-error";
+
 export interface EnquiryInput {
   firstName: FormDataEntryValue | null;
   lastName: FormDataEntryValue | null;
@@ -18,7 +20,10 @@ export async function submitEnquiry(input: EnquiryInput) {
   const payload = (await response.json()) as { message?: string };
 
   if (!response.ok) {
-    throw new Error(payload.message ?? "Your enquiry could not be submitted.");
+    throw new ApiRequestError(
+      payload.message ?? "Your enquiry could not be submitted.",
+      response.status,
+    );
   }
 
   return payload.message;

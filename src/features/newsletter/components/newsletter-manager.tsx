@@ -5,7 +5,10 @@ import { browserEvents, browserStorage } from "@/config/browser-storage";
 import { Cluster, Stack } from "@/components/layout";
 import { Button, Modal } from "@/components/ui";
 import { readBrowserStorage, writeBrowserStorage } from "@/lib/browser-storage";
+import { ApiRequestError } from "@/lib/api-error";
 import { subscribeToNewsletter } from "../api/subscribe";
+
+const ERROR_ID = "newsletter-modal-error";
 
 const STATE_KEY = browserStorage.newsletter;
 const OPEN_EVENT = browserEvents.openNewsletter;
@@ -43,6 +46,7 @@ export function NewsletterManager() {
     "idle" | "submitting" | "success" | "error"
   >("idle");
   const [message, setMessage] = React.useState("");
+  const [invalidField, setInvalidField] = React.useState(false);
 
   React.useEffect(() => {
     function canPrompt() {
@@ -64,6 +68,7 @@ export function NewsletterManager() {
     const openNewsletter = () => {
       setStatus("idle");
       setMessage("");
+      setInvalidField(false);
       setOpen(true);
     };
     window.addEventListener(OPEN_EVENT, openNewsletter);
@@ -91,6 +96,7 @@ export function NewsletterManager() {
   async function subscribe(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setStatus("submitting");
+    setInvalidField(false);
     const form = new FormData(event.currentTarget);
     const email = String(form.get("email") ?? "");
     const company = String(form.get("company") ?? "");
@@ -123,6 +129,7 @@ export function NewsletterManager() {
           ? error.message
           : "Subscription could not be completed.",
       );
+      setInvalidField(error instanceof ApiRequestError && error.status === 422);
       setStatus("error");
     }
   }
@@ -158,6 +165,8 @@ export function NewsletterManager() {
                 required
                 autoComplete="email"
                 placeholder="you@example.com"
+                aria-invalid={invalidField}
+                aria-describedby={invalidField ? ERROR_ID : undefined}
                 className="h-12 border border-input bg-background px-4 outline-none placeholder:text-muted-foreground focus:ring-2 focus:ring-ring"
               />
             </label>
@@ -165,11 +174,9 @@ export function NewsletterManager() {
               Company
               <input name="company" tabIndex={-1} autoComplete="off" />
             </label>
-            {message && (
-              <p role="alert" className="text-sm text-destructive">
-                {message}
-              </p>
-            )}
+            <p id={ERROR_ID} role="alert" className="text-sm text-destructive">
+              {message}
+            </p>
             <Cluster>
               <Button
                 type="submit"

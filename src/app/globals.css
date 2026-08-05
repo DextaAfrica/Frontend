@@ -57,7 +57,7 @@
   --brand-light: #f8f8f7;
   --brand-accent: #e81613;
   --service-border: #000000;
-  --text-subtle: #969696;
+  --text-subtle: #666666;
 
   --section-intro-height: clamp(26rem, 35vw, 32rem);
   --scroll-copy-size: clamp(1.5rem, 2.45vw, 2.25rem);
