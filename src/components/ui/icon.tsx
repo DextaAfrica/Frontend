@@ -1,6 +1,9 @@
 import {
   ArrowRight,
+  BadgeCheck,
   Building2,
+  ChevronDown,
+  Clock,
   Monitor,
   Mail,
   MapPin,
@@ -8,6 +11,7 @@ import {
   Moon,
   Palette,
   Phone,
+  Play,
   Quote,
   Sun,
   X,
@@ -27,7 +31,11 @@ export type IconName =
   | "quote"
   | "mail"
   | "phone"
-  | "pin";
+  | "pin"
+  | "play"
+  | "badge-check"
+  | "chevron-down"
+  | "clock";
 
 export interface IconProps extends LucideProps {
   name: IconName;
@@ -46,6 +54,10 @@ const icons: Record<IconName, LucideIcon> = {
   mail: Mail,
   phone: Phone,
   pin: MapPin,
+  play: Play,
+  "badge-check": BadgeCheck,
+  "chevron-down": ChevronDown,
+  clock: Clock,
 };
 
 export function Icon({

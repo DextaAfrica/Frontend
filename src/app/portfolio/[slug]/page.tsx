@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { createElement } from "react";
 import { DevelopmentScreen } from "@/features/development";
 import { siteConfig } from "@/config/site";
 import { projects } from "@/data/projects";
@@ -31,6 +32,9 @@ export async function generateMetadata({
 export default async function ProjectPage({ params }: ProjectPageProps) {
   const { slug } = await params;
   const project = projects.find((item) => item.slug === slug);
-  if (!project) notFound();
-  return <DevelopmentScreen project={project} />;
+  if (!project) {
+    notFound();
+    return null;
+  }
+  return createElement(DevelopmentScreen, { project });
 }

@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import { Container } from "@/components/layout";
+import { EditorialHeading } from "@/components/ui";
 import { homeMotion } from "@/config/home-motion";
 import { cn } from "@/lib/utils";
 
@@ -12,6 +13,33 @@ export interface ScrollRevealCopyProps extends Omit<
   heading: string;
   paragraphs: readonly string[];
   initialWordCount?: number;
+}
+
+/**
+ * Splits a paragraph into per-word tokens for the scroll reveal, tracking
+ * `*accent phrase*` markers across word boundaries so a multi-word accent
+ * (e.g. "of *real estate*") renders in italic serif without breaking the
+ * per-word reveal animation.
+ */
+function splitAccentWords(paragraph: string) {
+  let inAccent = false;
+  return paragraph.split(" ").map((raw) => {
+    const opensAccent = raw.startsWith("*") && !inAccent;
+    const closesAccent = raw.endsWith("*") && raw.length > 1;
+    let word = raw;
+
+    if (opensAccent) {
+      word = word.slice(1);
+      inAccent = true;
+    }
+    const accented = inAccent;
+    if (inAccent && closesAccent) {
+      word = word.slice(0, -1);
+      inAccent = false;
+    }
+
+    return { word, accented };
+  });
 }
 
 export function ScrollRevealCopy({
@@ -129,13 +157,16 @@ export function ScrollRevealCopy({
     >
       <div className="scroll-reveal-frame">
         <Container size="editorial">
-          <h2 id={headingId} className="sr-only">
+          <EditorialHeading
+            id={headingId}
+            className="mx-auto mb-8 max-w-3xl text-center text-brand-light sm:mb-10"
+          >
             {heading}
-          </h2>
+          </EditorialHeading>
           <div className="scroll-reveal-copy">
             {paragraphs.map((paragraph) => (
               <p key={paragraph}>
-                {paragraph.split(" ").map((word) => {
+                {splitAccentWords(paragraph).map(({ word, accented }) => {
                   const currentIndex = wordIndex++;
 
                   return (
@@ -145,7 +176,10 @@ export function ScrollRevealCopy({
                         currentIndex < initialWordCount ? "true" : undefined
                       }
                       data-reveal-word
-                      className="scroll-reveal-word"
+                      className={cn(
+                        "scroll-reveal-word",
+                        accented && "font-serif italic",
+                      )}
                     >
                       {word}
                     </span>

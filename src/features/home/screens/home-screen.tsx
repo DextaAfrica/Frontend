@@ -1,5 +1,5 @@
 import { Page } from "@/components/layout";
-import { CinematicHero } from "@/components/marketing";
+import { LandingHero } from "@/components/marketing";
 import {
   BlogSection,
   FeaturedProjectsSection,
@@ -14,7 +14,7 @@ import type { HomePageContent } from "../types/home-page";
 export function HomeScreen({ content }: { content: HomePageContent }) {
   return (
     <Page>
-      <CinematicHero {...content.hero} />
+      <LandingHero {...content.hero} />
       <WhoWeAreSection content={content.intro} />
       <ServicesSection services={content.services} />
       <FeaturedProjectsSection

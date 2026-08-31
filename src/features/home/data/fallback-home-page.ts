@@ -2,17 +2,20 @@ import type { HomePageContent } from "../types/home-page";
 
 export const fallbackHomePageContent = {
   hero: {
-    titleLines: ["Your partner in", "building wealth"],
-    ctaLabel: "Contact Sales",
-    ctaHref: "/contact",
+    badge: "Registered with LASERA",
+    titleLines: ["Building the future", "of *real estate*"],
+    description:
+      "Dexta Africa is a real estate company providing development, advisory, and marketing solutions across Nigeria and Africa.",
+    primary: { label: "Explore Our Projects", href: "/projects" },
+    secondary: { label: "Talk to an Expert", href: "/contact" },
     video: "/media/dexta-hero-desktop.webm",
     mobileVideo: "/media/dexta-hero-mobile.webm",
     poster: "/images/dexta-hero-poster.jpg",
   },
   intro: {
-    heading: "Who we are",
+    heading: "Your partner in *building* wealth",
     paragraphs: [
-      "From site to skyline, Dexta Africa delivers value-driven real estate solutions that turn dreams into addresses.",
+      "From site to skyline, Dexta Africa delivers *value-driven* real estate solutions that turn dreams into addresses.",
       "Whether you're investing, living, or learning, we have the right opportunity for you.",
     ],
   },

@@ -1,5 +1,6 @@
 import { Container } from "@/components/layout";
 import { ButtonLink, HeroHeading, Icon } from "@/components/ui";
+import { renderWithAccents } from "@/components/ui/typography";
 import { HeroVideo } from "./hero-video";
 import { Reveal } from "./reveal";
 
@@ -9,7 +10,7 @@ export interface CinematicHeroProps {
   ctaHref: string;
   video: string;
   mobileVideo?: string;
-  poster?: string;
+  poster: string;
 }
 
 export function CinematicHero({
@@ -29,7 +30,7 @@ export function CinematicHero({
           <HeroHeading>
             {titleLines.map((line, index) => (
               <span key={line} className="block">
-                {line}
+                {renderWithAccents(line)}
                 {index < titleLines.length - 1 && <br className="sr-only" />}
               </span>
             ))}
