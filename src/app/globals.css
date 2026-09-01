@@ -270,6 +270,11 @@
   --stat-value-glow: 0 0 28px oklch(from var(--primary) l c h / 0.55);
 }
 
+/* ===========================================================================
+   3. TAILWIND THEME MAPPING — exposes the tokens above as utility classes
+   (--color-primary → bg-primary/text-primary, --text-hero → text-hero, …).
+   Add a line here only when a component needs the token as a utility.
+   =========================================================================== */
 @theme inline {
   --ease-premium: var(--motion-ease-premium);
   --color-background: var(--background);
@@ -417,6 +422,9 @@
   --shadow-service-panel: var(--elevation-service-panel);
 }
 
+/* ===========================================================================
+   4a. BASE — element defaults.
+   =========================================================================== */
 * {
   border-color: var(--border);
 }
@@ -435,6 +443,12 @@ body {
     background-color 240ms var(--motion-ease-premium);
 }
 
+/* ===========================================================================
+   4b. COMPONENT CLASSES — styling that can't be expressed as utilities
+   (scroll-driven service stack, project-card hover panel, newsletter card
+   fan, app loader, cinematic reveal, header menu trigger). Each block is
+   named for the component that owns it. Keyframes are at the end.
+   =========================================================================== */
 .section-default {
   background: var(--section-default);
 }
@@ -1035,6 +1049,9 @@ dialog[open]::backdrop {
   animation: enter-fade 700ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
+/* ===========================================================================
+   4c. KEYFRAMES
+   =========================================================================== */
 @keyframes route-enter {
   from {
     opacity: 0;
