@@ -45,10 +45,7 @@ export function JournalScreen() {
                       Exploring the decisions and ideas that shape enduring
                       places and more meaningful daily experiences.
                     </Text>
-                    <ButtonLink
-                      href={`/blog/${article.slug}`}
-                      variant="link"
-                    >
+                    <ButtonLink href={`/blog/${article.slug}`} variant="link">
                       Read perspective
                     </ButtonLink>
                   </Stack>

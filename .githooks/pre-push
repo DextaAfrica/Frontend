@@ -1,0 +1,35 @@
+#!/bin/sh
+#
+# Full gate that runs before every push: types + tests + production build.
+# This is the "the product still works after we push" guard — `next build`
+# statically analyses and renders every route, so a page that throws fails
+# the push instead of failing in production.
+#
+# Mirrors `npm run check` + `npm run build`, i.e. the whole of
+# .github/workflows/ci.yml. Keep them in sync.
+#
+# Bypass in an emergency with:  SKIP_HOOKS=1 git push ...
+#
+set -e
+
+if [ "$SKIP_HOOKS" = "1" ]; then
+  echo "pre-push: skipped (SKIP_HOOKS=1)"
+  exit 0
+fi
+
+# Give the build room on memory-constrained machines (CI runners are fine).
+if [ -z "$NODE_OPTIONS" ]; then
+  export NODE_OPTIONS="--max-old-space-size=4096"
+fi
+export NEXT_TELEMETRY_DISABLED=1
+
+echo "pre-push: typecheck"
+npm run typecheck --silent
+
+echo "pre-push: tests"
+npm run test --silent
+
+echo "pre-push: production build"
+npm run build --silent
+
+echo "pre-push: ok"

@@ -53,10 +53,26 @@ export const siteConfig = {
     registration: "© Dexta Africa Limited is Registered with LASERA",
   },
   social: [
-    { label: "Facebook", href: "https://facebook.com/dextaafrica", icon: "facebook" },
-    { label: "Instagram", href: "https://instagram.com/dextaafrica", icon: "instagram" },
-    { label: "LinkedIn", href: "https://linkedin.com/company/dextaafrica", icon: "linkedin" },
-    { label: "YouTube", href: "https://youtube.com/@dextaafrica", icon: "youtube" },
+    {
+      label: "Facebook",
+      href: "https://facebook.com/dextaafrica",
+      icon: "facebook",
+    },
+    {
+      label: "Instagram",
+      href: "https://instagram.com/dextaafrica",
+      icon: "instagram",
+    },
+    {
+      label: "LinkedIn",
+      href: "https://linkedin.com/company/dextaafrica",
+      icon: "linkedin",
+    },
+    {
+      label: "YouTube",
+      href: "https://youtube.com/@dextaafrica",
+      icon: "youtube",
+    },
   ],
 } as const;
 

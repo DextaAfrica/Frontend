@@ -3,7 +3,14 @@
 import * as React from "react";
 import Image from "next/image";
 import { Container } from "@/components/layout";
-import { Badge, ButtonLink, HeroHeading, Icon, Modal, Text } from "@/components/ui";
+import {
+  Badge,
+  ButtonLink,
+  HeroHeading,
+  Icon,
+  Modal,
+  Text,
+} from "@/components/ui";
 import { renderWithAccents } from "@/components/ui/typography";
 import { Reveal } from "./reveal";
 
@@ -89,7 +96,12 @@ export function LandingHero({
               aria-hidden
               className="absolute top-1/2 left-1/2 grid size-16 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full bg-brand-light/95 text-brand-dark shadow-xl transition-transform duration-300 group-hover:scale-110 sm:size-20"
             >
-              <Icon name="play" size={26} className="translate-x-0.5" fill="currentColor" />
+              <Icon
+                name="play"
+                size={26}
+                className="translate-x-0.5"
+                fill="currentColor"
+              />
             </span>
           </button>
         </Reveal>

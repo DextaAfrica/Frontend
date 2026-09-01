@@ -28,8 +28,7 @@
     radial-gradient(circle at 82% 12%, rgb(232 22 19 / 0.035), transparent 30%),
     var(--background);
   --section-surface:
-    linear-gradient(145deg, rgb(0 0 0 / 0.015), transparent 48%),
-    var(--surface);
+    linear-gradient(145deg, rgb(0 0 0 / 0.015), transparent 48%), var(--surface);
 
   --primary: oklch(0.56 0.225 25);
   --primary-hover: oklch(0.5 0.215 25);

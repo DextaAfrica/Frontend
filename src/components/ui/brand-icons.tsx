@@ -14,7 +14,11 @@ export interface BrandIconProps extends SVGProps<SVGSVGElement> {
   size?: number | string;
 }
 
-function BrandIcon({ size = 20, path, ...props }: BrandIconProps & { path: string }) {
+function BrandIcon({
+  size = 20,
+  path,
+  ...props
+}: BrandIconProps & { path: string }) {
   return (
     <svg
       width={size}

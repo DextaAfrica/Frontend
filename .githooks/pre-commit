@@ -1,0 +1,23 @@
+#!/bin/sh
+#
+# Fast gate that runs on every commit: formatting + lint.
+# These mirror the first two steps of `npm run check` and of CI
+# (.github/workflows/ci.yml). The slower typecheck/test/build gate runs on
+# push (see .githooks/pre-push).
+#
+# Bypass in an emergency with:  SKIP_HOOKS=1 git commit ...
+#
+set -e
+
+if [ "$SKIP_HOOKS" = "1" ]; then
+  echo "pre-commit: skipped (SKIP_HOOKS=1)"
+  exit 0
+fi
+
+echo "pre-commit: prettier --check"
+npm run format:check --silent
+
+echo "pre-commit: eslint"
+npm run lint --silent
+
+echo "pre-commit: ok"

@@ -1,5 +1,20 @@
 # CI/CD pipeline
 
+## Local git hooks
+
+The repository ships pre-commit and pre-push hooks in `.githooks/` so a broken
+change is caught before it leaves a developer machine. They mirror CI exactly:
+
+- **pre-commit** — `prettier --check` and `eslint` (fast).
+- **pre-push** — `typecheck`, `test`, and the full `next build` (every route is
+  rendered, so a page that throws fails the push).
+
+They are enabled automatically by the `prepare` script on `npm install` /
+`npm ci`, or manually with `make hooks` (`git config core.hooksPath .githooks`).
+Bypass once, in an emergency only, with `SKIP_HOOKS=1 git commit` /
+`SKIP_HOOKS=1 git push`. Keep the hook scripts and `.github/workflows/ci.yml` in
+sync when either changes.
+
 ## Continuous integration
 
 `.github/workflows/ci.yml` runs on pull requests and pushes to `main` and `develop`:

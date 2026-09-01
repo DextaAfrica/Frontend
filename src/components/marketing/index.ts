@@ -1,4 +1,3 @@
-export * from "./cinematic-hero";
 export * from "./cta-band";
 export * from "./editorial-hero";
 export * from "./faq-accordion";

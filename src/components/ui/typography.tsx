@@ -82,7 +82,7 @@ export function SectionHeading({
   return (
     <h2
       className={cn(
-        "font-display tracking-section-heading text-balance font-semibold",
+        "font-display font-semibold tracking-section-heading text-balance",
         sectionHeadingSizes[size],
         className,
       )}

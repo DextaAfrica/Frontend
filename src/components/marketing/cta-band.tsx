@@ -41,7 +41,7 @@ export function CtaBand({
       </Container>
       <span
         aria-hidden
-        className="pointer-events-none absolute inset-x-0 bottom-[-0.12em] select-none text-center font-display text-[18vw] leading-none font-black tracking-tighter text-brand-light/10 sm:text-[15vw]"
+        className="pointer-events-none absolute inset-x-0 bottom-[-0.12em] text-center font-display text-[18vw] leading-none font-black tracking-tighter text-brand-light/10 select-none sm:text-[15vw]"
       >
         DEXTA
       </span>
