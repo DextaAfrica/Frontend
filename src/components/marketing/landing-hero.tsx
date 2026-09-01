@@ -26,15 +26,19 @@ export interface LandingHeroProps {
  * the editorial reading column (not flush to the browser edge, and not
  * centered) so it lines up with every other section's content edge below it.
  *
- * The headline plays a line-mask reveal on mount: each line sits inside its
- * own overflow-hidden mask and, once mounted, GSAP animates it up into place
- * from just below the mask — staggered — with the badge, description, and
- * CTAs fading up afterward so the headline reads first. The visible/resting
- * state is the CSS default (not the hidden one): `gsap.fromTo` sets the
- * hidden starting position itself at animation time, so if the animation
- * never fires for any reason, the headline is simply visible immediately
- * rather than stuck invisible — this is the one piece of copy on the page
- * that can never fail silently.
+ * The entrance is one coordinated sequence, not independent fades: the badge
+ * scales and sharpens into place with a slight overshoot first, the headline
+ * lines reveal from behind their masks right after, and the description/CTAs
+ * fade up last (via <Reveal>) so the eye lands on the headline. The badge
+ * also carries its own recurring diagonal light sweep (pure CSS, see
+ * `.hero-badge` in globals.css) — a quiet, continuous "alive" detail once
+ * the entrance settles, not just a one-time animation.
+ *
+ * Both the badge and the headline use GSAP's `fromTo` rather than a
+ * CSS-hidden-by-default state: the visible/resting state is the CSS default,
+ * and `fromTo` sets the hidden starting point itself at animation time — so
+ * if the animation never fires for any reason, the content is simply visible
+ * immediately rather than stuck invisible. Neither can fail silently.
  *
  * The scrim is left-to-right, not a flat wash over the whole frame: it darkens
  * only the left portion where the copy sits, fading to fully transparent by
@@ -53,6 +57,8 @@ export function LandingHero({
   mobileVideo,
   poster,
 }: LandingHeroProps) {
+  const introRef = React.useRef<HTMLDivElement>(null);
+  const badgeRef = React.useRef<HTMLSpanElement>(null);
   const headingRef = React.useRef<HTMLDivElement>(null);
 
   useGSAP(
@@ -63,22 +69,41 @@ export function LandingHero({
       const lines = gsap.utils.toArray<HTMLElement>(
         headingRef.current?.querySelectorAll("[data-hero-line-inner]") ?? [],
       );
-      if (!lines.length) return;
 
-      gsap.fromTo(
-        lines,
-        { yPercent: 110 },
-        {
-          yPercent: 0,
-          duration: 1.2,
-          stagger: 0.14,
-          ease: "power4.out",
-          delay: 0.15,
-          clearProps: "transform",
-        },
-      );
+      const timeline = gsap.timeline({ delay: 0.1 });
+
+      if (badgeRef.current) {
+        timeline.fromTo(
+          badgeRef.current,
+          { opacity: 0, scale: 0.8, y: 10, filter: "blur(6px)" },
+          {
+            opacity: 1,
+            scale: 1,
+            y: 0,
+            filter: "blur(0px)",
+            duration: 0.8,
+            ease: "back.out(1.7)",
+            clearProps: "filter",
+          },
+        );
+      }
+
+      if (lines.length) {
+        timeline.fromTo(
+          lines,
+          { yPercent: 110 },
+          {
+            yPercent: 0,
+            duration: 1.2,
+            stagger: 0.14,
+            ease: "power4.out",
+            clearProps: "transform",
+          },
+          "-=0.35",
+        );
+      }
     },
-    { scope: headingRef },
+    { scope: introRef },
   );
 
   return (
@@ -99,13 +124,17 @@ export function LandingHero({
           className="pointer-events-none absolute top-1/2 left-[10%] -z-10 h-[120%] w-[55%] -translate-x-1/2 -translate-y-1/2 bg-[radial-gradient(ellipse_60%_60%_at_50%_50%,rgb(6_6_6/0.3),transparent_72%)]"
         />
 
-        <div className="relative flex max-w-2xl flex-col items-start gap-6 text-left">
-          <Reveal>
-            <span className="inline-flex w-fit items-center gap-1.5 rounded-full border border-on-media-border bg-on-media-surface px-3 py-1.5 text-xs font-medium tracking-wide text-on-media backdrop-blur-md">
-              <Icon name="badge-check" size={14} />
-              {badge}
-            </span>
-          </Reveal>
+        <div
+          ref={introRef}
+          className="relative flex max-w-2xl flex-col items-start gap-6 text-left"
+        >
+          <span
+            ref={badgeRef}
+            className="hero-badge inline-flex w-fit items-center gap-1.5 rounded-full border border-on-media-border bg-on-media-surface px-3 py-1.5 text-xs font-medium tracking-wide text-on-media backdrop-blur-md"
+          >
+            <Icon name="badge-check" size={14} />
+            {badge}
+          </span>
 
           <div ref={headingRef}>
             <HeroHeading className="[text-shadow:0_2px_28px_rgb(0_0_0/0.45)]">
