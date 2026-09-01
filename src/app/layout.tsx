@@ -7,6 +7,7 @@ import "@fontsource-variable/playfair-display/wght-italic.css";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { SiteHeader } from "@/components/layout/site-header";
 import { AppShell, AppShellMain } from "@/components/layout";
+import { Cursor } from "@/components/ui/cursor";
 import { siteConfig } from "@/config/site";
 import { AppProvider } from "@/providers/app-provider";
 import { THEME_COLORS, themeInitializer } from "@/config/theme";
@@ -81,6 +82,7 @@ export default async function RootLayout({
       </head>
       <body className="min-h-dvh bg-background font-sans text-foreground antialiased">
         <AppProvider>
+          <Cursor />
           <AppShell>
             <SiteHeader />
             <AppShellMain>{children}</AppShellMain>

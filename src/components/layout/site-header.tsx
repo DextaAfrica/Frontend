@@ -19,6 +19,8 @@ import { Stack } from "./stack";
 export function SiteHeader() {
   const [open, setOpen] = React.useState(false);
   const [scrolled, setScrolled] = React.useState(false);
+  const [retreated, setRetreated] = React.useState(false);
+  const lastScrollY = React.useRef(0);
   const pathname = usePathname();
   const isLandingPage = pathname === "/";
   const overlaysHero = isLandingPage && !open && !scrolled;
@@ -53,10 +55,26 @@ export function SiteHeader() {
   );
 
   React.useEffect(() => {
-    const updateScrolledState = () => setScrolled(window.scrollY > 32);
-    updateScrolledState();
-    window.addEventListener("scroll", updateScrolledState, { passive: true });
-    return () => window.removeEventListener("scroll", updateScrolledState);
+    lastScrollY.current = window.scrollY;
+
+    // Reveals on scroll-up, retreats on scroll-down past a threshold that
+    // clears the header's own height — so the nav follows the visitor's
+    // intent (heading back up to find something) rather than just tracking
+    // raw scroll position.
+    function update() {
+      const currentY = window.scrollY;
+      const delta = currentY - lastScrollY.current;
+      setScrolled(currentY > 32);
+      if (currentY < 120) {
+        setRetreated(false);
+      } else if (Math.abs(delta) > 4) {
+        setRetreated(delta > 0);
+      }
+      lastScrollY.current = currentY;
+    }
+    update();
+    window.addEventListener("scroll", update, { passive: true });
+    return () => window.removeEventListener("scroll", update);
   }, [pathname]);
 
   React.useEffect(() => {
@@ -85,7 +103,8 @@ export function SiteHeader() {
     <>
       <header
         className={cn(
-          "top-0 z-[var(--layer-header)] w-full border-b transition-[background-color,border-color,color] duration-300",
+          "top-0 z-[var(--layer-header)] w-full border-b transition-[background-color,border-color,color,transform] duration-300 ease-premium",
+          retreated && !open ? "-translate-y-full" : "translate-y-0",
           overlaysHero
             ? "absolute border-brand-light/15 bg-brand-dark/70 text-brand-light shadow-lg backdrop-blur-md"
             : open

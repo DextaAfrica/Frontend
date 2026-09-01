@@ -1116,3 +1116,39 @@ dialog[open]::backdrop {
     transform: none;
   }
 }
+
+/* Custom cursor — see src/components/ui/cursor.tsx. Only ever active on
+   devices the component has confirmed have a real mouse; native cursor is
+   otherwise left completely alone. */
+.custom-cursor,
+.custom-cursor * {
+  cursor: none !important;
+}
+
+.cursor-dot {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 2147483647;
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  background: #ffffff;
+  mix-blend-mode: difference;
+  pointer-events: none;
+  opacity: 0;
+  transition:
+    opacity 200ms var(--motion-ease-premium),
+    width 250ms var(--motion-ease-premium),
+    height 250ms var(--motion-ease-premium);
+  will-change: transform;
+}
+
+.cursor-dot[data-visible="true"] {
+  opacity: 1;
+}
+
+.cursor-dot[data-hovering="true"] {
+  width: 36px;
+  height: 36px;
+}

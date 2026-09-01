@@ -8,3 +8,4 @@ export * from "./quote-block";
 export * from "./reveal";
 export * from "./section-heading";
 export * from "./scroll-reveal-copy";
+export * from "./toc-nav";
