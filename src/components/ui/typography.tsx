@@ -58,7 +58,7 @@ export function Heading({
   return (
     <h1
       className={cn(
-        "font-display text-3xl leading-heading font-semibold tracking-heading text-balance sm:text-4xl lg:text-5xl",
+        "font-display text-editorial leading-editorial font-semibold tracking-editorial text-balance",
         className,
       )}
       {...props}

@@ -290,7 +290,7 @@ export function SiteHeader() {
                     onClick={closeMenu}
                     aria-current={pathname === item.href ? "page" : undefined}
                     className={cn(
-                      "group flex min-h-16 items-center justify-between border-b border-border py-3 text-navigation-display leading-none font-light tracking-navigation-display sm:min-h-20 sm:py-4 sm:text-5xl lg:min-h-24 lg:text-6xl",
+                      "group flex min-h-16 items-center justify-between border-b border-border py-3 text-navigation-display leading-none font-light tracking-navigation-display sm:min-h-20 sm:py-4 lg:min-h-24",
                       pathname === item.href && "text-primary",
                     )}
                   >

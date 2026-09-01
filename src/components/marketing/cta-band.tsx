@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { Container } from "@/components/layout";
-import { ButtonLink, HeroHeading, Icon } from "@/components/ui";
+import { ButtonLink, EditorialHeading, Icon } from "@/components/ui";
 import { Reveal } from "./reveal";
 
 export interface CtaBandProps {
@@ -32,7 +32,7 @@ export function CtaBand({
       />
       <Container className="relative flex flex-col items-center gap-8 text-center">
         <Reveal className="flex flex-col items-center gap-8">
-          <HeroHeading className="text-4xl sm:text-6xl">{title}</HeroHeading>
+          <EditorialHeading>{title}</EditorialHeading>
           <ButtonLink href={ctaHref} size="lg" variant="onMedia">
             {ctaLabel}
             <Icon name="arrow-right" />

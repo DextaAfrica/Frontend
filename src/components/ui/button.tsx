@@ -30,28 +30,28 @@ const variants: Record<ButtonVariant, string> = {
   // lifts into a genuine red glow — the two modes are meant to look
   // different, not just re-colored.
   primary:
-    "border-primary bg-primary text-primary-foreground shadow-[var(--control-shadow)] hover:-translate-y-0.5 hover:border-primary-hover hover:bg-primary-hover hover:shadow-[var(--control-shadow-glow)] active:translate-y-0 active:shadow-[var(--control-shadow)]",
+    "border-primary bg-primary text-primary-foreground shadow-[var(--control-shadow)] hover:-translate-y-1 hover:scale-[1.02] hover:border-primary-hover hover:bg-primary-hover hover:shadow-[var(--control-shadow-glow)] active:translate-y-0 active:scale-[0.96] active:shadow-[var(--control-shadow)]",
   // A confident outlined pill. Light mode: crisp near-black border on
   // paper-white. Dark mode: the same border logic plus a faint frosted
   // fill (--control-glass) that light mode doesn't have — its own
   // deliberate dark-mode character, not an inverted clone.
   secondary:
-    "border-[var(--control-border-strong)] bg-[var(--control-glass)] text-foreground shadow-[var(--control-shadow)] backdrop-blur-sm hover:-translate-y-0.5 hover:border-[var(--control-border-strong-hover)] hover:bg-control-hover hover:shadow-[var(--control-shadow-hover)] active:translate-y-0 active:bg-control-pressed",
+    "border-[var(--control-border-strong)] bg-[var(--control-glass)] text-foreground shadow-[var(--control-shadow)] backdrop-blur-sm hover:-translate-y-1 hover:scale-[1.02] hover:border-[var(--control-border-strong-hover)] hover:bg-control-hover hover:shadow-[var(--control-shadow-hover)] active:translate-y-0 active:bg-control-pressed",
   // Fully inverted fill (foreground/background swap) — solid near-black on
   // paper-white in light mode, solid near-white on near-black in dark
   // mode. The starkest, most obviously theme-aware variant.
   neutral:
-    "border-foreground bg-foreground text-background shadow-[var(--control-shadow)] hover:-translate-y-0.5 hover:bg-foreground/85 hover:shadow-[var(--control-shadow-hover)] active:translate-y-0",
+    "border-foreground bg-foreground text-background shadow-[var(--control-shadow)] hover:-translate-y-1 hover:scale-[1.02] hover:bg-foreground/85 hover:shadow-[var(--control-shadow-hover)] active:translate-y-0",
   // For placement directly over photography/video — always a light pill
   // regardless of site theme, turning brand-red on hover.
   onMedia:
-    "border-brand-light bg-brand-light text-brand-dark shadow-[var(--control-shadow)] hover:-translate-y-0.5 hover:border-primary hover:bg-primary hover:text-primary-foreground hover:shadow-[var(--control-shadow-glow)] active:translate-y-0",
+    "border-brand-light bg-brand-light text-brand-dark shadow-[var(--control-shadow)] hover:-translate-y-1 hover:scale-[1.02] hover:border-primary hover:bg-primary hover:text-primary-foreground hover:shadow-[var(--control-shadow-glow)] active:translate-y-0",
   ghost:
     "border-transparent text-foreground shadow-none hover:bg-control-hover active:bg-control-pressed",
   outline:
-    "border-primary/35 bg-transparent text-primary hover:-translate-y-0.5 hover:border-primary hover:bg-primary-subtle active:translate-y-0",
+    "border-primary/35 bg-transparent text-primary hover:-translate-y-1 hover:scale-[1.02] hover:border-primary hover:bg-primary-subtle active:translate-y-0",
   destructive:
-    "border-destructive bg-destructive text-destructive-foreground shadow-[var(--control-shadow)] hover:-translate-y-0.5 hover:brightness-90 hover:shadow-[var(--control-shadow-hover)] active:translate-y-0",
+    "border-destructive bg-destructive text-destructive-foreground shadow-[var(--control-shadow)] hover:-translate-y-1 hover:scale-[1.02] hover:brightness-90 hover:shadow-[var(--control-shadow-hover)] active:translate-y-0",
   link: "h-auto rounded-none border-transparent p-0 text-primary underline-offset-4 hover:underline active:scale-100",
 };
 const sizes: Record<ButtonSize, string> = {
