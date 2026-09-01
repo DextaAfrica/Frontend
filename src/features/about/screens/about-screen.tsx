@@ -62,13 +62,11 @@ export function AboutScreen() {
             title="Principles made visible."
           />
           <Grid columns="three">
-            {values.map((value, index) => (
+            {values.map((value) => (
               <Card key={value.title}>
                 <CardContent className="p-7">
                   <Stack gap="md">
-                    <span className="text-sm font-bold text-primary">
-                      0{index + 1}
-                    </span>
+                    <span className="h-px w-8 bg-primary" aria-hidden />
                     <CardHeading size="lg">{value.title}</CardHeading>
                     <Text className="text-sm">{value.text}</Text>
                   </Stack>

@@ -23,7 +23,6 @@ export const homePageContent = {
   services: [
     {
       id: "residential-development",
-      number: "01",
       label: "Building the future",
       title: "Residential Development",
       description:
@@ -32,7 +31,6 @@ export const homePageContent = {
     },
     {
       id: "site-and-service",
-      number: "02",
       label: "Land with purpose",
       title: "Site and Service Development",
       description:
@@ -41,7 +39,6 @@ export const homePageContent = {
     },
     {
       id: "hospitality-development",
-      number: "03",
       label: "Investment meets lifestyle",
       title: "Hospitality Development",
       description:
@@ -59,7 +56,6 @@ export const homePageContent = {
   projects: [
     {
       id: "dlodge-apartment",
-      number: "01",
       name: "D'lodge Apartment",
       location: "Lekki Peninsula 2",
       status: "Now selling",
@@ -69,7 +65,6 @@ export const homePageContent = {
     },
     {
       id: "olumo-county-estate",
-      number: "02",
       name: "Olumo County Estate",
       location: "Kobape, Ogun state",
       status: "Available plots",
@@ -79,7 +74,6 @@ export const homePageContent = {
     },
     {
       id: "kingsway-estate",
-      number: "03",
       name: "Kingsway Estate",
       location: "Ijebu-Ode, Ogun State",
       status: "Now selling",

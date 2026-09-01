@@ -294,20 +294,17 @@ export function ServicesSection({
 
                   <div
                     data-service-expanded
-                    className="service-expanded-content absolute inset-0 grid grid-cols-[1fr_auto] content-between gap-6 p-service"
+                    className="service-expanded-content absolute inset-0 flex flex-col justify-between gap-6 p-service"
                   >
                     <div>
                       <p className="mb-4 font-mono text-service-label tracking-service-label uppercase">
-                        ({service.number}) {service.label}
+                        {service.label}
                       </p>
                       <h3 className="max-w-[18ch] text-service-title leading-service-title font-medium tracking-service-title">
                         {service.title}
                       </h3>
                     </div>
-                    <span className="font-mono text-service-number leading-none tracking-service-number">
-                      {service.number}
-                    </span>
-                    <p className="col-span-2 max-w-service-copy justify-self-end text-service-copy leading-service-copy font-normal">
+                    <p className="max-w-service-copy self-end text-service-copy leading-service-copy font-normal">
                       {service.description}
                     </p>
                   </div>
@@ -320,10 +317,7 @@ export function ServicesSection({
                     onClick={() => goToService(index)}
                     className="service-collapsed-control group absolute inset-x-0 bottom-0 isolate flex h-service-row w-full items-center gap-5 px-service text-left text-foreground transition-colors focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none focus-visible:ring-inset"
                   >
-                    <span className="font-mono text-service-tab-number leading-none opacity-60">
-                      {service.number}
-                    </span>
-                    <span className="font-mono text-xs tracking-service-label uppercase">
+                    <span className="font-mono text-xs tracking-service-label text-muted-foreground uppercase">
                       {service.label}
                     </span>
                     <span className="text-service-tab leading-tight">

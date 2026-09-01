@@ -27,7 +27,6 @@ export const homePageContentSchema = z.object({
     .array(
       z.object({
         id: nonEmptyString,
-        number: nonEmptyString,
         label: nonEmptyString,
         title: nonEmptyString,
         description: nonEmptyString,
@@ -44,7 +43,6 @@ export const homePageContentSchema = z.object({
     .array(
       z.object({
         id: nonEmptyString,
-        number: nonEmptyString,
         name: nonEmptyString,
         location: nonEmptyString,
         status: nonEmptyString,
