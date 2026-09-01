@@ -12,7 +12,7 @@ export interface CtaBandProps {
 
 /** The "Start Your Property Journey Today" band repeated across every page. */
 export function CtaBand({
-  title = "Start Your *Property* Journey *Today*",
+  title = "Start Your *Property* Journey Today",
   ctaLabel = "Let's Talk",
   ctaHref = "/contact",
   image = "/images/residence-rooftop.png",

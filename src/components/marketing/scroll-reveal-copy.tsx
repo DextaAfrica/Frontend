@@ -15,33 +15,6 @@ export interface ScrollRevealCopyProps extends Omit<
   initialWordCount?: number;
 }
 
-/**
- * Splits a paragraph into per-word tokens for the scroll reveal, tracking
- * `*accent phrase*` markers across word boundaries so a multi-word accent
- * (e.g. "of *real estate*") renders in italic serif without breaking the
- * per-word reveal animation.
- */
-function splitAccentWords(paragraph: string) {
-  let inAccent = false;
-  return paragraph.split(" ").map((raw) => {
-    const opensAccent = raw.startsWith("*") && !inAccent;
-    const closesAccent = raw.endsWith("*") && raw.length > 1;
-    let word = raw;
-
-    if (opensAccent) {
-      word = word.slice(1);
-      inAccent = true;
-    }
-    const accented = inAccent;
-    if (inAccent && closesAccent) {
-      word = word.slice(0, -1);
-      inAccent = false;
-    }
-
-    return { word, accented };
-  });
-}
-
 export function ScrollRevealCopy({
   heading,
   paragraphs,
@@ -159,14 +132,14 @@ export function ScrollRevealCopy({
         <Container size="editorial">
           <EditorialHeading
             id={headingId}
-            className="mx-auto mb-8 max-w-3xl text-center text-brand-light sm:mb-10"
+            className="mx-auto mb-8 max-w-3xl text-center sm:mb-10"
           >
             {heading}
           </EditorialHeading>
           <div className="scroll-reveal-copy">
             {paragraphs.map((paragraph) => (
               <p key={paragraph}>
-                {splitAccentWords(paragraph).map(({ word, accented }) => {
+                {paragraph.split(" ").map((word) => {
                   const currentIndex = wordIndex++;
 
                   return (
@@ -176,10 +149,7 @@ export function ScrollRevealCopy({
                         currentIndex < initialWordCount ? "true" : undefined
                       }
                       data-reveal-word
-                      className={cn(
-                        "scroll-reveal-word",
-                        accented && "font-serif italic",
-                      )}
+                      className="scroll-reveal-word"
                     >
                       {word}
                     </span>

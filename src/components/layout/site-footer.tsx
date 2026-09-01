@@ -7,9 +7,15 @@ import { siteConfig } from "@/config/site";
 import { InlineNewsletterForm } from "@/features/newsletter/components/inline-newsletter-form";
 import { Container } from "./container";
 
+const labelClass =
+  "font-display text-xs font-semibold tracking-footer-heading text-brand-light uppercase";
+const linkListClass =
+  "mt-5 flex flex-col gap-3 text-sm tracking-footer text-brand-light/75 uppercase";
+const linkClass = "transition-colors hover:text-brand-light";
+
 export function SiteFooter() {
   return (
-    <footer className="bg-brand-dark py-16 text-xs text-brand-light sm:py-20">
+    <footer className="bg-brand-dark py-16 text-brand-light sm:py-20">
       <Container>
         <div className="grid gap-12 sm:grid-cols-2 lg:grid-cols-[2fr_1fr_1fr_1.4fr]">
           <div>
@@ -19,10 +25,8 @@ export function SiteFooter() {
               width={238}
               height={104}
             />
-            <p className="mt-8 tracking-footer uppercase">
-              Lagos office address
-            </p>
-            <p className="mt-4 max-w-xs leading-4 tracking-footer-copy">
+            <p className={`mt-8 ${labelClass}`}>Lagos office address</p>
+            <p className="mt-4 max-w-xs text-sm leading-6 tracking-footer-copy text-brand-light/75">
               {siteConfig.contact.address}
             </p>
           </div>
@@ -31,24 +35,29 @@ export function SiteFooter() {
             <FooterGroup key={group.title} {...group} />
           ))}
 
-          <div className="tracking-footer uppercase">
-            <p className="tracking-footer-heading">Contact</p>
-            <div className="mt-5 flex flex-col gap-2">
-              <a href={`mailto:${siteConfig.contact.email}`}>
+          <div>
+            <p className={labelClass}>Contact</p>
+            <div className={linkListClass}>
+              <a
+                href={`mailto:${siteConfig.contact.email}`}
+                className={linkClass}
+              >
                 {siteConfig.contact.email}
               </a>
-              <a href={`tel:${siteConfig.contact.phone}`}>
+              <a href={`tel:${siteConfig.contact.phone}`} className={linkClass}>
                 {siteConfig.contact.phone}
               </a>
               <span>{siteConfig.contact.shortCode}</span>
               <span>{siteConfig.contact.supportLabel}</span>
             </div>
-            <p className="mt-12">{siteConfig.contact.availability}</p>
+            <p className="mt-8 text-sm tracking-footer-copy text-brand-light/60 normal-case">
+              {siteConfig.contact.availability}
+            </p>
           </div>
         </div>
 
         <div className="mt-16 border-t border-on-media-border pt-10 sm:mt-20">
-          <p className="text-sm font-medium text-brand-light normal-case">
+          <p className="font-display text-sm font-medium text-brand-light">
             Updates, insights &amp; stories straight to your inbox
           </p>
           <InlineNewsletterForm
@@ -57,7 +66,7 @@ export function SiteFooter() {
           />
         </div>
 
-        <div className="mt-10 flex flex-col gap-5 border-t border-on-media-border pt-8 tracking-footer-copy sm:flex-row sm:items-center sm:justify-between">
+        <div className="mt-10 flex flex-col gap-5 border-t border-on-media-border pt-8 text-sm tracking-footer-copy text-brand-light/60 sm:flex-row sm:items-center sm:justify-between">
           <p>{siteConfig.legal.registration}</p>
           <div className="flex flex-wrap items-center gap-4">
             <CookieSettingsButton />
@@ -87,11 +96,15 @@ function FooterGroup({
   links,
 }: (typeof siteConfig.footer.groups)[number]) {
   return (
-    <div className="tracking-footer uppercase">
-      <p className="tracking-footer-heading">{title}</p>
-      <nav className="mt-5 flex flex-col gap-2">
+    <div>
+      <p className={labelClass}>{title}</p>
+      <nav className={linkListClass}>
         {links.map((link) => (
-          <Link key={link.label} href={link.href as Route}>
+          <Link
+            key={link.label}
+            href={link.href as Route}
+            className={linkClass}
+          >
             {link.label}
           </Link>
         ))}

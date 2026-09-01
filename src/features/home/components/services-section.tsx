@@ -251,7 +251,7 @@ export function ServicesSection({
   return (
     <section
       ref={sectionRef}
-      className="service-scroll-section bg-brand-dark text-brand-light"
+      className="service-scroll-section bg-background text-foreground"
       style={{ "--service-count": services.length } as ServiceSectionStyle}
       aria-labelledby={`${sectionId}-heading`}
     >
@@ -271,7 +271,7 @@ export function ServicesSection({
                   key={service.id}
                   data-service-card
                   data-active={isActive || undefined}
-                  className="service-card relative isolate min-h-service-mobile overflow-hidden bg-brand-dark sm:min-h-service-tablet lg:min-h-0"
+                  className="service-card relative isolate min-h-service-mobile overflow-hidden bg-muted text-on-media sm:min-h-service-tablet lg:min-h-0"
                   style={
                     {
                       position: "relative",

@@ -39,7 +39,7 @@ export function BlogSection({
                     className="object-cover transition-transform duration-700 ease-premium group-hover:scale-project-media"
                   />
                 </div>
-                <h3 className="mt-5 font-serif text-xl leading-editorial tracking-editorial">
+                <h3 className="mt-5 font-display text-xl leading-editorial font-semibold tracking-editorial">
                   {post.title}
                 </h3>
                 <div className="mt-4 flex flex-wrap gap-x-7 gap-y-2 text-sm text-muted-foreground">

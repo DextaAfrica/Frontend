@@ -16,7 +16,7 @@ export const homePageContent = {
   intro: {
     heading: "Your partner in *building* wealth",
     paragraphs: [
-      "From site to skyline, Dexta Africa delivers *value-driven* real estate solutions that turn dreams into addresses.",
+      "From site to skyline, Dexta Africa delivers value-driven real estate solutions that turn dreams into addresses.",
       "Whether you're investing, living, or learning, we have the right opportunity for you.",
     ],
   },

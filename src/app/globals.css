@@ -181,9 +181,9 @@
   --shape-testimonial-avatar: 0.25rem;
   --letter-spacing-testimonial: -0.025em;
   --letter-spacing-testimonial-author: 0.01em;
-  --letter-spacing-footer: 0.2em;
-  --letter-spacing-footer-heading: 0.25em;
-  --letter-spacing-footer-copy: 0.05em;
+  --letter-spacing-footer: 0.06em;
+  --letter-spacing-footer-heading: 0.1em;
+  --letter-spacing-footer-copy: 0.01em;
   --letter-spacing-project-index: 0.2em;
   --letter-spacing-project-status: 0.12em;
   --space-projects: clamp(4rem, 7vw, 7rem);
@@ -578,7 +578,7 @@ dialog[open]::backdrop {
 
 .scroll-reveal-copy {
   margin-inline: auto;
-  color: var(--brand-light);
+  color: var(--foreground);
   font-family: var(--font-display);
   font-size: var(--scroll-copy-size);
   font-weight: 500;
