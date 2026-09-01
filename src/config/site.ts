@@ -5,6 +5,7 @@ export const siteConfig = {
   url: process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000",
   ogImage: "/images/dexta-hero-poster.jpg",
   navItems: [
+    { label: "Home", href: "/" },
     { label: "Projects", href: "/projects" },
     { label: "Careers", href: "/careers" },
     { label: "Blog", href: "/blog" },

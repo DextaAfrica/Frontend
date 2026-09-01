@@ -6,11 +6,20 @@ import { cn } from "@/lib/utils";
  * words inside an otherwise sans headline (e.g. "Building the future of
  * *real estate*"). Never wraps a whole heading: it's a word-level accent,
  * matching the pattern used throughout the approved designs.
+ *
+ * Carries the theme's red (`--color-primary`) as a slow, continuous gradient
+ * shimmer — quiet and always-on rather than a one-shot animation, same spirit
+ * as the hero badge's light sweep (see `.hero-badge` in globals.css). Pure
+ * CSS, so it costs nothing at rest and simply becomes a flat accent color
+ * under `prefers-reduced-motion` (see `.accent-highlight` in globals.css).
  */
 export function Accent({ className, ...props }: React.ComponentProps<"span">) {
   return (
     <span
-      className={cn("font-serif font-normal italic", className)}
+      className={cn(
+        "accent-highlight font-serif font-normal italic",
+        className,
+      )}
       {...props}
     />
   );

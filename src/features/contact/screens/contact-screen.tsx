@@ -9,7 +9,7 @@ export function ContactScreen() {
     <Page>
       <EditorialHero
         eyebrow="Contact"
-        title="Let’s begin a conversation."
+        title="Let’s begin a *conversation*."
         description="Whether you are looking for a home, considering an investment, or exploring a partnership, our team is here to help."
       />
       <Section tone="surface">

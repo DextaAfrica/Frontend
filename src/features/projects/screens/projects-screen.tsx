@@ -11,7 +11,7 @@ export function ProjectsScreen() {
     <Page>
       <EditorialHero
         eyebrow="Our projects"
-        title="Landmarks with a lasting point of view."
+        title="*Landmarks* with a lasting point of view."
         description="Each address responds to its place while sharing our commitment to timeless form, thoughtful living, and enduring value."
         primary={{ label: "Discuss a residence", href: "/contact" }}
       />

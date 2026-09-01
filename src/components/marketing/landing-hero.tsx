@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { Container } from "@/components/layout";
-import { ButtonLink, HeroHeading, Icon, Text } from "@/components/ui";
+import { ButtonLink, HeroHeading, Icon } from "@/components/ui";
 import { renderWithAccents } from "@/components/ui/typography";
 import { gsap, useGSAP } from "@/lib/gsap";
 import { HeroVideo } from "./hero-video";
@@ -60,6 +60,7 @@ export function LandingHero({
   const introRef = React.useRef<HTMLDivElement>(null);
   const badgeRef = React.useRef<HTMLSpanElement>(null);
   const headingRef = React.useRef<HTMLDivElement>(null);
+  const descriptionRef = React.useRef<HTMLParagraphElement>(null);
 
   useGSAP(
     () => {
@@ -102,6 +103,22 @@ export function LandingHero({
           "-=0.35",
         );
       }
+
+      if (descriptionRef.current) {
+        timeline.fromTo(
+          descriptionRef.current,
+          { opacity: 0, y: 14, filter: "blur(10px)" },
+          {
+            opacity: 1,
+            y: 0,
+            filter: "blur(0px)",
+            duration: 0.9,
+            ease: "power3.out",
+            clearProps: "filter",
+          },
+          "-=0.55",
+        );
+      }
     },
     { scope: introRef },
   );
@@ -113,15 +130,19 @@ export function LandingHero({
         aria-hidden
         className="absolute inset-x-0 top-0 h-36 bg-gradient-to-b from-black/45 via-black/10 to-transparent"
       />
+      {/* Reading scrim: solid enough behind the copy column to stay legible
+          against any frame of the video (a bright sky is as likely as a dark
+          facade), tapering off well before the right edge so that side of
+          the shot stays vivid rather than the whole frame reading muted. */}
       <span
         aria-hidden
-        className="absolute inset-0 bg-gradient-to-r from-brand-dark/80 via-brand-dark/30 to-transparent"
+        className="absolute inset-0 bg-[linear-gradient(to_right,rgb(6_6_6/0.88)_0%,rgb(6_6_6/0.74)_34%,rgb(6_6_6/0.38)_56%,transparent_78%)]"
       />
 
       <Container size="editorial" className="relative">
         <span
           aria-hidden
-          className="pointer-events-none absolute top-1/2 left-[10%] -z-10 h-[120%] w-[55%] -translate-x-1/2 -translate-y-1/2 bg-[radial-gradient(ellipse_60%_60%_at_50%_50%,rgb(6_6_6/0.3),transparent_72%)]"
+          className="pointer-events-none absolute top-1/2 left-[10%] -z-10 h-[120%] w-[60%] -translate-x-1/2 -translate-y-1/2 bg-[radial-gradient(ellipse_60%_60%_at_50%_50%,rgb(6_6_6/0.48),transparent_72%)]"
         />
 
         <div
@@ -148,11 +169,17 @@ export function LandingHero({
             </HeroHeading>
           </div>
 
-          <Reveal delay={0.7}>
-            <Text className="max-w-xl text-base text-pretty text-on-media-muted [text-shadow:0_1px_16px_rgb(0_0_0/0.4)] sm:text-lg">
-              {description}
-            </Text>
-          </Reveal>
+          {/* A plain <p>, not <Text>: <Text> bakes in text-muted-foreground,
+              which — since cn() is a plain class-join, not a Tailwind-aware
+              merge — can outrank a color passed in via className depending
+              on which rule the stylesheet happens to declare later. Full
+              control here avoids that fight entirely. */}
+          <p
+            ref={descriptionRef}
+            className="max-w-xl font-sans text-base leading-6 text-pretty text-hero-copy transition-colors duration-500 ease-premium [text-shadow:0_1px_16px_rgb(0_0_0/0.4)] sm:text-lg"
+          >
+            {description}
+          </p>
 
           <Reveal
             delay={0.85}
