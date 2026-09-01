@@ -646,18 +646,15 @@ dialog[open]::backdrop {
 }
 
 /* Hero headline line-mask reveal — see landing-hero.tsx. The hidden state
-   lives here (not as an inline style) so it's the resting DOM/CSS state:
-   correct even before JS runs, and reduced-motion visitors always see the
-   text in place with no reliance on the animation ever firing. */
+   lives here as the DEFAULT/resting state — visible, not hidden. GSAP's
+   `fromTo` (in landing-hero.tsx) sets the hidden starting position itself,
+   at animation time, and animates from there — so if the animation never
+   fires for any reason (an error, a slow/failed hydration, JS disabled),
+   the headline is simply visible immediately rather than stuck invisible.
+   A hidden-by-default mask that depends on JS to ever reveal it is exactly
+   the kind of thing that fails silently; this doesn't. */
 [data-hero-line-inner] {
   display: block;
-  transform: translateY(110%);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  [data-hero-line-inner] {
-    transform: none;
-  }
 }
 
 .dexta-hero {
@@ -759,11 +756,11 @@ dialog[open]::backdrop {
 }
 
 /* --- Site header ----------------------------------------------------------- *
- * The bar morphs between two states as the page scrolls. Everything derives
- * from a single 0 → 1 value, `--header-progress`:
- *   - GSAP owns it (scrubbed) on wide screens with motion allowed;
- *   - otherwise CSS transitions it off the `data-scrolled` attribute.
- * `@property` makes it animatable as a number in the non-GSAP path. */
+ * A single fixed/sticky bar: logo and nav links never move or reposition —
+ * the only thing that changes on scroll is the background/height/blur,
+ * driven entirely by one CSS-transitioned 0 → 1 value, `--header-progress`.
+ * `@property` makes it animatable as a number (without it, `transition`
+ * would just snap between the two states instead of easing). */
 @property --header-progress {
   syntax: "<number>";
   inherits: false;
@@ -783,6 +780,7 @@ dialog[open]::backdrop {
   );
   backdrop-filter: blur(calc(var(--header-progress) * 14px));
   -webkit-backdrop-filter: blur(calc(var(--header-progress) * 14px));
+  transition: --header-progress 340ms var(--motion-ease-premium);
 }
 
 .site-header::after {
@@ -800,18 +798,13 @@ dialog[open]::backdrop {
   position: sticky;
 }
 
+.site-header[data-scrolled="true"] {
+  --header-progress: 1;
+}
+
 /* Over the hero video: light text, chrome fades in only on scroll. */
 .site-header[data-overlays-hero="true"] {
   color: var(--brand-light);
-}
-
-/* Non-GSAP path (touch / narrow / reduced motion): transition the one value. */
-.site-header:not([data-gsap="true"]) {
-  transition: --header-progress 340ms var(--motion-ease-premium);
-}
-
-.site-header:not([data-gsap="true"])[data-scrolled="true"] {
-  --header-progress: 1;
 }
 
 .site-header__logo {
@@ -819,15 +812,8 @@ dialog[open]::backdrop {
   transition: color 300ms var(--motion-ease-premium);
 }
 
-.site-header__nav-group {
-  transition:
-    opacity 300ms var(--motion-ease-premium),
-    transform 300ms var(--motion-ease-premium);
-}
-
 @media (prefers-reduced-motion: reduce) {
-  .site-header,
-  .site-header__nav-group {
+  .site-header {
     transition-duration: 1ms;
   }
   .hero-video-media video {

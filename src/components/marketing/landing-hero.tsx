@@ -26,11 +26,15 @@ export interface LandingHeroProps {
  * the editorial reading column (not flush to the browser edge, and not
  * centered) so it lines up with every other section's content edge below it.
  *
- * The headline plays a line-mask reveal on mount: each line rests translated
- * behind its own overflow-hidden mask (set in CSS, so there's no flash of
- * unstyled/unmasked text before JS runs) and slides up into place,
- * staggered — the badge, description, and CTAs each fade up afterward so the
- * headline reads first.
+ * The headline plays a line-mask reveal on mount: each line sits inside its
+ * own overflow-hidden mask and, once mounted, GSAP animates it up into place
+ * from just below the mask — staggered — with the badge, description, and
+ * CTAs fading up afterward so the headline reads first. The visible/resting
+ * state is the CSS default (not the hidden one): `gsap.fromTo` sets the
+ * hidden starting position itself at animation time, so if the animation
+ * never fires for any reason, the headline is simply visible immediately
+ * rather than stuck invisible — this is the one piece of copy on the page
+ * that can never fail silently.
  *
  * The scrim is left-to-right, not a flat wash over the whole frame: it darkens
  * only the left portion where the copy sits, fading to fully transparent by
@@ -61,14 +65,18 @@ export function LandingHero({
       );
       if (!lines.length) return;
 
-      gsap.to(lines, {
-        yPercent: 0,
-        duration: 1.2,
-        stagger: 0.14,
-        ease: "power4.out",
-        delay: 0.15,
-        clearProps: "transform",
-      });
+      gsap.fromTo(
+        lines,
+        { yPercent: 110 },
+        {
+          yPercent: 0,
+          duration: 1.2,
+          stagger: 0.14,
+          ease: "power4.out",
+          delay: 0.15,
+          clearProps: "transform",
+        },
+      );
     },
     { scope: headingRef },
   );
