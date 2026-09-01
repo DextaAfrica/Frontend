@@ -8,16 +8,23 @@ import { gsap, useGSAP } from "@/lib/gsap";
 import { HeroVideo } from "./hero-video";
 import { Reveal } from "./reveal";
 
-export interface LandingHeroProps {
-  badge: string;
+export interface LandingHeroSlide {
   titleLines: readonly string[];
   description: string;
+}
+
+export interface LandingHeroProps {
+  badge: string;
+  slides: readonly LandingHeroSlide[];
   primary: { label: string; href: string };
   secondary: { label: string; href: string };
   video: string;
   mobileVideo?: string;
   poster: string;
 }
+
+const AUTO_ADVANCE_MS = 7000;
+const EXIT_DURATION = 0.5;
 
 /**
  * The site's top hero: the showreel plays as a full-bleed ambient
@@ -26,19 +33,24 @@ export interface LandingHeroProps {
  * the editorial reading column (not flush to the browser edge, and not
  * centered) so it lines up with every other section's content edge below it.
  *
- * The entrance is one coordinated sequence, not independent fades: the badge
- * scales and sharpens into place with a slight overshoot first, the headline
- * lines reveal from behind their masks right after, and the description/CTAs
- * fade up last (via <Reveal>) so the eye lands on the headline. The badge
- * also carries its own recurring diagonal light sweep (pure CSS, see
- * `.hero-badge` in globals.css) — a quiet, continuous "alive" detail once
- * the entrance settles, not just a one-time animation.
+ * The title/description rotate through `slides` on a timer, one video
+ * serving all of them — same badge and CTAs throughout, only the message
+ * changes. Each transition reuses the mount entrance's own choreography
+ * (see the `enter` effect below) rather than a separate one-off animation,
+ * so cycling through slides feels like the same considered reveal each
+ * time, not a generic crossfade bolted on afterward.
  *
- * Both the badge and the headline use GSAP's `fromTo` rather than a
- * CSS-hidden-by-default state: the visible/resting state is the CSS default,
- * and `fromTo` sets the hidden starting point itself at animation time — so
- * if the animation never fires for any reason, the content is simply visible
- * immediately rather than stuck invisible. Neither can fail silently.
+ * The exit is GSAP-driven and finishes via a genuine `onComplete` callback
+ * before the slide index changes — not a `setTimeout` racing a CSS
+ * transition — so the text is never swapped mid-animation and the two
+ * phases (outgoing lines sliding up, incoming lines sliding in) never
+ * overlap or fight over the same DOM nodes.
+ *
+ * Auto-advance pauses on hover/focus, is driven by a ref (not the `slides`
+ * closure) so the interval never goes stale, and never starts at all under
+ * `prefers-reduced-motion` — manual pagination-dot navigation still works
+ * there, just as an instant cut rather than an animated transition, since
+ * that's a click the visitor asked for rather than ambient motion.
  *
  * The scrim is left-to-right, not a flat wash over the whole frame: it darkens
  * only the left portion where the copy sits, fading to fully transparent by
@@ -49,19 +61,74 @@ export interface LandingHeroProps {
  */
 export function LandingHero({
   badge,
-  titleLines,
-  description,
+  slides,
   primary,
   secondary,
   video,
   mobileVideo,
   poster,
 }: LandingHeroProps) {
+  const [activeIndex, setActiveIndex] = React.useState(0);
   const introRef = React.useRef<HTMLDivElement>(null);
   const badgeRef = React.useRef<HTMLSpanElement>(null);
   const headingRef = React.useRef<HTMLDivElement>(null);
   const descriptionRef = React.useRef<HTMLParagraphElement>(null);
+  const activeIndexRef = React.useRef(activeIndex);
+  const isAnimatingRef = React.useRef(false);
+  const pausedRef = React.useRef(false);
 
+  React.useLayoutEffect(() => {
+    activeIndexRef.current = activeIndex;
+  }, [activeIndex]);
+
+  const goToSlide = React.useCallback((nextIndex: number) => {
+    if (nextIndex === activeIndexRef.current || isAnimatingRef.current) {
+      return;
+    }
+
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      setActiveIndex(nextIndex);
+      return;
+    }
+
+    isAnimatingRef.current = true;
+    const lines = gsap.utils.toArray<HTMLElement>(
+      headingRef.current?.querySelectorAll("[data-hero-line-inner]") ?? [],
+    );
+
+    const exit = gsap.timeline({
+      onComplete: () => {
+        setActiveIndex(nextIndex);
+        isAnimatingRef.current = false;
+      },
+    });
+
+    if (lines.length) {
+      exit.to(lines, {
+        yPercent: -110,
+        duration: EXIT_DURATION,
+        stagger: 0.06,
+        ease: "power3.in",
+      });
+    }
+    if (descriptionRef.current) {
+      exit.to(
+        descriptionRef.current,
+        {
+          opacity: 0,
+          y: -10,
+          filter: "blur(8px)",
+          duration: EXIT_DURATION * 0.8,
+          ease: "power2.in",
+        },
+        "<",
+      );
+    }
+  }, []);
+
+  // Entrance: replays on mount for slide 0, then again on every subsequent
+  // slide change (the badge only ever plays once — its content never
+  // changes, so re-animating it on every slide would just be noise).
   useGSAP(
     () => {
       if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
@@ -71,9 +138,9 @@ export function LandingHero({
         headingRef.current?.querySelectorAll("[data-hero-line-inner]") ?? [],
       );
 
-      const timeline = gsap.timeline({ delay: 0.1 });
+      const timeline = gsap.timeline({ delay: activeIndex === 0 ? 0.1 : 0 });
 
-      if (badgeRef.current) {
+      if (activeIndex === 0 && badgeRef.current) {
         timeline.fromTo(
           badgeRef.current,
           { opacity: 0, scale: 0.8, y: 10, filter: "blur(6px)" },
@@ -100,7 +167,7 @@ export function LandingHero({
             ease: "power4.out",
             clearProps: "transform",
           },
-          "-=0.35",
+          activeIndex === 0 ? "-=0.35" : 0,
         );
       }
 
@@ -120,11 +187,42 @@ export function LandingHero({
         );
       }
     },
-    { scope: introRef },
+    { scope: introRef, dependencies: [activeIndex] },
   );
 
+  // Auto-advance — paused on hover/focus, off entirely under reduced motion.
+  React.useEffect(() => {
+    if (slides.length < 2) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      return;
+    }
+
+    const id = window.setInterval(() => {
+      if (pausedRef.current) return;
+      goToSlide((activeIndexRef.current + 1) % slides.length);
+    }, AUTO_ADVANCE_MS);
+
+    return () => window.clearInterval(id);
+  }, [slides.length, goToSlide]);
+
+  const slide = slides[activeIndex] ?? slides[0];
+
   return (
-    <section className="dexta-hero relative isolate flex items-center overflow-hidden bg-brand-dark text-on-media">
+    <section
+      className="dexta-hero relative isolate flex items-center overflow-hidden bg-brand-dark text-on-media"
+      onPointerEnter={() => {
+        pausedRef.current = true;
+      }}
+      onPointerLeave={() => {
+        pausedRef.current = false;
+      }}
+      onFocus={() => {
+        pausedRef.current = true;
+      }}
+      onBlur={() => {
+        pausedRef.current = false;
+      }}
+    >
       <HeroVideo video={video} mobileVideo={mobileVideo} poster={poster} />
       <span
         aria-hidden
@@ -159,7 +257,7 @@ export function LandingHero({
 
           <div ref={headingRef}>
             <HeroHeading className="[text-shadow:0_2px_28px_rgb(0_0_0/0.45)]">
-              {titleLines.map((line, index) => (
+              {slide?.titleLines.map((line, index) => (
                 <span key={index} className="block overflow-hidden py-1">
                   <span data-hero-line-inner className="block">
                     {renderWithAccents(line)}
@@ -176,9 +274,10 @@ export function LandingHero({
               control here avoids that fight entirely. */}
           <p
             ref={descriptionRef}
+            aria-live="polite"
             className="max-w-xl font-sans text-base leading-6 text-pretty text-hero-copy transition-colors duration-500 ease-premium [text-shadow:0_1px_16px_rgb(0_0_0/0.4)] sm:text-lg"
           >
-            {description}
+            {slide?.description}
           </p>
 
           <Reveal
@@ -193,6 +292,27 @@ export function LandingHero({
               {secondary.label}
             </ButtonLink>
           </Reveal>
+
+          {slides.length > 1 && (
+            <div
+              role="tablist"
+              aria-label="Hero slides"
+              className="mt-2 flex items-center gap-2.5"
+            >
+              {slides.map((_, index) => (
+                <button
+                  key={index}
+                  type="button"
+                  role="tab"
+                  aria-selected={index === activeIndex}
+                  aria-label={`Show slide ${index + 1} of ${slides.length}`}
+                  onClick={() => goToSlide(index)}
+                  className="hero-dot"
+                  data-active={index === activeIndex || undefined}
+                />
+              ))}
+            </div>
+          )}
         </div>
       </Container>
 

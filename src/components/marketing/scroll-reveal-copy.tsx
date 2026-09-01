@@ -3,7 +3,9 @@
 import * as React from "react";
 import { Container } from "@/components/layout";
 import { EditorialHeading } from "@/components/ui";
+import { splitAccentWords } from "@/components/ui/typography";
 import { homeMotion } from "@/config/home-motion";
+import { gsap, useGSAP } from "@/lib/gsap";
 import { cn } from "@/lib/utils";
 import { Reveal } from "./reveal";
 
@@ -20,8 +22,20 @@ export interface ScrollRevealCopyProps extends Omit<
  * Word-by-word scroll reveal: each word rises into place, sharpens out of a
  * blur, and brightens from a dim resting opacity — three properties moving
  * together rather than a flat opacity fade, which is what actually reads as
- * a deliberate reveal instead of a fade wearing one as a label. Progress is
- * tied to scroll position and smoothed via lerp so it never feels stepped.
+ * a deliberate reveal instead of a fade wearing one as a label. A `*word*`
+ * (or `*multi word phrase*`) inside a paragraph gets the site's red accent
+ * treatment, same convention as every heading — see <Accent>.
+ *
+ * Driven by GSAP ScrollTrigger's own scrub + stagger rather than a bespoke
+ * scroll-listener/rAF/lerp loop, so this section finally shares the same
+ * animation engine as the hero, the services stack, and every other
+ * scroll-tied piece of this site instead of hand-rolling its own.
+ *
+ * The resting/no-JS state is fully visible (see .scroll-reveal-word in
+ * globals.css) — GSAP's `gsap.set` establishes the dim, blurred starting
+ * point only once it actually runs, inside the reduced-motion check below.
+ * Same rule as the hero and editorial banner: a failed or skipped animation
+ * leaves the copy simply visible, never stuck dim.
  */
 export function ScrollRevealCopy({
   heading,
@@ -33,103 +47,58 @@ export function ScrollRevealCopy({
   const stageRef = React.useRef<HTMLElement>(null);
   const headingId = React.useId();
 
-  React.useEffect(() => {
-    const stage = stageRef.current;
-    if (!stage) return;
+  useGSAP(
+    () => {
+      const stage = stageRef.current;
+      if (!stage) return;
 
-    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const motion = homeMotion.intro;
-    let frame = 0;
-    let currentProgress = 0;
-    let targetProgress = 0;
-    const wordElements = Array.from(
-      stage.querySelectorAll<HTMLElement>("[data-reveal-word]"),
-    );
-
-    const paint = (progress: number) => {
-      const animatedWords = Math.max(1, wordElements.length - initialWordCount);
-
-      wordElements.forEach((word, index) => {
-        if (index < initialWordCount || reducedMotion.matches) {
-          word.style.opacity = "1";
-          word.style.transform = "none";
-          word.style.filter = "none";
-          return;
-        }
-
-        const animatedIndex = index - initialWordCount;
-        const start = (animatedIndex / animatedWords) * motion.revealSpan;
-        const linearProgress = Math.min(
-          1,
-          Math.max(0, (progress - start) / motion.wordTransitionSpan),
-        );
-        const easedProgress =
-          linearProgress * linearProgress * (3 - 2 * linearProgress);
-
-        word.style.opacity = String(
-          motion.mutedOpacity + easedProgress * (1 - motion.mutedOpacity),
-        );
-        word.style.transform = `translateY(${(1 - easedProgress) * motion.wordOffsetEm}em)`;
-        word.style.filter = `blur(${(1 - easedProgress) * motion.wordBlurPx}px)`;
-      });
-    };
-
-    const measure = () => {
-      if (reducedMotion.matches) {
-        currentProgress = 1;
-        targetProgress = 1;
-        paint(1);
-        return;
-      }
-
-      const bounds = stage.getBoundingClientRect();
-      const revealStart = window.innerHeight * motion.viewportStart;
-      const revealEnd = -bounds.height * motion.sectionEnd;
-      const distance = revealStart - revealEnd;
-      targetProgress = Math.min(
-        1,
-        Math.max(0, (revealStart - bounds.top) / distance),
+      const words = gsap.utils.toArray<HTMLElement>(
+        stage.querySelectorAll("[data-reveal-word]"),
       );
-    };
+      const animated = words.slice(initialWordCount);
+      if (!animated.length) return;
 
-    const render = () => {
-      const difference = targetProgress - currentProgress;
-      currentProgress += difference * motion.smoothing;
+      const motion = homeMotion.intro;
+      const mm = gsap.matchMedia();
 
-      paint(currentProgress);
+      mm.add("(prefers-reduced-motion: no-preference)", () => {
+        gsap.set(animated, {
+          opacity: motion.mutedOpacity,
+          y: `${motion.wordOffsetEm}em`,
+          filter: `blur(${motion.wordBlurPx}px)`,
+        });
 
-      if (Math.abs(difference) > motion.settleThreshold) {
-        frame = window.requestAnimationFrame(render);
-      } else {
-        currentProgress = targetProgress;
-        paint(currentProgress);
-        frame = 0;
-      }
-    };
+        // A single word's own transition should span wordTransitionSpan of
+        // the total scrubbed range, however many words there are — so the
+        // per-word stagger step is derived from the word count rather than
+        // fixed, keeping that proportion true for any paragraph length.
+        const wordDuration = 1;
+        const totalSpan = wordDuration / motion.wordTransitionSpan;
+        const stagger =
+          animated.length > 1
+            ? (totalSpan - wordDuration) / (animated.length - 1)
+            : 0;
 
-    const update = () => {
-      measure();
-      if (!frame && !reducedMotion.matches) {
-        frame = window.requestAnimationFrame(render);
-      }
-    };
+        gsap.to(animated, {
+          opacity: 1,
+          y: 0,
+          filter: "blur(0px)",
+          ease: "none",
+          duration: wordDuration,
+          stagger: { each: stagger, from: "start" },
+          scrollTrigger: {
+            trigger: stage,
+            start: "top 80%",
+            end: "top 20%",
+            scrub: 0.6,
+          },
+        });
+      });
 
-    measure();
-    currentProgress = targetProgress;
-    paint(currentProgress);
-    window.addEventListener("scroll", update, { passive: true });
-    window.addEventListener("resize", update);
-    reducedMotion.addEventListener("change", update);
-
-    return () => {
-      window.removeEventListener("scroll", update);
-      window.removeEventListener("resize", update);
-      reducedMotion.removeEventListener("change", update);
-      if (frame) window.cancelAnimationFrame(frame);
-    };
-  }, [initialWordCount]);
-
-  let wordIndex = 0;
+      return () => mm.revert();
+    },
+    { scope: stageRef, dependencies: [paragraphs, initialWordCount] },
+  );
 
   return (
     <section
@@ -141,34 +110,43 @@ export function ScrollRevealCopy({
       <div className="scroll-reveal-frame">
         <Container size="editorial">
           <Reveal as="div">
+            {/* !font-bold: EditorialHeading's own font-medium is a plain
+                utility class too, and cn() is a plain join, not a
+                Tailwind-aware merge — so an unforced override here isn't
+                guaranteed to win the cascade. !important makes it certain. */}
             <EditorialHeading
               id={headingId}
-              className="mx-auto mb-8 max-w-3xl text-center sm:mb-10"
+              className="mx-auto mb-8 max-w-3xl text-center !font-bold sm:mb-10"
             >
               {heading}
             </EditorialHeading>
           </Reveal>
           <div className="scroll-reveal-copy">
-            {paragraphs.map((paragraph) => (
-              <p key={paragraph}>
-                {paragraph.split(" ").map((word) => {
-                  const currentIndex = wordIndex++;
+            {paragraphs.map((paragraph, paragraphIndex) => {
+              const tokens = splitAccentWords(paragraph);
 
-                  return (
-                    <span
-                      key={`${word}-${currentIndex}`}
-                      data-initial-word={
-                        currentIndex < initialWordCount ? "true" : undefined
-                      }
-                      data-reveal-word
-                      className="scroll-reveal-word"
-                    >
-                      {word}
-                    </span>
-                  );
-                })}
-              </p>
-            ))}
+              return (
+                <p key={paragraphIndex}>
+                  {tokens.map((token, tokenIndex) => {
+                    return (
+                      <React.Fragment key={tokenIndex}>
+                        <span
+                          data-reveal-word
+                          className={cn(
+                            "scroll-reveal-word",
+                            token.accented &&
+                              "accent-highlight font-serif font-normal italic",
+                          )}
+                        >
+                          {token.word}
+                        </span>
+                        {tokenIndex < tokens.length - 1 ? " " : null}
+                      </React.Fragment>
+                    );
+                  })}
+                </p>
+              );
+            })}
           </div>
         </Container>
       </div>

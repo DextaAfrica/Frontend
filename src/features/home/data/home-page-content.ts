@@ -4,9 +4,23 @@ import type { HomePageContent } from "../types/home-page";
 export const homePageContent = {
   hero: {
     badge: "Registered with LASERA",
-    titleLines: ["Building the future", "of *real estate*"],
-    description:
-      "Dexta Africa is a real estate company providing development, advisory, and marketing solutions across Nigeria and Africa.",
+    slides: [
+      {
+        titleLines: ["Welcome to", "*Dexta Africa*"],
+        description:
+          "A trusted name in African real estate — every development built on integrity, quality, and lasting value.",
+      },
+      {
+        titleLines: ["Building the future", "of *real estate*"],
+        description:
+          "Dexta Africa is a real estate company providing development, advisory, and marketing solutions across Nigeria and Africa.",
+      },
+      {
+        titleLines: ["Turning dreams", "into *addresses*"],
+        description:
+          "From site to skyline, we deliver value-driven developments across Nigeria and Africa — for those investing, living, or building a legacy.",
+      },
+    ],
     primary: { label: "Explore Our Projects", href: "/projects" },
     secondary: { label: "Talk to an Expert", href: "/contact" },
     video: "/media/dexta-hero-desktop.webm",
@@ -16,8 +30,8 @@ export const homePageContent = {
   intro: {
     heading: "Your partner in *building* wealth",
     paragraphs: [
-      "From site to skyline, Dexta Africa delivers value-driven real estate solutions that turn dreams into addresses.",
-      "Whether you're investing, living, or learning, we have the right opportunity for you.",
+      "From site to skyline, Dexta Africa delivers value-driven real estate solutions that turn dreams into *addresses*.",
+      "Whether you're investing, living, or learning, we have the right *opportunity* for you.",
     ],
   },
   services: [

@@ -129,8 +129,7 @@
    * most are mapped to a utility in the @theme block and consumed as e.g.
    * `min-h-service-panel`, `max-w-editorial-heading`, `py-section-editorial`.  */
   --section-intro-height: clamp(26rem, 35vw, 32rem);
-  --scroll-copy-size: clamp(1.25rem, 1.85vw, 1.75rem);
-  --scroll-copy-muted-opacity: 0.32;
+  --scroll-copy-size: clamp(1.0625rem, 1.5vw, 1.4375rem);
   --type-hero: clamp(2.25rem, 3.8vw, 3.75rem);
   --letter-spacing-hero: -0.02em;
   --letter-spacing-heading: -0.04em;
@@ -688,7 +687,7 @@ dialog[open]::backdrop {
   color: var(--foreground);
   font-family: var(--font-display);
   font-size: var(--scroll-copy-size);
-  font-weight: 500;
+  font-weight: 400;
   line-height: 1.05;
   letter-spacing: -0.0625rem;
   text-align: center;
@@ -758,6 +757,48 @@ dialog[open]::backdrop {
     animation: none;
     display: none;
   }
+}
+
+/* Hero slide pagination (see landing-hero.tsx). A 24px hit target with a
+   small 8px visual dot, growing to a pill when active, so the touch target
+   stays generous without the indicator itself looking oversized. */
+.hero-dot {
+  position: relative;
+  width: 1.5rem;
+  height: 1.5rem;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+.hero-dot::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 999px;
+  background: var(--on-media-border);
+  transition:
+    background-color 300ms ease,
+    width 300ms ease;
+}
+
+.hero-dot:hover::before {
+  background: var(--on-media-muted);
+}
+
+.hero-dot[data-active]::before {
+  width: 1.5rem;
+  background: var(--on-media);
+}
+
+.hero-dot:focus-visible {
+  border-radius: 999px;
+  outline: 2px solid var(--on-media);
+  outline-offset: 2px;
 }
 
 /* Word-level headline accent (see <Accent> in typography.tsx): the theme's
@@ -1451,22 +1492,14 @@ dialog[open]::backdrop {
   right: 24.5rem;
 }
 
+/* Visible/resting by default — GSAP (scroll-reveal-copy.tsx) sets the dim,
+   blurred starting point itself, only once it actually runs. A real space
+   character sits between each word in the markup (not CSS margin), so
+   selecting or copying this text — or reading it with a screen reader —
+   never loses the spaces the way adjacent margined inline-blocks would. */
 .scroll-reveal-word {
   display: inline-block;
-  margin-inline-end: 0.24em;
-  opacity: var(--scroll-copy-muted-opacity);
-  transform: translateY(0.4em);
-  filter: blur(7px);
   will-change: opacity, transform, filter;
-}
-
-.scroll-reveal-word[data-initial-word="true"] {
-  opacity: 1;
-  transform: none;
-}
-
-.scroll-reveal-word:last-child {
-  margin-inline-end: 0;
 }
 
 @media (max-width: 767px) {
@@ -1578,12 +1611,6 @@ dialog[open]::backdrop {
 
   .scroll-reveal-stage {
     min-height: 100svh;
-  }
-  .scroll-reveal-copy,
-  .scroll-reveal-word {
-    opacity: 1;
-    transform: none;
-    filter: none;
   }
 }
 

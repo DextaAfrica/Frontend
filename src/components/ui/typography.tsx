@@ -59,6 +59,58 @@ function withAccents(children: React.ReactNode): React.ReactNode {
   return typeof children === "string" ? renderWithAccents(children) : children;
 }
 
+export interface AccentWord {
+  word: string;
+  accented: boolean;
+}
+
+/**
+ * Same `*word*` convention as {@link renderWithAccents}, but tokenized down
+ * to individual words rather than rendered to JSX — for callers (like the
+ * word-by-word scroll reveal) that need to wrap every word in their own
+ * element and still know which ones fall inside an accent phrase.
+ *
+ * Strips the asterisks first, tracking which character ranges they wrapped,
+ * then splits the *clean* text on whitespace — so a word touching an accent
+ * boundary with no space (`*addresses*.`) still comes out as one token
+ * ("addresses.") instead of splitting its trailing punctuation into a
+ * floating word of its own.
+ */
+export function splitAccentWords(text: string): AccentWord[] {
+  const accentRanges: Array<[number, number]> = [];
+  const pattern = new RegExp(ACCENT_PATTERN);
+  let lastIndex = 0;
+  let match: RegExpExecArray | null;
+  let clean = "";
+
+  while ((match = pattern.exec(text))) {
+    clean += text.slice(lastIndex, match.index);
+    const start = clean.length;
+    clean += match[1] ?? "";
+    accentRanges.push([start, clean.length]);
+    lastIndex = match.index + match[0].length;
+  }
+  clean += text.slice(lastIndex);
+
+  const isAccented = (start: number, end: number) =>
+    accentRanges.some(
+      ([rangeStart, rangeEnd]) => start < rangeEnd && end > rangeStart,
+    );
+
+  const tokens: AccentWord[] = [];
+  const wordPattern = /\S+/g;
+  let wordMatch: RegExpExecArray | null;
+  while ((wordMatch = wordPattern.exec(clean))) {
+    const word = wordMatch[0];
+    tokens.push({
+      word,
+      accented: isAccented(wordMatch.index, wordMatch.index + word.length),
+    });
+  }
+
+  return tokens;
+}
+
 export function Heading({
   className,
   children,
