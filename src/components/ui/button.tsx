@@ -14,22 +14,45 @@ export type ButtonVariant =
   | "link";
 export type ButtonSize = "sm" | "md" | "lg" | "icon";
 
+/**
+ * Every interactive state (hover, active, focus) is intentionally designed
+ * per theme rather than just inheriting inverted tokens — see the
+ * `--control-shadow-*` and `--control-border-strong` custom properties in
+ * globals.css, which resolve to a soft neutral lift in light mode and a
+ * genuine brand-tinted glow in dark mode. `group/btn` lets the trailing
+ * icon nudge on hover across every variant automatically.
+ */
 const base =
-  "inline-flex shrink-0 items-center justify-center gap-2 rounded-[var(--control-radius)] border border-transparent text-control font-normal tracking-control shadow-[var(--control-shadow)] transition-[color,background-color,border-color,box-shadow,transform] duration-200 outline-none select-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:pointer-events-none disabled:border-control-disabled disabled:bg-control-disabled disabled:text-control-disabled-foreground disabled:shadow-none active:translate-y-px aria-busy:cursor-wait [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0";
+  "group/btn relative inline-flex shrink-0 items-center justify-center gap-2 rounded-[var(--control-radius)] border text-control font-medium tracking-control transition-[color,background-color,border-color,box-shadow,transform] duration-300 ease-premium outline-none select-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:pointer-events-none disabled:translate-y-0 disabled:scale-100 disabled:border-control-disabled disabled:bg-control-disabled disabled:text-control-disabled-foreground disabled:shadow-none aria-busy:cursor-wait active:scale-[0.97] active:duration-150 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 [&_svg]:transition-transform [&_svg]:duration-300 [&_svg]:ease-premium group-hover/btn:[&_svg]:translate-x-0.5";
+
 const variants: Record<ButtonVariant, string> = {
+  // Solid brand red. Light mode lifts with a soft neutral shadow; dark mode
+  // lifts into a genuine red glow — the two modes are meant to look
+  // different, not just re-colored.
   primary:
-    "border-primary bg-primary text-primary-foreground shadow-sm hover:border-primary-hover hover:bg-primary-hover",
+    "border-primary bg-primary text-primary-foreground shadow-[var(--control-shadow)] hover:-translate-y-0.5 hover:border-primary-hover hover:bg-primary-hover hover:shadow-[var(--control-shadow-glow)] active:translate-y-0 active:shadow-[var(--control-shadow)]",
+  // A confident outlined pill. Light mode: crisp near-black border on
+  // paper-white. Dark mode: the same border logic plus a faint frosted
+  // fill (--control-glass) that light mode doesn't have — its own
+  // deliberate dark-mode character, not an inverted clone.
   secondary:
-    "border border-border bg-surface-elevated text-foreground hover:border-input hover:bg-control-hover active:bg-control-pressed",
-  neutral: "bg-foreground text-background hover:opacity-85",
+    "border-[var(--control-border-strong)] bg-[var(--control-glass)] text-foreground shadow-[var(--control-shadow)] backdrop-blur-sm hover:-translate-y-0.5 hover:border-[var(--control-border-strong-hover)] hover:bg-control-hover hover:shadow-[var(--control-shadow-hover)] active:translate-y-0 active:bg-control-pressed",
+  // Fully inverted fill (foreground/background swap) — solid near-black on
+  // paper-white in light mode, solid near-white on near-black in dark
+  // mode. The starkest, most obviously theme-aware variant.
+  neutral:
+    "border-foreground bg-foreground text-background shadow-[var(--control-shadow)] hover:-translate-y-0.5 hover:bg-foreground/85 hover:shadow-[var(--control-shadow-hover)] active:translate-y-0",
+  // For placement directly over photography/video — always a light pill
+  // regardless of site theme, turning brand-red on hover.
   onMedia:
-    "border-brand-light bg-brand-light text-brand-dark hover:border-primary hover:bg-primary hover:text-primary-foreground",
+    "border-brand-light bg-brand-light text-brand-dark shadow-[var(--control-shadow)] hover:-translate-y-0.5 hover:border-primary hover:bg-primary hover:text-primary-foreground hover:shadow-[var(--control-shadow-glow)] active:translate-y-0",
   ghost:
-    "shadow-none text-foreground hover:bg-control-hover active:bg-control-pressed",
+    "border-transparent text-foreground shadow-none hover:bg-control-hover active:bg-control-pressed",
   outline:
-    "border border-primary/35 bg-transparent text-primary hover:bg-primary-subtle",
-  destructive: "bg-destructive text-destructive-foreground hover:brightness-90",
-  link: "h-auto rounded-none p-0 text-primary underline-offset-4 hover:underline",
+    "border-primary/35 bg-transparent text-primary hover:-translate-y-0.5 hover:border-primary hover:bg-primary-subtle active:translate-y-0",
+  destructive:
+    "border-destructive bg-destructive text-destructive-foreground shadow-[var(--control-shadow)] hover:-translate-y-0.5 hover:brightness-90 hover:shadow-[var(--control-shadow-hover)] active:translate-y-0",
+  link: "h-auto rounded-none border-transparent p-0 text-primary underline-offset-4 hover:underline active:scale-100",
 };
 const sizes: Record<ButtonSize, string> = {
   sm: "h-[var(--control-height-sm)] px-[var(--control-padding-sm)] text-xs",

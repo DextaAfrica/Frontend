@@ -1,10 +1,7 @@
-"use client";
-
-import * as React from "react";
-import Image from "next/image";
 import { Container } from "@/components/layout";
-import { Badge, ButtonLink, HeroHeading, Icon, Modal, Text } from "@/components/ui";
+import { ButtonLink, HeroHeading, Icon, Text } from "@/components/ui";
 import { renderWithAccents } from "@/components/ui/typography";
+import { HeroVideo } from "./hero-video";
 import { Reveal } from "./reveal";
 
 export interface LandingHeroProps {
@@ -19,10 +16,11 @@ export interface LandingHeroProps {
 }
 
 /**
- * The site's top hero: a centered light-theme headline block followed by a
- * large rounded video-preview panel with a play button that opens the real
- * showreel in a modal. Distinct from CinematicHero, which is the full-bleed
- * treatment used further down the homepage.
+ * The site's top hero: the showreel plays as a full-bleed ambient
+ * background (autoplay, muted, looped — never a click-to-play panel), with
+ * the badge/headline/CTAs overlaid and centered on top of it. A bright
+ * divider line marks the exact seam with whatever section follows, so the
+ * hero reads as its own deliberate moment rather than bleeding into it.
  */
 export function LandingHero({
   badge,
@@ -34,17 +32,24 @@ export function LandingHero({
   mobileVideo,
   poster,
 }: LandingHeroProps) {
-  const [playing, setPlaying] = React.useState(false);
-
   return (
-    <section className="relative overflow-hidden pt-28 pb-16 sm:pt-36 sm:pb-24">
-      <span aria-hidden className="editorial-hero-glow absolute inset-0" />
+    <section className="dexta-hero relative isolate flex items-center overflow-hidden bg-brand-dark text-on-media">
+      <HeroVideo video={video} mobileVideo={mobileVideo} poster={poster} />
+      <span
+        aria-hidden
+        className="absolute inset-0 bg-gradient-to-b from-brand-dark/75 via-brand-dark/35 to-brand-dark/80"
+      />
+      <span
+        aria-hidden
+        className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_35%,rgb(6_6_6/0.55)_100%)]"
+      />
+
       <Container size="editorial" className="relative">
         <Reveal className="mx-auto flex max-w-3xl flex-col items-center gap-6 text-center">
-          <Badge variant="brand" className="gap-1.5">
+          <span className="inline-flex w-fit items-center gap-1.5 rounded-full border border-on-media-border bg-on-media-surface px-3 py-1.5 text-xs font-medium tracking-wide text-on-media backdrop-blur-md">
             <Icon name="badge-check" size={14} />
             {badge}
-          </Badge>
+          </span>
           <HeroHeading>
             {titleLines.map((line, index) => (
               <span key={index} className="block">
@@ -52,7 +57,7 @@ export function LandingHero({
               </span>
             ))}
           </HeroHeading>
-          <Text className="max-w-2xl text-base text-pretty sm:text-lg">
+          <Text className="max-w-2xl text-base text-pretty text-on-media-muted sm:text-lg">
             {description}
           </Text>
           <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
@@ -60,64 +65,21 @@ export function LandingHero({
               {primary.label}
               <Icon name="arrow-right" />
             </ButtonLink>
-            <ButtonLink href={secondary.href} size="lg" variant="secondary">
+            <ButtonLink href={secondary.href} size="lg" variant="onMedia">
               {secondary.label}
             </ButtonLink>
           </div>
         </Reveal>
-
-        <Reveal delay={0.15} className="relative mt-14 sm:mt-16">
-          <button
-            type="button"
-            onClick={() => setPlaying(true)}
-            className="group relative block aspect-[16/10] w-full overflow-hidden rounded-3xl sm:aspect-[21/9]"
-            aria-label="Play the Dexta Africa showreel"
-          >
-            <Image
-              src={poster}
-              alt=""
-              fill
-              priority
-              sizes="100vw"
-              className="object-cover transition-transform duration-700 ease-premium group-hover:scale-[1.02]"
-            />
-            <span
-              aria-hidden
-              className="absolute inset-0 bg-black/15 transition-colors group-hover:bg-black/25"
-            />
-            <span
-              aria-hidden
-              className="absolute top-1/2 left-1/2 grid size-16 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full bg-brand-light/95 text-brand-dark shadow-xl transition-transform duration-300 group-hover:scale-110 sm:size-20"
-            >
-              <Icon name="play" size={26} className="translate-x-0.5" fill="currentColor" />
-            </span>
-          </button>
-        </Reveal>
       </Container>
 
-      <Modal
-        open={playing}
-        onClose={() => setPlaying(false)}
-        title="Dexta Africa"
-        className="w-[min(var(--layout-dialog-wide-viewport-width),var(--container-dialog-wide))]"
-      >
-        <video
-          controls
-          autoPlay
-          playsInline
-          poster={poster}
-          className="aspect-video w-full rounded-panel bg-black"
-        >
-          {mobileVideo && (
-            <source
-              media="(max-width: 767px)"
-              src={mobileVideo}
-              type="video/webm"
-            />
-          )}
-          <source src={video} type="video/webm" />
-        </video>
-      </Modal>
+      <span
+        aria-hidden
+        className="absolute inset-x-0 bottom-0 z-10 h-px bg-gradient-to-r from-transparent via-on-media/35 to-transparent"
+      />
+      <span
+        aria-hidden
+        className="absolute inset-x-0 bottom-0 z-10 h-24 bg-gradient-to-t from-brand-dark to-transparent"
+      />
     </section>
   );
 }

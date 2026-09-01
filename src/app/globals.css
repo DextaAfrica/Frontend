@@ -23,6 +23,11 @@
   --control-disabled: #f0efec;
   --control-disabled-foreground: #9c988f;
   --control-shadow: 0 1px 2px rgb(20 18 14 / 0.06);
+  --control-shadow-hover: 0 12px 28px rgb(20 18 14 / 0.14);
+  --control-shadow-glow: 0 12px 28px oklch(from var(--primary) l c h / 0.28);
+  --control-border-strong: rgb(18 17 15 / 0.18);
+  --control-border-strong-hover: rgb(18 17 15 / 0.85);
+  --control-glass: transparent;
   --card-shadow: 0 12px 32px rgb(20 18 14 / 0.07);
   --section-default:
     radial-gradient(circle at 82% 12%, rgb(232 22 19 / 0.035), transparent 30%),
@@ -212,6 +217,13 @@
   --control-disabled: #211e1a;
   --control-disabled-foreground: #756d64;
   --control-shadow: 0 1px 2px rgb(0 0 0 / 0.4);
+  --control-shadow-hover: 0 18px 40px rgb(0 0 0 / 0.6);
+  --control-shadow-glow:
+    0 0 0 1px oklch(from var(--primary) l c h / 0.4),
+    0 18px 44px oklch(from var(--primary) l c h / 0.5);
+  --control-border-strong: rgb(244 239 231 / 0.22);
+  --control-border-strong-hover: rgb(244 239 231 / 0.9);
+  --control-glass: rgb(244 239 231 / 0.04);
   --card-shadow: 0 16px 40px rgb(0 0 0 / 0.28);
   --section-default:
     radial-gradient(circle at 82% 12%, rgb(232 22 19 / 0.075), transparent 32%),
