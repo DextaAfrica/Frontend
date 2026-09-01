@@ -57,6 +57,8 @@ export function TestimonialSection({
   heading: HomePageContent["testimonialSection"];
 }) {
   const count = testimonials.length;
+  const canCarousel = count > 1;
+
   const [active, setActive] = React.useState(0);
   const [paused, setPaused] = React.useState(false);
   const [motionOn, setMotionOn] = React.useState(false);
@@ -64,41 +66,41 @@ export function TestimonialSection({
   const rootRef = React.useRef<HTMLDivElement>(null);
   const stageRef = React.useRef<HTMLDivElement>(null);
   const dotsRef = React.useRef<HTMLDivElement>(null);
-  const timelineRef = React.useRef<gsap.core.Timeline | null>(null);
+
+  const timerRef = React.useRef<gsap.core.Timeline | null>(null);
+  const transitionRef = React.useRef<gsap.core.Timeline | null>(null);
   const progressRef = React.useRef(0);
   const prevActiveRef = React.useRef(0);
+  const pausedRef = React.useRef(paused);
   const suppressRef = React.useRef({
     interact: false,
     hidden: false,
     offscreen: false,
   });
-  const pausedRef = React.useRef(paused);
-
-  const canCarousel = count > 1;
-
-  const syncTimeline = React.useCallback(() => {
-    const timeline = timelineRef.current;
-    if (!timeline) return;
-    const s = suppressRef.current;
-    const running =
-      !pausedRef.current && !s.interact && !s.hidden && !s.offscreen;
-    if (running) timeline.resume();
-    else timeline.pause();
-  }, []);
 
   const setProgressVar = React.useCallback((value: number) => {
     progressRef.current = value;
     dotsRef.current?.style.setProperty("--testimonial-progress", String(value));
   }, []);
 
+  const syncTimer = React.useCallback(() => {
+    const timer = timerRef.current;
+    if (!timer) return;
+    const s = suppressRef.current;
+    const run = !pausedRef.current && !s.interact && !s.hidden && !s.offscreen;
+    if (run) timer.resume();
+    else timer.pause();
+  }, []);
+
   const goTo = React.useCallback(
-    (index: number) => {
-      setActive(((index % count) + count) % count);
-    },
+    (index: number) => setActive(((index % count) + count) % count),
     [count],
   );
 
-  // Crossfade between quotes whenever `active` changes (motion allowed only).
+  // Motion gate. Runs once (per `canCarousel`): opts in to animation, hands
+  // slide visibility to GSAP, and pins every non-active slide hidden so the
+  // stack collapses to one. `useGSAP` reverts all of this if motion is turned
+  // off or the component unmounts.
   useGSAP(
     () => {
       if (!canCarousel) return;
@@ -107,83 +109,13 @@ export function TestimonialSection({
 
       const mm = gsap.matchMedia();
       mm.add("(prefers-reduced-motion: no-preference)", () => {
-        setMotionOn(true);
-        stage.dataset.animated = "true";
-
         const slides = gsap.utils.toArray<HTMLElement>(
           stage.querySelectorAll("[data-slide]"),
         );
-        const current = slides[active];
-        const previous = slides[prevActiveRef.current];
-        if (!current) return;
-
-        // First run: GSAP now owns visibility, so pin every other slide hidden.
-        if (!previous || previous === current) {
-          gsap.set(current, { autoAlpha: 1, y: 0, filter: "none" });
-          gsap.set(
-            slides.filter((slide) => slide !== current),
-            { autoAlpha: 0 },
-          );
-          prevActiveRef.current = active;
-          return () => {
-            setMotionOn(false);
-            delete stage.dataset.animated;
-          };
-        }
-
-        const caption = current.querySelector<HTMLElement>(
-          "[data-slide-caption]",
-        );
-        const avatar = current.querySelector<HTMLElement>(
-          ".testimonial-avatar",
-        );
-
-        const timeline = gsap.timeline();
-
-        timeline.to(
-          previous,
-          {
-            autoAlpha: 0,
-            y: motion.out.y,
-            filter: `blur(${motion.out.blur}px)`,
-            duration: motion.out.duration,
-            ease: "power2.in",
-          },
-          0,
-        );
-
-        timeline.fromTo(
-          current,
-          { autoAlpha: 0, y: motion.in.y, filter: `blur(${motion.in.blur}px)` },
-          {
-            autoAlpha: 1,
-            y: 0,
-            filter: "blur(0px)",
-            duration: motion.in.duration,
-            ease: motion.in.ease,
-            clearProps: "filter",
-          },
-          motion.out.duration * 0.6,
-        );
-
-        if (avatar) {
-          timeline.fromTo(
-            avatar,
-            { scale: motion.avatarScaleFrom },
-            { scale: 1, duration: motion.in.duration, ease: "power2.out" },
-            "<",
-          );
-        }
-        if (caption) {
-          timeline.fromTo(
-            caption,
-            { autoAlpha: 0, y: 8 },
-            { autoAlpha: 1, y: 0, duration: 0.4, ease: "power2.out" },
-            `>-${motion.in.captionOffset}`,
-          );
-        }
-
-        prevActiveRef.current = active;
+        gsap.set(slides, { autoAlpha: 0 });
+        gsap.set(slides[active] ?? [], { autoAlpha: 1, y: 0 });
+        stage.dataset.animated = "true";
+        setMotionOn(true);
 
         return () => {
           setMotionOn(false);
@@ -193,108 +125,165 @@ export function TestimonialSection({
 
       return () => mm.revert();
     },
-    { scope: rootRef, dependencies: [active, canCarousel] },
+    { scope: rootRef, dependencies: [canCarousel] },
   );
 
-  // Segment timer: eases the fill to this segment's start, then travels to the
-  // next dot over `dwell` seconds and advances. Rebuilt on every `active`
-  // change so a click seeks smoothly; pause/resume is handled separately.
-  useGSAP(
-    () => {
-      if (!canCarousel) return;
-      const dots = dotsRef.current;
-      if (!dots) return;
+  // Quote crossfade on every `active` change. Imperative (not in a matchMedia
+  // scope) so a rapid change never reverts the transition mid-flight — the
+  // previous timeline is simply killed and replaced.
+  React.useEffect(() => {
+    const from = prevActiveRef.current;
+    prevActiveRef.current = active;
+    if (!motionOn || from === active) return;
 
-      const mm = gsap.matchMedia();
-      mm.add("(prefers-reduced-motion: no-preference)", () => {
-        const isLast = active === count - 1;
-        const segmentStart = active / (count - 1);
-        const segmentEnd = isLast ? 1 : (active + 1) / (count - 1);
-        const proxy = { p: progressRef.current };
+    const stage = stageRef.current;
+    if (!stage) return;
+    const slides = stage.querySelectorAll<HTMLElement>("[data-slide]");
+    const outgoing = slides[from];
+    const incoming = slides[active];
+    if (!incoming) return;
 
-        const timeline = gsap.timeline({
-          paused: true,
-          onComplete: () => setActive((current) => (current + 1) % count),
-        });
+    transitionRef.current?.kill();
+    const tl = gsap.timeline();
+    transitionRef.current = tl;
 
-        if (Math.abs(proxy.p - segmentStart) > 0.001) {
-          timeline.to(proxy, {
-            p: segmentStart,
-            duration: motion.wrapRewind,
-            ease: "power2.inOut",
-            onUpdate: () => setProgressVar(proxy.p),
-          });
-        } else {
-          setProgressVar(segmentStart);
-        }
+    if (outgoing) {
+      tl.to(
+        outgoing,
+        {
+          autoAlpha: 0,
+          y: motion.out.y,
+          filter: `blur(${motion.out.blur}px)`,
+          duration: motion.out.duration,
+          ease: "power2.in",
+        },
+        0,
+      );
+    }
 
-        // For the last testimonial `segmentEnd === segmentStart === 1`: the fill
-        // holds full while the timer runs, then `onComplete` wraps to 0.
-        timeline.to(proxy, {
-          p: segmentEnd,
-          duration: motion.dwell,
-          ease: "none",
-          onUpdate: () => setProgressVar(proxy.p),
-        });
+    tl.fromTo(
+      incoming,
+      { autoAlpha: 0, y: motion.in.y, filter: `blur(${motion.in.blur}px)` },
+      {
+        autoAlpha: 1,
+        y: 0,
+        filter: "blur(0px)",
+        duration: motion.in.duration,
+        ease: motion.in.ease,
+        clearProps: "filter",
+      },
+      motion.out.duration * 0.6,
+    );
 
-        timelineRef.current = timeline;
-        syncTimeline();
+    const avatar = incoming.querySelector<HTMLElement>(".testimonial-avatar");
+    if (avatar) {
+      tl.fromTo(
+        avatar,
+        { scale: motion.avatarScaleFrom },
+        { scale: 1, duration: motion.in.duration, ease: "power2.out" },
+        "<",
+      );
+    }
+    const caption = incoming.querySelector<HTMLElement>("[data-slide-caption]");
+    if (caption) {
+      tl.fromTo(
+        caption,
+        { autoAlpha: 0, y: 8 },
+        { autoAlpha: 1, y: 0, duration: 0.4, ease: "power2.out" },
+        `>-${motion.in.captionOffset}`,
+      );
+    }
+  }, [active, motionOn]);
 
-        return () => {
-          timeline.kill();
-          timelineRef.current = null;
-        };
+  // Segment timer: eases the fill to this segment's start (covers the loop
+  // wrap and dot clicks), then travels to the next dot over `dwell` seconds
+  // and advances. Rebuilt per segment; pause/resume handled by `syncTimer`.
+  React.useEffect(() => {
+    if (!motionOn || !canCarousel) return;
+
+    const start = active / (count - 1);
+    const end = active === count - 1 ? 1 : (active + 1) / (count - 1);
+    const proxy = { p: progressRef.current };
+
+    const tl = gsap.timeline({
+      paused: true,
+      onComplete: () => setActive((current) => (current + 1) % count),
+    });
+
+    if (Math.abs(proxy.p - start) > 0.001) {
+      tl.to(proxy, {
+        p: start,
+        duration: motion.wrapRewind,
+        ease: "power2.inOut",
+        onUpdate: () => setProgressVar(proxy.p),
       });
+    } else {
+      setProgressVar(start);
+    }
 
-      return () => mm.revert();
-    },
-    { scope: rootRef, dependencies: [active, count, canCarousel] },
-  );
+    // Last testimonial: `end === start === 1`; the fill holds full while the
+    // timer runs, then `onComplete` wraps back to the first.
+    tl.to(proxy, {
+      p: end,
+      duration: motion.dwell,
+      ease: "none",
+      onUpdate: () => setProgressVar(proxy.p),
+    });
 
-  // Pause when the tab is hidden or the section scrolls out of view.
+    timerRef.current = tl;
+    syncTimer();
+
+    return () => {
+      tl.kill();
+      timerRef.current = null;
+    };
+  }, [active, motionOn, canCarousel, count, setProgressVar, syncTimer]);
+
+  // Pause on hidden tab / off-screen section.
   React.useEffect(() => {
     if (!canCarousel) return;
     const onVisibility = () => {
       suppressRef.current.hidden = document.hidden;
-      syncTimeline();
+      syncTimer();
     };
     document.addEventListener("visibilitychange", onVisibility);
 
     const root = rootRef.current;
-    let observer: IntersectionObserver | undefined;
-    if (root) {
-      observer = new IntersectionObserver(
-        ([entry]) => {
-          suppressRef.current.offscreen = !entry?.isIntersecting;
-          syncTimeline();
-        },
-        { threshold: 0.25 },
-      );
-      observer.observe(root);
-    }
+    const observer = root
+      ? new IntersectionObserver(
+          ([entry]) => {
+            suppressRef.current.offscreen = !entry?.isIntersecting;
+            syncTimer();
+          },
+          { threshold: 0.25 },
+        )
+      : undefined;
+    observer?.observe(root as Element);
 
     return () => {
       document.removeEventListener("visibilitychange", onVisibility);
       observer?.disconnect();
     };
-  }, [canCarousel, syncTimeline]);
+  }, [canCarousel, syncTimer]);
 
-  // React to the play/pause control.
+  // Play/pause control.
   React.useEffect(() => {
     pausedRef.current = paused;
-    syncTimeline();
-  }, [paused, syncTimeline]);
+    syncTimer();
+  }, [paused, syncTimer]);
 
-  // Reduced motion / no carousel: keep the fill line in sync without animation.
+  // Reduced motion / no JS: keep the fill line meaningful without a timer.
   React.useEffect(() => {
     if (motionOn || !canCarousel) return;
-    setProgressVar(count > 1 ? active / (count - 1) : 0);
+    setProgressVar(active / (count - 1));
   }, [active, motionOn, canCarousel, count, setProgressVar]);
 
   const pauseForInteraction = (value: boolean) => {
     suppressRef.current.interact = value;
-    syncTimeline();
+    syncTimer();
   };
+
+  const activeItem = testimonials[active];
 
   return (
     <Section spacing="editorial" tone="default">
@@ -322,9 +311,9 @@ export function TestimonialSection({
           }}
         >
           <p className="sr-only" aria-live="polite">
-            {`Testimonial ${active + 1} of ${count}: ${
-              testimonials[active]?.author
-            }, ${testimonials[active]?.role}`}
+            {activeItem
+              ? `Testimonial ${active + 1} of ${count}: ${activeItem.author}, ${activeItem.role}`
+              : ""}
           </p>
 
           <div ref={stageRef} className="testimonial-stage">
@@ -373,13 +362,19 @@ export function TestimonialSection({
                 role="group"
                 aria-label="Select a testimonial"
                 onKeyDown={(event) => {
-                  if (event.key === "ArrowRight") {
-                    event.preventDefault();
-                    goTo(active + 1);
-                  } else if (event.key === "ArrowLeft") {
-                    event.preventDefault();
-                    goTo(active - 1);
-                  }
+                  const delta =
+                    event.key === "ArrowRight"
+                      ? 1
+                      : event.key === "ArrowLeft"
+                        ? -1
+                        : 0;
+                  if (!delta) return;
+                  event.preventDefault();
+                  const next = (((active + delta) % count) + count) % count;
+                  goTo(next);
+                  event.currentTarget
+                    .querySelectorAll<HTMLButtonElement>("[data-dot]")
+                    [next]?.focus();
                 }}
               >
                 <span className="testimonial-track" aria-hidden />
