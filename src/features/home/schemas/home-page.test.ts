@@ -1,12 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { fallbackHomePageContent } from "../data/fallback-home-page";
+import { homePageContent } from "../data/home-page-content";
 import { homePageContentSchema } from "./home-page";
 
 describe("homePageContentSchema", () => {
-  it("accepts the local fallback content", () => {
-    expect(
-      homePageContentSchema.safeParse(fallbackHomePageContent).success,
-    ).toBe(true);
+  it("accepts the site's home page content", () => {
+    expect(homePageContentSchema.safeParse(homePageContent).success).toBe(true);
   });
 
   it("rejects incomplete upstream content", () => {
@@ -16,8 +14,15 @@ describe("homePageContentSchema", () => {
   it("rejects empty collections required by the homepage", () => {
     expect(
       homePageContentSchema.safeParse({
-        ...fallbackHomePageContent,
+        ...homePageContent,
         projects: [],
+      }).success,
+    ).toBe(false);
+
+    expect(
+      homePageContentSchema.safeParse({
+        ...homePageContent,
+        testimonials: [],
       }).success,
     ).toBe(false);
   });

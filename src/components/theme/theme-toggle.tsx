@@ -1,5 +1,7 @@
 "use client";
 
+import * as React from "react";
+import type { CSSProperties } from "react";
 import { Icon, type IconName } from "@/components/ui/icon";
 import { useMounted } from "@/hooks/use-mounted";
 import { cn } from "@/lib/utils";
@@ -15,7 +17,12 @@ const options: readonly {
   { value: "system", label: "Use system appearance", icon: "system" },
 ];
 
-export function ThemeToggle({ className }: { className?: string }) {
+type ToggleStyle = CSSProperties & { "--thumb-index": number };
+
+export function ThemeToggle({
+  className,
+  ...props
+}: React.ComponentProps<"div">) {
   const mounted = useMounted();
   const { theme, resolvedTheme, setTheme } = useTheme();
 
@@ -24,23 +31,28 @@ export function ThemeToggle({ className }: { className?: string }) {
       <span
         aria-hidden
         className={cn(
-          "block h-9 w-[var(--layout-theme-toggle-width)] rounded-[var(--control-radius)] border border-border/70 bg-surface-elevated/80",
+          "block h-9 w-[7.25rem] rounded-full border border-border/60 bg-surface-elevated/70",
           className,
         )}
       />
     );
   }
 
+  const activeIndex = Math.max(
+    0,
+    options.findIndex((option) => option.value === theme),
+  );
+
   return (
     <div
       role="radiogroup"
       aria-label="Website appearance"
-      className={cn(
-        "grid h-9 grid-cols-3 gap-0.5 rounded-[var(--control-radius)] border border-border bg-background/95 p-0.5 text-foreground shadow-sm backdrop-blur-md",
-        className,
-      )}
       data-resolved-theme={resolvedTheme}
+      className={cn("theme-toggle", className)}
+      style={{ "--thumb-index": activeIndex } as ToggleStyle}
+      {...props}
     >
+      <span aria-hidden className="theme-toggle__thumb" />
       {options.map((option) => {
         const selected = theme === option.value;
 
@@ -50,17 +62,14 @@ export function ThemeToggle({ className }: { className?: string }) {
             type="button"
             role="radio"
             aria-checked={selected}
-            aria-label={`${option.label}${option.value === "system" ? `, currently ${resolvedTheme}` : ""}`}
+            aria-label={`${option.label}${
+              option.value === "system" ? `, currently ${resolvedTheme}` : ""
+            }`}
             title={option.label}
             onClick={() => setTheme(option.value)}
-            className={cn(
-              "grid min-w-8 place-items-center rounded-[calc(var(--control-radius)-1px)] border transition-[color,background-color,border-color,box-shadow] duration-200 focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none",
-              selected
-                ? "border-foreground bg-foreground text-background shadow-sm"
-                : "border-transparent text-foreground/65 hover:bg-muted hover:text-foreground",
-            )}
+            className="theme-toggle__option"
           >
-            <Icon name={option.icon} size={15} strokeWidth={1.8} />
+            <Icon name={option.icon} size={15} strokeWidth={1.85} />
           </button>
         );
       })}

@@ -22,7 +22,7 @@ export interface Project {
   image?: string;
 }
 export function ProjectCard({ project }: { project: Project }) {
-  const href = `/portfolio/${project.slug}`;
+  const href = `/projects/${project.slug}`;
   return (
     <Reveal>
       <Card className="group overflow-hidden">

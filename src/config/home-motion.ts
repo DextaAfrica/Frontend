@@ -3,9 +3,10 @@ export const homeMotion = {
   intro: {
     revealSpan: 0.76,
     wordTransitionSpan: 0.24,
-    mutedOpacity: 0.48,
+    mutedOpacity: 0.32,
     smoothing: 0.14,
-    wordOffsetEm: 0.045,
+    wordOffsetEm: 0.4,
+    wordBlurPx: 7,
     viewportStart: 0.7,
     sectionEnd: 0.02,
     settleThreshold: 0.0005,
@@ -33,5 +34,21 @@ export const homeMotion = {
       mediaExitScale: 1.02,
       mediaExitPercent: -2,
     },
+  },
+  testimonials: {
+    enabledMedia: "(prefers-reduced-motion: no-preference)",
+    /** Seconds the fill line takes to travel from one dot to the next. */
+    dwell: 7,
+    /** Seconds to ease the fill line back to the start on the loop wrap. */
+    wrapRewind: 0.45,
+    out: { duration: 0.34, y: -8, blur: 4 },
+    in: {
+      duration: 0.56,
+      y: 14,
+      blur: 6,
+      ease: "expo.out",
+      captionOffset: 0.06,
+    },
+    avatarScaleFrom: 1.05,
   },
 } as const;

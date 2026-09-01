@@ -6,7 +6,7 @@ export function WhoWeAreSection({ content }: { content: HomeIntroContent }) {
     <ScrollRevealCopy
       heading={content.heading}
       paragraphs={content.paragraphs}
-      className="bg-brand-dark text-brand-light"
+      className="bg-background text-foreground"
     />
   );
 }

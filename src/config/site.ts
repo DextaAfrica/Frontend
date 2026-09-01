@@ -5,9 +5,9 @@ export const siteConfig = {
   url: process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000",
   ogImage: "/images/dexta-hero-poster.jpg",
   navItems: [
-    { label: "Projects", href: "/portfolio" },
+    { label: "Projects", href: "/projects" },
     { label: "Careers", href: "/careers" },
-    { label: "Blog", href: "/journal" },
+    { label: "Blog", href: "/blog" },
     { label: "About us", href: "/about" },
     { label: "Contact us", href: "/contact" },
   ],
@@ -30,10 +30,12 @@ export const siteConfig = {
   footer: {
     groups: [
       {
-        title: "Company",
+        title: "Quick Links",
         links: [
-          { label: "About us", href: "/about" },
-          { label: "FAQ", href: "/about" },
+          { label: "Projects", href: "/projects" },
+          { label: "About Us", href: "/about" },
+          { label: "Blog", href: "/blog" },
+          { label: "Careers", href: "/careers" },
         ],
       },
       {
@@ -50,7 +52,28 @@ export const siteConfig = {
   legal: {
     registration: "© Dexta Africa Limited is Registered with LASERA",
   },
-  social: ["Instagram", "LinkedIn", "Pinterest"],
+  social: [
+    {
+      label: "Facebook",
+      href: "https://facebook.com/dextaafrica",
+      icon: "facebook",
+    },
+    {
+      label: "Instagram",
+      href: "https://instagram.com/dextaafrica",
+      icon: "instagram",
+    },
+    {
+      label: "LinkedIn",
+      href: "https://linkedin.com/company/dextaafrica",
+      icon: "linkedin",
+    },
+    {
+      label: "YouTube",
+      href: "https://youtube.com/@dextaafrica",
+      icon: "youtube",
+    },
+  ],
 } as const;
 
 export type SiteConfig = typeof siteConfig;

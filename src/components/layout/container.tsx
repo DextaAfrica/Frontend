@@ -22,7 +22,7 @@ export function Container({
     <div
       data-layout="container"
       className={cn(
-        "mx-auto w-full px-5 sm:px-8 lg:px-10",
+        "mx-auto w-full px-5 sm:px-8 lg:px-10 xl:px-14",
         sizes[size],
         className,
       )}

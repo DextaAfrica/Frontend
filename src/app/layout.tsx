@@ -1,11 +1,13 @@
 import type { Metadata, Viewport } from "next";
 import { headers } from "next/headers";
 import Script from "next/script";
-import "@fontsource-variable/manrope";
-import "@fontsource-variable/cormorant-garamond";
+import "@fontsource-variable/dm-sans";
+import "@fontsource-variable/bricolage-grotesque";
+import "@fontsource-variable/playfair-display/wght-italic.css";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { SiteHeader } from "@/components/layout/site-header";
 import { AppShell, AppShellMain } from "@/components/layout";
+import { Cursor } from "@/components/ui/cursor";
 import { siteConfig } from "@/config/site";
 import { AppProvider } from "@/providers/app-provider";
 import { THEME_COLORS, themeInitializer } from "@/config/theme";
@@ -50,6 +52,12 @@ const organizationSchema = {
 };
 
 export const viewport: Viewport = {
+  // Next.js only auto-fills these when no viewport export exists at all —
+  // once a layout provides its own (for themeColor here), it owns the
+  // whole meta tag, so width/initialScale must be declared explicitly or
+  // browsers fall back to their own (usually wrong) defaults.
+  width: "device-width",
+  initialScale: 1,
   themeColor: [
     { media: "(prefers-color-scheme: light)", color: THEME_COLORS.light },
     { media: "(prefers-color-scheme: dark)", color: THEME_COLORS.dark },
@@ -80,6 +88,7 @@ export default async function RootLayout({
       </head>
       <body className="min-h-dvh bg-background font-sans text-foreground antialiased">
         <AppProvider>
+          <Cursor />
           <AppShell>
             <SiteHeader />
             <AppShellMain>{children}</AppShellMain>

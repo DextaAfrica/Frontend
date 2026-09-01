@@ -12,7 +12,6 @@ import { Eyebrow } from "@/components/ui/typography";
 import { siteConfig } from "@/config/site";
 import { gsap, useGSAP } from "@/lib/gsap";
 import { cn } from "@/lib/utils";
-import { Cluster } from "./cluster";
 import { Container } from "./container";
 import { Stack } from "./stack";
 
@@ -20,15 +19,17 @@ export function SiteHeader() {
   const [open, setOpen] = React.useState(false);
   const [scrolled, setScrolled] = React.useState(false);
   const pathname = usePathname();
+
   const isLandingPage = pathname === "/";
+  const solid = !isLandingPage || scrolled || open;
   const overlaysHero = isLandingPage && !open && !scrolled;
+
   const menuButtonRef = React.useRef<HTMLButtonElement>(null);
   const panelRef = React.useRef<HTMLDivElement>(null);
 
-  // Links are always at full opacity in their resting DOM/CSS state, so
-  // there's no "stuck invisible" state possible: the whole panel is already
-  // hidden via CSS when closed, and this only ever plays an entrance while
-  // opening, never one that could leave links mid-fade if it's interrupted.
+  // Mobile menu entrance: stagger the links in when the panel opens. The
+  // resting DOM state is already full-opacity, so an interrupted tween can
+  // never leave a link stuck invisible.
   useGSAP(
     () => {
       if (!open) return;
@@ -37,12 +38,12 @@ export function SiteHeader() {
       const links = gsap.utils.toArray<HTMLElement>(
         panel.querySelectorAll("[data-menu-link]"),
       );
-      if (!links.length) return;
-
-      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      if (
+        !links.length ||
+        window.matchMedia("(prefers-reduced-motion: reduce)").matches
+      ) {
         return;
       }
-
       gsap.fromTo(
         links,
         { y: 24, opacity: 0 },
@@ -52,8 +53,15 @@ export function SiteHeader() {
     { scope: panelRef, dependencies: [open] },
   );
 
+  // Header stays fixed/sticky and always visible while scrolling — it's
+  // the visitor's only way to navigate away from wherever they are on the
+  // page, so it never hides on scroll-down. The only thing that changes on
+  // scroll is the background/height fading in over `--header-progress`
+  // (a plain CSS transition, see globals.css) — nothing about the logo or
+  // nav links ever moves or repositions, so there's nothing here that can
+  // collide with itself.
   React.useEffect(() => {
-    const updateScrolledState = () => setScrolled(window.scrollY > 32);
+    const updateScrolledState = () => setScrolled(window.scrollY > 24);
     updateScrolledState();
     window.addEventListener("scroll", updateScrolledState, { passive: true });
     return () => window.removeEventListener("scroll", updateScrolledState);
@@ -84,61 +92,51 @@ export function SiteHeader() {
   return (
     <>
       <header
-        className={cn(
-          "top-0 z-[var(--layer-header)] w-full border-b transition-[background-color,border-color,color] duration-300",
-          overlaysHero
-            ? "absolute border-brand-light/15 bg-brand-dark/70 text-brand-light shadow-lg backdrop-blur-md"
-            : open
-              ? "fixed inset-x-0 border-border bg-background text-foreground"
-              : isLandingPage
-                ? "fixed inset-x-0 border-border/70 bg-background/95 text-foreground shadow-sm backdrop-blur-xl"
-                : "sticky border-border/70 bg-background/95 text-foreground backdrop-blur-xl",
-        )}
+        data-sticky={!isLandingPage}
+        data-scrolled={solid}
+        data-overlays-hero={overlaysHero}
+        className="site-header"
       >
-        <Container size="wide">
-          <div className="flex h-16 flex-nowrap items-center justify-between gap-2 sm:h-20 sm:gap-4">
+        <Container size="wide" className="h-full">
+          <div className="flex h-full items-center justify-between gap-4">
             <Link
               href="/"
               onClick={closeMenu}
               aria-label={`${siteConfig.name} home`}
-              className="shrink-0"
+              className="site-header__logo shrink-0"
             >
-              <Image
-                src="/images/dexta-logo.svg"
-                alt={siteConfig.name}
-                width={110}
-                height={48}
-                priority
-                className={cn(
-                  "h-7 w-auto sm:h-9",
-                  !overlaysHero && "invert dark:invert-0",
-                )}
-              />
+              <Wordmark overlaysHero={overlaysHero} className="h-7 sm:h-8" />
             </Link>
 
-            <Cluster className="gap-1.5 sm:gap-3">
-              <ThemeToggle
-                className={cn(
-                  overlaysHero &&
-                    "border-brand-light/30 bg-brand-dark/70 text-brand-light shadow-lg [&_button:not([aria-checked='true'])]:text-brand-light/75 [&_button:not([aria-checked='true'])]:hover:bg-brand-light/10 [&_button:not([aria-checked='true'])]:hover:text-brand-light [&_button[aria-checked='true']]:border-brand-light [&_button[aria-checked='true']]:bg-brand-light [&_button[aria-checked='true']]:text-brand-dark",
-                )}
-              />
+            <nav
+              aria-label="Primary"
+              className="hidden items-center gap-7 lg:flex"
+            >
+              {siteConfig.navItems.map((item) => (
+                <HeaderLink key={item.href} item={item} pathname={pathname} />
+              ))}
+            </nav>
+
+            <div className="flex items-center gap-2.5 sm:gap-4">
+              <ThemeToggle data-on-media={overlaysHero || undefined} />
+
               {!open && (
                 <ButtonLink
                   href={siteConfig.navigation.appointmentHref}
                   size="sm"
                   variant={overlaysHero ? "onMedia" : "primary"}
-                  className="header-booking hidden text-control-compact tracking-control-compact uppercase md:inline-flex"
+                  className="hidden text-control-compact tracking-control-compact uppercase md:inline-flex"
                 >
                   {siteConfig.navigation.appointmentCta}
                 </ButtonLink>
               )}
+
               <Button
                 ref={menuButtonRef}
                 variant="secondary"
                 size="sm"
                 data-on-media={overlaysHero || undefined}
-                className="header-menu-trigger shrink-0 text-control-compact tracking-control-compact uppercase"
+                className="header-menu-trigger shrink-0 text-control-compact tracking-control-compact uppercase lg:hidden"
                 onClick={() => setOpen((current) => !current)}
                 aria-expanded={open}
                 aria-controls="site-navigation"
@@ -147,7 +145,7 @@ export function SiteHeader() {
                 {open ? "Close" : "Menu"}
                 <Icon name={open ? "close" : "menu"} size={16} />
               </Button>
-            </Cluster>
+            </div>
           </div>
         </Container>
       </header>
@@ -160,7 +158,7 @@ export function SiteHeader() {
         aria-label="Site navigation"
         aria-hidden={!open}
         className={cn(
-          "fixed inset-0 z-[var(--layer-navigation)] bg-background text-foreground transition-[background-color,color,opacity] duration-300 ease-out",
+          "fixed inset-0 z-[var(--layer-navigation)] bg-background text-foreground transition-[opacity] duration-300 ease-out",
           open
             ? "pointer-events-auto visible opacity-100"
             : "pointer-events-none invisible opacity-0",
@@ -181,7 +179,7 @@ export function SiteHeader() {
                     onClick={closeMenu}
                     aria-current={pathname === item.href ? "page" : undefined}
                     className={cn(
-                      "group flex min-h-16 items-center justify-between border-b border-border py-3 text-navigation-display leading-none font-light tracking-navigation-display sm:min-h-20 sm:py-4 sm:text-5xl lg:min-h-24 lg:text-6xl",
+                      "group flex min-h-16 items-center justify-between border-b border-border py-3 text-navigation-display leading-none font-light tracking-navigation-display sm:min-h-20 sm:py-4 lg:min-h-24",
                       pathname === item.href && "text-primary",
                     )}
                   >
@@ -216,5 +214,62 @@ export function SiteHeader() {
         </Container>
       </div>
     </>
+  );
+}
+
+/**
+ * The Dexta wordmark. Two colour variants of the same asset: charcoal + red on
+ * light surfaces, near-white + red on dark ones (over the hero video, or the
+ * dark theme). CSS picks between them so there is no hydration flash.
+ */
+function Wordmark({
+  overlaysHero,
+  className,
+}: {
+  overlaysHero: boolean;
+  className?: string;
+}) {
+  const base = cn("w-auto", className);
+  return (
+    <>
+      <Image
+        src="/images/dexta-logo-on-dark.svg"
+        alt=""
+        width={110}
+        height={48}
+        priority
+        className={cn(base, overlaysHero ? "block" : "hidden dark:block")}
+      />
+      <Image
+        src="/images/dexta-logo.svg"
+        alt=""
+        width={110}
+        height={48}
+        priority
+        className={cn(base, overlaysHero ? "hidden" : "block dark:hidden")}
+      />
+    </>
+  );
+}
+
+function HeaderLink({
+  item,
+  pathname,
+}: {
+  item: (typeof siteConfig.navItems)[number];
+  pathname: string;
+}) {
+  const active = pathname === item.href;
+  return (
+    <Link
+      href={item.href as Route}
+      aria-current={active ? "page" : undefined}
+      className={cn(
+        "text-control-compact font-medium tracking-control-compact whitespace-nowrap uppercase transition-colors hover:text-primary",
+        active && "text-primary",
+      )}
+    >
+      {item.label}
+    </Link>
   );
 }

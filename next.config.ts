@@ -10,6 +10,22 @@ const nextConfig: NextConfig = {
     // (as a remotePattern) the day content actually starts serving one.
     remotePatterns: [],
   },
+  async redirects() {
+    return [
+      { source: "/portfolio", destination: "/projects", permanent: true },
+      {
+        source: "/portfolio/:slug",
+        destination: "/projects/:slug",
+        permanent: true,
+      },
+      { source: "/journal", destination: "/blog", permanent: true },
+      {
+        source: "/journal/:slug",
+        destination: "/blog/:slug",
+        permanent: true,
+      },
+    ];
+  },
   async headers() {
     return [
       {

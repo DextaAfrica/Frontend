@@ -1,19 +1,30 @@
+import type { ComponentType } from "react";
 import {
   ArrowRight,
+  BadgeCheck,
   Building2,
+  ChevronDown,
+  Clock,
   Monitor,
   Mail,
   MapPin,
   Menu,
   Moon,
   Palette,
+  Pause,
   Phone,
+  Play,
   Quote,
   Sun,
   X,
-  type LucideIcon,
   type LucideProps,
 } from "lucide-react";
+import {
+  FacebookIcon,
+  InstagramIcon,
+  LinkedInIcon,
+  YouTubeIcon,
+} from "./brand-icons";
 
 export type IconName =
   | "arrow-right"
@@ -27,13 +38,33 @@ export type IconName =
   | "quote"
   | "mail"
   | "phone"
-  | "pin";
+  | "pin"
+  | "play"
+  | "pause"
+  | "badge-check"
+  | "chevron-down"
+  | "clock"
+  | "facebook"
+  | "instagram"
+  | "linkedin"
+  | "youtube";
 
 export interface IconProps extends LucideProps {
   name: IconName;
 }
 
-const icons: Record<IconName, LucideIcon> = {
+/**
+ * The subset of props `Icon` forwards to a glyph. Both `lucide-react` icons and
+ * the local brand SVGs in `./brand-icons` satisfy this shape.
+ */
+type GlyphProps = {
+  size?: number | string;
+  strokeWidth?: number | string;
+  className?: string;
+  "aria-hidden"?: boolean | "true" | "false";
+};
+
+const icons: Record<IconName, ComponentType<GlyphProps>> = {
   "arrow-right": ArrowRight,
   architecture: Building2,
   moon: Moon,
@@ -46,6 +77,15 @@ const icons: Record<IconName, LucideIcon> = {
   mail: Mail,
   phone: Phone,
   pin: MapPin,
+  play: Play,
+  pause: Pause,
+  "badge-check": BadgeCheck,
+  "chevron-down": ChevronDown,
+  clock: Clock,
+  facebook: FacebookIcon,
+  instagram: InstagramIcon,
+  linkedin: LinkedInIcon,
+  youtube: YouTubeIcon,
 };
 
 export function Icon({

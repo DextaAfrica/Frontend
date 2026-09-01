@@ -2,35 +2,58 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
+/* ===========================================================================
+   This file has four parts, in order:
+     1. :root            — design tokens, light theme (the source of truth)
+     2. .dark            — the tokens that change under the dark theme
+     3. @theme inline    — maps tokens to Tailwind utilities (bg-primary, …)
+     4. @layer base / …  — element defaults, then component classes + keyframes
+   Product components consume semantic utilities (bg-primary,
+   text-muted-foreground, border-border), never raw hex or oklch.
+   =========================================================================== */
+
 :root {
   color-scheme: light;
 
+  /* -- Motion -------------------------------------------------------------- */
   --motion-fast: 180ms;
   --motion-base: 420ms;
   --motion-slow: 900ms;
   --motion-ease-premium: cubic-bezier(0.22, 1, 0.36, 1);
 
-  --background: #eeeae3;
-  --foreground: #171512;
-  --surface: #f7f3ec;
-  --surface-elevated: #fffaf2;
-  --muted: #e5dfd5;
-  --muted-foreground: #686159;
-  --border: #d4ccbf;
-  --input: #cfc6b8;
-  --control-hover: #ddd6ca;
-  --control-pressed: #cec5b7;
-  --control-disabled: #e2dcd2;
-  --control-disabled-foreground: #8d857b;
-  --control-shadow: 0 1px 2px rgb(40 32 24 / 0.08);
-  --card-shadow: 0 12px 32px rgb(40 32 24 / 0.08);
+  /* -- Color: neutral surfaces & text ------------------------------------- */
+  --background: #ffffff;
+  --foreground: #12110f;
+  --surface: #f7f7f5;
+  --surface-elevated: #ffffff;
+  --muted: #f0efec;
+  --muted-foreground: #68655f;
+  --border: #e6e4df;
+  --input: #d9d6cf;
+  --control-hover: #eeede9;
+  --control-pressed: #e2e0da;
+  --control-disabled: #f0efec;
+  --control-disabled-foreground: #9c988f;
+  --control-shadow: 0 1px 2px rgb(20 18 14 / 0.06);
+  --control-shadow-hover: 0 16px 36px rgb(20 18 14 / 0.2);
+  --control-shadow-glow:
+    0 0 0 1px oklch(from var(--primary) l c h / 0.15),
+    0 16px 36px oklch(from var(--primary) l c h / 0.4);
+  --control-border-strong: rgb(18 17 15 / 0.18);
+  --control-border-strong-hover: rgb(18 17 15 / 0.85);
+  --control-glass: transparent;
+  --card-shadow: 0 12px 32px rgb(20 18 14 / 0.07);
   --section-default:
-    radial-gradient(circle at 82% 12%, rgb(232 22 19 / 0.035), transparent 30%),
+    radial-gradient(
+      circle at 82% 12%,
+      oklch(from var(--primary) l c h / 0.035),
+      transparent 30%
+    ),
     var(--background);
   --section-surface:
-    linear-gradient(145deg, rgb(255 255 255 / 0.28), transparent 48%),
-    var(--surface);
+    linear-gradient(145deg, rgb(0 0 0 / 0.015), transparent 48%), var(--surface);
 
+  /* -- Color: brand & status (oklch — the single source of the brand red) -- */
   --primary: oklch(0.56 0.225 25);
   --primary-hover: oklch(0.5 0.215 25);
   --primary-foreground: oklch(0.99 0.005 20);
@@ -53,14 +76,17 @@
   --mist-medium: rgb(255 255 255 / 0.6);
   --mist-soft: rgb(255 255 255 / 0.5);
 
+  /* -- Radius & controls ------------------------------------------------- */
   --radius: 0.625rem;
-  --control-radius: 0.25rem;
+  --control-radius: 999px;
   --control-height-sm: 2.25rem;
   --control-height-md: 2.75rem;
   --control-height-lg: 3.25rem;
   --control-padding-sm: 0.875rem;
   --control-padding-md: 1.125rem;
   --control-padding-lg: 1.5rem;
+
+  /* -- Typography: fonts, plus small global type/tracking values --------- */
   --type-control: 0.8125rem;
   --type-control-compact: 0.7rem;
   --type-status: 0.6875rem;
@@ -71,24 +97,36 @@
   --letter-spacing-eyebrow: 0.2em;
   --letter-spacing-navigation-display: -0.04em;
   --font-sans:
-    "Manrope Variable", "Helvetica Neue", "Segoe UI", Arial, sans-serif;
+    "DM Sans Variable", "Helvetica Neue", "Segoe UI", Arial, sans-serif;
+  --font-display:
+    "Bricolage Grotesque Variable", "DM Sans Variable", "Helvetica Neue",
+    sans-serif;
   --font-serif:
-    "Cormorant Garamond Variable", Iowan Old Style, Baskerville, serif;
+    "Playfair Display Variable", "Iowan Old Style", Baskerville, serif;
   --font-mono: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
 
+  /* Fixed brand neutrals — the same near-black / near-white in both themes,
+     used for surfaces that never invert (footer, cinematic sections). */
   --brand-dark: #060606;
   --brand-dark-elevated: #1c1c1c;
   --brand-light: #f8f8f7;
-  --brand-accent: #e81613;
-  --service-border: #000000;
+  --service-border: var(--border);
   --text-subtle: #666666;
   --stat-value-glow: none;
+  /* There is one brand red: the semantic `--primary` scale below. Raw CSS that
+     needs it references `var(--primary)` directly — no separate accent token. */
 
+  /* -- Component-scoped layout & type values ----------------------------- *
+   * Feature-specific measurements (hero, services scroll, testimonial,
+   * newsletter, project mosaic). These are translated from the reference
+   * designs. Grouped here so the component classes further down stay small;
+   * most are mapped to a utility in the @theme block and consumed as e.g.
+   * `min-h-service-panel`, `max-w-editorial-heading`, `py-section-editorial`.  */
   --section-intro-height: clamp(26rem, 35vw, 32rem);
   --scroll-copy-size: clamp(1.5rem, 2.45vw, 2.25rem);
-  --scroll-copy-muted-opacity: 0.48;
-  --type-hero: clamp(2.35rem, 3.75vw, 3.5rem);
-  --letter-spacing-hero: 0.0968em;
+  --scroll-copy-muted-opacity: 0.32;
+  --type-hero: clamp(2.5rem, 4.6vw, 4.25rem);
+  --letter-spacing-hero: -0.02em;
   --letter-spacing-heading: -0.04em;
   --line-height-heading: 1.02;
   --letter-spacing-section-heading: -0.03em;
@@ -97,7 +135,7 @@
   --space-services-y: clamp(1.5rem, 2vw, 2rem);
   --space-service-inline: clamp(1.5rem, 5.694vw, 5.125rem);
   --type-section-display: clamp(1.65rem, 2.45vw, 2.25rem);
-  --type-editorial: clamp(2.15rem, 3.55vw, 3.25rem);
+  --type-editorial: clamp(1.85rem, 2.9vw, 2.75rem);
   --type-project-title: clamp(1.5rem, 2.5vw, 2.25rem);
   --type-metric: clamp(3.5rem, 5.25vw, 4.75rem);
   --line-height-editorial: 1.1;
@@ -174,9 +212,9 @@
   --shape-testimonial-avatar: 0.25rem;
   --letter-spacing-testimonial: -0.025em;
   --letter-spacing-testimonial-author: 0.01em;
-  --letter-spacing-footer: 0.2em;
-  --letter-spacing-footer-heading: 0.25em;
-  --letter-spacing-footer-copy: 0.05em;
+  --letter-spacing-footer: 0.06em;
+  --letter-spacing-footer-heading: 0.1em;
+  --letter-spacing-footer-copy: 0.01em;
   --letter-spacing-project-index: 0.2em;
   --letter-spacing-project-status: 0.12em;
   --space-projects: clamp(4rem, 7vw, 7rem);
@@ -184,8 +222,8 @@
   --space-project-card: clamp(1.25rem, 2.5vw, 2rem);
   --space-blog-grid: clamp(4rem, 7vw, 5rem);
   --space-blog-row: 3.25rem;
-  --elevation-service-panel: 0 8px 24px rgb(0 0 0 / 0.48);
-  --elevation-service-row: 0 8px 24px rgb(0 0 0 / 0.56);
+  --elevation-service-panel: 0 12px 32px rgb(20 18 14 / 0.12);
+  --elevation-service-row: 0 6px 20px rgb(20 18 14 / 0.1);
   --motion-project-media: 900ms;
   --transform-project-media-scale: 1.025;
   --layer-navigation: 60;
@@ -193,6 +231,10 @@
   --layer-notice: 80;
 }
 
+/* ===========================================================================
+   2. DARK THEME — only the tokens that differ from :root. Everything else
+   (radius, type scale, layout values) is inherited unchanged.
+   =========================================================================== */
 .dark {
   color-scheme: dark;
 
@@ -209,9 +251,20 @@
   --control-disabled: #211e1a;
   --control-disabled-foreground: #756d64;
   --control-shadow: 0 1px 2px rgb(0 0 0 / 0.4);
+  --control-shadow-hover: 0 22px 48px rgb(0 0 0 / 0.65);
+  --control-shadow-glow:
+    0 0 0 1px oklch(from var(--primary) l c h / 0.5),
+    0 22px 52px oklch(from var(--primary) l c h / 0.6);
+  --control-border-strong: rgb(244 239 231 / 0.22);
+  --control-border-strong-hover: rgb(244 239 231 / 0.9);
+  --control-glass: rgb(244 239 231 / 0.04);
   --card-shadow: 0 16px 40px rgb(0 0 0 / 0.28);
   --section-default:
-    radial-gradient(circle at 82% 12%, rgb(232 22 19 / 0.075), transparent 32%),
+    radial-gradient(
+      circle at 82% 12%,
+      oklch(from var(--primary) l c h / 0.075),
+      transparent 32%
+    ),
     var(--background);
   --section-surface:
     linear-gradient(145deg, rgb(255 255 255 / 0.025), transparent 48%),
@@ -231,6 +284,11 @@
   --stat-value-glow: 0 0 28px oklch(from var(--primary) l c h / 0.55);
 }
 
+/* ===========================================================================
+   3. TAILWIND THEME MAPPING — exposes the tokens above as utility classes
+   (--color-primary → bg-primary/text-primary, --text-hero → text-hero, …).
+   Add a line here only when a component needs the token as a utility.
+   =========================================================================== */
 @theme inline {
   --ease-premium: var(--motion-ease-premium);
   --color-background: var(--background);
@@ -267,11 +325,11 @@
   --color-brand-dark: var(--brand-dark);
   --color-brand-dark-elevated: var(--brand-dark-elevated);
   --color-brand-light: var(--brand-light);
-  --color-brand-accent: var(--brand-accent);
   --color-service-border: var(--service-border);
   --color-text-subtle: var(--text-subtle);
 
   --font-sans: var(--font-sans);
+  --font-display: var(--font-display);
   --font-serif: var(--font-serif);
   --font-mono: var(--font-mono);
   --radius-sm: calc(var(--radius) - 4px);
@@ -378,6 +436,9 @@
   --shadow-service-panel: var(--elevation-service-panel);
 }
 
+/* ===========================================================================
+   4a. BASE — element defaults.
+   =========================================================================== */
 * {
   border-color: var(--border);
 }
@@ -396,6 +457,13 @@ body {
     background-color 240ms var(--motion-ease-premium);
 }
 
+/* ===========================================================================
+   4b. COMPONENT CLASSES — styling that can't be expressed as utilities
+   (site header scroll-morph, theme toggle, scroll-driven service stack,
+   project-card hover panel, newsletter card fan, app loader, cinematic
+   reveal, hero video). Each block is named for the component that owns it.
+   Keyframes are at the end.
+   =========================================================================== */
 .section-default {
   background: var(--section-default);
 }
@@ -563,8 +631,8 @@ dialog[open]::backdrop {
 
 .scroll-reveal-copy {
   margin-inline: auto;
-  color: var(--brand-light);
-  font-family: var(--font-serif);
+  color: var(--foreground);
+  font-family: var(--font-display);
   font-size: var(--scroll-copy-size);
   font-weight: 500;
   line-height: 1.05;
@@ -577,12 +645,38 @@ dialog[open]::backdrop {
   margin-top: 1em;
 }
 
+/* Hero headline line-mask reveal — see landing-hero.tsx. The hidden state
+   lives here (not as an inline style) so it's the resting DOM/CSS state:
+   correct even before JS runs, and reduced-motion visitors always see the
+   text in place with no reliance on the animation ever firing. */
+[data-hero-line-inner] {
+  display: block;
+  transform: translateY(110%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-hero-line-inner] {
+    transform: none;
+  }
+}
+
 .dexta-hero {
   min-height: 100svh;
 }
 
-.dexta-hero-overlay {
-  background: linear-gradient(to bottom, transparent 55%, var(--brand-dark));
+/* Light colour grade + a very slow push-in so the footage never feels static.
+   Both are cosmetic and disabled under reduced-motion. */
+.hero-video-media video {
+  filter: brightness(1.05) contrast(1.08) saturate(1.12);
+  animation: hero-kenburns 26s var(--motion-ease-premium) alternate infinite;
+  will-change: transform;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-video-media video {
+    animation: none;
+    filter: none;
+  }
 }
 
 .blog-media {
@@ -614,7 +708,7 @@ dialog[open]::backdrop {
 }
 
 .project-card-panel {
-  border-top: 0.1875rem solid var(--brand-accent);
+  border-top: 0.1875rem solid var(--primary);
   transform: none;
   box-shadow: 0 -1rem 2.5rem rgb(0 0 0 / 0.16);
 }
@@ -662,6 +756,175 @@ dialog[open]::backdrop {
 .blog-media {
   aspect-ratio: 405 / 264;
   border-radius: var(--radius-lg);
+}
+
+/* --- Site header ----------------------------------------------------------- *
+ * The bar morphs between two states as the page scrolls. Everything derives
+ * from a single 0 → 1 value, `--header-progress`:
+ *   - GSAP owns it (scrubbed) on wide screens with motion allowed;
+ *   - otherwise CSS transitions it off the `data-scrolled` attribute.
+ * `@property` makes it animatable as a number in the non-GSAP path. */
+@property --header-progress {
+  syntax: "<number>";
+  inherits: false;
+  initial-value: 0;
+}
+
+.site-header {
+  --header-progress: 0;
+  position: fixed;
+  inset-inline: 0;
+  top: 0;
+  z-index: var(--layer-header);
+  height: calc(5rem - var(--header-progress) * 1.1rem);
+  color: var(--foreground);
+  background: rgb(
+    from var(--background) r g b / calc(var(--header-progress) * 0.82)
+  );
+  backdrop-filter: blur(calc(var(--header-progress) * 14px));
+  -webkit-backdrop-filter: blur(calc(var(--header-progress) * 14px));
+}
+
+.site-header::after {
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0;
+  height: 1px;
+  background: var(--border);
+  opacity: var(--header-progress);
+  box-shadow: 0 20px 44px -28px rgb(0 0 0 / calc(0.55 * var(--header-progress)));
+  content: "";
+}
+
+.site-header[data-sticky="true"] {
+  position: sticky;
+}
+
+/* Over the hero video: light text, chrome fades in only on scroll. */
+.site-header[data-overlays-hero="true"] {
+  color: var(--brand-light);
+}
+
+/* Non-GSAP path (touch / narrow / reduced motion): transition the one value. */
+.site-header:not([data-gsap="true"]) {
+  transition: --header-progress 340ms var(--motion-ease-premium);
+}
+
+.site-header:not([data-gsap="true"])[data-scrolled="true"] {
+  --header-progress: 1;
+}
+
+.site-header__logo {
+  color: inherit;
+  transition: color 300ms var(--motion-ease-premium);
+}
+
+.site-header__nav-group {
+  transition:
+    opacity 300ms var(--motion-ease-premium),
+    transform 300ms var(--motion-ease-premium);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .site-header,
+  .site-header__nav-group {
+    transition-duration: 1ms;
+  }
+  .hero-video-media video {
+    animation: none;
+  }
+}
+
+/* --- Theme toggle ---------------------------------------------------------- */
+.theme-toggle {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(3, 2.25rem);
+  align-items: center;
+  gap: 0;
+  height: 2.25rem;
+  padding: 0.25rem;
+  border: 1px solid rgb(from var(--foreground) r g b / 0.1);
+  border-radius: var(--control-radius);
+  background: rgb(from var(--foreground) r g b / 0.05);
+  box-shadow: inset 0 1px 2px rgb(from var(--foreground) r g b / 0.06);
+}
+
+.theme-toggle__thumb {
+  position: absolute;
+  top: 0.25rem;
+  left: 0.25rem;
+  width: calc((100% - 0.5rem) / 3);
+  height: calc(100% - 0.5rem);
+  border-radius: calc(var(--control-radius) - 1px);
+  background: var(--surface-elevated);
+  box-shadow: var(--control-shadow-hover);
+  transform: translateX(calc(var(--thumb-index) * 100%));
+  transition: transform 340ms var(--motion-ease-premium);
+}
+
+.theme-toggle[data-resolved-theme="dark"] .theme-toggle__thumb {
+  background: var(--primary);
+  box-shadow: var(--control-shadow-glow);
+}
+
+.theme-toggle__option {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  height: 100%;
+  color: rgb(from var(--foreground) r g b / 0.5);
+  transition: color 220ms var(--motion-ease-premium);
+}
+
+.theme-toggle__option:hover {
+  color: var(--foreground);
+}
+
+.theme-toggle__option[aria-checked="true"] {
+  color: var(--foreground);
+}
+
+.theme-toggle[data-resolved-theme="dark"]
+  .theme-toggle__option[aria-checked="true"] {
+  color: var(--primary-foreground);
+}
+
+.theme-toggle__option:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+  border-radius: calc(var(--control-radius) - 1px);
+}
+
+/* Glass variant for placement over the hero video. */
+.theme-toggle[data-on-media="true"] {
+  border-color: rgb(255 255 255 / 0.28);
+  background: rgb(6 6 6 / 0.4);
+  box-shadow:
+    inset 0 1px 2px rgb(0 0 0 / 0.25),
+    0 8px 24px rgb(0 0 0 / 0.3);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.theme-toggle[data-on-media="true"] .theme-toggle__thumb {
+  background: var(--brand-light);
+}
+
+.theme-toggle[data-on-media="true"] .theme-toggle__option {
+  color: rgb(255 255 255 / 0.7);
+}
+
+.theme-toggle[data-on-media="true"] .theme-toggle__option:hover,
+.theme-toggle[data-on-media="true"] .theme-toggle__option[aria-checked="true"] {
+  color: var(--brand-dark);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .theme-toggle__thumb {
+    transition-duration: 1ms;
+  }
 }
 
 /* Header controls own their contrast instead of inheriting it from the page. */
@@ -721,7 +984,7 @@ dialog[open]::backdrop {
   position: relative;
   isolation: isolate;
   overflow: clip;
-  background: var(--brand-dark);
+  background: var(--surface);
   --service-active-height: clamp(
     28rem,
     calc(
@@ -750,7 +1013,7 @@ dialog[open]::backdrop {
   min-height: 0;
   place-items: center;
   overflow: clip;
-  background: var(--brand-dark);
+  background: var(--surface);
 }
 
 .service-shell {
@@ -758,7 +1021,7 @@ dialog[open]::backdrop {
   max-height: calc(100svh - (var(--space-services-y) * 2));
   overflow: hidden;
   border-radius: var(--shape-service-group) var(--shape-service-group) 0 0;
-  background: var(--brand-dark);
+  background: var(--surface);
 }
 
 .service-card-stage {
@@ -768,7 +1031,7 @@ dialog[open]::backdrop {
       ((var(--service-count) - 1) * var(--layout-service-row-height))
   );
   overflow: hidden;
-  background: var(--brand-dark);
+  background: var(--surface);
 }
 
 .service-card {
@@ -778,7 +1041,7 @@ dialog[open]::backdrop {
   min-height: 0;
   overflow: hidden;
   border: 1px solid var(--service-border);
-  background: var(--brand-dark);
+  background: var(--muted);
   box-shadow: var(--elevation-service-panel);
   transform-origin: 50% 0%;
   contain: paint;
@@ -795,8 +1058,9 @@ dialog[open]::backdrop {
   z-index: 1;
   background: linear-gradient(
     to bottom,
-    transparent 0%,
-    rgb(0 0 0 / 0.72) 100%
+    rgb(0 0 0 / 0.42) 0%,
+    rgb(0 0 0 / 0.12) 38%,
+    rgb(0 0 0 / 0.62) 100%
   );
 }
 
@@ -843,8 +1107,8 @@ dialog[open]::backdrop {
   z-index: 3;
   inset-inline: -1px;
   width: calc(100% + 2px);
-  border-top: 1px solid var(--service-border);
-  background: var(--brand-dark) !important;
+  border-top: 1px solid var(--border);
+  background: var(--surface-elevated) !important;
   box-shadow: var(--elevation-service-row);
   backface-visibility: hidden;
 }
@@ -853,13 +1117,13 @@ dialog[open]::backdrop {
   position: absolute;
   z-index: -1;
   inset: -2px;
-  background: var(--brand-dark);
+  background: var(--surface-elevated);
   content: "";
 }
 
 .service-collapsed-control:hover::before,
 .service-collapsed-control:focus-visible::before {
-  background: var(--brand-dark-elevated);
+  background: var(--muted);
 }
 
 @media (max-width: 63.999rem) {
@@ -937,6 +1201,147 @@ dialog[open]::backdrop {
   }
 }
 
+/* --- Testimonial carousel ------------------------------------------------- *
+ * Every slide is stacked in the same grid cell so the section is always as
+ * tall as the longest quote — swapping quotes never shifts the layout. Before
+ * JS (`:not([data-animated])`) the active slide shows via `data-active`; once
+ * GSAP takes over it owns opacity/visibility/transform. */
+.testimonial-carousel {
+  position: relative;
+}
+
+.testimonial-stage {
+  display: grid;
+}
+
+.testimonial-stage > [data-slide] {
+  grid-area: 1 / 1;
+}
+
+.testimonial-stage:not([data-animated]) > [data-slide][data-active="false"] {
+  visibility: hidden;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.testimonial-avatar--monogram {
+  display: inline-grid;
+  background: var(--primary-subtle);
+  color: var(--primary);
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.testimonial-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(1rem, 3vw, 2rem);
+  margin-top: var(--space-testimonial-meta);
+}
+
+.testimonial-playpause {
+  display: grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  border: 1px solid var(--border);
+  border-radius: var(--control-radius);
+  color: var(--muted-foreground);
+  transition:
+    color 200ms var(--motion-ease-premium),
+    border-color 200ms var(--motion-ease-premium),
+    background-color 200ms var(--motion-ease-premium);
+}
+
+.testimonial-playpause:hover {
+  color: var(--foreground);
+  border-color: var(--input);
+  background: var(--control-hover);
+}
+
+.testimonial-playpause:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+.testimonial-dots {
+  --testimonial-progress: 0;
+  --dot-size: 0.5rem;
+  --dot-gap: clamp(1.75rem, 5vw, 3rem);
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--dot-gap);
+  padding-block: 0.75rem;
+}
+
+.testimonial-track,
+.testimonial-track-fill {
+  position: absolute;
+  top: 50%;
+  left: calc(var(--dot-size) / 2);
+  right: calc(var(--dot-size) / 2);
+  height: 1px;
+  translate: 0 -50%;
+  pointer-events: none;
+}
+
+.testimonial-track {
+  background: var(--border);
+}
+
+.testimonial-track-fill {
+  right: auto;
+  width: calc(var(--testimonial-progress) * (100% - var(--dot-size)));
+  background: var(--primary);
+}
+
+.testimonial-dots [data-dot] {
+  position: relative;
+  width: var(--dot-size);
+  height: var(--dot-size);
+  border-radius: 999px;
+  background: var(--border);
+  transition:
+    background-color 260ms var(--motion-ease-premium),
+    box-shadow 260ms var(--motion-ease-premium),
+    transform 260ms var(--motion-ease-premium);
+}
+
+.testimonial-dots [data-dot][data-state="past"],
+.testimonial-dots [data-dot][data-state="active"] {
+  background: var(--primary);
+}
+
+.testimonial-dots [data-dot][data-state="active"] {
+  transform: scale(1.35);
+  box-shadow: 0 0 0 4px var(--primary-subtle);
+}
+
+.testimonial-dots [data-dot]:hover {
+  transform: scale(1.35);
+}
+
+.testimonial-dots [data-dot]:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .testimonial-playpause {
+    display: none;
+  }
+  .testimonial-track-fill {
+    transition: width var(--motion-base) var(--motion-ease-premium);
+  }
+  .testimonial-stage > [data-slide] {
+    transition: none;
+  }
+}
+
 .newsletter-card-stack {
   position: absolute;
   top: 4rem;
@@ -970,8 +1375,9 @@ dialog[open]::backdrop {
   display: inline-block;
   margin-inline-end: 0.24em;
   opacity: var(--scroll-copy-muted-opacity);
-  transform: translateY(0.045em);
-  will-change: opacity, transform;
+  transform: translateY(0.4em);
+  filter: blur(7px);
+  will-change: opacity, transform, filter;
 }
 
 .scroll-reveal-word[data-initial-word="true"] {
@@ -994,6 +1400,18 @@ dialog[open]::backdrop {
 }
 .enter-fade {
   animation: enter-fade 700ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* ===========================================================================
+   4c. KEYFRAMES
+   =========================================================================== */
+@keyframes hero-kenburns {
+  from {
+    transform: scale(1);
+  }
+  to {
+    transform: scale(1.08);
+  }
 }
 
 @keyframes route-enter {
@@ -1099,5 +1517,42 @@ dialog[open]::backdrop {
   .scroll-reveal-word {
     opacity: 1;
     transform: none;
+    filter: none;
   }
+}
+
+/* Custom cursor — see src/components/ui/cursor.tsx. Only ever active on
+   devices the component has confirmed have a real mouse; native cursor is
+   otherwise left completely alone. */
+.custom-cursor,
+.custom-cursor * {
+  cursor: none !important;
+}
+
+.cursor-dot {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 2147483647;
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: #ffffff;
+  mix-blend-mode: difference;
+  pointer-events: none;
+  opacity: 0;
+  transition:
+    opacity 150ms var(--motion-ease-premium),
+    width 200ms var(--motion-ease-premium),
+    height 200ms var(--motion-ease-premium);
+  will-change: transform;
+}
+
+.cursor-dot[data-visible="true"] {
+  opacity: 1;
+}
+
+.cursor-dot[data-hovering="true"] {
+  width: 22px;
+  height: 22px;
 }

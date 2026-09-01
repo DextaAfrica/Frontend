@@ -57,10 +57,7 @@ export function FeaturedProjectsSection({
                 aria-hidden
                 className="project-card-shade absolute inset-0 bg-gradient-to-t from-black/55 via-transparent to-black/25"
               />
-              <div className="absolute inset-x-0 top-0 z-10 flex items-start justify-between gap-5 p-project-card text-on-media">
-                <span className="font-mono text-xs tracking-project-index text-on-media-muted">
-                  {project.number}
-                </span>
+              <div className="absolute inset-x-0 top-0 z-10 flex items-start justify-end gap-5 p-project-card text-on-media">
                 <span className="border border-on-media-border bg-on-media-surface px-3 py-1.5 text-status tracking-project-status uppercase backdrop-blur-md">
                   {project.status}
                 </span>
@@ -69,7 +66,7 @@ export function FeaturedProjectsSection({
                 <span className="mb-4 block h-px w-divider bg-brand-dark" />
                 <div className="flex flex-col items-start justify-between gap-5 sm:flex-row sm:items-end sm:gap-6">
                   <div>
-                    <h3 className="font-serif text-project-title leading-editorial tracking-editorial">
+                    <h3 className="font-display text-project-title leading-editorial font-semibold tracking-editorial">
                       {project.name}
                     </h3>
                     <p className="mt-2 text-sm text-brand-dark/65">

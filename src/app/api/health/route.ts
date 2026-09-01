@@ -9,9 +9,9 @@ export function GET() {
       service: "dexta-africa-web",
       timestamp: new Date().toISOString(),
       // Informational only — a stale CMS never fails the health check,
-      // since fallback content is meant to keep the site serving through
-      // an outage. This is what makes that outage observable rather than
-      // silent: alert on `homePageContent.source === "fallback"`.
+      // since the site's own content keeps it serving through an outage.
+      // This is what makes that outage observable rather than silent:
+      // alert on `homePageContent.source === "static"`.
       homePageContent: getContentSourceState(),
     },
     { headers: { "Cache-Control": "no-store" } },

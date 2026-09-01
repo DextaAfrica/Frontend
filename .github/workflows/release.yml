@@ -77,8 +77,8 @@ jobs:
             type=ref,event=tag
             type=raw,value=latest,enable={{is_default_branch}}
           labels: |
-            org.opencontainers.image.title=Maison Rouge Web
-            org.opencontainers.image.description=Maison Rouge production website
+            org.opencontainers.image.title=Dexta Africa Web
+            org.opencontainers.image.description=Dexta Africa production website
       - name: Build and push multi-platform image
         id: build
         uses: docker/build-push-action@v7

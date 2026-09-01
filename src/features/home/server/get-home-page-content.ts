@@ -1,17 +1,23 @@
 import "server-only";
 
-import { fallbackHomePageContent } from "../data/fallback-home-page";
+import { homePageContent } from "../data/home-page-content";
 import { homePageContentSchema } from "../schemas/home-page";
 import type { HomePageContent } from "../types/home-page";
 import { recordContentSourceResult } from "./content-source-state";
 
 const REVALIDATE_SECONDS = 300;
 
+/**
+ * Resolves the home page's content. When `CONTENT_API_URL` is configured,
+ * the CMS is treated as an override and takes precedence; otherwise — or if
+ * the CMS is unreachable or returns a payload that fails validation — the
+ * site serves its own shipped content.
+ */
 export async function getHomePageContent(): Promise<HomePageContent> {
   const endpoint = process.env.CONTENT_API_URL;
   if (!endpoint) {
-    recordContentSourceResult("unconfigured");
-    return fallbackHomePageContent;
+    recordContentSourceResult("static");
+    return homePageContent;
   }
 
   try {
@@ -34,12 +40,12 @@ export async function getHomePageContent(): Promise<HomePageContent> {
     const message = error instanceof Error ? error.message : String(error);
     console.error(
       JSON.stringify({
-        event: "home_page_content_fallback",
+        event: "home_page_content_cms_unavailable",
         message,
         timestamp: new Date().toISOString(),
       }),
     );
-    recordContentSourceResult("fallback", message);
-    return fallbackHomePageContent;
+    recordContentSourceResult("static", message);
+    return homePageContent;
   }
 }

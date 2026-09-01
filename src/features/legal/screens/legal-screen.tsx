@@ -1,6 +1,7 @@
-import { Page, Section, Stack } from "@/components/layout";
-import { EditorialHero } from "@/components/marketing";
+import { Grid, Page, Section, Stack } from "@/components/layout";
+import { EditorialHero, TocNav } from "@/components/marketing";
 import { Eyebrow, SectionHeading, Text } from "@/components/ui";
+import { slugify } from "@/lib/utils";
 
 export interface LegalSection {
   title: string;
@@ -20,6 +21,11 @@ export function LegalScreen({
   sections: LegalSection[];
   lastUpdated?: string;
 }) {
+  const tocItems = sections.map((section) => ({
+    id: slugify(section.title),
+    label: section.title,
+  }));
+
   return (
     <Page>
       <EditorialHero
@@ -28,26 +34,34 @@ export function LegalScreen({
         description={description}
       />
       <Section tone="surface">
-        <Stack gap="2xl" className="mx-auto max-w-4xl">
-          <Eyebrow className="border-b border-border pb-5 text-muted-foreground">
-            Last updated: {lastUpdated}
-          </Eyebrow>
-          {sections.map((section) => (
-            <section key={section.title}>
-              <Stack gap="sm">
-                <SectionHeading size="compact">{section.title}</SectionHeading>
-                <Text>{section.body}</Text>
-                {section.items && (
-                  <ul className="grid gap-2 pl-5 text-base leading-7 text-muted-foreground marker:text-primary">
-                    {section.items.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                )}
-              </Stack>
-            </section>
-          ))}
-        </Stack>
+        <Grid columns="four" gap="xl" className="items-start">
+          <TocNav
+            items={tocItems}
+            className="sticky top-28 hidden lg:col-span-1 lg:flex"
+          />
+          <Stack gap="2xl" className="lg:col-span-3">
+            <Eyebrow className="border-b border-border pb-5 text-muted-foreground">
+              Last updated: {lastUpdated}
+            </Eyebrow>
+            {sections.map((section) => (
+              <section key={section.title} id={slugify(section.title)}>
+                <Stack gap="sm">
+                  <SectionHeading size="compact">
+                    {section.title}
+                  </SectionHeading>
+                  <Text>{section.body}</Text>
+                  {section.items && (
+                    <ul className="grid gap-2 pl-5 text-base leading-7 text-muted-foreground marker:text-primary">
+                      {section.items.map((item) => (
+                        <li key={item}>{item}</li>
+                      ))}
+                    </ul>
+                  )}
+                </Stack>
+              </section>
+            ))}
+          </Stack>
+        </Grid>
       </Section>
     </Page>
   );

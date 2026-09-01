@@ -10,12 +10,14 @@ const sectionHeadingSchema = z.object({
 
 export const homePageContentSchema = z.object({
   hero: z.object({
+    badge: nonEmptyString,
     titleLines: nonEmptyStringArray,
-    ctaLabel: nonEmptyString,
-    ctaHref: nonEmptyString,
+    description: nonEmptyString,
+    primary: z.object({ label: nonEmptyString, href: nonEmptyString }),
+    secondary: z.object({ label: nonEmptyString, href: nonEmptyString }),
     video: nonEmptyString,
     mobileVideo: nonEmptyString.optional(),
-    poster: nonEmptyString.optional(),
+    poster: nonEmptyString,
   }),
   intro: z.object({
     heading: nonEmptyString,
@@ -25,7 +27,6 @@ export const homePageContentSchema = z.object({
     .array(
       z.object({
         id: nonEmptyString,
-        number: nonEmptyString,
         label: nonEmptyString,
         title: nonEmptyString,
         description: nonEmptyString,
@@ -42,7 +43,6 @@ export const homePageContentSchema = z.object({
     .array(
       z.object({
         id: nonEmptyString,
-        number: nonEmptyString,
         name: nonEmptyString,
         location: nonEmptyString,
         status: nonEmptyString,
@@ -53,13 +53,18 @@ export const homePageContentSchema = z.object({
     )
     .min(1),
   testimonialSection: sectionHeadingSchema,
-  testimonial: z.object({
-    id: nonEmptyString,
-    quote: nonEmptyString,
-    author: nonEmptyString,
-    role: nonEmptyString,
-    portrait: nonEmptyString,
-  }),
+  testimonials: z
+    .array(
+      z.object({
+        id: nonEmptyString,
+        quote: nonEmptyString,
+        author: nonEmptyString,
+        role: nonEmptyString,
+        // Optional: entries without a photo render an initials monogram.
+        portrait: nonEmptyString.optional(),
+      }),
+    )
+    .min(1),
   statistics: z
     .array(
       z.object({

@@ -3,12 +3,23 @@
 import * as React from "react";
 import { Button, Icon } from "@/components/ui";
 import { ApiRequestError } from "@/lib/api-error";
+import { cn } from "@/lib/utils";
 import { subscribeToNewsletter } from "../api/subscribe";
 
 type SubmissionState = "idle" | "submitting" | "success" | "error";
 const ERROR_ID = "inline-newsletter-error";
 
-export function InlineNewsletterForm() {
+export interface InlineNewsletterFormProps {
+  /** Fixed-dark-surface styling for placement on the always-dark footer,
+   * instead of the theme-relative styling used on a light/dark-toggling page. */
+  onMedia?: boolean;
+  className?: string;
+}
+
+export function InlineNewsletterForm({
+  onMedia = false,
+  className,
+}: InlineNewsletterFormProps = {}) {
   const [status, setStatus] = React.useState<SubmissionState>("idle");
   const [message, setMessage] = React.useState("");
   const [invalidField, setInvalidField] = React.useState(false);
@@ -44,29 +55,56 @@ export function InlineNewsletterForm() {
   }
 
   return (
-    <form onSubmit={subscribe} className="mt-13" noValidate>
-      <div className="flex min-h-newsletter-input flex-col items-stretch gap-2 rounded border border-input bg-background p-2 focus-within:ring-2 focus-within:ring-ring sm:flex-row sm:items-center sm:gap-0">
-        <label htmlFor="landing-email" className="sr-only">
-          Your email address
-        </label>
+    <form onSubmit={subscribe} className={cn("mt-13", className)} noValidate>
+      <div
+        className={cn(
+          "flex min-h-newsletter-input flex-col items-stretch gap-2 rounded border p-2 focus-within:ring-2 focus-within:ring-ring sm:flex-row sm:items-center sm:gap-0",
+          onMedia
+            ? "border-brand-light/25 bg-brand-light/5"
+            : "border-input bg-background",
+        )}
+      >
         <input
           id="landing-email"
           name="email"
           type="email"
           required
           autoComplete="email"
+          aria-label="Your email address"
           placeholder="Your email address"
           aria-invalid={invalidField}
           aria-describedby={invalidField ? ERROR_ID : undefined}
-          className="h-12 min-w-0 flex-1 bg-transparent px-2 text-base outline-none placeholder:text-muted-foreground sm:text-lg"
+          className={cn(
+            "h-12 min-w-0 flex-1 bg-transparent px-2 text-base outline-none sm:text-lg",
+            onMedia
+              ? "placeholder:text-brand-light/50"
+              : "placeholder:text-muted-foreground",
+          )}
         />
-        <label className="sr-only" aria-hidden="true">
-          Company
-          <input name="company" tabIndex={-1} autoComplete="off" />
-        </label>
+        {/* Honeypot: real visitors never see or fill this in — hidden by
+            inline style rather than a class, so there's no dependency on a
+            utility class resolving correctly for it to stay invisible. */}
+        <input
+          type="text"
+          name="company"
+          tabIndex={-1}
+          autoComplete="off"
+          aria-hidden="true"
+          style={{
+            position: "absolute",
+            width: 1,
+            height: 1,
+            padding: 0,
+            margin: -1,
+            overflow: "hidden",
+            clip: "rect(0, 0, 0, 0)",
+            whiteSpace: "nowrap",
+            border: 0,
+          }}
+        />
         <Button
           type="submit"
-          variant="neutral"
+          variant={onMedia ? "onMedia" : "neutral"}
           size="lg"
           className="w-full sm:w-newsletter-button"
           disabled={status === "submitting"}
@@ -78,11 +116,14 @@ export function InlineNewsletterForm() {
       <p
         id={ERROR_ID}
         role={status === "error" ? "alert" : "status"}
-        className={
+        className={cn(
+          "mt-3 text-sm",
           status === "error"
-            ? "mt-3 text-sm text-destructive"
-            : "mt-3 text-sm text-success"
-        }
+            ? "text-destructive"
+            : onMedia
+              ? "text-brand-light/70"
+              : "text-success",
+        )}
       >
         {message}
       </p>

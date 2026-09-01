@@ -16,7 +16,7 @@ PROD_COMPOSE := $(DOCKER) compose -f compose.prod.yaml
 
 export APP_PORT IMAGE_NAME IMAGE_TAG
 
-.PHONY: help doctor install dev build start lint typecheck test test-watch format format-check check verify \
+.PHONY: help doctor install hooks dev build start lint typecheck test test-watch format format-check check verify \
 	dev-build dev-up dev-down dev-restart dev-logs dev-shell dev-status \
 	prod-build prod-up prod prod-down prod-restart prod-logs prod-shell prod-status \
 	config-dev config-prod health clean clean-all
@@ -32,6 +32,10 @@ doctor: ## Check that local development tools are installed
 
 install: doctor ## Install exact dependencies from package-lock.json
 	$(NPM) ci
+
+hooks: ## Enable the repository's pre-commit and pre-push git hooks
+	git config core.hooksPath .githooks
+	@echo "Git hooks enabled (.githooks). Bypass once with SKIP_HOOKS=1."
 
 dev: doctor ## Run the local Next.js development server
 	$(NPM) run dev -- --hostname 0.0.0.0 --port $(APP_PORT)

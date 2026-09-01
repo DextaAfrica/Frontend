@@ -251,7 +251,7 @@ export function ServicesSection({
   return (
     <section
       ref={sectionRef}
-      className="service-scroll-section bg-brand-dark text-brand-light"
+      className="service-scroll-section bg-background text-foreground"
       style={{ "--service-count": services.length } as ServiceSectionStyle}
       aria-labelledby={`${sectionId}-heading`}
     >
@@ -271,7 +271,7 @@ export function ServicesSection({
                   key={service.id}
                   data-service-card
                   data-active={isActive || undefined}
-                  className="service-card relative isolate min-h-service-mobile overflow-hidden bg-brand-dark sm:min-h-service-tablet lg:min-h-0"
+                  className="service-card relative isolate min-h-service-mobile overflow-hidden bg-muted text-on-media sm:min-h-service-tablet lg:min-h-0"
                   style={
                     {
                       position: "relative",
@@ -294,20 +294,17 @@ export function ServicesSection({
 
                   <div
                     data-service-expanded
-                    className="service-expanded-content absolute inset-0 grid grid-cols-[1fr_auto] content-between gap-6 p-service"
+                    className="service-expanded-content absolute inset-0 flex flex-col justify-between gap-6 p-service"
                   >
                     <div>
                       <p className="mb-4 font-mono text-service-label tracking-service-label uppercase">
-                        ({service.number}) {service.label}
+                        {service.label}
                       </p>
                       <h3 className="max-w-[18ch] text-service-title leading-service-title font-medium tracking-service-title">
                         {service.title}
                       </h3>
                     </div>
-                    <span className="font-mono text-service-number leading-none tracking-service-number">
-                      {service.number}
-                    </span>
-                    <p className="col-span-2 max-w-service-copy justify-self-end text-service-copy leading-service-copy font-normal">
+                    <p className="max-w-service-copy self-end text-service-copy leading-service-copy font-normal">
                       {service.description}
                     </p>
                   </div>
@@ -318,12 +315,9 @@ export function ServicesSection({
                     tabIndex={isActive ? -1 : 0}
                     aria-label={`Show ${service.title}`}
                     onClick={() => goToService(index)}
-                    className="service-collapsed-control group absolute inset-x-0 bottom-0 isolate flex h-service-row w-full items-center gap-5 bg-brand-dark px-service text-left text-brand-light transition-colors hover:bg-brand-dark-elevated focus-visible:ring-2 focus-visible:ring-brand-light focus-visible:outline-none focus-visible:ring-inset"
+                    className="service-collapsed-control group absolute inset-x-0 bottom-0 isolate flex h-service-row w-full items-center gap-5 px-service text-left text-foreground transition-colors focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none focus-visible:ring-inset"
                   >
-                    <span className="font-mono text-service-tab-number leading-none opacity-60">
-                      {service.number}
-                    </span>
-                    <span className="font-mono text-xs tracking-service-label uppercase">
+                    <span className="font-mono text-xs tracking-service-label text-muted-foreground uppercase">
                       {service.label}
                     </span>
                     <span className="text-service-tab leading-tight">
