@@ -187,7 +187,6 @@ export function SiteHeader() {
         data-scrolled={solid}
         data-overlays-hero={overlaysHero}
         data-gsap={morphActive}
-        data-retreated={retreated && !open}
         className="site-header"
       >
         <Container size="wide" className="h-full">
