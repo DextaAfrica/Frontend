@@ -1,34 +1,46 @@
 # Feature content strategy
 
-Each folder under `src/features/*` is a screen. Not every screen sources its
-content the same way, and that split is intentional:
+Each folder under `src/features/*` owns one product area and its route
+compositions. Route files in `src/app/**/page.tsx` stay thin — metadata plus a
+single import of the feature screen.
+
+## Where content lives — one rule
+
+**Static content for a feature lives under that feature's own `data/`
+directory.** There is no shared top-level `src/data/`. A value used by exactly
+one screen may stay inline in that screen; anything referenced from more than one
+place (a list screen and a detail route, `sitemap.ts`, etc.) gets a `data/` file.
+
+Current `data/` modules:
+
+- `features/blog/data/articles.ts` — blog list + `/blog/[slug]` + `sitemap.ts`
+- `features/projects/data/projects.ts` — projects list + `/projects/[slug]` + `sitemap.ts`
+- `features/projects/data/residences.ts` — the `/projects/[slug]` residence table
+- `features/careers/data/roles.ts` — the careers areas grid
+- `features/home/data/home-page-content.ts` — the shipped home page content
+- `features/home/data/faq.ts` — the home FAQ list (`FaqItem` type lives with the
+  `FaqAccordion` component it feeds)
 
 ## CMS-overridable
 
-**`home`** is the only feature wired to the managed content API. It follows
-one pattern, and it's the pattern to copy if another feature needs the same:
+**`home`** is the only feature wired to the managed content API, and it is the
+pattern to copy if another feature ever needs the same:
 
-- `server/get-home-page-content.ts` — the site's own content
-  (`data/home-page-content.ts`) is what ships and renders by default. When
-  `CONTENT_API_URL` is configured, that CMS response is fetched and, once
-  validated, takes precedence — tagged for on-demand revalidation
-  (`POST /api/revalidate`). Any network failure or schema mismatch is
-  logged and the site keeps serving its own content rather than breaking.
-- `schemas/home-page.ts` — the zod schema a CMS payload is validated
-  against before it's trusted.
+- `server/get-home-page-content.ts` — the shipped content
+  (`data/home-page-content.ts`) renders by default. When `CONTENT_API_URL` is
+  configured, that CMS response is fetched and, once validated, takes precedence
+  — tagged for on-demand revalidation (`POST /api/revalidate`). Any network
+  failure or schema mismatch is logged and the site keeps serving its own
+  content rather than breaking.
+- `schemas/home-page.ts` — the zod schema a CMS payload is validated against.
 - `types/home-page.ts` — the typed shape everything downstream renders.
 - Which source served the last request is observable at `GET /api/health`
-  (`homePageContent.source`), not just in server logs.
+  (`homePageContent.source`).
 
 ## Static by design
 
-**`about`, `careers`, `contact`, `development`, `journal`, `legal`,
-`lifestyle`, `portfolio`** render copy that lives directly in their
-`screens/` components (or in `src/data/projects.ts` /
-`src/data/articles.ts` for the two with detail routes). This is a choice,
-not a gap: this content changes by shipping code, not by a content editor,
-and doesn't currently warrant a CMS round-trip or a schema to maintain.
-
-If a feature outgrows static copy — a non-engineer needs to edit it, or it
-needs to change without a deploy — give it the same three pieces `home`
-has (`server/`, `schemas/`, `data/`) rather than inventing a new pattern.
+**`about`, `blog`, `careers`, `contact`, `legal`, `lifestyle`, `projects`**
+render copy that changes by shipping code, not by a content editor. They do not
+carry a CMS round-trip or a schema. If one outgrows that — a non-engineer needs
+to edit it, or it must change without a deploy — give it the same `server/` +
+`schemas/` + `data/` pieces `home` has rather than inventing a new pattern.

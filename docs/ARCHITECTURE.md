@@ -63,6 +63,21 @@ features/example/
 
 Create only folders a feature actually needs. Do not introduce empty abstraction layers.
 
+Feature folders are named for their route (`features/blog` → `/blog`,
+`features/projects` → `/projects` and `/projects/[slug]`). Screens are named for
+what they render (`BlogScreen`, `ArticleScreen`, `ProjectsScreen`,
+`ProjectScreen`).
+
+## Where static content lives
+
+There is no shared top-level `src/data/`. Static content for a feature lives in
+that feature's own `data/` directory and is re-exported from its `index.ts`. A
+value used by exactly one screen may stay inline in that screen; anything read
+from more than one place (a list screen and a detail route, `sitemap.ts`) gets a
+`data/` file. Types that describe a shared component's props live with that
+component, not with the data (for example `FaqItem` lives in
+`components/marketing/faq-accordion.tsx`). See `src/features/README.md`.
+
 ## Import boundaries
 
 - Prefer `@/` absolute imports.

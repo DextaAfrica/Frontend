@@ -2,14 +2,26 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
+/* ===========================================================================
+   This file has four parts, in order:
+     1. :root            — design tokens, light theme (the source of truth)
+     2. .dark            — the tokens that change under the dark theme
+     3. @theme inline    — maps tokens to Tailwind utilities (bg-primary, …)
+     4. @layer base / …  — element defaults, then component classes + keyframes
+   Product components consume semantic utilities (bg-primary,
+   text-muted-foreground, border-border), never raw hex or oklch.
+   =========================================================================== */
+
 :root {
   color-scheme: light;
 
+  /* -- Motion -------------------------------------------------------------- */
   --motion-fast: 180ms;
   --motion-base: 420ms;
   --motion-slow: 900ms;
   --motion-ease-premium: cubic-bezier(0.22, 1, 0.36, 1);
 
+  /* -- Color: neutral surfaces & text ------------------------------------- */
   --background: #ffffff;
   --foreground: #12110f;
   --surface: #f7f7f5;
@@ -25,11 +37,16 @@
   --control-shadow: 0 1px 2px rgb(20 18 14 / 0.06);
   --card-shadow: 0 12px 32px rgb(20 18 14 / 0.07);
   --section-default:
-    radial-gradient(circle at 82% 12%, rgb(232 22 19 / 0.035), transparent 30%),
+    radial-gradient(
+      circle at 82% 12%,
+      oklch(from var(--primary) l c h / 0.035),
+      transparent 30%
+    ),
     var(--background);
   --section-surface:
     linear-gradient(145deg, rgb(0 0 0 / 0.015), transparent 48%), var(--surface);
 
+  /* -- Color: brand & status (oklch — the single source of the brand red) -- */
   --primary: oklch(0.56 0.225 25);
   --primary-hover: oklch(0.5 0.215 25);
   --primary-foreground: oklch(0.99 0.005 20);
@@ -52,6 +69,7 @@
   --mist-medium: rgb(255 255 255 / 0.6);
   --mist-soft: rgb(255 255 255 / 0.5);
 
+  /* -- Radius & controls ------------------------------------------------- */
   --radius: 0.625rem;
   --control-radius: 999px;
   --control-height-sm: 2.25rem;
@@ -60,6 +78,8 @@
   --control-padding-sm: 0.875rem;
   --control-padding-md: 1.125rem;
   --control-padding-lg: 1.5rem;
+
+  /* -- Typography: fonts, plus small global type/tracking values --------- */
   --type-control: 0.8125rem;
   --type-control-compact: 0.7rem;
   --type-status: 0.6875rem;
@@ -78,14 +98,23 @@
     "Playfair Display Variable", "Iowan Old Style", Baskerville, serif;
   --font-mono: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
 
+  /* Fixed brand neutrals — the same near-black / near-white in both themes,
+     used for surfaces that never invert (footer, cinematic sections). */
   --brand-dark: #060606;
   --brand-dark-elevated: #1c1c1c;
   --brand-light: #f8f8f7;
-  --brand-accent: #e81613;
   --service-border: #000000;
   --text-subtle: #666666;
   --stat-value-glow: none;
+  /* There is one brand red: the semantic `--primary` scale below. Raw CSS that
+     needs it references `var(--primary)` directly — no separate accent token. */
 
+  /* -- Component-scoped layout & type values ----------------------------- *
+   * Feature-specific measurements (hero, services scroll, testimonial,
+   * newsletter, project mosaic). These are translated from the reference
+   * designs. Grouped here so the component classes further down stay small;
+   * most are mapped to a utility in the @theme block and consumed as e.g.
+   * `min-h-service-panel`, `max-w-editorial-heading`, `py-section-editorial`.  */
   --section-intro-height: clamp(26rem, 35vw, 32rem);
   --scroll-copy-size: clamp(1.5rem, 2.45vw, 2.25rem);
   --scroll-copy-muted-opacity: 0.48;
@@ -195,6 +224,10 @@
   --layer-notice: 80;
 }
 
+/* ===========================================================================
+   2. DARK THEME — only the tokens that differ from :root. Everything else
+   (radius, type scale, layout values) is inherited unchanged.
+   =========================================================================== */
 .dark {
   color-scheme: dark;
 
@@ -213,7 +246,11 @@
   --control-shadow: 0 1px 2px rgb(0 0 0 / 0.4);
   --card-shadow: 0 16px 40px rgb(0 0 0 / 0.28);
   --section-default:
-    radial-gradient(circle at 82% 12%, rgb(232 22 19 / 0.075), transparent 32%),
+    radial-gradient(
+      circle at 82% 12%,
+      oklch(from var(--primary) l c h / 0.075),
+      transparent 32%
+    ),
     var(--background);
   --section-surface:
     linear-gradient(145deg, rgb(255 255 255 / 0.025), transparent 48%),
@@ -269,7 +306,6 @@
   --color-brand-dark: var(--brand-dark);
   --color-brand-dark-elevated: var(--brand-dark-elevated);
   --color-brand-light: var(--brand-light);
-  --color-brand-accent: var(--brand-accent);
   --color-service-border: var(--service-border);
   --color-text-subtle: var(--text-subtle);
 
@@ -617,7 +653,7 @@ dialog[open]::backdrop {
 }
 
 .project-card-panel {
-  border-top: 0.1875rem solid var(--brand-accent);
+  border-top: 0.1875rem solid var(--primary);
   transform: none;
   box-shadow: 0 -1rem 2.5rem rgb(0 0 0 / 0.16);
 }
