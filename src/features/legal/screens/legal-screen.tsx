@@ -39,7 +39,7 @@ export function LegalScreen({
             items={tocItems}
             className="sticky top-28 hidden lg:col-span-1 lg:flex"
           />
-          <Stack gap="2xl" className="lg:col-span-3">
+          <Stack gap="2xl" className="col-span-full lg:col-span-3">
             <Eyebrow className="border-b border-border pb-5 text-muted-foreground">
               Last updated: {lastUpdated}
             </Eyebrow>

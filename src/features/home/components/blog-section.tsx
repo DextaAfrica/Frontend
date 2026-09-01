@@ -34,7 +34,7 @@ export function BlogSection({
                     src={post.image}
                     alt=""
                     fill
-                    sizes="(min-width: 1024px) 29vw, (min-width: 640px) 45vw, 100vw"
+                    sizes="(min-width: 1024px) 29vw, (min-width: 768px) 45vw, 100vw"
                     unoptimized={isRemoteAsset(post.image)}
                     className="object-cover transition-transform duration-700 ease-premium group-hover:scale-project-media"
                   />

@@ -130,7 +130,13 @@
    * `min-h-service-panel`, `max-w-editorial-heading`, `py-section-editorial`.  */
   --section-intro-height: clamp(26rem, 35vw, 32rem);
   --scroll-copy-size: clamp(1.0625rem, 1.5vw, 1.4375rem);
-  --type-hero: clamp(2.25rem, 3.8vw, 3.75rem);
+  /* Floor lowered from 2.25rem: at ~375px the old floor left roughly 335px
+     of column width (after Container's padding) against a longer slide
+     line like "opportunity for you", which needs ~376px at that size —
+     it would wrap inside the hero's single-line reveal mask and clip.
+     3.8vw overtakes this floor well before it'd ever visibly shrink a
+     wider viewport, so this only changes narrow phones. */
+  --type-hero: clamp(1.875rem, 3.8vw, 3.75rem);
   --letter-spacing-hero: -0.02em;
   --letter-spacing-heading: -0.04em;
   --line-height-heading: 1.02;
@@ -160,11 +166,16 @@
   --layout-newsletter-card-height: 10.375rem;
   --layout-newsletter-input-height: 4.0625rem;
   --layout-page-state-min-height: 65vh;
-  --layout-article-media-min-height: 26rem;
-  --layout-lifestyle-hero-min-height: 36rem;
-  --layout-lifestyle-media-min-height: 28rem;
-  --layout-development-hero-min-height: 38rem;
-  --layout-about-media-min-height: 34rem;
+  /* svh-driven, not just a flat rem: these used to be fixed heights that
+     didn't budge on a short mobile viewport (a single image panel eating
+     ~90% of an iPhone SE's screen before any real content appeared). The
+     clamp's ceiling is the original desktop value; the floor keeps the
+     panel from ever getting uselessly small. */
+  --layout-article-media-min-height: clamp(18rem, 45svh, 26rem);
+  --layout-lifestyle-hero-min-height: clamp(22rem, 55svh, 36rem);
+  --layout-lifestyle-media-min-height: clamp(18rem, 42svh, 28rem);
+  --layout-development-hero-min-height: clamp(22rem, 58svh, 38rem);
+  --layout-about-media-min-height: clamp(20rem, 50svh, 34rem);
   --layout-grid-card-min: 18rem;
   --layout-theme-toggle-width: 6.625rem;
   --layout-dialog-viewport-width: 92vw;
@@ -990,6 +1001,16 @@ dialog[open]::backdrop {
   box-shadow: inset 0 1px 2px rgb(from var(--foreground) r g b / 0.06);
 }
 
+/* Each segment is a real tap target on a touch device, not just a mouse
+   target — .theme-toggle__thumb/__option are both sized in percentages of
+   the parent, so bumping the parent here scales them automatically. */
+@media (pointer: coarse) {
+  .theme-toggle {
+    grid-template-columns: repeat(3, 2.75rem);
+    height: 2.75rem;
+  }
+}
+
 .theme-toggle__thumb {
   position: absolute;
   top: 0.25rem;
@@ -1409,6 +1430,29 @@ dialog[open]::backdrop {
     background-color 260ms var(--motion-ease-premium),
     box-shadow 260ms var(--motion-ease-premium),
     transform 260ms var(--motion-ease-premium);
+}
+
+/* The visual dot stays small (it's a progress indicator, not a button), but
+   an invisible, absolutely-positioned hit area — which doesn't affect flex
+   sizing or the track-fill math above, both keyed to --dot-size — brings
+   the actual tap target closer to a reasonable touch-target size. */
+.testimonial-dots [data-dot]::after {
+  content: "";
+  position: absolute;
+  inset: -0.5rem;
+}
+
+/* Same expanded-hit-area technique as the testimonial dots above: the
+   visible circle (site-footer.tsx) stays a deliberately understated 32px,
+   but the actual tap target reaches the ~44px guideline. */
+.footer-social-link {
+  position: relative;
+}
+
+.footer-social-link::after {
+  content: "";
+  position: absolute;
+  inset: -0.375rem;
 }
 
 .testimonial-dots [data-dot][data-state="past"],

@@ -37,7 +37,12 @@ export function Modal({
       onClose={onClose}
       onCancel={onClose}
       className={cn(
-        "m-auto w-[min(var(--layout-dialog-viewport-width),var(--container-modal))] rounded-panel border border-border bg-background p-0 text-foreground shadow-2xl backdrop:bg-backdrop backdrop:backdrop-blur-sm",
+        // max-height + overflow-y are explicit rather than left to the
+        // browser's own <dialog> UA-default sizing, which isn't guaranteed
+        // to include scrolling — on a short mobile viewport (or with the
+        // on-screen keyboard open) content taller than the dialog now
+        // scrolls internally instead of risking being clipped.
+        "m-auto max-h-[90svh] w-[min(var(--layout-dialog-viewport-width),var(--container-modal))] overflow-y-auto rounded-panel border border-border bg-background p-0 text-foreground shadow-2xl backdrop:bg-backdrop backdrop:backdrop-blur-sm",
         className,
       )}
       aria-labelledby={titleId}

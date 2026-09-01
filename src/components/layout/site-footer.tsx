@@ -78,7 +78,7 @@ export function SiteFooter() {
                   target="_blank"
                   rel="noreferrer noopener"
                   aria-label={profile.label}
-                  className="grid size-8 place-items-center rounded-full border border-on-media-border text-brand-light transition-colors hover:border-brand-light hover:bg-brand-light/10"
+                  className="footer-social-link grid size-8 place-items-center rounded-full border border-on-media-border text-brand-light transition-colors hover:border-brand-light hover:bg-brand-light/10"
                 >
                   <Icon name={profile.icon} size={14} />
                 </a>
