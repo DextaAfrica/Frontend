@@ -23,8 +23,6 @@ export function SiteHeader() {
   const [open, setOpen] = React.useState(false);
   const [scrolled, setScrolled] = React.useState(false);
   const [morphActive, setMorphActive] = React.useState(false);
-  const [retreated, setRetreated] = React.useState(false);
-  const lastScrollY = React.useRef(0);
   const pathname = usePathname();
 
   const isLandingPage = pathname === "/";
@@ -63,28 +61,14 @@ export function SiteHeader() {
     { scope: panelRef, dependencies: [open] },
   );
 
+  // Header stays fixed/sticky and always visible while scrolling — it's
+  // the visitor's only way to navigate away from wherever they are on the
+  // page, so it never hides on scroll-down.
   React.useEffect(() => {
-    lastScrollY.current = window.scrollY;
-
-    // Reveals on scroll-up, retreats on scroll-down past a threshold —
-    // comfortably past the desktop morph's own ~170px scroll window above,
-    // so the two scroll-driven effects never fight each other on the way
-    // down. The nav follows the visitor's intent (heading back up to find
-    // something) rather than just tracking raw scroll position.
-    function update() {
-      const currentY = window.scrollY;
-      const delta = currentY - lastScrollY.current;
-      setScrolled(currentY > 24);
-      if (currentY < 220) {
-        setRetreated(false);
-      } else if (Math.abs(delta) > 4) {
-        setRetreated(delta > 0);
-      }
-      lastScrollY.current = currentY;
-    }
-    update();
-    window.addEventListener("scroll", update, { passive: true });
-    return () => window.removeEventListener("scroll", update);
+    const updateScrolledState = () => setScrolled(window.scrollY > 24);
+    updateScrolledState();
+    window.addEventListener("scroll", updateScrolledState, { passive: true });
+    return () => window.removeEventListener("scroll", updateScrolledState);
   }, [pathname]);
 
   React.useEffect(() => {

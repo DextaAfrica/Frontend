@@ -133,7 +133,7 @@
   --space-services-y: clamp(1.5rem, 2vw, 2rem);
   --space-service-inline: clamp(1.5rem, 5.694vw, 5.125rem);
   --type-section-display: clamp(1.65rem, 2.45vw, 2.25rem);
-  --type-editorial: clamp(2.15rem, 3.55vw, 3.25rem);
+  --type-editorial: clamp(1.85rem, 2.9vw, 2.75rem);
   --type-project-title: clamp(1.5rem, 2.5vw, 2.25rem);
   --type-metric: clamp(3.5rem, 5.25vw, 4.75rem);
   --line-height-editorial: 1.1;
@@ -641,6 +641,21 @@ dialog[open]::backdrop {
 
 .scroll-reveal-copy p + p {
   margin-top: 1em;
+}
+
+/* Hero headline line-mask reveal — see landing-hero.tsx. The hidden state
+   lives here (not as an inline style) so it's the resting DOM/CSS state:
+   correct even before JS runs, and reduced-motion visitors always see the
+   text in place with no reliance on the animation ever firing. */
+[data-hero-line-inner] {
+  display: block;
+  transform: translateY(110%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-hero-line-inner] {
+    transform: none;
+  }
 }
 
 .dexta-hero {

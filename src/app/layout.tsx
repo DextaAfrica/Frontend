@@ -52,6 +52,12 @@ const organizationSchema = {
 };
 
 export const viewport: Viewport = {
+  // Next.js only auto-fills these when no viewport export exists at all —
+  // once a layout provides its own (for themeColor here), it owns the
+  // whole meta tag, so width/initialScale must be declared explicitly or
+  // browsers fall back to their own (usually wrong) defaults.
+  width: "device-width",
+  initialScale: 1,
   themeColor: [
     { media: "(prefers-color-scheme: light)", color: THEME_COLORS.light },
     { media: "(prefers-color-scheme: dark)", color: THEME_COLORS.dark },
