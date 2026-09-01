@@ -224,9 +224,11 @@
   --elevation-service-row: 0 6px 20px rgb(20 18 14 / 0.1);
   --motion-project-media: 900ms;
   --transform-project-media-scale: 1.025;
-  --layer-navigation: 60;
   --layer-header: 70;
   --layer-notice: 80;
+  /* Above the header and the consent notice: while the mobile menu is open
+     it is the only thing on screen, full-bleed and opaque. */
+  --layer-navigation: 90;
 }
 
 /* ===========================================================================
@@ -473,11 +475,72 @@ body {
   );
 }
 
-.site-navigation-scroll {
+/* --- Mobile navigation panel ------------------------------------------------
+ * Full-bleed, opaque, and above everything (see --layer-navigation). Its own
+ * visibility is CSS-only — a plain `opacity` transition with `visibility`
+ * flipped on a matching delay, so it can never be left half-shown by an
+ * interrupted script. The link stagger (GSAP, in site-header.tsx) is a
+ * cosmetic layer on top of content that is already fully in the DOM and
+ * fully opaque at rest. */
+.mobile-nav {
+  position: fixed;
+  inset: 0;
+  z-index: var(--layer-navigation);
+  display: flex;
+  flex-direction: column;
+  height: 100dvh;
+  background: var(--background);
+  color: var(--foreground);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition:
+    opacity 280ms var(--motion-ease-premium),
+    visibility 0s linear 280ms;
+}
+
+.mobile-nav[data-open="true"] {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transition:
+    opacity 280ms var(--motion-ease-premium),
+    visibility 0s linear 0s;
+}
+
+.mobile-nav__bar {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: space-between;
+  height: 5rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.mobile-nav__scroll {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
   padding-bottom: max(
     var(--layout-safe-area-mobile),
     env(safe-area-inset-bottom)
   );
+}
+
+@media (min-width: 40rem) {
+  .mobile-nav__scroll {
+    padding-bottom: max(
+      var(--layout-safe-area-tablet),
+      env(safe-area-inset-bottom)
+    );
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mobile-nav {
+    transition-duration: 1ms;
+  }
 }
 
 .stat-mist-primary {

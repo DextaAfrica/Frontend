@@ -27,9 +27,12 @@ export function SiteHeader() {
   const menuButtonRef = React.useRef<HTMLButtonElement>(null);
   const panelRef = React.useRef<HTMLDivElement>(null);
 
-  // Mobile menu entrance: stagger the links in when the panel opens. The
-  // resting DOM state is already full-opacity, so an interrupted tween can
-  // never leave a link stuck invisible.
+  // Mobile menu entrance: stagger the links in when the panel opens. This is
+  // a cosmetic layer only — the panel's own visibility (see `.mobile-nav` in
+  // globals.css) is plain CSS and never depends on this running, and every
+  // link's resting DOM state is already full-opacity, so a tween that gets
+  // interrupted (fast double-click, route change) can never strand a link
+  // invisible; `clearProps` also drops the inline styles once it settles.
   useGSAP(
     () => {
       if (!open) return;
@@ -46,8 +49,15 @@ export function SiteHeader() {
       }
       gsap.fromTo(
         links,
-        { y: 24, opacity: 0 },
-        { y: 0, opacity: 1, duration: 0.5, stagger: 0.06, ease: "power3.out" },
+        { y: 20, autoAlpha: 0 },
+        {
+          y: 0,
+          autoAlpha: 1,
+          duration: 0.5,
+          stagger: 0.06,
+          ease: "power3.out",
+          clearProps: "opacity,visibility,transform",
+        },
       );
     },
     { scope: panelRef, dependencies: [open] },
@@ -71,7 +81,9 @@ export function SiteHeader() {
     if (!open) return;
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
-    panelRef.current?.querySelector<HTMLAnchorElement>("a")?.focus();
+    panelRef.current
+      ?.querySelector<HTMLButtonElement>("[data-menu-close]")
+      ?.focus();
     function handleKeyDown(event: KeyboardEvent) {
       if (event.key === "Escape") {
         setOpen(false);
@@ -163,66 +175,86 @@ export function SiteHeader() {
         aria-modal="true"
         aria-label="Site navigation"
         aria-hidden={!open}
-        className={cn(
-          "fixed inset-0 z-[var(--layer-navigation)] bg-background text-foreground transition-[opacity] duration-300 ease-out",
-          open
-            ? "pointer-events-auto visible opacity-100"
-            : "pointer-events-none invisible opacity-0",
-        )}
+        data-open={open}
+        className="mobile-nav"
       >
-        <Container
-          size="wide"
-          className="site-navigation-scroll h-full overflow-y-auto pt-20 sm:pt-24"
-        >
-          <Stack gap="lg" className="min-h-full justify-between py-4 sm:py-6">
-            <nav aria-label="Site navigation links">
-              <Stack gap="none">
-                {siteConfig.navItems.map((item) => (
-                  <Link
-                    key={item.href}
-                    href={item.href as Route}
-                    data-menu-link
-                    onClick={closeMenu}
-                    aria-current={pathname === item.href ? "page" : undefined}
-                    className={cn(
-                      "group flex min-h-16 items-center justify-between border-b border-border py-3 text-navigation-display leading-none font-light tracking-navigation-display sm:min-h-20 sm:py-4 lg:min-h-24",
-                      pathname === item.href && "text-primary",
-                    )}
-                  >
-                    <span>{item.label}</span>
-                    <Icon
-                      name="arrow-right"
-                      className="text-muted-foreground transition-transform group-hover:translate-x-1 group-hover:text-primary"
-                    />
-                  </Link>
-                ))}
-              </Stack>
-            </nav>
-
-            <div className="flex items-center justify-between gap-4 border-t border-border pt-5 lg:hidden">
-              <Eyebrow as="span">Appearance</Eyebrow>
-              <ThemeToggle />
-            </div>
-
-            <div className="grid gap-5 border-t border-border pt-5 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end sm:gap-8 sm:pt-6">
-              <Stack gap="sm" className="max-w-md">
-                <Eyebrow>{siteConfig.navigation.appointmentEyebrow}</Eyebrow>
-                <p className="text-sm leading-6 text-muted-foreground">
-                  {siteConfig.navigation.appointmentDescription}
-                </p>
-              </Stack>
-              <ButtonLink
-                href={siteConfig.navigation.appointmentHref}
-                size="lg"
-                onClick={closeMenu}
-                className="w-full justify-between sm:w-auto sm:min-w-52"
-              >
-                {siteConfig.navigation.appointmentCta}{" "}
-                <Icon name="arrow-right" />
-              </ButtonLink>
-            </div>
-          </Stack>
+        <Container size="wide" className="mobile-nav__bar">
+          <Link
+            href="/"
+            onClick={closeMenu}
+            aria-label={`${siteConfig.name} home`}
+            tabIndex={open ? 0 : -1}
+          >
+            <Wordmark overlaysHero={false} className="h-7" />
+          </Link>
+          <Button
+            data-menu-close
+            variant="secondary"
+            size="sm"
+            tabIndex={open ? 0 : -1}
+            className="text-control-compact tracking-control-compact uppercase"
+            onClick={closeMenu}
+            aria-label="Close navigation"
+          >
+            Close
+            <Icon name="close" size={16} />
+          </Button>
         </Container>
+
+        <div className="mobile-nav__scroll">
+          <Container size="wide">
+            <Stack gap="lg" className="py-6 sm:py-8">
+              <nav aria-label="Site navigation links">
+                <Stack gap="none">
+                  {siteConfig.navItems.map((item) => (
+                    <Link
+                      key={item.href}
+                      href={item.href as Route}
+                      data-menu-link
+                      tabIndex={open ? 0 : -1}
+                      onClick={closeMenu}
+                      aria-current={pathname === item.href ? "page" : undefined}
+                      className={cn(
+                        "group flex min-h-16 items-center justify-between border-b border-border py-3 text-navigation-display leading-none font-light tracking-navigation-display transition-colors active:bg-muted/60 sm:min-h-20 sm:py-4 lg:min-h-24",
+                        pathname === item.href && "text-primary",
+                      )}
+                    >
+                      <span>{item.label}</span>
+                      <Icon
+                        name="arrow-right"
+                        className="shrink-0 text-muted-foreground transition-transform group-hover:translate-x-1 group-hover:text-primary"
+                      />
+                    </Link>
+                  ))}
+                </Stack>
+              </nav>
+
+              <div className="flex items-center justify-between gap-4 border-t border-border pt-5">
+                <Eyebrow as="span">Appearance</Eyebrow>
+                <ThemeToggle />
+              </div>
+
+              <div className="grid gap-5 border-t border-border pt-5 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end sm:gap-8 sm:pt-6">
+                <Stack gap="sm" className="max-w-md">
+                  <Eyebrow>{siteConfig.navigation.appointmentEyebrow}</Eyebrow>
+                  <p className="text-sm leading-6 text-muted-foreground">
+                    {siteConfig.navigation.appointmentDescription}
+                  </p>
+                </Stack>
+                <ButtonLink
+                  href={siteConfig.navigation.appointmentHref}
+                  size="lg"
+                  tabIndex={open ? 0 : -1}
+                  onClick={closeMenu}
+                  className="w-full justify-between sm:w-auto sm:min-w-52"
+                >
+                  {siteConfig.navigation.appointmentCta}
+                  <Icon name="arrow-right" />
+                </ButtonLink>
+              </div>
+            </Stack>
+          </Container>
+        </div>
       </div>
     </>
   );
