@@ -1,6 +1,6 @@
 import { Page } from "@/components/layout";
 import { CtaBand, FaqAccordion, LandingHero } from "@/components/marketing";
-import { faqItems } from "@/data/faq";
+import { faqItems } from "../data/faq";
 import {
   BlogSection,
   FeaturedProjectsSection,

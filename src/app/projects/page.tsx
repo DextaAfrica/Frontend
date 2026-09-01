@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { PortfolioScreen } from "@/features/portfolio";
+import { ProjectsScreen } from "@/features/projects";
 export const metadata: Metadata = {
   title: "Projects",
   description:
@@ -7,5 +7,5 @@ export const metadata: Metadata = {
   alternates: { canonical: "/projects" },
 };
 export default function ProjectsPage() {
-  return <PortfolioScreen />;
+  return <ProjectsScreen />;
 }

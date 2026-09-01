@@ -28,8 +28,7 @@ export interface LandingHeroProps {
 /**
  * The site's top hero: a centered light-theme headline block followed by a
  * large rounded video-preview panel with a play button that opens the real
- * showreel in a modal. Distinct from CinematicHero, which is the full-bleed
- * treatment used further down the homepage.
+ * showreel in a modal.
  */
 export function LandingHero({
   badge,

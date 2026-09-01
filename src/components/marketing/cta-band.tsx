@@ -15,7 +15,7 @@ export function CtaBand({
   title = "Start Your *Property* Journey *Today*",
   ctaLabel = "Let's Talk",
   ctaHref = "/contact",
-  image = "/images/maison-rooftop.png",
+  image = "/images/residence-rooftop.png",
 }: CtaBandProps) {
   return (
     <section className="relative isolate overflow-hidden bg-brand-dark py-24 text-brand-light sm:py-32">

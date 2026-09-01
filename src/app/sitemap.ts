@@ -1,7 +1,7 @@
 import type { MetadataRoute } from "next";
 import { siteConfig } from "@/config/site";
-import { articles } from "@/data/articles";
-import { projects } from "@/data/projects";
+import { articles } from "@/features/blog";
+import { projects } from "@/features/projects";
 
 const staticRoutes = [
   { path: "", changeFrequency: "weekly", priority: 1 },

@@ -1,9 +1,5 @@
-export interface FaqItem {
-  question: string;
-  answer: string;
-}
+import type { FaqItem } from "@/components/marketing";
 
-/** Shared across every page's "Got Questions?" section. */
 export const faqItems: FaqItem[] = [
   {
     question: "What is Dexta Africa Limited all about?",
