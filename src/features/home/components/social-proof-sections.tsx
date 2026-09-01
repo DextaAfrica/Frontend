@@ -45,22 +45,9 @@ export function TestimonialSection({
           />
           “{testimonial.quote}”
         </blockquote>
-        <figcaption className="mt-testimonial-meta flex flex-col items-start justify-between gap-8 sm:flex-row sm:items-end">
-          <div className="text-testimonial-author leading-none font-light tracking-testimonial-author uppercase">
-            <p>{testimonial.author}</p>
-            <p className="mt-2 text-text-subtle">{testimonial.role}</p>
-          </div>
-          <div
-            className="flex items-center gap-testimonial-progress font-mono text-sm"
-            aria-label="Testimonial 1 of 1"
-          >
-            <span>01</span>
-            <span
-              aria-hidden
-              className="h-px w-testimonial-progress bg-current"
-            />
-            <span className="text-text-subtle">01</span>
-          </div>
+        <figcaption className="mt-testimonial-meta text-testimonial-author leading-none font-light tracking-testimonial-author uppercase">
+          <p>{testimonial.author}</p>
+          <p className="mt-2 text-text-subtle">{testimonial.role}</p>
         </figcaption>
       </Reveal>
     </Section>
