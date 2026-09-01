@@ -215,17 +215,7 @@ export function SiteHeader() {
                 aria-label={`${siteConfig.name} home`}
                 className="site-header__logo shrink-0 lg:hidden"
               >
-                <Image
-                  src="/images/dexta-logo.svg"
-                  alt={siteConfig.name}
-                  width={110}
-                  height={48}
-                  priority
-                  className={cn(
-                    "h-7 w-auto sm:h-8",
-                    !overlaysHero && "invert dark:invert-0",
-                  )}
-                />
+                <Wordmark overlaysHero={overlaysHero} className="h-7 sm:h-8" />
               </Link>
 
               <nav
@@ -248,17 +238,7 @@ export function SiteHeader() {
               className="site-header__logo absolute top-1/2 left-1/2 z-[1] hidden -translate-y-1/2 lg:block"
             >
               <span className="block -translate-x-1/2">
-                <Image
-                  src="/images/dexta-logo.svg"
-                  alt={siteConfig.name}
-                  width={110}
-                  height={48}
-                  priority
-                  className={cn(
-                    "h-8 w-auto",
-                    !overlaysHero && "invert dark:invert-0",
-                  )}
-                />
+                <Wordmark overlaysHero={overlaysHero} className="h-8" />
               </span>
             </Link>
 
@@ -368,6 +348,41 @@ export function SiteHeader() {
           </Stack>
         </Container>
       </div>
+    </>
+  );
+}
+
+/**
+ * The Dexta wordmark. Two colour variants of the same asset: charcoal + red on
+ * light surfaces, near-white + red on dark ones (over the hero video, or the
+ * dark theme). CSS picks between them so there is no hydration flash.
+ */
+function Wordmark({
+  overlaysHero,
+  className,
+}: {
+  overlaysHero: boolean;
+  className?: string;
+}) {
+  const base = cn("w-auto", className);
+  return (
+    <>
+      <Image
+        src="/images/dexta-logo-on-dark.svg"
+        alt=""
+        width={110}
+        height={48}
+        priority
+        className={cn(base, overlaysHero ? "block" : "hidden dark:block")}
+      />
+      <Image
+        src="/images/dexta-logo.svg"
+        alt=""
+        width={110}
+        height={48}
+        priority
+        className={cn(base, overlaysHero ? "hidden" : "block dark:hidden")}
+      />
     </>
   );
 }

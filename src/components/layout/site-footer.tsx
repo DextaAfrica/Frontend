@@ -20,7 +20,7 @@ export function SiteFooter() {
         <div className="grid gap-12 sm:grid-cols-2 lg:grid-cols-[2fr_1fr_1fr_1.4fr]">
           <div>
             <Image
-              src="/images/dexta-logo.svg"
+              src="/images/dexta-logo-on-dark.svg"
               alt="Dexta"
               width={238}
               height={104}
