@@ -1,0 +1,22 @@
+# Normalize line endings to LF for every text file, regardless of the
+# platform or a contributor's core.autocrlf setting. Without this, Windows
+# checkouts convert everything to CRLF and the Prettier pre-commit hook
+# fails repo-wide on line endings alone, not real content.
+* text=auto eol=lf
+
+# Binary assets must never be line-ending-normalized.
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.webp binary
+*.avif binary
+*.ico binary
+*.woff binary
+*.woff2 binary
+*.ttf binary
+*.otf binary
+*.webm binary
+*.mp4 binary
+*.mov binary
+*.pdf binary
