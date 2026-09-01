@@ -116,7 +116,6 @@
   --brand-dark: #060606;
   --brand-dark-elevated: #1c1c1c;
   --brand-light: #f8f8f7;
-  --service-border: var(--border);
   --text-subtle: #666666;
   --stat-value-glow: none;
   /* There is one brand red: the semantic `--primary` scale below. Raw CSS that
@@ -340,7 +339,6 @@
   --color-brand-dark: var(--brand-dark);
   --color-brand-dark-elevated: var(--brand-dark-elevated);
   --color-brand-light: var(--brand-light);
-  --color-service-border: var(--service-border);
   --color-text-subtle: var(--text-subtle);
 
   --font-sans: var(--font-sans);
@@ -1186,7 +1184,6 @@ dialog[open]::backdrop {
   top: 0;
   min-height: 0;
   overflow: hidden;
-  border: 1px solid var(--service-border);
   background: var(--muted);
   box-shadow: var(--elevation-service-panel);
   transform-origin: 50% 0%;
@@ -1251,24 +1248,16 @@ dialog[open]::backdrop {
 
 .service-collapsed-control {
   z-index: 3;
-  inset-inline: -1px;
-  width: calc(100% + 2px);
-  border-top: 1px solid var(--border);
-  background: var(--surface-elevated) !important;
+  inset-inline: 0;
+  width: 100%;
+  background: var(--surface-elevated);
   box-shadow: var(--elevation-service-row);
   backface-visibility: hidden;
+  transition: background-color 220ms var(--motion-ease-premium);
 }
 
-.service-collapsed-control::before {
-  position: absolute;
-  z-index: -1;
-  inset: -2px;
-  background: var(--surface-elevated);
-  content: "";
-}
-
-.service-collapsed-control:hover::before,
-.service-collapsed-control:focus-visible::before {
+.service-collapsed-control:hover,
+.service-collapsed-control:focus-visible {
   background: var(--muted);
 }
 

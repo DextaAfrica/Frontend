@@ -20,19 +20,24 @@ export const homeMotion = {
     contentTransition: 0.2,
     start: "top top",
     end: "bottom bottom",
+    // mediaScale/mediaOffsetPercent prime an incoming image slightly zoomed
+    // and shifted before it becomes active; mediaExitScale/mediaExitPercent
+    // carry it further as it exits. The gap between those two states *is*
+    // the parallax — too small (this used to top out around 1.075/6%) and
+    // it reads as a jitter rather than depth, however smooth the easing is.
     compact: {
       scrub: 0.72,
-      mediaScale: 1.075,
-      mediaOffsetPercent: 6,
-      mediaExitScale: 1.025,
-      mediaExitPercent: -2.5,
+      mediaScale: 1.12,
+      mediaOffsetPercent: 9,
+      mediaExitScale: 1.05,
+      mediaExitPercent: -5,
     },
     wide: {
       scrub: 1,
-      mediaScale: 1.055,
-      mediaOffsetPercent: 4.5,
-      mediaExitScale: 1.02,
-      mediaExitPercent: -2,
+      mediaScale: 1.16,
+      mediaOffsetPercent: 11,
+      mediaExitScale: 1.07,
+      mediaExitPercent: -6.5,
     },
   },
   testimonials: {

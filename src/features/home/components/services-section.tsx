@@ -271,7 +271,12 @@ export function ServicesSection({
                   key={service.id}
                   data-service-card
                   data-active={isActive || undefined}
-                  className="service-card relative isolate min-h-service-mobile overflow-hidden bg-muted text-on-media sm:min-h-service-tablet lg:min-h-0"
+                  // Sizing is fully owned by .service-card's own CSS rules
+                  // (:first-child/:not(:first-child), driven by
+                  // --service-active-height etc.) — a min-h-* utility here
+                  // would only ever lose to that more specific rule, so it
+                  // isn't one.
+                  className="service-card relative isolate overflow-hidden bg-muted text-on-media"
                   style={
                     {
                       position: "relative",
