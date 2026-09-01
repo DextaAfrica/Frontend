@@ -714,6 +714,24 @@ dialog[open]::backdrop {
   min-height: 100svh;
 }
 
+/* The hero's opening slide ("Welcome to Dexta Africa") reads as the site's
+   statement of intent, so it carries more weight than the slides that
+   follow it — heavier, tighter, a touch larger. An attribute selector on
+   the element itself (rather than another utility class) beats
+   HeroHeading's own font-semibold/text-hero on specificity alone, no
+   !important needed, regardless of which rule the stylesheet declares
+   later — see the cn()-isn't-a-merge notes elsewhere in this file. */
+.dexta-hero h1[data-commanding] {
+  font-weight: 800;
+  letter-spacing: -0.03em;
+}
+
+@media (min-width: 40rem) {
+  .dexta-hero h1[data-commanding] {
+    font-size: clamp(2.75rem, 4.6vw, 4.75rem);
+  }
+}
+
 /* Hero eyebrow badge: a recurring diagonal light sweep, independent of the
    badge's own GSAP entrance (see landing-hero.tsx) — pure CSS, so it keeps
    running with zero JS cost and is trivially disabled under reduced-motion. */
@@ -757,48 +775,6 @@ dialog[open]::backdrop {
     animation: none;
     display: none;
   }
-}
-
-/* Hero slide pagination (see landing-hero.tsx). A 24px hit target with a
-   small 8px visual dot, growing to a pill when active, so the touch target
-   stays generous without the indicator itself looking oversized. */
-.hero-dot {
-  position: relative;
-  width: 1.5rem;
-  height: 1.5rem;
-  padding: 0;
-  border: none;
-  background: transparent;
-  cursor: pointer;
-}
-
-.hero-dot::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  margin: auto;
-  width: 0.5rem;
-  height: 0.5rem;
-  border-radius: 999px;
-  background: var(--on-media-border);
-  transition:
-    background-color 300ms ease,
-    width 300ms ease;
-}
-
-.hero-dot:hover::before {
-  background: var(--on-media-muted);
-}
-
-.hero-dot[data-active]::before {
-  width: 1.5rem;
-  background: var(--on-media);
-}
-
-.hero-dot:focus-visible {
-  border-radius: 999px;
-  outline: 2px solid var(--on-media);
-  outline-offset: 2px;
 }
 
 /* Word-level headline accent (see <Accent> in typography.tsx): the theme's

@@ -11,14 +11,14 @@ export const homePageContent = {
           "A trusted name in African real estate — every development built on integrity, quality, and lasting value.",
       },
       {
-        titleLines: ["Building the future", "of *real estate*"],
+        titleLines: ["Your partner in", "*building* wealth"],
         description:
-          "Dexta Africa is a real estate company providing development, advisory, and marketing solutions across Nigeria and Africa.",
+          "From site to skyline, we deliver value-driven real estate solutions across Nigeria and Africa.",
       },
       {
-        titleLines: ["Turning dreams", "into *addresses*"],
+        titleLines: ["The right", "*opportunity* for you"],
         description:
-          "From site to skyline, we deliver value-driven developments across Nigeria and Africa — for those investing, living, or building a legacy.",
+          "Whether you're investing, living, or learning — there's a place for you at Dexta Africa.",
       },
     ],
     primary: { label: "Explore Our Projects", href: "/projects" },

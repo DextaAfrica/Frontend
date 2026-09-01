@@ -48,9 +48,9 @@ const EXIT_DURATION = 0.5;
  *
  * Auto-advance pauses on hover/focus, is driven by a ref (not the `slides`
  * closure) so the interval never goes stale, and never starts at all under
- * `prefers-reduced-motion` — manual pagination-dot navigation still works
- * there, just as an instant cut rather than an animated transition, since
- * that's a click the visitor asked for rather than ambient motion.
+ * `prefers-reduced-motion` — the `aria-live="polite"` region on the
+ * description still announces each new slide as it lands for anyone using
+ * a screen reader, even with no visible pagination UI.
  *
  * The scrim is left-to-right, not a flat wash over the whole frame: it darkens
  * only the left portion where the copy sits, fading to fully transparent by
@@ -91,6 +91,10 @@ export function LandingHero({
       return;
     }
 
+    // The slide currently on screen, not the one we're going to — decides
+    // whether this exit gets the commanding slide's extra punch.
+    const leavingCommanding = activeIndexRef.current === 0;
+
     isAnimatingRef.current = true;
     const lines = gsap.utils.toArray<HTMLElement>(
       headingRef.current?.querySelectorAll("[data-hero-line-inner]") ?? [],
@@ -106,12 +110,17 @@ export function LandingHero({
     if (lines.length) {
       exit.to(lines, {
         yPercent: -110,
+        scale: leavingCommanding ? 1.05 : 1,
+        transformOrigin: "50% 0%",
         duration: EXIT_DURATION,
         stagger: 0.06,
         ease: "power3.in",
       });
     }
     if (descriptionRef.current) {
+      // Starts a beat after the heading begins leaving, not on the same
+      // frame — two elements exiting in step read as a single flat block;
+      // staggered by even a tenth of a second, it reads as layered.
       exit.to(
         descriptionRef.current,
         {
@@ -121,7 +130,7 @@ export function LandingHero({
           duration: EXIT_DURATION * 0.8,
           ease: "power2.in",
         },
-        "<",
+        "<+0.1",
       );
     }
   }, []);
@@ -157,14 +166,21 @@ export function LandingHero({
       }
 
       if (lines.length) {
+        // Slide 0 ("Welcome to Dexta Africa") gets a more forceful punch-in
+        // — a slight overshoot on scale, not just a rise — to read as
+        // commanding rather than the calmer, purely-vertical reveal every
+        // other slide uses.
         timeline.fromTo(
           lines,
-          { yPercent: 110 },
+          activeIndex === 0
+            ? { yPercent: 110, scale: 0.94, transformOrigin: "50% 100%" }
+            : { yPercent: 110 },
           {
             yPercent: 0,
-            duration: 1.2,
+            scale: 1,
+            duration: activeIndex === 0 ? 1.1 : 1.2,
             stagger: 0.14,
-            ease: "power4.out",
+            ease: activeIndex === 0 ? "back.out(1.6)" : "power4.out",
             clearProps: "transform",
           },
           activeIndex === 0 ? "-=0.35" : 0,
@@ -256,7 +272,10 @@ export function LandingHero({
           </span>
 
           <div ref={headingRef}>
-            <HeroHeading className="[text-shadow:0_2px_28px_rgb(0_0_0/0.45)]">
+            <HeroHeading
+              data-commanding={activeIndex === 0 || undefined}
+              className="[text-shadow:0_2px_28px_rgb(0_0_0/0.45)]"
+            >
               {slide?.titleLines.map((line, index) => (
                 <span key={index} className="block overflow-hidden py-1">
                   <span data-hero-line-inner className="block">
@@ -292,27 +311,6 @@ export function LandingHero({
               {secondary.label}
             </ButtonLink>
           </Reveal>
-
-          {slides.length > 1 && (
-            <div
-              role="tablist"
-              aria-label="Hero slides"
-              className="mt-2 flex items-center gap-2.5"
-            >
-              {slides.map((_, index) => (
-                <button
-                  key={index}
-                  type="button"
-                  role="tab"
-                  aria-selected={index === activeIndex}
-                  aria-label={`Show slide ${index + 1} of ${slides.length}`}
-                  onClick={() => goToSlide(index)}
-                  className="hero-dot"
-                  data-active={index === activeIndex || undefined}
-                />
-              ))}
-            </div>
-          )}
         </div>
       </Container>
 
