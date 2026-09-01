@@ -53,13 +53,18 @@ export const homePageContentSchema = z.object({
     )
     .min(1),
   testimonialSection: sectionHeadingSchema,
-  testimonial: z.object({
-    id: nonEmptyString,
-    quote: nonEmptyString,
-    author: nonEmptyString,
-    role: nonEmptyString,
-    portrait: nonEmptyString,
-  }),
+  testimonials: z
+    .array(
+      z.object({
+        id: nonEmptyString,
+        quote: nonEmptyString,
+        author: nonEmptyString,
+        role: nonEmptyString,
+        // Optional: entries without a photo render an initials monogram.
+        portrait: nonEmptyString.optional(),
+      }),
+    )
+    .min(1),
   statistics: z
     .array(
       z.object({

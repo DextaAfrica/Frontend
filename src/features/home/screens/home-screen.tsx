@@ -23,7 +23,7 @@ export function HomeScreen({ content }: { content: HomePageContent }) {
         heading={content.projectsSection}
       />
       <TestimonialSection
-        testimonial={content.testimonial}
+        testimonials={content.testimonials}
         heading={content.testimonialSection}
       />
       <BlogSection posts={content.blog} heading={content.blogSection} />

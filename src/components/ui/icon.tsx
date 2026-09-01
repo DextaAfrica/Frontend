@@ -11,6 +11,7 @@ import {
   Menu,
   Moon,
   Palette,
+  Pause,
   Phone,
   Play,
   Quote,
@@ -39,6 +40,7 @@ export type IconName =
   | "phone"
   | "pin"
   | "play"
+  | "pause"
   | "badge-check"
   | "chevron-down"
   | "clock"
@@ -76,6 +78,7 @@ const icons: Record<IconName, ComponentType<GlyphProps>> = {
   phone: Phone,
   pin: MapPin,
   play: Play,
+  pause: Pause,
   "badge-check": BadgeCheck,
   "chevron-down": ChevronDown,
   clock: Clock,

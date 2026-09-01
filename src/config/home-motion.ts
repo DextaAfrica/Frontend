@@ -35,4 +35,20 @@ export const homeMotion = {
       mediaExitPercent: -2,
     },
   },
+  testimonials: {
+    enabledMedia: "(prefers-reduced-motion: no-preference)",
+    /** Seconds the fill line takes to travel from one dot to the next. */
+    dwell: 7,
+    /** Seconds to ease the fill line back to the start on the loop wrap. */
+    wrapRewind: 0.45,
+    out: { duration: 0.34, y: -8, blur: 4 },
+    in: {
+      duration: 0.56,
+      y: 14,
+      blur: 6,
+      ease: "expo.out",
+      captionOffset: 0.06,
+    },
+    avatarScaleFrom: 1.05,
+  },
 } as const;

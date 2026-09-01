@@ -86,14 +86,44 @@ export const homePageContent = {
     eyebrow: "Testimonials",
     title: "Words from those who trusted us",
   },
-  testimonial: {
-    id: "shaka-vanessa",
-    quote:
-      "I’m honestly impressed with the quality of D’lennox project. Everything from the foundation to the structure looks really amazing - exactly as promised. The team was professional and kept me updated at every stage. It’s truly feeling like home already.",
-    author: "Shaka Vanessa",
-    role: "Realtor",
-    portrait: "/images/testimonial-shaka.jpg",
-  },
+  testimonials: [
+    {
+      id: "shaka-vanessa",
+      quote:
+        "I’m honestly impressed with the quality of the D’lennox project. Everything from the foundation to the structure looks amazing — exactly as promised. The team was professional and kept me updated at every stage. It already feels like home.",
+      author: "Shaka Vanessa",
+      role: "Realtor",
+      portrait: "/images/testimonial-shaka.jpg",
+    },
+    {
+      id: "ibrahim-danladi",
+      quote:
+        "I bought two plots at Olumo County Estate on a payment plan and completed in eight months. The allocation was smooth, the survey and deed came through exactly when they said, and the roads were already graded when I visited. No stories.",
+      author: "Ibrahim Danladi",
+      role: "Plot owner, Olumo County Estate",
+    },
+    {
+      id: "ngozi-eze",
+      quote:
+        "I invested from London and never once felt in the dark. I got site photos every fortnight, a video walkthrough before allocation, and my documents couriered to me. Dexta made buying land back home feel like buying anywhere else in the world.",
+      author: "Ngozi Eze",
+      role: "Diaspora investor",
+    },
+    {
+      id: "tunde-bakare",
+      quote:
+        "As a first-time buyer the installment plan is what made it possible for me. Everything was written down from day one — the price, the schedule, what happens after the deposit. I always knew exactly where I stood.",
+      author: "Tunde Bakare",
+      role: "First-time land buyer",
+    },
+    {
+      id: "amara-okonkwo",
+      quote:
+        "We have partnered with Dexta on three developments now. They hold delivery to the same standard we hold the drawings to, and they protect the design intent right through to handover. That is rare.",
+      author: "Amara Okonkwo",
+      role: "Principal Architect, Studio Lattice",
+    },
+  ],
   statistics: [
     {
       id: "clients",

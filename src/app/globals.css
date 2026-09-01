@@ -1212,6 +1212,147 @@ dialog[open]::backdrop {
   }
 }
 
+/* --- Testimonial carousel ------------------------------------------------- *
+ * Every slide is stacked in the same grid cell so the section is always as
+ * tall as the longest quote — swapping quotes never shifts the layout. Before
+ * JS (`:not([data-animated])`) the active slide shows via `data-active`; once
+ * GSAP takes over it owns opacity/visibility/transform. */
+.testimonial-carousel {
+  position: relative;
+}
+
+.testimonial-stage {
+  display: grid;
+}
+
+.testimonial-stage > [data-slide] {
+  grid-area: 1 / 1;
+}
+
+.testimonial-stage:not([data-animated]) > [data-slide][data-active="false"] {
+  visibility: hidden;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.testimonial-avatar--monogram {
+  display: inline-grid;
+  background: var(--primary-subtle);
+  color: var(--primary);
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.testimonial-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(1rem, 3vw, 2rem);
+  margin-top: var(--space-testimonial-meta);
+}
+
+.testimonial-playpause {
+  display: grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  border: 1px solid var(--border);
+  border-radius: var(--control-radius);
+  color: var(--muted-foreground);
+  transition:
+    color 200ms var(--motion-ease-premium),
+    border-color 200ms var(--motion-ease-premium),
+    background-color 200ms var(--motion-ease-premium);
+}
+
+.testimonial-playpause:hover {
+  color: var(--foreground);
+  border-color: var(--input);
+  background: var(--control-hover);
+}
+
+.testimonial-playpause:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+.testimonial-dots {
+  --testimonial-progress: 0;
+  --dot-size: 0.5rem;
+  --dot-gap: clamp(1.75rem, 5vw, 3rem);
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--dot-gap);
+  padding-block: 0.75rem;
+}
+
+.testimonial-track,
+.testimonial-track-fill {
+  position: absolute;
+  top: 50%;
+  left: calc(var(--dot-size) / 2);
+  right: calc(var(--dot-size) / 2);
+  height: 1px;
+  translate: 0 -50%;
+  pointer-events: none;
+}
+
+.testimonial-track {
+  background: var(--border);
+}
+
+.testimonial-track-fill {
+  right: auto;
+  width: calc(var(--testimonial-progress) * (100% - var(--dot-size)));
+  background: var(--primary);
+}
+
+.testimonial-dots [data-dot] {
+  position: relative;
+  width: var(--dot-size);
+  height: var(--dot-size);
+  border-radius: 999px;
+  background: var(--border);
+  transition:
+    background-color 260ms var(--motion-ease-premium),
+    box-shadow 260ms var(--motion-ease-premium),
+    transform 260ms var(--motion-ease-premium);
+}
+
+.testimonial-dots [data-dot][data-state="past"],
+.testimonial-dots [data-dot][data-state="active"] {
+  background: var(--primary);
+}
+
+.testimonial-dots [data-dot][data-state="active"] {
+  transform: scale(1.35);
+  box-shadow: 0 0 0 4px var(--primary-subtle);
+}
+
+.testimonial-dots [data-dot]:hover {
+  transform: scale(1.35);
+}
+
+.testimonial-dots [data-dot]:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .testimonial-playpause {
+    display: none;
+  }
+  .testimonial-track-fill {
+    transition: width var(--motion-base) var(--motion-ease-premium);
+  }
+  .testimonial-stage > [data-slide] {
+    transition: none;
+  }
+}
+
 .newsletter-card-stack {
   position: absolute;
   top: 4rem;

@@ -1,58 +1,7 @@
-import Image from "next/image";
 import { Section } from "@/components/layout";
-import {
-  EditorialSectionHeading,
-  Reveal,
-  RevealGroup,
-  RevealItem,
-} from "@/components/marketing";
-import { isRemoteAsset } from "@/lib/media";
-import type {
-  HomePageContent,
-  StatisticContent,
-  TestimonialContent,
-} from "../types/home-page";
+import { RevealGroup, RevealItem } from "@/components/marketing";
+import type { StatisticContent } from "../types/home-page";
 import { StatCard } from "./stat-card";
-
-export function TestimonialSection({
-  testimonial,
-  heading,
-}: {
-  testimonial: TestimonialContent;
-  heading: HomePageContent["testimonialSection"];
-}) {
-  return (
-    <Section spacing="editorial" tone="default">
-      <EditorialSectionHeading
-        eyebrow={heading.eyebrow}
-        title={heading.title}
-        align="center"
-        className="max-w-testimonial-heading"
-      />
-
-      <Reveal
-        as="figure"
-        className="mx-auto mt-testimonial w-full max-w-testimonial-body"
-      >
-        <blockquote className="text-testimonial leading-testimonial font-medium tracking-testimonial">
-          <Image
-            src={testimonial.portrait}
-            alt={`Portrait of ${testimonial.author}`}
-            width={70}
-            height={70}
-            unoptimized={isRemoteAsset(testimonial.portrait)}
-            className="mr-testimonial-quote mb-1 inline-block size-testimonial-avatar rounded-testimonial-avatar object-cover align-middle"
-          />
-          “{testimonial.quote}”
-        </blockquote>
-        <figcaption className="mt-testimonial-meta text-testimonial-author leading-none font-light tracking-testimonial-author uppercase">
-          <p>{testimonial.author}</p>
-          <p className="mt-2 text-text-subtle">{testimonial.role}</p>
-        </figcaption>
-      </Reveal>
-    </Section>
-  );
-}
 
 export function StatisticsSection({
   statistics,

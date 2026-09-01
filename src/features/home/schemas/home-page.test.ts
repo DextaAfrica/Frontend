@@ -18,5 +18,12 @@ describe("homePageContentSchema", () => {
         projects: [],
       }).success,
     ).toBe(false);
+
+    expect(
+      homePageContentSchema.safeParse({
+        ...homePageContent,
+        testimonials: [],
+      }).success,
+    ).toBe(false);
   });
 });
