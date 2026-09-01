@@ -5,6 +5,7 @@ import { Container } from "@/components/layout";
 import { EditorialHeading } from "@/components/ui";
 import { homeMotion } from "@/config/home-motion";
 import { cn } from "@/lib/utils";
+import { Reveal } from "./reveal";
 
 export interface ScrollRevealCopyProps extends Omit<
   React.ComponentProps<"section">,
@@ -15,6 +16,13 @@ export interface ScrollRevealCopyProps extends Omit<
   initialWordCount?: number;
 }
 
+/**
+ * Word-by-word scroll reveal: each word rises into place, sharpens out of a
+ * blur, and brightens from a dim resting opacity — three properties moving
+ * together rather than a flat opacity fade, which is what actually reads as
+ * a deliberate reveal instead of a fade wearing one as a label. Progress is
+ * tied to scroll position and smoothed via lerp so it never feels stepped.
+ */
 export function ScrollRevealCopy({
   heading,
   paragraphs,
@@ -45,6 +53,7 @@ export function ScrollRevealCopy({
         if (index < initialWordCount || reducedMotion.matches) {
           word.style.opacity = "1";
           word.style.transform = "none";
+          word.style.filter = "none";
           return;
         }
 
@@ -61,6 +70,7 @@ export function ScrollRevealCopy({
           motion.mutedOpacity + easedProgress * (1 - motion.mutedOpacity),
         );
         word.style.transform = `translateY(${(1 - easedProgress) * motion.wordOffsetEm}em)`;
+        word.style.filter = `blur(${(1 - easedProgress) * motion.wordBlurPx}px)`;
       });
     };
 
@@ -130,12 +140,14 @@ export function ScrollRevealCopy({
     >
       <div className="scroll-reveal-frame">
         <Container size="editorial">
-          <EditorialHeading
-            id={headingId}
-            className="mx-auto mb-8 max-w-3xl text-center sm:mb-10"
-          >
-            {heading}
-          </EditorialHeading>
+          <Reveal as="div">
+            <EditorialHeading
+              id={headingId}
+              className="mx-auto mb-8 max-w-3xl text-center sm:mb-10"
+            >
+              {heading}
+            </EditorialHeading>
+          </Reveal>
           <div className="scroll-reveal-copy">
             {paragraphs.map((paragraph) => (
               <p key={paragraph}>

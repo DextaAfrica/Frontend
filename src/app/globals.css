@@ -122,7 +122,7 @@
    * `min-h-service-panel`, `max-w-editorial-heading`, `py-section-editorial`.  */
   --section-intro-height: clamp(26rem, 35vw, 32rem);
   --scroll-copy-size: clamp(1.5rem, 2.45vw, 2.25rem);
-  --scroll-copy-muted-opacity: 0.48;
+  --scroll-copy-muted-opacity: 0.32;
   --type-hero: clamp(2.5rem, 4.6vw, 4.25rem);
   --letter-spacing-hero: -0.02em;
   --letter-spacing-heading: -0.04em;
@@ -1244,8 +1244,9 @@ dialog[open]::backdrop {
   display: inline-block;
   margin-inline-end: 0.24em;
   opacity: var(--scroll-copy-muted-opacity);
-  transform: translateY(0.045em);
-  will-change: opacity, transform;
+  transform: translateY(0.4em);
+  filter: blur(7px);
+  will-change: opacity, transform, filter;
 }
 
 .scroll-reveal-word[data-initial-word="true"] {
@@ -1385,6 +1386,7 @@ dialog[open]::backdrop {
   .scroll-reveal-word {
     opacity: 1;
     transform: none;
+    filter: none;
   }
 }
 

@@ -3,9 +3,10 @@ export const homeMotion = {
   intro: {
     revealSpan: 0.76,
     wordTransitionSpan: 0.24,
-    mutedOpacity: 0.48,
+    mutedOpacity: 0.32,
     smoothing: 0.14,
-    wordOffsetEm: 0.045,
+    wordOffsetEm: 0.4,
+    wordBlurPx: 7,
     viewportStart: 0.7,
     sectionEnd: 0.02,
     settleThreshold: 0.0005,
