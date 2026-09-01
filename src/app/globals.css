@@ -766,6 +766,15 @@ dialog[open]::backdrop {
   );
   backdrop-filter: blur(calc(var(--header-progress) * 14px));
   -webkit-backdrop-filter: blur(calc(var(--header-progress) * 14px));
+  transform: translateY(0);
+  transition: transform 340ms var(--motion-ease-premium);
+}
+
+/* Retreats on scroll-down, reveals on scroll-up — see the scroll effect in
+   site-header.tsx. Independent of --header-progress (which only ever
+   drives height/background/blur), so the two never fight visually. */
+.site-header[data-retreated="true"] {
+  transform: translateY(-100%);
 }
 
 .site-header::after {
@@ -822,7 +831,7 @@ dialog[open]::backdrop {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .site-header:not([data-gsap="true"]),
+  .site-header,
   .site-header__nav-group {
     transition-duration: 1ms;
   }
