@@ -29,13 +29,13 @@ export type ButtonSize = "sm" | "md" | "lg" | "icon";
  */
 const base = cn(
   "group/btn relative isolate inline-flex shrink-0 items-center justify-center gap-2",
-  "rounded-[var(--control-radius)] border border-transparent",
+  "rounded-[var(--control-radius)]",
   "text-control font-medium tracking-control whitespace-nowrap",
-  "transition-[color,background-color,border-color,box-shadow,translate,scale] duration-[240ms] ease-premium",
+  "transition-[color,background-color,box-shadow,translate,scale] duration-[240ms] ease-premium",
   "outline-none select-none",
   "focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
   "active:scale-[0.97] active:duration-[110ms]",
-  "disabled:pointer-events-none disabled:translate-none disabled:scale-100 disabled:border-transparent disabled:bg-control-disabled disabled:text-control-disabled-foreground disabled:shadow-none",
+  "disabled:pointer-events-none disabled:translate-none disabled:scale-100 disabled:bg-control-disabled disabled:text-control-disabled-foreground disabled:shadow-none",
   "aria-busy:cursor-wait",
   // Icons: sized, non-interactive, and animated on the compositor.
   "[&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
@@ -46,15 +46,21 @@ const base = cn(
   "group-active/btn:[&_svg:last-child]:translate-x-0",
 );
 
+/**
+ * No variant uses a border — every one of them is a filled pill, and every
+ * one defines a resting fill (the "off" state) that is visibly different
+ * from its hover fill (the "on" state). A border can only ever add a
+ * hairline; a fill change is unambiguous at a glance.
+ */
 const variants: Record<ButtonVariant, string> = {
   // Solid brand red. Rest sits on a hairline shadow; hover rises into a calm
   // red glow; press settles back flat.
   primary:
     "bg-primary text-primary-foreground shadow-[var(--control-shadow)] hover:-translate-y-0.5 hover:bg-primary-hover hover:shadow-[var(--control-shadow-glow)] active:translate-y-0 active:shadow-[var(--control-shadow)]",
-  // Outlined pill. One clean border that firms up on hover over a muted wash —
-  // no translucent double-lines, no backdrop blur.
+  // A muted fill at rest, firming up to a visibly darker fill on hover —
+  // the "off"/"on" contrast lives entirely in the fill, not a border.
   secondary:
-    "border-border bg-transparent text-foreground hover:-translate-y-0.5 hover:border-foreground/35 hover:bg-muted hover:shadow-[var(--control-shadow-hover)] active:translate-y-0 active:bg-control-pressed",
+    "bg-muted text-foreground hover:-translate-y-0.5 hover:bg-control-hover hover:shadow-[var(--control-shadow-hover)] active:translate-y-0 active:bg-control-pressed",
   // Inverted fill — near-black on paper / near-white on ink.
   neutral:
     "bg-foreground text-background shadow-[var(--control-shadow)] hover:-translate-y-0.5 hover:bg-foreground/90 hover:shadow-[var(--control-shadow-hover)] active:translate-y-0 active:shadow-[var(--control-shadow)]",
@@ -63,8 +69,10 @@ const variants: Record<ButtonVariant, string> = {
     "bg-brand-light text-brand-dark shadow-[var(--control-shadow)] hover:-translate-y-0.5 hover:bg-primary hover:text-primary-foreground hover:shadow-[var(--control-shadow-glow)] active:translate-y-0 active:shadow-[var(--control-shadow)]",
   ghost:
     "text-foreground hover:bg-control-hover active:bg-control-pressed active:scale-[0.98]",
+  // A quiet brand-tinted fill at rest that solidifies to the full brand red
+  // on hover — the clearest possible off/on read of any variant.
   outline:
-    "border-primary/40 text-primary hover:-translate-y-0.5 hover:border-primary hover:bg-primary/8 active:translate-y-0",
+    "bg-primary-subtle text-primary hover:-translate-y-0.5 hover:bg-primary hover:text-primary-foreground hover:shadow-[var(--control-shadow-glow)] active:translate-y-0",
   destructive:
     "bg-destructive text-destructive-foreground shadow-[var(--control-shadow)] hover:-translate-y-0.5 hover:brightness-95 hover:shadow-[var(--control-shadow-hover)] active:translate-y-0 active:shadow-[var(--control-shadow)]",
   link: "h-auto rounded-none p-0 text-primary underline-offset-4 hover:text-primary-hover hover:underline active:scale-100 [&_svg:last-child]:opacity-100 [&_svg:last-child]:translate-x-0",

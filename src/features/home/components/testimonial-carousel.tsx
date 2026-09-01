@@ -4,7 +4,6 @@ import * as React from "react";
 import Image from "next/image";
 import { Section } from "@/components/layout";
 import { EditorialSectionHeading, Reveal } from "@/components/marketing";
-import { Icon } from "@/components/ui";
 import { homeMotion } from "@/config/home-motion";
 import { gsap, useGSAP } from "@/lib/gsap";
 import { isRemoteAsset } from "@/lib/media";
@@ -60,7 +59,6 @@ export function TestimonialSection({
   const canCarousel = count > 1;
 
   const [active, setActive] = React.useState(0);
-  const [paused, setPaused] = React.useState(false);
   const [motionOn, setMotionOn] = React.useState(false);
 
   const rootRef = React.useRef<HTMLDivElement>(null);
@@ -71,7 +69,6 @@ export function TestimonialSection({
   const transitionRef = React.useRef<gsap.core.Timeline | null>(null);
   const progressRef = React.useRef(0);
   const prevActiveRef = React.useRef(0);
-  const pausedRef = React.useRef(paused);
   const suppressRef = React.useRef({
     interact: false,
     hidden: false,
@@ -87,7 +84,7 @@ export function TestimonialSection({
     const timer = timerRef.current;
     if (!timer) return;
     const s = suppressRef.current;
-    const run = !pausedRef.current && !s.interact && !s.hidden && !s.offscreen;
+    const run = !s.interact && !s.hidden && !s.offscreen;
     if (run) timer.resume();
     else timer.pause();
   }, []);
@@ -266,12 +263,6 @@ export function TestimonialSection({
     };
   }, [canCarousel, syncTimer]);
 
-  // Play/pause control.
-  React.useEffect(() => {
-    pausedRef.current = paused;
-    syncTimer();
-  }, [paused, syncTimer]);
-
   // Reduced motion / no JS: keep the fill line meaningful without a timer.
   React.useEffect(() => {
     if (motionOn || !canCarousel) return;
@@ -342,20 +333,6 @@ export function TestimonialSection({
 
           {canCarousel && (
             <div className="testimonial-controls">
-              {motionOn && (
-                <button
-                  type="button"
-                  className="testimonial-playpause"
-                  aria-label={
-                    paused ? "Play testimonials" : "Pause testimonials"
-                  }
-                  aria-pressed={paused}
-                  onClick={() => setPaused((value) => !value)}
-                >
-                  <Icon name={paused ? "play" : "pause"} size={14} />
-                </button>
-              )}
-
               <div
                 ref={dotsRef}
                 className="testimonial-dots"

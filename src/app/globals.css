@@ -121,7 +121,7 @@
    * most are mapped to a utility in the @theme block and consumed as e.g.
    * `min-h-service-panel`, `max-w-editorial-heading`, `py-section-editorial`.  */
   --section-intro-height: clamp(26rem, 35vw, 32rem);
-  --scroll-copy-size: clamp(1.5rem, 2.45vw, 2.25rem);
+  --scroll-copy-size: clamp(1.25rem, 1.85vw, 1.75rem);
   --scroll-copy-muted-opacity: 0.32;
   --type-hero: clamp(2.25rem, 3.8vw, 3.75rem);
   --letter-spacing-hero: -0.02em;
@@ -132,8 +132,8 @@
   --space-page: clamp(1rem, 1.181vw, 1.0625rem);
   --space-services-y: clamp(1.5rem, 2vw, 2rem);
   --space-service-inline: clamp(1.5rem, 5.694vw, 5.125rem);
-  --type-section-display: clamp(1.65rem, 2.45vw, 2.25rem);
-  --type-editorial: clamp(1.85rem, 2.9vw, 2.75rem);
+  --type-section-display: clamp(1.375rem, 1.9vw, 1.875rem);
+  --type-editorial: clamp(1.5rem, 2.3vw, 2.25rem);
   --type-project-title: clamp(1.5rem, 2.5vw, 2.25rem);
   --type-metric: clamp(3.5rem, 5.25vw, 4.75rem);
   --line-height-editorial: 1.1;
@@ -939,9 +939,10 @@ dialog[open]::backdrop {
   }
 }
 
-/* Header controls own their contrast instead of inheriting it from the page. */
+/* Header controls own their contrast instead of inheriting it from the page.
+   No borders — every state is a distinct fill, same as the rest of the
+   button system. */
 .header-menu-trigger {
-  border-color: var(--border) !important;
   background: var(--surface-elevated) !important;
   color: var(--foreground) !important;
   box-shadow: 0 1px 3px rgb(0 0 0 / 0.14);
@@ -949,33 +950,18 @@ dialog[open]::backdrop {
 
 .header-menu-trigger:hover,
 .header-menu-trigger[aria-expanded="true"] {
-  border-color: color-mix(
-    in srgb,
-    var(--foreground) 42%,
-    var(--border)
-  ) !important;
   background: var(--muted) !important;
   color: var(--foreground) !important;
 }
 
 .header-menu-trigger[data-on-media="true"] {
-  border-color: color-mix(
-    in srgb,
-    var(--brand-light) 42%,
-    transparent
-  ) !important;
   background: color-mix(in srgb, var(--brand-dark) 86%, transparent) !important;
   color: var(--brand-light) !important;
   box-shadow: 0 2px 12px rgb(0 0 0 / 0.32);
 }
 
 .header-menu-trigger[data-on-media="true"]:hover {
-  border-color: color-mix(
-    in srgb,
-    var(--brand-light) 68%,
-    transparent
-  ) !important;
-  background: color-mix(in srgb, var(--brand-dark) 72%, transparent) !important;
+  background: color-mix(in srgb, var(--brand-dark) 68%, transparent) !important;
   color: var(--brand-light) !important;
 }
 
@@ -986,7 +972,6 @@ dialog[open]::backdrop {
 
 @media (forced-colors: active) {
   .header-menu-trigger {
-    border-color: ButtonText !important;
     background: ButtonFace !important;
     color: ButtonText !important;
   }
@@ -1254,31 +1239,6 @@ dialog[open]::backdrop {
   margin-top: var(--space-testimonial-meta);
 }
 
-.testimonial-playpause {
-  display: grid;
-  place-items: center;
-  width: 2rem;
-  height: 2rem;
-  border: 1px solid var(--border);
-  border-radius: var(--control-radius);
-  color: var(--muted-foreground);
-  transition:
-    color 200ms var(--motion-ease-premium),
-    border-color 200ms var(--motion-ease-premium),
-    background-color 200ms var(--motion-ease-premium);
-}
-
-.testimonial-playpause:hover {
-  color: var(--foreground);
-  border-color: var(--input);
-  background: var(--control-hover);
-}
-
-.testimonial-playpause:focus-visible {
-  outline: 2px solid var(--ring);
-  outline-offset: 2px;
-}
-
 .testimonial-dots {
   --testimonial-progress: 0;
   --dot-size: 0.5rem;
@@ -1343,9 +1303,6 @@ dialog[open]::backdrop {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .testimonial-playpause {
-    display: none;
-  }
   .testimonial-track-fill {
     transition: width var(--motion-base) var(--motion-ease-premium);
   }

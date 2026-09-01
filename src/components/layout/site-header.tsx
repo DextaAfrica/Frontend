@@ -118,7 +118,13 @@ export function SiteHeader() {
             </nav>
 
             <div className="flex items-center gap-2.5 sm:gap-4">
-              <ThemeToggle data-on-media={overlaysHero || undefined} />
+              {/* The toggle is a wide 3-segment control — on anything
+                  narrower than the full nav, it has nowhere to sit without
+                  crowding the CTA/menu button, so it moves into the mobile
+                  menu panel instead (below) rather than squeezing in here. */}
+              <div className="hidden lg:block">
+                <ThemeToggle data-on-media={overlaysHero || undefined} />
+              </div>
 
               {!open && (
                 <ButtonLink
@@ -192,6 +198,11 @@ export function SiteHeader() {
                 ))}
               </Stack>
             </nav>
+
+            <div className="flex items-center justify-between gap-4 border-t border-border pt-5 lg:hidden">
+              <Eyebrow as="span">Appearance</Eyebrow>
+              <ThemeToggle />
+            </div>
 
             <div className="grid gap-5 border-t border-border pt-5 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end sm:gap-8 sm:pt-6">
               <Stack gap="sm" className="max-w-md">
