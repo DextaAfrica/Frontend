@@ -457,9 +457,10 @@ body {
 
 /* ===========================================================================
    4b. COMPONENT CLASSES — styling that can't be expressed as utilities
-   (scroll-driven service stack, project-card hover panel, newsletter card
-   fan, app loader, cinematic reveal, header menu trigger). Each block is
-   named for the component that owns it. Keyframes are at the end.
+   (site header scroll-morph, theme toggle, scroll-driven service stack,
+   project-card hover panel, newsletter card fan, app loader, cinematic
+   reveal, hero video). Each block is named for the component that owns it.
+   Keyframes are at the end.
    =========================================================================== */
 .section-default {
   background: var(--section-default);
@@ -646,8 +647,19 @@ dialog[open]::backdrop {
   min-height: 100svh;
 }
 
-.dexta-hero-overlay {
-  background: linear-gradient(to bottom, transparent 55%, var(--brand-dark));
+/* Light colour grade + a very slow push-in so the footage never feels static.
+   Both are cosmetic and disabled under reduced-motion. */
+.hero-video-media video {
+  filter: brightness(1.05) contrast(1.08) saturate(1.12);
+  animation: hero-kenburns 26s var(--motion-ease-premium) alternate infinite;
+  will-change: transform;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-video-media video {
+    animation: none;
+    filter: none;
+  }
 }
 
 .blog-media {
@@ -727,6 +739,188 @@ dialog[open]::backdrop {
 .blog-media {
   aspect-ratio: 405 / 264;
   border-radius: var(--radius-lg);
+}
+
+/* --- Site header ----------------------------------------------------------- *
+ * The bar morphs between two states as the page scrolls. Everything derives
+ * from a single 0 → 1 value, `--header-progress`:
+ *   - GSAP owns it (scrubbed) on wide screens with motion allowed;
+ *   - otherwise CSS transitions it off the `data-scrolled` attribute.
+ * `@property` makes it animatable as a number in the non-GSAP path. */
+@property --header-progress {
+  syntax: "<number>";
+  inherits: false;
+  initial-value: 0;
+}
+
+.site-header {
+  --header-progress: 0;
+  position: fixed;
+  inset-inline: 0;
+  top: 0;
+  z-index: var(--layer-header);
+  height: calc(5rem - var(--header-progress) * 1.1rem);
+  color: var(--foreground);
+  background: rgb(
+    from var(--background) r g b / calc(var(--header-progress) * 0.82)
+  );
+  backdrop-filter: blur(calc(var(--header-progress) * 14px));
+  -webkit-backdrop-filter: blur(calc(var(--header-progress) * 14px));
+}
+
+.site-header::after {
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0;
+  height: 1px;
+  background: var(--border);
+  opacity: var(--header-progress);
+  box-shadow: 0 20px 44px -28px rgb(0 0 0 / calc(0.55 * var(--header-progress)));
+  content: "";
+}
+
+.site-header[data-sticky="true"] {
+  position: sticky;
+}
+
+/* Over the hero video: light text, chrome fades in only on scroll. */
+.site-header[data-overlays-hero="true"] {
+  color: var(--brand-light);
+}
+
+/* Non-GSAP path (touch / narrow / reduced motion): transition the one value. */
+.site-header:not([data-gsap="true"]) {
+  transition: --header-progress 340ms var(--motion-ease-premium);
+}
+
+.site-header:not([data-gsap="true"])[data-scrolled="true"] {
+  --header-progress: 1;
+}
+
+.site-header__logo {
+  color: inherit;
+  transition: color 300ms var(--motion-ease-premium);
+}
+
+.site-header__nav-group {
+  transition:
+    opacity 300ms var(--motion-ease-premium),
+    transform 300ms var(--motion-ease-premium);
+}
+
+/* GSAP owns the flank nav opacity while morphing; otherwise the groups show
+   only once the bar is in its solid state. */
+.site-header:not([data-gsap="true"]) .site-header__nav-group {
+  opacity: 0;
+  visibility: hidden;
+}
+
+.site-header:not([data-gsap="true"])[data-scrolled="true"]
+  .site-header__nav-group {
+  opacity: 1;
+  visibility: visible;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .site-header:not([data-gsap="true"]),
+  .site-header__nav-group {
+    transition-duration: 1ms;
+  }
+  .hero-video-media video {
+    animation: none;
+  }
+}
+
+/* --- Theme toggle ---------------------------------------------------------- */
+.theme-toggle {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(3, 2.25rem);
+  align-items: center;
+  gap: 0;
+  height: 2.25rem;
+  padding: 0.25rem;
+  border: 1px solid rgb(from var(--foreground) r g b / 0.1);
+  border-radius: var(--control-radius);
+  background: rgb(from var(--foreground) r g b / 0.05);
+  box-shadow: inset 0 1px 2px rgb(from var(--foreground) r g b / 0.06);
+}
+
+.theme-toggle__thumb {
+  position: absolute;
+  top: 0.25rem;
+  left: 0.25rem;
+  width: calc((100% - 0.5rem) / 3);
+  height: calc(100% - 0.5rem);
+  border-radius: calc(var(--control-radius) - 1px);
+  background: var(--surface-elevated);
+  box-shadow: var(--control-shadow-hover);
+  transform: translateX(calc(var(--thumb-index) * 100%));
+  transition: transform 340ms var(--motion-ease-premium);
+}
+
+.theme-toggle[data-resolved-theme="dark"] .theme-toggle__thumb {
+  background: var(--primary);
+  box-shadow: var(--control-shadow-glow);
+}
+
+.theme-toggle__option {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  height: 100%;
+  color: rgb(from var(--foreground) r g b / 0.5);
+  transition: color 220ms var(--motion-ease-premium);
+}
+
+.theme-toggle__option:hover {
+  color: var(--foreground);
+}
+
+.theme-toggle__option[aria-checked="true"] {
+  color: var(--foreground);
+}
+
+.theme-toggle[data-resolved-theme="dark"]
+  .theme-toggle__option[aria-checked="true"] {
+  color: var(--primary-foreground);
+}
+
+.theme-toggle__option:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+  border-radius: calc(var(--control-radius) - 1px);
+}
+
+/* Glass variant for placement over the hero video. */
+.theme-toggle[data-on-media="true"] {
+  border-color: rgb(255 255 255 / 0.28);
+  background: rgb(6 6 6 / 0.4);
+  box-shadow:
+    inset 0 1px 2px rgb(0 0 0 / 0.25),
+    0 8px 24px rgb(0 0 0 / 0.3);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.theme-toggle[data-on-media="true"] .theme-toggle__thumb {
+  background: var(--brand-light);
+}
+
+.theme-toggle[data-on-media="true"] .theme-toggle__option {
+  color: rgb(255 255 255 / 0.7);
+}
+
+.theme-toggle[data-on-media="true"] .theme-toggle__option:hover,
+.theme-toggle[data-on-media="true"] .theme-toggle__option[aria-checked="true"] {
+  color: var(--brand-dark);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .theme-toggle__thumb {
+    transition-duration: 1ms;
+  }
 }
 
 /* Header controls own their contrast instead of inheriting it from the page. */
@@ -1064,6 +1258,15 @@ dialog[open]::backdrop {
 /* ===========================================================================
    4c. KEYFRAMES
    =========================================================================== */
+@keyframes hero-kenburns {
+  from {
+    transform: scale(1);
+  }
+  to {
+    transform: scale(1.08);
+  }
+}
+
 @keyframes route-enter {
   from {
     opacity: 0;
