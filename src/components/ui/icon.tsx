@@ -4,6 +4,9 @@ import {
   Building2,
   ChevronDown,
   Clock,
+  Facebook,
+  Instagram,
+  Linkedin,
   Monitor,
   Mail,
   MapPin,
@@ -14,6 +17,7 @@ import {
   Play,
   Quote,
   Sun,
+  Youtube,
   X,
   type LucideIcon,
   type LucideProps,
@@ -35,7 +39,11 @@ export type IconName =
   | "play"
   | "badge-check"
   | "chevron-down"
-  | "clock";
+  | "clock"
+  | "facebook"
+  | "instagram"
+  | "linkedin"
+  | "youtube";
 
 export interface IconProps extends LucideProps {
   name: IconName;
@@ -58,6 +66,10 @@ const icons: Record<IconName, LucideIcon> = {
   "badge-check": BadgeCheck,
   "chevron-down": ChevronDown,
   clock: Clock,
+  facebook: Facebook,
+  instagram: Instagram,
+  linkedin: Linkedin,
+  youtube: Youtube,
 };
 
 export function Icon({

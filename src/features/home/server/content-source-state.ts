@@ -1,13 +1,13 @@
 import "server-only";
 
 /**
- * Tracks whether the last homepage content fetch actually reached the CMS,
- * so a silent, indefinite fallback is observable instead of looking
- * identical to a healthy deploy. Process-local — fine for a single
- * standalone container; a horizontally-scaled deploy would want this in a
- * shared store instead.
+ * Tracks which source last served the homepage content, so silently and
+ * indefinitely serving the site's static content instead of the CMS is
+ * observable rather than looking identical to a healthy deploy. Process-
+ * local — fine for a single standalone container; a horizontally-scaled
+ * deploy would want this in a shared store instead.
  */
-export type ContentSource = "cms" | "fallback" | "unconfigured";
+export type ContentSource = "cms" | "static" | "unconfigured";
 
 interface ContentSourceState {
   source: ContentSource;

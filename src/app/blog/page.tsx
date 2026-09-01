@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
 import { JournalScreen } from "@/features/journal";
 export const metadata: Metadata = {
-  title: "Journal",
+  title: "Blog",
   description:
     "Perspectives on architecture, material, place, culture, and home.",
-  alternates: { canonical: "/journal" },
+  alternates: { canonical: "/blog" },
 };
-export default function JournalPage() {
+export default function BlogPage() {
   return <JournalScreen />;
 }

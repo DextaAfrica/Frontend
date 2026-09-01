@@ -93,7 +93,7 @@ The homepage repository provides:
 
 - a typed `HomePageContent` domain contract;
 - runtime validation for untrusted API responses;
-- a deterministic local fallback for development and upstream outages;
+- the site's own shipped content, served by default and kept serving through any CMS outage;
 - five-minute server revalidation and a `home-page` cache tag;
 - a protected `/api/revalidate` endpoint for CMS publish webhooks.
 

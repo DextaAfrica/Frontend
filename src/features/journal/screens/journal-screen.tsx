@@ -46,7 +46,7 @@ export function JournalScreen() {
                       places and more meaningful daily experiences.
                     </Text>
                     <ButtonLink
-                      href={`/journal/${article.slug}`}
+                      href={`/blog/${article.slug}`}
                       variant="link"
                     >
                       Read perspective

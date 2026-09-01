@@ -26,7 +26,7 @@ export function ArticleScreen({ article }: { article: JournalArticle }) {
               </Stack>
             </section>
           ))}
-          <ButtonLink href="/journal" variant="outline" className="w-fit">
+          <ButtonLink href="/blog" variant="outline" className="w-fit">
             Back to journal
           </ButtonLink>
         </Stack>

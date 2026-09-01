@@ -13,7 +13,7 @@ Tailwind CSS, and a feature-first architecture.
 - Feature-first boundaries with thin route files and explicit public APIs
 - Responsive routes, metadata defaults, loading UI, 404, segment and global error boundaries
 - Native accessible dialog, SVG icon system, mobile navigation, and route/reveal motion
-- Server-side managed-content boundary with validation, caching, revalidation, and local fallbacks
+- Server-side managed-content boundary with validation, caching, revalidation, and a shipped content default
 - Responsive image delivery and dedicated desktop/mobile hero media
 - Functional enquiry, newsletter, consent, health-check, and content-revalidation boundaries
 - Centralized site and navigation configuration
@@ -87,7 +87,7 @@ Homepage content follows this dependency flow:
 ```text
 app/page.tsx
   → features/home/server/get-home-page-content.ts
-  → validated managed content or typed local fallback
+  → validated CMS content, when configured, else the site's own typed content
   → HomeScreen
   → prop-driven feature sections
 ```
@@ -113,15 +113,16 @@ Pipeline, registry, security, and deployment setup are in [the CI/CD guide](docs
 
 - `/` — editorial home
 - `/about` — company story and principles
-- `/portfolio` — development collection
-- `/portfolio/seren-redwood` — flagship development detail
+- `/projects` — development collection
+- `/projects/seren-redwood` — flagship development detail
 - `/lifestyle` — services, amenities, and living experience
-- `/journal` — editorial insights
+- `/blog` — editorial insights
 - `/contact` — enquiry form and native confirmation modal
 - `/careers` — disciplines and studio opportunities
 - `/privacy`, `/terms`, `/cookies`, `/accessibility` — complete policy destinations
-- `/portfolio/[slug]` — statically generated development details
-- `/journal/[slug]` — statically generated editorial articles
+- `/projects/[slug]` — statically generated development details
+- `/blog/[slug]` — statically generated editorial articles
+- `/portfolio`, `/portfolio/[slug]`, `/journal`, `/journal/[slug]` — permanently redirect to the routes above
 
 The native consent manager provides a first-visit cookie banner, optional-category preferences,
 persistent local choices, cross-tab synchronization, and a footer control for reopening settings.

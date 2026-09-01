@@ -1,6 +1,7 @@
 import type { HomePageContent } from "../types/home-page";
 
-export const fallbackHomePageContent = {
+/** The site's home page content, shipped with the app. */
+export const homePageContent = {
   hero: {
     badge: "Registered with LASERA",
     titleLines: ["Building the future", "of *real estate*"],
@@ -52,7 +53,7 @@ export const fallbackHomePageContent = {
     eyebrow: "Featured Projects",
     title: "Projects that speak for themselves",
     ctaLabel: "View all projects",
-    ctaHref: "/portfolio",
+    ctaHref: "/projects",
     cardCtaLabel: "View project",
   },
   projects: [
@@ -63,7 +64,7 @@ export const fallbackHomePageContent = {
       location: "Lekki Peninsula 2",
       status: "Now selling",
       image: "/images/project-dlodge.jpg",
-      href: "/portfolio",
+      href: "/projects",
       layout: "feature",
     },
     {
@@ -73,7 +74,7 @@ export const fallbackHomePageContent = {
       location: "Kobape, Ogun state",
       status: "Available plots",
       image: "/images/project-olumo.jpg",
-      href: "/portfolio",
+      href: "/projects",
       layout: "compact",
     },
     {
@@ -83,7 +84,7 @@ export const fallbackHomePageContent = {
       location: "Ijebu-Ode, Ogun State",
       status: "Now selling",
       image: "/images/project-kingsway.jpg",
-      href: "/portfolio",
+      href: "/projects",
       layout: "compact",
     },
   ],
@@ -163,7 +164,7 @@ export const fallbackHomePageContent = {
     id,
     title,
     image,
-    href: "/journal",
+    href: "/blog",
     publishedAt: "July 28, 2026",
     readingTime: "4 min read",
   })),

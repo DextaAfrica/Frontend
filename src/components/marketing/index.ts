@@ -1,5 +1,7 @@
 export * from "./cinematic-hero";
+export * from "./cta-band";
 export * from "./editorial-hero";
+export * from "./faq-accordion";
 export * from "./landing-hero";
 export * from "./media-panel";
 export * from "./project-card";

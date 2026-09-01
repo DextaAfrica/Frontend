@@ -1,9 +1,9 @@
 import { Page } from "@/components/layout";
-import { LandingHero } from "@/components/marketing";
+import { CtaBand, FaqAccordion, LandingHero } from "@/components/marketing";
+import { faqItems } from "@/data/faq";
 import {
   BlogSection,
   FeaturedProjectsSection,
-  NewsletterSection,
   ServicesSection,
   StatisticsSection,
   TestimonialSection,
@@ -16,18 +16,19 @@ export function HomeScreen({ content }: { content: HomePageContent }) {
     <Page>
       <LandingHero {...content.hero} />
       <WhoWeAreSection content={content.intro} />
-      <ServicesSection services={content.services} />
+      <StatisticsSection statistics={content.statistics} />
       <FeaturedProjectsSection
         projects={content.projects}
         heading={content.projectsSection}
       />
+      <ServicesSection services={content.services} />
       <TestimonialSection
         testimonial={content.testimonial}
         heading={content.testimonialSection}
       />
-      <StatisticsSection statistics={content.statistics} />
       <BlogSection posts={content.blog} heading={content.blogSection} />
-      <NewsletterSection {...content.newsletter} />
+      <FaqAccordion items={faqItems} />
+      <CtaBand />
     </Page>
   );
 }

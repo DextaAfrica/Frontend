@@ -1,8 +1,10 @@
 import Image from "next/image";
 import Link from "next/link";
+import type { Route } from "next";
 import { CookieSettingsButton } from "@/components/consent/consent-manager";
+import { Icon } from "@/components/ui";
 import { siteConfig } from "@/config/site";
-import { NewsletterButton } from "@/features/newsletter/components/newsletter-manager";
+import { InlineNewsletterForm } from "@/features/newsletter/components/inline-newsletter-form";
 import { Container } from "./container";
 
 export function SiteFooter() {
@@ -45,11 +47,34 @@ export function SiteFooter() {
           </div>
         </div>
 
-        <div className="mt-16 flex flex-col gap-5 border-t border-on-media-border pt-8 tracking-footer-copy sm:flex-row sm:items-center sm:justify-between">
+        <div className="mt-16 border-t border-on-media-border pt-10 sm:mt-20">
+          <p className="text-sm font-medium text-brand-light normal-case">
+            Updates, insights &amp; stories straight to your inbox
+          </p>
+          <InlineNewsletterForm
+            onMedia
+            className="mt-4 max-w-newsletter-title"
+          />
+        </div>
+
+        <div className="mt-10 flex flex-col gap-5 border-t border-on-media-border pt-8 tracking-footer-copy sm:flex-row sm:items-center sm:justify-between">
           <p>{siteConfig.legal.registration}</p>
-          <div className="flex flex-wrap gap-4">
+          <div className="flex flex-wrap items-center gap-4">
             <CookieSettingsButton />
-            <NewsletterButton />
+            <div className="flex items-center gap-3">
+              {siteConfig.social.map((profile) => (
+                <a
+                  key={profile.label}
+                  href={profile.href}
+                  target="_blank"
+                  rel="noreferrer noopener"
+                  aria-label={profile.label}
+                  className="grid size-8 place-items-center rounded-full border border-on-media-border text-brand-light transition-colors hover:border-brand-light hover:bg-brand-light/10"
+                >
+                  <Icon name={profile.icon} size={14} />
+                </a>
+              ))}
+            </div>
           </div>
         </div>
       </Container>
@@ -66,7 +91,7 @@ function FooterGroup({
       <p className="tracking-footer-heading">{title}</p>
       <nav className="mt-5 flex flex-col gap-2">
         {links.map((link) => (
-          <Link key={link.label} href={link.href}>
+          <Link key={link.label} href={link.href as Route}>
             {link.label}
           </Link>
         ))}

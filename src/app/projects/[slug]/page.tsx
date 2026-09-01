@@ -20,7 +20,7 @@ export async function generateMetadata({
     ? {
         title: project.name,
         description: project.description,
-        alternates: { canonical: `/portfolio/${slug}` },
+        alternates: { canonical: `/projects/${slug}` },
         openGraph: {
           title: project.name,
           description: project.description,
