@@ -34,14 +34,9 @@
   --control-pressed: #e2e0da;
   --control-disabled: #f0efec;
   --control-disabled-foreground: #9c988f;
-  --control-shadow: 0 1px 2px rgb(20 18 14 / 0.06);
-  --control-shadow-hover: 0 16px 36px rgb(20 18 14 / 0.2);
-  --control-shadow-glow:
-    0 0 0 1px oklch(from var(--primary) l c h / 0.15),
-    0 16px 36px oklch(from var(--primary) l c h / 0.4);
-  --control-border-strong: rgb(18 17 15 / 0.18);
-  --control-border-strong-hover: rgb(18 17 15 / 0.85);
-  --control-glass: transparent;
+  --control-shadow: 0 1px 2px rgb(20 18 14 / 0.07);
+  --control-shadow-hover: 0 10px 24px rgb(20 18 14 / 0.13);
+  --control-shadow-glow: 0 8px 22px oklch(from var(--primary) l c h / 0.3);
   --card-shadow: 0 12px 32px rgb(20 18 14 / 0.07);
   --section-default:
     radial-gradient(
@@ -254,13 +249,8 @@
   --control-disabled: #211e1a;
   --control-disabled-foreground: #756d64;
   --control-shadow: 0 1px 2px rgb(0 0 0 / 0.4);
-  --control-shadow-hover: 0 22px 48px rgb(0 0 0 / 0.65);
-  --control-shadow-glow:
-    0 0 0 1px oklch(from var(--primary) l c h / 0.5),
-    0 22px 52px oklch(from var(--primary) l c h / 0.6);
-  --control-border-strong: rgb(244 239 231 / 0.22);
-  --control-border-strong-hover: rgb(244 239 231 / 0.9);
-  --control-glass: rgb(244 239 231 / 0.04);
+  --control-shadow-hover: 0 14px 30px rgb(0 0 0 / 0.5);
+  --control-shadow-glow: 0 10px 26px oklch(from var(--primary) l c h / 0.45);
   --card-shadow: 0 16px 40px rgb(0 0 0 / 0.28);
   --section-default:
     radial-gradient(
@@ -517,30 +507,18 @@ body {
   }
 }
 
-[data-ui="button"],
-[data-ui="button-link"] {
-  transition-duration: var(--motion-fast);
-  transition-timing-function: var(--motion-ease-premium);
-}
-
-[data-ui="button"]:hover:not(:disabled),
-[data-ui="button-link"]:hover {
-  transform: translateY(-1px);
-}
-
-[data-ui="button"]:active:not(:disabled),
-[data-ui="button-link"]:active {
-  transform: translateY(0);
-}
-
-[data-ui="button"] svg,
-[data-ui="button-link"] svg {
-  transition: transform var(--motion-fast) var(--motion-ease-premium);
-}
-
-[data-ui="button"]:hover svg,
-[data-ui="button-link"]:hover svg {
-  transform: translateX(0.18rem);
+/* All button motion is defined on the component (src/components/ui/button.tsx).
+   This only opts the whole control — glyphs included — out of it when the
+   visitor has asked for reduced motion. */
+@media (prefers-reduced-motion: reduce) {
+  [data-ui="button"],
+  [data-ui="button-link"],
+  [data-ui="button"] svg,
+  [data-ui="button-link"] svg {
+    transition: none !important;
+    translate: none !important;
+    scale: 1 !important;
+  }
 }
 
 dialog[open] {
