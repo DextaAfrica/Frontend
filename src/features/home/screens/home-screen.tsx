@@ -16,12 +16,12 @@ export function HomeScreen({ content }: { content: HomePageContent }) {
     <Page>
       <LandingHero {...content.hero} />
       <WhoWeAreSection content={content.intro} />
+      <ServicesSection services={content.services} />
       <StatisticsSection statistics={content.statistics} />
       <FeaturedProjectsSection
         projects={content.projects}
         heading={content.projectsSection}
       />
-      <ServicesSection services={content.services} />
       <TestimonialSection
         testimonial={content.testimonial}
         heading={content.testimonialSection}
