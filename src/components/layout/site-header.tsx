@@ -15,14 +15,9 @@ import { cn } from "@/lib/utils";
 import { Container } from "./container";
 import { Stack } from "./stack";
 
-const PRIMARY_NAV_COUNT = 3;
-const leftNavItems = siteConfig.navItems.slice(0, PRIMARY_NAV_COUNT);
-const rightNavItems = siteConfig.navItems.slice(PRIMARY_NAV_COUNT);
-
 export function SiteHeader() {
   const [open, setOpen] = React.useState(false);
   const [scrolled, setScrolled] = React.useState(false);
-  const [morphActive, setMorphActive] = React.useState(false);
   const pathname = usePathname();
 
   const isLandingPage = pathname === "/";
@@ -31,9 +26,6 @@ export function SiteHeader() {
 
   const menuButtonRef = React.useRef<HTMLButtonElement>(null);
   const panelRef = React.useRef<HTMLDivElement>(null);
-  const headerRef = React.useRef<HTMLElement>(null);
-  const logoRef = React.useRef<HTMLAnchorElement>(null);
-  const leftNavRef = React.useRef<HTMLElement>(null);
 
   // Mobile menu entrance: stagger the links in when the panel opens. The
   // resting DOM state is already full-opacity, so an interrupted tween can
@@ -63,7 +55,11 @@ export function SiteHeader() {
 
   // Header stays fixed/sticky and always visible while scrolling — it's
   // the visitor's only way to navigate away from wherever they are on the
-  // page, so it never hides on scroll-down.
+  // page, so it never hides on scroll-down. The only thing that changes on
+  // scroll is the background/height fading in over `--header-progress`
+  // (a plain CSS transition, see globals.css) — nothing about the logo or
+  // nav links ever moves or repositions, so there's nothing here that can
+  // collide with itself.
   React.useEffect(() => {
     const updateScrolledState = () => setScrolled(window.scrollY > 24);
     updateScrolledState();
@@ -89,85 +85,6 @@ export function SiteHeader() {
     };
   }, [open]);
 
-  // Desktop scroll-morph: the logo glides from the left gutter to dead centre
-  // and the bar picks up a glass background — scrubbed to the first ~170px
-  // of scroll. Wide screens with motion allowed only; every other case is
-  // handled by CSS off `data-scrolled`. The nav links themselves are never
-  // part of this animation — they're visible from first paint, full stop,
-  // since they're the visitor's only way to navigate the site.
-  useGSAP(
-    () => {
-      if (!isLandingPage) return;
-      const header = headerRef.current;
-      const logo = logoRef.current;
-      const anchor = leftNavRef.current;
-      if (!header || !logo || !anchor) return;
-
-      const mm = gsap.matchMedia();
-      mm.add(
-        "(min-width: 64rem) and (prefers-reduced-motion: no-preference)",
-        () => {
-          setMorphActive(true);
-
-          const measureTravel = () => {
-            const current = Number(gsap.getProperty(logo, "x")) || 0;
-            gsap.set(logo, { x: 0 });
-            const travel =
-              logo.getBoundingClientRect().left -
-              anchor.getBoundingClientRect().left;
-            gsap.set(logo, { x: current });
-            return Math.max(0, travel);
-          };
-
-          let travel = measureTravel();
-          const progress = { value: 0 };
-
-          const timeline = gsap.timeline({
-            defaults: { ease: "none" },
-            scrollTrigger: {
-              trigger: document.documentElement,
-              start: "top top",
-              end: "+=170",
-              scrub: 0.4,
-              invalidateOnRefresh: true,
-              onRefresh: () => {
-                travel = measureTravel();
-              },
-            },
-          });
-
-          timeline
-            .to(
-              progress,
-              {
-                value: 1,
-                onUpdate: () =>
-                  header.style.setProperty(
-                    "--header-progress",
-                    String(progress.value),
-                  ),
-              },
-              0,
-            )
-            .fromTo(
-              logo,
-              { x: () => -travel, scale: 1 },
-              { x: 0, scale: 0.9 },
-              0,
-            );
-
-          return () => {
-            setMorphActive(false);
-            header.style.removeProperty("--header-progress");
-          };
-        },
-      );
-
-      return () => mm.revert();
-    },
-    { scope: headerRef, dependencies: [isLandingPage] },
-  );
-
   function closeMenu() {
     setOpen(false);
   }
@@ -175,60 +92,32 @@ export function SiteHeader() {
   return (
     <>
       <header
-        ref={headerRef}
         data-sticky={!isLandingPage}
         data-scrolled={solid}
         data-overlays-hero={overlaysHero}
-        data-gsap={morphActive}
         className="site-header"
       >
         <Container size="wide" className="h-full">
-          <div className="flex h-full items-center justify-between gap-3">
-            <div className="flex items-center gap-6 xl:gap-10">
-              <Link
-                href="/"
-                onClick={closeMenu}
-                aria-label={`${siteConfig.name} home`}
-                className="site-header__logo shrink-0 lg:hidden"
-              >
-                <Wordmark overlaysHero={overlaysHero} className="h-7 sm:h-8" />
-              </Link>
-
-              <nav
-                ref={leftNavRef}
-                data-nav-group
-                aria-label="Primary"
-                className="site-header__nav-group hidden items-center gap-7 lg:flex"
-              >
-                {leftNavItems.map((item) => (
-                  <HeaderLink key={item.href} item={item} pathname={pathname} />
-                ))}
-              </nav>
-            </div>
-
+          <div className="flex h-full items-center justify-between gap-4">
             <Link
-              ref={logoRef}
               href="/"
               onClick={closeMenu}
               aria-label={`${siteConfig.name} home`}
-              className="site-header__logo absolute top-1/2 left-1/2 z-[1] hidden -translate-y-1/2 lg:block"
+              className="site-header__logo shrink-0"
             >
-              <span className="block -translate-x-1/2">
-                <Wordmark overlaysHero={overlaysHero} className="h-8" />
-              </span>
+              <Wordmark overlaysHero={overlaysHero} className="h-7 sm:h-8" />
             </Link>
 
-            <div className="flex items-center gap-2.5 sm:gap-4">
-              <nav
-                data-nav-group
-                aria-label="Secondary"
-                className="site-header__nav-group hidden items-center gap-7 lg:flex"
-              >
-                {rightNavItems.map((item) => (
-                  <HeaderLink key={item.href} item={item} pathname={pathname} />
-                ))}
-              </nav>
+            <nav
+              aria-label="Primary"
+              className="hidden items-center gap-7 lg:flex"
+            >
+              {siteConfig.navItems.map((item) => (
+                <HeaderLink key={item.href} item={item} pathname={pathname} />
+              ))}
+            </nav>
 
+            <div className="flex items-center gap-2.5 sm:gap-4">
               <ThemeToggle data-on-media={overlaysHero || undefined} />
 
               {!open && (
