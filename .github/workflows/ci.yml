@@ -88,4 +88,4 @@ jobs:
           push: false
           cache-from: type=gha,scope=production
           cache-to: type=gha,mode=max,scope=production
-          tags: maison-rouge-web:ci
+          tags: dexta-africa-web:ci

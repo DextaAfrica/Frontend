@@ -29,6 +29,11 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000).
 
+`npm install` also enables the repository's git hooks (`.githooks/`): a fast
+`pre-commit` (formatting + lint) and a full `pre-push` (typecheck, tests, and a
+production build of every route). Run `make hooks` to enable them by hand, or set
+`SKIP_HOOKS=1` for a one-off emergency bypass.
+
 ## Commands
 
 ```bash

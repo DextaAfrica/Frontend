@@ -1,7 +1,11 @@
 import { Grid, Section, Stack } from "@/components/layout";
 import { Badge, EditorialHeading, Icon, Text } from "@/components/ui";
-import type { FaqItem } from "@/data/faq";
 import { Reveal, RevealGroup, RevealItem } from "./reveal";
+
+export interface FaqItem {
+  question: string;
+  answer: string;
+}
 
 export interface FaqAccordionProps {
   items: readonly FaqItem[];

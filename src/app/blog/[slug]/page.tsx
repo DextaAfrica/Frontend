@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { ArticleScreen } from "@/features/journal";
-import { articles } from "@/data/articles";
+import { articles, ArticleScreen } from "@/features/blog";
 
 interface ArticlePageProps {
   params: Promise<{ slug: string }>;

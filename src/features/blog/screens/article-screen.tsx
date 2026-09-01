@@ -1,9 +1,9 @@
 import { Page, Section, Stack } from "@/components/layout";
 import { EditorialHero, MediaPanel } from "@/components/marketing";
 import { ButtonLink, SectionHeading, Text } from "@/components/ui";
-import type { JournalArticle } from "@/data/articles";
+import type { Article } from "../data/articles";
 
-export function ArticleScreen({ article }: { article: JournalArticle }) {
+export function ArticleScreen({ article }: { article: Article }) {
   return (
     <Page>
       <EditorialHero
@@ -27,7 +27,7 @@ export function ArticleScreen({ article }: { article: JournalArticle }) {
             </section>
           ))}
           <ButtonLink href="/blog" variant="outline" className="w-fit">
-            Back to journal
+            Back to blog
           </ButtonLink>
         </Stack>
       </Section>

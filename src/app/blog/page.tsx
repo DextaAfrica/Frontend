@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { JournalScreen } from "@/features/journal";
+import { BlogScreen } from "@/features/blog";
 export const metadata: Metadata = {
   title: "Blog",
   description:
@@ -7,5 +7,5 @@ export const metadata: Metadata = {
   alternates: { canonical: "/blog" },
 };
 export default function BlogPage() {
-  return <JournalScreen />;
+  return <BlogScreen />;
 }

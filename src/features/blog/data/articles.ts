@@ -1,4 +1,4 @@
-export interface JournalArticle {
+export interface Article {
   slug: string;
   title: string;
   category: string;
@@ -8,7 +8,7 @@ export interface JournalArticle {
   sections: ReadonlyArray<{ title: string; body: string }>;
 }
 
-export const articles: JournalArticle[] = [
+export const articles: Article[] = [
   {
     slug: "warm-modernism",
     title: "The return of warm modernism",

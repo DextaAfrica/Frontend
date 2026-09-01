@@ -4,9 +4,7 @@ import { homePageContentSchema } from "./home-page";
 
 describe("homePageContentSchema", () => {
   it("accepts the site's home page content", () => {
-    expect(homePageContentSchema.safeParse(homePageContent).success).toBe(
-      true,
-    );
+    expect(homePageContentSchema.safeParse(homePageContent).success).toBe(true);
   });
 
   it("rejects incomplete upstream content", () => {

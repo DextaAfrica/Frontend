@@ -12,12 +12,13 @@ import {
   Eyebrow,
   Text,
 } from "@/components/ui";
-import { articles } from "@/data/articles";
-export function JournalScreen() {
+import { articles } from "../data/articles";
+
+export function BlogScreen() {
   return (
     <Page>
       <EditorialHero
-        eyebrow="Journal"
+        eyebrow="Blog"
         title="Ideas for a more considered world."
         description="Perspectives on architecture, material, place, culture, and the evolving meaning of home."
       />
@@ -45,10 +46,7 @@ export function JournalScreen() {
                       Exploring the decisions and ideas that shape enduring
                       places and more meaningful daily experiences.
                     </Text>
-                    <ButtonLink
-                      href={`/blog/${article.slug}`}
-                      variant="link"
-                    >
+                    <ButtonLink href={`/blog/${article.slug}`} variant="link">
                       Read perspective
                     </ButtonLink>
                   </Stack>

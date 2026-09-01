@@ -1,9 +1,5 @@
-export interface FaqItem {
-  question: string;
-  answer: string;
-}
+import type { FaqItem } from "@/components/marketing";
 
-/** Shared across every page's "Got Questions?" section. */
 export const faqItems: FaqItem[] = [
   {
     question: "What is Dexta Africa Limited all about?",
@@ -16,7 +12,8 @@ export const faqItems: FaqItem[] = [
       "Our current developments are concentrated in Ogun and Lagos States, with estates in locations such as Ijebu-Ode and Kobape. We continue to expand into strategically selected, high-growth locations across Nigeria.",
   },
   {
-    question: "Are your lands and properties verified and free from government acquisition?",
+    question:
+      "Are your lands and properties verified and free from government acquisition?",
     answer:
       "Yes. Every property we sell is verified and free from government acquisition or encumbrance before it is listed. We conduct full due diligence, including title verification and physical inspection, on every parcel of land.",
   },

@@ -15,7 +15,7 @@ export function CtaBand({
   title = "Start Your *Property* Journey *Today*",
   ctaLabel = "Let's Talk",
   ctaHref = "/contact",
-  image = "/images/maison-rooftop.png",
+  image = "/images/residence-rooftop.png",
 }: CtaBandProps) {
   return (
     <section className="relative isolate overflow-hidden bg-brand-dark py-24 text-brand-light sm:py-32">
@@ -41,7 +41,7 @@ export function CtaBand({
       </Container>
       <span
         aria-hidden
-        className="pointer-events-none absolute inset-x-0 bottom-[-0.12em] select-none text-center font-display text-[18vw] leading-none font-black tracking-tighter text-brand-light/10 sm:text-[15vw]"
+        className="pointer-events-none absolute inset-x-0 bottom-[-0.12em] text-center font-display text-[18vw] leading-none font-black tracking-tighter text-brand-light/10 select-none sm:text-[15vw]"
       >
         DEXTA
       </span>

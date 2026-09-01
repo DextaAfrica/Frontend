@@ -113,7 +113,7 @@ export const homePageContent = {
       value: "12+",
       copy: "Partners delivering value through strong collaborations.",
       highlight: "Partners",
-      image: "/images/maison-interior.png",
+      image: "/images/residence-interior.png",
     },
     {
       id: "projects",

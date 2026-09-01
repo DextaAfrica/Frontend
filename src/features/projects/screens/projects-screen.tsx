@@ -4,13 +4,13 @@ import {
   MarketingHeading,
   ProjectCard,
 } from "@/components/marketing";
-import { projects } from "@/data/projects";
+import { projects } from "../data/projects";
 
-export function PortfolioScreen() {
+export function ProjectsScreen() {
   return (
     <Page>
       <EditorialHero
-        eyebrow="Our portfolio"
+        eyebrow="Our projects"
         title="Landmarks with a lasting point of view."
         description="Each address responds to its place while sharing our commitment to timeless form, thoughtful living, and enduring value."
         primary={{ label: "Discuss a residence", href: "/contact" }}
