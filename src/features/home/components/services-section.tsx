@@ -318,7 +318,7 @@ export function ServicesSection({
                     tabIndex={isActive ? -1 : 0}
                     aria-label={`Show ${service.title}`}
                     onClick={() => goToService(index)}
-                    className="service-collapsed-control group absolute inset-x-0 bottom-0 isolate flex h-service-row w-full items-center gap-5 bg-brand-dark px-service text-left text-brand-light transition-colors hover:bg-brand-dark-elevated focus-visible:ring-2 focus-visible:ring-brand-light focus-visible:outline-none focus-visible:ring-inset"
+                    className="service-collapsed-control group absolute inset-x-0 bottom-0 isolate flex h-service-row w-full items-center gap-5 px-service text-left text-foreground transition-colors focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none focus-visible:ring-inset"
                   >
                     <span className="font-mono text-service-tab-number leading-none opacity-60">
                       {service.number}
