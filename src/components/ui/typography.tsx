@@ -150,6 +150,11 @@ export function Eyebrow({
   );
 }
 
+/**
+ * The site's editorial voice — Playfair Display, reserved for section
+ * headlines. Roman here; an `*accent*` word inside renders in Playfair
+ * italic (see `Accent`) for a quiet emphasis rather than a font clash.
+ */
 export function EditorialHeading({
   className,
   children,
@@ -158,7 +163,7 @@ export function EditorialHeading({
   return (
     <h2
       className={cn(
-        "font-display text-editorial leading-editorial font-semibold tracking-editorial text-balance",
+        "font-serif text-editorial leading-[1.14] font-medium tracking-normal text-balance",
         className,
       )}
       {...props}

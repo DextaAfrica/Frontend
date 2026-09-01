@@ -96,13 +96,16 @@
   --letter-spacing-control-compact: 0.08em;
   --letter-spacing-eyebrow: 0.2em;
   --letter-spacing-navigation-display: -0.04em;
+  /* One calm grotesque carries the whole UI — body, controls, and headings
+     (`font-display`). Playfair Display is the single editorial counterpoint:
+     the section headlines (`EditorialHeading`) and the italic `*accent*`
+     words, nothing else. */
   --font-sans:
-    "DM Sans Variable", "Helvetica Neue", "Segoe UI", Arial, sans-serif;
-  --font-display:
-    "Bricolage Grotesque Variable", "DM Sans Variable", "Helvetica Neue",
-    sans-serif;
+    "Manrope Variable", "Helvetica Neue", "Segoe UI", Arial, sans-serif;
+  --font-display: var(--font-sans);
   --font-serif:
-    "Playfair Display Variable", "Iowan Old Style", Baskerville, serif;
+    "Playfair Display Variable", "Iowan Old Style", "Times New Roman", Georgia,
+    serif;
   --font-mono: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
 
   /* Fixed brand neutrals — the same near-black / near-white in both themes,
