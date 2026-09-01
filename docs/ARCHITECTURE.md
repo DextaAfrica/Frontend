@@ -22,6 +22,29 @@ Runtime schemas live beside the feature boundary they protect. Data from HTTP,
 browser storage, forms, and content systems remains `unknown` until a schema
 validates and normalizes it. TypeScript types alone are not runtime validation.
 
+## Design tokens (`src/app/globals.css`)
+
+The file is ordered: `:root` (light tokens, the source of truth) → `.dark`
+(only the tokens that change) → `@theme inline` (maps tokens to Tailwind
+utilities) → `@layer base` and component classes. Section banners mark each part.
+
+- **One brand red.** The `--primary` oklch scale is the only brand red. Raw CSS
+  references `var(--primary)` (or `oklch(from var(--primary) …)` for tints); there
+  is no separate `--brand-accent`.
+- **`--brand-dark` / `--brand-dark-elevated` / `--brand-light`** are the fixed
+  near-black / near-white neutrals for surfaces that never invert (footer,
+  cinematic sections).
+- **Three font roles only:** `--font-display` (Bricolage Grotesque),
+  `--font-sans` (DM Sans), `--font-serif` (Playfair Display, used only by the
+  word-level `<Accent>` primitive). Each has a real fallback stack.
+- **`src/config/theme.ts`** holds a small flat mirror of a few colours for the
+  `<meta name="theme-color">` tags and the `global-error.tsx` crash screen, which
+  render with no access to `globals.css`. Keep its `light`/`dark` tracking
+  `--background`.
+- Components consume semantic utilities (`bg-primary`, `text-muted-foreground`,
+  `border-border`), never raw hex/oklch. Add a line to `@theme inline` only when
+  a component needs a token as a utility.
+
 ## Layout rule
 
 Product screens do not hand-author generic layout `<div>` elements. Use the smallest suitable primitive:
@@ -62,6 +85,21 @@ features/example/
 ```
 
 Create only folders a feature actually needs. Do not introduce empty abstraction layers.
+
+Feature folders are named for their route (`features/blog` → `/blog`,
+`features/projects` → `/projects` and `/projects/[slug]`). Screens are named for
+what they render (`BlogScreen`, `ArticleScreen`, `ProjectsScreen`,
+`ProjectScreen`).
+
+## Where static content lives
+
+There is no shared top-level `src/data/`. Static content for a feature lives in
+that feature's own `data/` directory and is re-exported from its `index.ts`. A
+value used by exactly one screen may stay inline in that screen; anything read
+from more than one place (a list screen and a detail route, `sitemap.ts`) gets a
+`data/` file. Types that describe a shared component's props live with that
+component, not with the data (for example `FaqItem` lives in
+`components/marketing/faq-accordion.tsx`). See `src/features/README.md`.
 
 ## Import boundaries
 

@@ -12,25 +12,34 @@ import { Eyebrow } from "@/components/ui/typography";
 import { siteConfig } from "@/config/site";
 import { gsap, useGSAP } from "@/lib/gsap";
 import { cn } from "@/lib/utils";
-import { Cluster } from "./cluster";
 import { Container } from "./container";
 import { Stack } from "./stack";
+
+const PRIMARY_NAV_COUNT = 3;
+const leftNavItems = siteConfig.navItems.slice(0, PRIMARY_NAV_COUNT);
+const rightNavItems = siteConfig.navItems.slice(PRIMARY_NAV_COUNT);
 
 export function SiteHeader() {
   const [open, setOpen] = React.useState(false);
   const [scrolled, setScrolled] = React.useState(false);
+  const [morphActive, setMorphActive] = React.useState(false);
   const [retreated, setRetreated] = React.useState(false);
   const lastScrollY = React.useRef(0);
   const pathname = usePathname();
+
   const isLandingPage = pathname === "/";
+  const solid = !isLandingPage || scrolled || open;
   const overlaysHero = isLandingPage && !open && !scrolled;
+
   const menuButtonRef = React.useRef<HTMLButtonElement>(null);
   const panelRef = React.useRef<HTMLDivElement>(null);
+  const headerRef = React.useRef<HTMLElement>(null);
+  const logoRef = React.useRef<HTMLAnchorElement>(null);
+  const leftNavRef = React.useRef<HTMLElement>(null);
 
-  // Links are always at full opacity in their resting DOM/CSS state, so
-  // there's no "stuck invisible" state possible: the whole panel is already
-  // hidden via CSS when closed, and this only ever plays an entrance while
-  // opening, never one that could leave links mid-fade if it's interrupted.
+  // Mobile menu entrance: stagger the links in when the panel opens. The
+  // resting DOM state is already full-opacity, so an interrupted tween can
+  // never leave a link stuck invisible.
   useGSAP(
     () => {
       if (!open) return;
@@ -39,12 +48,12 @@ export function SiteHeader() {
       const links = gsap.utils.toArray<HTMLElement>(
         panel.querySelectorAll("[data-menu-link]"),
       );
-      if (!links.length) return;
-
-      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      if (
+        !links.length ||
+        window.matchMedia("(prefers-reduced-motion: reduce)").matches
+      ) {
         return;
       }
-
       gsap.fromTo(
         links,
         { y: 24, opacity: 0 },
@@ -57,15 +66,16 @@ export function SiteHeader() {
   React.useEffect(() => {
     lastScrollY.current = window.scrollY;
 
-    // Reveals on scroll-up, retreats on scroll-down past a threshold that
-    // clears the header's own height — so the nav follows the visitor's
-    // intent (heading back up to find something) rather than just tracking
-    // raw scroll position.
+    // Reveals on scroll-up, retreats on scroll-down past a threshold —
+    // comfortably past the desktop morph's own ~170px scroll window above,
+    // so the two scroll-driven effects never fight each other on the way
+    // down. The nav follows the visitor's intent (heading back up to find
+    // something) rather than just tracking raw scroll position.
     function update() {
       const currentY = window.scrollY;
       const delta = currentY - lastScrollY.current;
-      setScrolled(currentY > 32);
-      if (currentY < 120) {
+      setScrolled(currentY > 24);
+      if (currentY < 220) {
         setRetreated(false);
       } else if (Math.abs(delta) > 4) {
         setRetreated(delta > 0);
@@ -95,6 +105,92 @@ export function SiteHeader() {
     };
   }, [open]);
 
+  // Desktop scroll-morph: the logo glides from the left gutter to dead centre
+  // while the flanking nav groups fade in and the bar picks up a glass
+  // background — all scrubbed to the first ~170px of scroll. Wide screens with
+  // motion allowed only; every other case is handled by CSS off `data-scrolled`.
+  useGSAP(
+    () => {
+      if (!isLandingPage) return;
+      const header = headerRef.current;
+      const logo = logoRef.current;
+      const anchor = leftNavRef.current;
+      if (!header || !logo || !anchor) return;
+
+      const mm = gsap.matchMedia();
+      mm.add(
+        "(min-width: 64rem) and (prefers-reduced-motion: no-preference)",
+        () => {
+          setMorphActive(true);
+
+          const measureTravel = () => {
+            const current = Number(gsap.getProperty(logo, "x")) || 0;
+            gsap.set(logo, { x: 0 });
+            const travel =
+              logo.getBoundingClientRect().left -
+              anchor.getBoundingClientRect().left;
+            gsap.set(logo, { x: current });
+            return Math.max(0, travel);
+          };
+
+          let travel = measureTravel();
+          const progress = { value: 0 };
+          const groups = gsap.utils.toArray<HTMLElement>(
+            header.querySelectorAll("[data-nav-group]"),
+          );
+
+          const timeline = gsap.timeline({
+            defaults: { ease: "none" },
+            scrollTrigger: {
+              trigger: document.documentElement,
+              start: "top top",
+              end: "+=170",
+              scrub: 0.4,
+              invalidateOnRefresh: true,
+              onRefresh: () => {
+                travel = measureTravel();
+              },
+            },
+          });
+
+          timeline
+            .to(
+              progress,
+              {
+                value: 1,
+                onUpdate: () =>
+                  header.style.setProperty(
+                    "--header-progress",
+                    String(progress.value),
+                  ),
+              },
+              0,
+            )
+            .fromTo(
+              logo,
+              { x: () => -travel, scale: 1 },
+              { x: 0, scale: 0.9 },
+              0,
+            )
+            .fromTo(
+              groups,
+              { autoAlpha: 0, y: 6 },
+              { autoAlpha: 1, y: 0, stagger: 0.04 },
+              0,
+            );
+
+          return () => {
+            setMorphActive(false);
+            header.style.removeProperty("--header-progress");
+          };
+        },
+      );
+
+      return () => mm.revert();
+    },
+    { scope: headerRef, dependencies: [isLandingPage] },
+  );
+
   function closeMenu() {
     setOpen(false);
   }
@@ -102,62 +198,99 @@ export function SiteHeader() {
   return (
     <>
       <header
-        className={cn(
-          "top-0 z-[var(--layer-header)] w-full border-b transition-[background-color,border-color,color,transform] duration-300 ease-premium",
-          retreated && !open ? "-translate-y-full" : "translate-y-0",
-          overlaysHero
-            ? "absolute border-brand-light/15 bg-brand-dark/70 text-brand-light shadow-lg backdrop-blur-md"
-            : open
-              ? "fixed inset-x-0 border-border bg-background text-foreground"
-              : isLandingPage
-                ? "fixed inset-x-0 border-border/70 bg-background/95 text-foreground shadow-sm backdrop-blur-xl"
-                : "sticky border-border/70 bg-background/95 text-foreground backdrop-blur-xl",
-        )}
+        ref={headerRef}
+        data-sticky={!isLandingPage}
+        data-scrolled={solid}
+        data-overlays-hero={overlaysHero}
+        data-gsap={morphActive}
+        className="site-header"
       >
-        <Container size="wide">
-          <div className="flex h-16 flex-nowrap items-center justify-between gap-2 sm:h-20 sm:gap-4">
+        <Container size="wide" className="h-full">
+          <div className="flex h-full items-center justify-between gap-3">
+            <div className="flex items-center gap-6 xl:gap-10">
+              <Link
+                href="/"
+                onClick={closeMenu}
+                aria-label={`${siteConfig.name} home`}
+                className="site-header__logo shrink-0 lg:hidden"
+              >
+                <Image
+                  src="/images/dexta-logo.svg"
+                  alt={siteConfig.name}
+                  width={110}
+                  height={48}
+                  priority
+                  className={cn(
+                    "h-7 w-auto sm:h-8",
+                    !overlaysHero && "invert dark:invert-0",
+                  )}
+                />
+              </Link>
+
+              <nav
+                ref={leftNavRef}
+                data-nav-group
+                aria-label="Primary"
+                className="site-header__nav-group hidden items-center gap-7 lg:flex"
+              >
+                {leftNavItems.map((item) => (
+                  <HeaderLink key={item.href} item={item} pathname={pathname} />
+                ))}
+              </nav>
+            </div>
+
             <Link
+              ref={logoRef}
               href="/"
               onClick={closeMenu}
               aria-label={`${siteConfig.name} home`}
-              className="shrink-0"
+              className="site-header__logo absolute top-1/2 left-1/2 z-[1] hidden -translate-y-1/2 lg:block"
             >
-              <Image
-                src="/images/dexta-logo.svg"
-                alt={siteConfig.name}
-                width={110}
-                height={48}
-                priority
-                className={cn(
-                  "h-7 w-auto sm:h-9",
-                  !overlaysHero && "invert dark:invert-0",
-                )}
-              />
+              <span className="block -translate-x-1/2">
+                <Image
+                  src="/images/dexta-logo.svg"
+                  alt={siteConfig.name}
+                  width={110}
+                  height={48}
+                  priority
+                  className={cn(
+                    "h-8 w-auto",
+                    !overlaysHero && "invert dark:invert-0",
+                  )}
+                />
+              </span>
             </Link>
 
-            <Cluster className="gap-1.5 sm:gap-3">
-              <ThemeToggle
-                className={cn(
-                  overlaysHero &&
-                    "border-brand-light/30 bg-brand-dark/70 text-brand-light shadow-lg [&_button:not([aria-checked='true'])]:text-brand-light/75 [&_button:not([aria-checked='true'])]:hover:bg-brand-light/10 [&_button:not([aria-checked='true'])]:hover:text-brand-light [&_button[aria-checked='true']]:border-brand-light [&_button[aria-checked='true']]:bg-brand-light [&_button[aria-checked='true']]:text-brand-dark",
-                )}
-              />
+            <div className="flex items-center gap-2.5 sm:gap-4">
+              <nav
+                data-nav-group
+                aria-label="Secondary"
+                className="site-header__nav-group hidden items-center gap-7 lg:flex"
+              >
+                {rightNavItems.map((item) => (
+                  <HeaderLink key={item.href} item={item} pathname={pathname} />
+                ))}
+              </nav>
+
+              <ThemeToggle data-on-media={overlaysHero || undefined} />
+
               {!open && (
                 <ButtonLink
                   href={siteConfig.navigation.appointmentHref}
                   size="sm"
                   variant={overlaysHero ? "onMedia" : "primary"}
-                  className="header-booking hidden text-control-compact tracking-control-compact uppercase md:inline-flex"
+                  className="hidden text-control-compact tracking-control-compact uppercase md:inline-flex"
                 >
                   {siteConfig.navigation.appointmentCta}
                 </ButtonLink>
               )}
+
               <Button
                 ref={menuButtonRef}
                 variant="secondary"
                 size="sm"
                 data-on-media={overlaysHero || undefined}
-                className="header-menu-trigger shrink-0 text-control-compact tracking-control-compact uppercase"
+                className="header-menu-trigger shrink-0 text-control-compact tracking-control-compact uppercase lg:hidden"
                 onClick={() => setOpen((current) => !current)}
                 aria-expanded={open}
                 aria-controls="site-navigation"
@@ -166,7 +299,7 @@ export function SiteHeader() {
                 {open ? "Close" : "Menu"}
                 <Icon name={open ? "close" : "menu"} size={16} />
               </Button>
-            </Cluster>
+            </div>
           </div>
         </Container>
       </header>
@@ -179,7 +312,7 @@ export function SiteHeader() {
         aria-label="Site navigation"
         aria-hidden={!open}
         className={cn(
-          "fixed inset-0 z-[var(--layer-navigation)] bg-background text-foreground transition-[background-color,color,opacity] duration-300 ease-out",
+          "fixed inset-0 z-[var(--layer-navigation)] bg-background text-foreground transition-[opacity] duration-300 ease-out",
           open
             ? "pointer-events-auto visible opacity-100"
             : "pointer-events-none invisible opacity-0",
@@ -235,5 +368,27 @@ export function SiteHeader() {
         </Container>
       </div>
     </>
+  );
+}
+
+function HeaderLink({
+  item,
+  pathname,
+}: {
+  item: (typeof siteConfig.navItems)[number];
+  pathname: string;
+}) {
+  const active = pathname === item.href;
+  return (
+    <Link
+      href={item.href as Route}
+      aria-current={active ? "page" : undefined}
+      className={cn(
+        "text-control-compact font-medium tracking-control-compact whitespace-nowrap uppercase transition-colors hover:text-primary",
+        active && "text-primary",
+      )}
+    >
+      {item.label}
+    </Link>
   );
 }

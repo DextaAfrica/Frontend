@@ -29,7 +29,7 @@ export function HeroVideo({ video, mobileVideo, poster }: HeroVideoProps) {
   }, []);
 
   return (
-    <div className="absolute inset-0 size-full overflow-hidden bg-brand-dark">
+    <div className="hero-video-media absolute inset-0 size-full overflow-hidden bg-brand-dark">
       <Image
         src={poster}
         alt=""
