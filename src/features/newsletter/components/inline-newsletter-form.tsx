@@ -64,15 +64,13 @@ export function InlineNewsletterForm({
             : "border-input bg-background",
         )}
       >
-        <label htmlFor="landing-email" className="sr-only">
-          Your email address
-        </label>
         <input
           id="landing-email"
           name="email"
           type="email"
           required
           autoComplete="email"
+          aria-label="Your email address"
           placeholder="Your email address"
           aria-invalid={invalidField}
           aria-describedby={invalidField ? ERROR_ID : undefined}
@@ -83,10 +81,27 @@ export function InlineNewsletterForm({
               : "placeholder:text-muted-foreground",
           )}
         />
-        <label className="sr-only" aria-hidden="true">
-          Company
-          <input name="company" tabIndex={-1} autoComplete="off" />
-        </label>
+        {/* Honeypot: real visitors never see or fill this in — hidden by
+            inline style rather than a class, so there's no dependency on a
+            utility class resolving correctly for it to stay invisible. */}
+        <input
+          type="text"
+          name="company"
+          tabIndex={-1}
+          autoComplete="off"
+          aria-hidden="true"
+          style={{
+            position: "absolute",
+            width: 1,
+            height: 1,
+            padding: 0,
+            margin: -1,
+            overflow: "hidden",
+            clip: "rect(0, 0, 0, 0)",
+            whiteSpace: "nowrap",
+            border: 0,
+          }}
+        />
         <Button
           type="submit"
           variant={onMedia ? "onMedia" : "neutral"}

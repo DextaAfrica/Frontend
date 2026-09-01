@@ -55,7 +55,10 @@ export function Cursor() {
     let frame = 0;
     let visible = false;
 
-    const smoothing = reducedMotion ? 1 : 0.22;
+    // A small dot needs to feel tightly coupled to the actual pointer — too
+    // much lag on something this size reads as disconnected/janky rather
+    // than fluid, which is the opposite of what a trailing cursor is for.
+    const smoothing = reducedMotion ? 1 : 0.45;
 
     const render = () => {
       x += (targetX - x) * smoothing;
