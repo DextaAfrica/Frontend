@@ -90,9 +90,11 @@ export function SiteHeader() {
   }, [open]);
 
   // Desktop scroll-morph: the logo glides from the left gutter to dead centre
-  // while the flanking nav groups fade in and the bar picks up a glass
-  // background — all scrubbed to the first ~170px of scroll. Wide screens with
-  // motion allowed only; every other case is handled by CSS off `data-scrolled`.
+  // and the bar picks up a glass background — scrubbed to the first ~170px
+  // of scroll. Wide screens with motion allowed only; every other case is
+  // handled by CSS off `data-scrolled`. The nav links themselves are never
+  // part of this animation — they're visible from first paint, full stop,
+  // since they're the visitor's only way to navigate the site.
   useGSAP(
     () => {
       if (!isLandingPage) return;
@@ -119,9 +121,6 @@ export function SiteHeader() {
 
           let travel = measureTravel();
           const progress = { value: 0 };
-          const groups = gsap.utils.toArray<HTMLElement>(
-            header.querySelectorAll("[data-nav-group]"),
-          );
 
           const timeline = gsap.timeline({
             defaults: { ease: "none" },
@@ -154,12 +153,6 @@ export function SiteHeader() {
               logo,
               { x: () => -travel, scale: 1 },
               { x: 0, scale: 0.9 },
-              0,
-            )
-            .fromTo(
-              groups,
-              { autoAlpha: 0, y: 6 },
-              { autoAlpha: 1, y: 0, stagger: 0.04 },
               0,
             );
 

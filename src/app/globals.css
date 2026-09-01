@@ -823,19 +823,6 @@ dialog[open]::backdrop {
     transform 300ms var(--motion-ease-premium);
 }
 
-/* GSAP owns the flank nav opacity while morphing; otherwise the groups show
-   only once the bar is in its solid state. */
-.site-header:not([data-gsap="true"]) .site-header__nav-group {
-  opacity: 0;
-  visibility: hidden;
-}
-
-.site-header:not([data-gsap="true"])[data-scrolled="true"]
-  .site-header__nav-group {
-  opacity: 1;
-  visibility: visible;
-}
-
 @media (prefers-reduced-motion: reduce) {
   .site-header,
   .site-header__nav-group {

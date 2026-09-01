@@ -30,11 +30,14 @@ export interface LandingHeroProps {
  * behind its own overflow-hidden mask (set in CSS, so there's no flash of
  * unstyled/unmasked text before JS runs) and slides up into place,
  * staggered — the badge, description, and CTAs each fade up afterward so the
- * headline reads first. Scrims are deliberate rather than a flat wash: a
- * soft band at the top for header legibility, a taller gradient at the
- * bottom for the copy and the seam with the next section, and a focused
- * glow behind the headline itself. A bright hairline marks the exact seam
- * so the hero reads as its own moment.
+ * headline reads first.
+ *
+ * The scrim is left-to-right, not a flat wash over the whole frame: it darkens
+ * only the left portion where the copy sits, fading to fully transparent by
+ * roughly mid-frame — so the right side of the video stays genuinely vivid
+ * instead of the whole shot reading as muted. A soft band at the top keeps
+ * the header legible regardless of what's playing underneath it, and a
+ * bright hairline marks the exact seam with the next section.
  */
 export function LandingHero({
   badge,
@@ -79,13 +82,13 @@ export function LandingHero({
       />
       <span
         aria-hidden
-        className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-brand-dark via-brand-dark/55 to-transparent"
+        className="absolute inset-0 bg-gradient-to-r from-brand-dark/80 via-brand-dark/30 to-transparent"
       />
 
       <Container size="editorial" className="relative">
         <span
           aria-hidden
-          className="pointer-events-none absolute top-1/2 left-[18%] -z-10 h-[135%] w-[70%] -translate-x-1/2 -translate-y-1/2 bg-[radial-gradient(ellipse_60%_60%_at_50%_50%,rgb(6_6_6/0.52),transparent_72%)]"
+          className="pointer-events-none absolute top-1/2 left-[10%] -z-10 h-[120%] w-[55%] -translate-x-1/2 -translate-y-1/2 bg-[radial-gradient(ellipse_60%_60%_at_50%_50%,rgb(6_6_6/0.3),transparent_72%)]"
         />
 
         <div className="relative flex max-w-2xl flex-col items-start gap-6 text-left">
