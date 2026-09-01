@@ -19,8 +19,8 @@ export function QuoteBlock({
           align="center"
           className="mx-auto max-w-4xl text-center"
         >
-          <Icon name="quote" size={36} className="text-red-400" />
-          <blockquote className="text-2xl leading-tight font-medium text-balance sm:text-4xl">
+          <Icon name="quote" size={32} className="text-primary" />
+          <blockquote className="text-xl leading-tight font-medium text-balance sm:text-2xl lg:text-3xl">
             “{quote}”
           </blockquote>
           <Eyebrow className="text-background/55">
