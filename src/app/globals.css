@@ -1532,6 +1532,153 @@ dialog[open]::backdrop {
   animation: route-enter var(--motion-base) var(--motion-ease-premium) both;
 }
 
+/* --- Expertise marquee ------------------------------------------------------
+ * A broadcast lower-third, not a hero: a pulsing "on air" dot over a signal
+ * label, then one continuous strip scrolling underneath. The strip is built
+ * from two copies of the same list placed edge to edge (see
+ * expertise-marquee.tsx) and translated exactly -50% — because the second
+ * copy is a pixel-perfect continuation of the first, the loop has no visible
+ * seam. Edges dissolve via mask-image rather than a hard overflow clip. */
+.expertise-marquee {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 1.75rem;
+  padding-block: 3rem;
+  background: var(--brand-dark);
+  color: var(--brand-light);
+}
+
+.expertise-marquee__signal {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.625rem;
+}
+
+.expertise-marquee__dot {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 999px;
+  background: var(--primary);
+  box-shadow: 0 0 0 4px rgb(from var(--primary) r g b / 0.25);
+  animation: expertise-pulse 2.2s ease-in-out infinite;
+}
+
+.expertise-marquee__label {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.24em;
+  color: rgb(from var(--brand-light) r g b / 0.6);
+  text-transform: uppercase;
+}
+
+.expertise-marquee__viewport {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  mask-image: linear-gradient(
+    to right,
+    transparent,
+    black 8%,
+    black 92%,
+    transparent
+  );
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent,
+    black 8%,
+    black 92%,
+    transparent
+  );
+}
+
+.expertise-marquee__track {
+  display: flex;
+  width: max-content;
+  align-items: center;
+  animation: expertise-scroll 34s linear infinite;
+}
+
+.expertise-marquee:hover .expertise-marquee__track {
+  animation-play-state: paused;
+}
+
+.expertise-marquee__item {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 0.875rem;
+  padding-inline: 2.25rem;
+  border-right: 1px solid rgb(from var(--brand-light) r g b / 0.12);
+  font-family: var(--font-mono);
+  font-size: 0.95rem;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: rgb(from var(--brand-light) r g b / 0.85);
+  white-space: nowrap;
+}
+
+.expertise-marquee__icon {
+  display: grid;
+  flex-shrink: 0;
+  place-items: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 999px;
+  border: 1px solid rgb(from var(--brand-light) r g b / 0.15);
+  background: rgb(from var(--brand-light) r g b / 0.06);
+  color: var(--primary);
+}
+
+@media (max-width: 639px) {
+  .expertise-marquee__item {
+    padding-inline: 1.5rem;
+    font-size: 0.85rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .expertise-marquee__track {
+    animation: none;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.75rem 0;
+  }
+  .expertise-marquee__track [data-duplicate] {
+    display: none;
+  }
+  .expertise-marquee__item {
+    border-right: none;
+  }
+  .expertise-marquee__dot {
+    animation: none;
+  }
+}
+
+@keyframes expertise-scroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes expertise-pulse {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.55;
+    transform: scale(0.82);
+  }
+}
+
 /* ===========================================================================
    4c. KEYFRAMES
    =========================================================================== */

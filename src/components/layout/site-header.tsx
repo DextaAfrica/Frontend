@@ -24,6 +24,7 @@ export function SiteHeader() {
   const solid = !isLandingPage || scrolled || open;
   const overlaysHero = isLandingPage && !open && !scrolled;
 
+  const headerRef = React.useRef<HTMLElement>(null);
   const menuButtonRef = React.useRef<HTMLButtonElement>(null);
   const panelRef = React.useRef<HTMLDivElement>(null);
 
@@ -65,16 +66,47 @@ export function SiteHeader() {
 
   // Header stays fixed/sticky and always visible while scrolling — it's
   // the visitor's only way to navigate away from wherever they are on the
-  // page, so it never hides on scroll-down. The only thing that changes on
-  // scroll is the background/height fading in over `--header-progress`
-  // (a plain CSS transition, see globals.css) — nothing about the logo or
-  // nav links ever moves or repositions, so there's nothing here that can
+  // page, so it never hides on scroll-down. Nothing about the logo or nav
+  // links ever moves or repositions, so there's nothing here that can
   // collide with itself.
+  //
+  // The background/height/blur respond to how *far* the page has scrolled,
+  // not to crossing one fixed pixel: --header-progress is written directly
+  // to the DOM every animation frame (skipping React entirely, so scrolling
+  // never triggers a re-render), and the CSS `transition` already on it
+  // (see globals.css) smooths each rAF step into the next — so scrolling
+  // slowly reads as the header gradually committing, not snapping the
+  // instant you nudge the page. `scrolled` (React state, used for the
+  // coarser text-color/CTA-variant decisions elsewhere in this component)
+  // only flips once that progress crosses its midpoint, so it re-renders
+  // once per direction change rather than every scroll pixel.
   React.useEffect(() => {
-    const updateScrolledState = () => setScrolled(window.scrollY > 24);
-    updateScrolledState();
-    window.addEventListener("scroll", updateScrolledState, { passive: true });
-    return () => window.removeEventListener("scroll", updateScrolledState);
+    const header = headerRef.current;
+    if (!header) return;
+
+    const COMMIT_DISTANCE = 96;
+    let frame = 0;
+
+    const apply = () => {
+      frame = 0;
+      const progress = Math.min(
+        1,
+        Math.max(0, window.scrollY / COMMIT_DISTANCE),
+      );
+      header.style.setProperty("--header-progress", String(progress));
+      setScrolled(progress > 0.4);
+    };
+
+    const onScroll = () => {
+      if (!frame) frame = window.requestAnimationFrame(apply);
+    };
+
+    apply();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      if (frame) window.cancelAnimationFrame(frame);
+    };
   }, [pathname]);
 
   React.useEffect(() => {
@@ -104,32 +136,39 @@ export function SiteHeader() {
   return (
     <>
       <header
+        ref={headerRef}
         data-sticky={!isLandingPage}
         data-scrolled={solid}
         data-overlays-hero={overlaysHero}
         className="site-header"
       >
         <Container size="wide" className="h-full">
-          <div className="flex h-full items-center justify-between gap-4">
+          {/* A 3-column grid, not flex justify-between: with justify-between,
+              a middle child only gets equal *gaps* to its unequal-width
+              neighbors (logo vs. the wider toggle+CTA cluster), which pushes
+              its visual center off the header's true center. Two equal `1fr`
+              side columns guarantee the nav's own column is centered
+              regardless of how wide either side's content is. */}
+          <div className="grid h-full grid-cols-[1fr_auto_1fr] items-center gap-4">
             <Link
               href="/"
               onClick={closeMenu}
               aria-label={`${siteConfig.name} home`}
-              className="site-header__logo shrink-0"
+              className="site-header__logo shrink-0 justify-self-start"
             >
               <Wordmark overlaysHero={overlaysHero} className="h-7 sm:h-8" />
             </Link>
 
             <nav
               aria-label="Primary"
-              className="hidden items-center gap-7 lg:flex"
+              className="hidden items-center gap-7 justify-self-center lg:flex"
             >
               {siteConfig.navItems.map((item) => (
                 <HeaderLink key={item.href} item={item} pathname={pathname} />
               ))}
             </nav>
 
-            <div className="flex items-center gap-2.5 sm:gap-4">
+            <div className="flex items-center gap-2.5 justify-self-end sm:gap-4">
               {/* The toggle is a wide 3-segment control — on anything
                   narrower than the full nav, it has nowhere to sit without
                   crowding the CTA/menu button, so it moves into the mobile
