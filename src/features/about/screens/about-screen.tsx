@@ -26,7 +26,7 @@ export function AboutScreen() {
     <Page>
       <EditorialHero
         eyebrow="About Dexta Africa"
-        title="We build for what endures."
+        title="We build for what *endures*."
         description="Dexta Africa delivers value-driven real estate solutions across development, investment, and property services."
       />
       <Section tone="surface">

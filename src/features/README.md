@@ -20,6 +20,8 @@ Current `data/` modules:
 - `features/home/data/home-page-content.ts` — the shipped home page content
 - `features/home/data/faq.ts` — the home FAQ list (`FaqItem` type lives with the
   `FaqAccordion` component it feeds)
+- `features/home/data/expertise.ts` — the expertise-marquee items (same
+  pattern: `ExpertiseMarqueeItem` type lives with `ExpertiseMarquee`)
 
 ## CMS-overridable
 

@@ -99,7 +99,7 @@ export function ConsentManager() {
       {!consentSaved && (
         <aside
           aria-label="Cookie consent"
-          className="fixed inset-x-3 bottom-3 z-[var(--layer-notice)] border border-border bg-surface-elevated p-5 text-foreground shadow-2xl sm:right-5 sm:bottom-5 sm:left-auto sm:max-w-xl sm:p-6"
+          className="fixed inset-x-3 bottom-[max(0.75rem,env(safe-area-inset-bottom))] z-[var(--layer-notice)] border border-border bg-surface-elevated p-5 text-foreground shadow-2xl sm:right-5 sm:bottom-[max(1.25rem,env(safe-area-inset-bottom))] sm:left-auto sm:max-w-xl sm:p-6"
         >
           <Stack gap="md">
             <Stack gap="xs">

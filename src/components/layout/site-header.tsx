@@ -24,12 +24,16 @@ export function SiteHeader() {
   const solid = !isLandingPage || scrolled || open;
   const overlaysHero = isLandingPage && !open && !scrolled;
 
+  const headerRef = React.useRef<HTMLElement>(null);
   const menuButtonRef = React.useRef<HTMLButtonElement>(null);
   const panelRef = React.useRef<HTMLDivElement>(null);
 
-  // Mobile menu entrance: stagger the links in when the panel opens. The
-  // resting DOM state is already full-opacity, so an interrupted tween can
-  // never leave a link stuck invisible.
+  // Mobile menu entrance: stagger the links in when the panel opens. This is
+  // a cosmetic layer only — the panel's own visibility (see `.mobile-nav` in
+  // globals.css) is plain CSS and never depends on this running, and every
+  // link's resting DOM state is already full-opacity, so a tween that gets
+  // interrupted (fast double-click, route change) can never strand a link
+  // invisible; `clearProps` also drops the inline styles once it settles.
   useGSAP(
     () => {
       if (!open) return;
@@ -46,8 +50,15 @@ export function SiteHeader() {
       }
       gsap.fromTo(
         links,
-        { y: 24, opacity: 0 },
-        { y: 0, opacity: 1, duration: 0.5, stagger: 0.06, ease: "power3.out" },
+        { y: 20, autoAlpha: 0 },
+        {
+          y: 0,
+          autoAlpha: 1,
+          duration: 0.5,
+          stagger: 0.06,
+          ease: "power3.out",
+          clearProps: "opacity,visibility,transform",
+        },
       );
     },
     { scope: panelRef, dependencies: [open] },
@@ -55,23 +66,56 @@ export function SiteHeader() {
 
   // Header stays fixed/sticky and always visible while scrolling — it's
   // the visitor's only way to navigate away from wherever they are on the
-  // page, so it never hides on scroll-down. The only thing that changes on
-  // scroll is the background/height fading in over `--header-progress`
-  // (a plain CSS transition, see globals.css) — nothing about the logo or
-  // nav links ever moves or repositions, so there's nothing here that can
+  // page, so it never hides on scroll-down. Nothing about the logo or nav
+  // links ever moves or repositions, so there's nothing here that can
   // collide with itself.
+  //
+  // The background/height/blur respond to how *far* the page has scrolled,
+  // not to crossing one fixed pixel: --header-progress is written directly
+  // to the DOM every animation frame (skipping React entirely, so scrolling
+  // never triggers a re-render), and the CSS `transition` already on it
+  // (see globals.css) smooths each rAF step into the next — so scrolling
+  // slowly reads as the header gradually committing, not snapping the
+  // instant you nudge the page. `scrolled` (React state, used for the
+  // coarser text-color/CTA-variant decisions elsewhere in this component)
+  // only flips once that progress crosses its midpoint, so it re-renders
+  // once per direction change rather than every scroll pixel.
   React.useEffect(() => {
-    const updateScrolledState = () => setScrolled(window.scrollY > 24);
-    updateScrolledState();
-    window.addEventListener("scroll", updateScrolledState, { passive: true });
-    return () => window.removeEventListener("scroll", updateScrolledState);
+    const header = headerRef.current;
+    if (!header) return;
+
+    const COMMIT_DISTANCE = 96;
+    let frame = 0;
+
+    const apply = () => {
+      frame = 0;
+      const progress = Math.min(
+        1,
+        Math.max(0, window.scrollY / COMMIT_DISTANCE),
+      );
+      header.style.setProperty("--header-progress", String(progress));
+      setScrolled(progress > 0.4);
+    };
+
+    const onScroll = () => {
+      if (!frame) frame = window.requestAnimationFrame(apply);
+    };
+
+    apply();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      if (frame) window.cancelAnimationFrame(frame);
+    };
   }, [pathname]);
 
   React.useEffect(() => {
     if (!open) return;
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
-    panelRef.current?.querySelector<HTMLAnchorElement>("a")?.focus();
+    panelRef.current
+      ?.querySelector<HTMLButtonElement>("[data-menu-close]")
+      ?.focus();
     function handleKeyDown(event: KeyboardEvent) {
       if (event.key === "Escape") {
         setOpen(false);
@@ -92,33 +136,46 @@ export function SiteHeader() {
   return (
     <>
       <header
+        ref={headerRef}
         data-sticky={!isLandingPage}
         data-scrolled={solid}
         data-overlays-hero={overlaysHero}
         className="site-header"
       >
         <Container size="wide" className="h-full">
-          <div className="flex h-full items-center justify-between gap-4">
+          {/* A 3-column grid, not flex justify-between: with justify-between,
+              a middle child only gets equal *gaps* to its unequal-width
+              neighbors (logo vs. the wider toggle+CTA cluster), which pushes
+              its visual center off the header's true center. Two equal `1fr`
+              side columns guarantee the nav's own column is centered
+              regardless of how wide either side's content is. */}
+          <div className="grid h-full grid-cols-[1fr_auto_1fr] items-center gap-4">
             <Link
               href="/"
               onClick={closeMenu}
               aria-label={`${siteConfig.name} home`}
-              className="site-header__logo shrink-0"
+              className="site-header__logo shrink-0 justify-self-start"
             >
               <Wordmark overlaysHero={overlaysHero} className="h-7 sm:h-8" />
             </Link>
 
             <nav
               aria-label="Primary"
-              className="hidden items-center gap-7 lg:flex"
+              className="hidden items-center gap-7 justify-self-center lg:flex"
             >
               {siteConfig.navItems.map((item) => (
                 <HeaderLink key={item.href} item={item} pathname={pathname} />
               ))}
             </nav>
 
-            <div className="flex items-center gap-2.5 sm:gap-4">
-              <ThemeToggle data-on-media={overlaysHero || undefined} />
+            <div className="flex items-center gap-2.5 justify-self-end sm:gap-4">
+              {/* The toggle is a wide 3-segment control — on anything
+                  narrower than the full nav, it has nowhere to sit without
+                  crowding the CTA/menu button, so it moves into the mobile
+                  menu panel instead (below) rather than squeezing in here. */}
+              <div className="hidden lg:block">
+                <ThemeToggle data-on-media={overlaysHero || undefined} />
+              </div>
 
               {!open && (
                 <ButtonLink
@@ -157,61 +214,86 @@ export function SiteHeader() {
         aria-modal="true"
         aria-label="Site navigation"
         aria-hidden={!open}
-        className={cn(
-          "fixed inset-0 z-[var(--layer-navigation)] bg-background text-foreground transition-[opacity] duration-300 ease-out",
-          open
-            ? "pointer-events-auto visible opacity-100"
-            : "pointer-events-none invisible opacity-0",
-        )}
+        data-open={open}
+        className="mobile-nav"
       >
-        <Container
-          size="wide"
-          className="site-navigation-scroll h-full overflow-y-auto pt-20 sm:pt-24"
-        >
-          <Stack gap="lg" className="min-h-full justify-between py-4 sm:py-6">
-            <nav aria-label="Site navigation links">
-              <Stack gap="none">
-                {siteConfig.navItems.map((item) => (
-                  <Link
-                    key={item.href}
-                    href={item.href as Route}
-                    data-menu-link
-                    onClick={closeMenu}
-                    aria-current={pathname === item.href ? "page" : undefined}
-                    className={cn(
-                      "group flex min-h-16 items-center justify-between border-b border-border py-3 text-navigation-display leading-none font-light tracking-navigation-display sm:min-h-20 sm:py-4 lg:min-h-24",
-                      pathname === item.href && "text-primary",
-                    )}
-                  >
-                    <span>{item.label}</span>
-                    <Icon
-                      name="arrow-right"
-                      className="text-muted-foreground transition-transform group-hover:translate-x-1 group-hover:text-primary"
-                    />
-                  </Link>
-                ))}
-              </Stack>
-            </nav>
-
-            <div className="grid gap-5 border-t border-border pt-5 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end sm:gap-8 sm:pt-6">
-              <Stack gap="sm" className="max-w-md">
-                <Eyebrow>{siteConfig.navigation.appointmentEyebrow}</Eyebrow>
-                <p className="text-sm leading-6 text-muted-foreground">
-                  {siteConfig.navigation.appointmentDescription}
-                </p>
-              </Stack>
-              <ButtonLink
-                href={siteConfig.navigation.appointmentHref}
-                size="lg"
-                onClick={closeMenu}
-                className="w-full justify-between sm:w-auto sm:min-w-52"
-              >
-                {siteConfig.navigation.appointmentCta}{" "}
-                <Icon name="arrow-right" />
-              </ButtonLink>
-            </div>
-          </Stack>
+        <Container size="wide" className="mobile-nav__bar">
+          <Link
+            href="/"
+            onClick={closeMenu}
+            aria-label={`${siteConfig.name} home`}
+            tabIndex={open ? 0 : -1}
+          >
+            <Wordmark overlaysHero={false} className="h-7" />
+          </Link>
+          <Button
+            data-menu-close
+            variant="secondary"
+            size="sm"
+            tabIndex={open ? 0 : -1}
+            className="text-control-compact tracking-control-compact uppercase"
+            onClick={closeMenu}
+            aria-label="Close navigation"
+          >
+            Close
+            <Icon name="close" size={16} />
+          </Button>
         </Container>
+
+        <div className="mobile-nav__scroll">
+          <Container size="wide">
+            <Stack gap="lg" className="py-6 sm:py-8">
+              <nav aria-label="Site navigation links">
+                <Stack gap="none">
+                  {siteConfig.navItems.map((item) => (
+                    <Link
+                      key={item.href}
+                      href={item.href as Route}
+                      data-menu-link
+                      tabIndex={open ? 0 : -1}
+                      onClick={closeMenu}
+                      aria-current={pathname === item.href ? "page" : undefined}
+                      className={cn(
+                        "group flex min-h-16 items-center justify-between border-b border-border py-3 text-navigation-display leading-none font-light tracking-navigation-display transition-colors active:bg-muted/60 sm:min-h-20 sm:py-4 lg:min-h-24",
+                        pathname === item.href && "text-primary",
+                      )}
+                    >
+                      <span>{item.label}</span>
+                      <Icon
+                        name="arrow-right"
+                        className="shrink-0 text-muted-foreground transition-transform group-hover:translate-x-1 group-hover:text-primary"
+                      />
+                    </Link>
+                  ))}
+                </Stack>
+              </nav>
+
+              <div className="flex items-center justify-between gap-4 border-t border-border pt-5">
+                <Eyebrow as="span">Appearance</Eyebrow>
+                <ThemeToggle />
+              </div>
+
+              <div className="grid gap-5 border-t border-border pt-5 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end sm:gap-8 sm:pt-6">
+                <Stack gap="sm" className="max-w-md">
+                  <Eyebrow>{siteConfig.navigation.appointmentEyebrow}</Eyebrow>
+                  <p className="text-sm leading-6 text-muted-foreground">
+                    {siteConfig.navigation.appointmentDescription}
+                  </p>
+                </Stack>
+                <ButtonLink
+                  href={siteConfig.navigation.appointmentHref}
+                  size="lg"
+                  tabIndex={open ? 0 : -1}
+                  onClick={closeMenu}
+                  className="w-full justify-between sm:w-auto sm:min-w-52"
+                >
+                  {siteConfig.navigation.appointmentCta}
+                  <Icon name="arrow-right" />
+                </ButtonLink>
+              </div>
+            </Stack>
+          </Container>
+        </div>
       </div>
     </>
   );

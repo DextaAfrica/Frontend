@@ -15,50 +15,75 @@ export type ButtonVariant =
 export type ButtonSize = "sm" | "md" | "lg" | "icon";
 
 /**
- * Every interactive state (hover, active, focus) is intentionally designed
- * per theme rather than just inheriting inverted tokens — see the
- * `--control-shadow-*` and `--control-border-strong` custom properties in
- * globals.css, which resolve to a soft neutral lift in light mode and a
- * genuine brand-tinted glow in dark mode. `group/btn` lets the trailing
- * icon nudge on hover across every variant automatically.
+ * Motion is uniform across every variant and lives here, not in globals.css:
+ *
+ * - hover      → a calm 2px rise + a softer shadow (`--control-shadow-hover`,
+ *                or `--control-shadow-glow` for the brand fills).
+ * - press      → the whole control compresses to 0.97 on a fast curve.
+ * - the trailing icon rests tucked and dimmed *behind* the label, slides
+ *   forward and brightens on hover, and gathers back to centre on press.
+ *
+ * All of it animates the `translate` / `scale` / `opacity` properties (never
+ * `transform`), so nothing fights the layout, and it is disabled wholesale
+ * under `prefers-reduced-motion` (see globals.css).
  */
-const base =
-  "group/btn relative inline-flex shrink-0 items-center justify-center gap-2 rounded-[var(--control-radius)] border text-control font-medium tracking-control transition-[color,background-color,border-color,box-shadow,transform] duration-200 ease-premium outline-none select-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:pointer-events-none disabled:translate-y-0 disabled:scale-100 disabled:border-control-disabled disabled:bg-control-disabled disabled:text-control-disabled-foreground disabled:shadow-none aria-busy:cursor-wait active:scale-[0.96] active:duration-100 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 [&_svg]:transition-transform [&_svg]:duration-200 [&_svg]:ease-premium group-hover/btn:[&_svg]:translate-x-1";
+const base = cn(
+  "group/btn relative isolate inline-flex shrink-0 items-center justify-center gap-2",
+  "rounded-[var(--control-radius)]",
+  "text-control font-medium tracking-control whitespace-nowrap",
+  "transition-[color,background-color,box-shadow,translate,scale] duration-[240ms] ease-premium",
+  "outline-none select-none",
+  "focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+  "active:scale-[0.97] active:duration-[110ms]",
+  "disabled:pointer-events-none disabled:translate-none disabled:scale-100 disabled:bg-control-disabled disabled:text-control-disabled-foreground disabled:shadow-none",
+  "aria-busy:cursor-wait",
+  // Icons: sized, non-interactive, and animated on the compositor.
+  "[&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
+  "[&_svg]:transition-[translate,opacity,scale] [&_svg]:duration-[240ms] [&_svg]:ease-premium",
+  // A trailing icon rests behind the label, then leads on interaction.
+  "[&_svg:last-child]:-translate-x-0.5 [&_svg:last-child]:opacity-70",
+  "group-hover/btn:[&_svg:last-child]:translate-x-[3px] group-hover/btn:[&_svg:last-child]:opacity-100",
+  "group-active/btn:[&_svg:last-child]:translate-x-0",
+);
 
+/**
+ * No variant uses a border — every one of them is a filled pill, and every
+ * one defines a resting fill (the "off" state) that is visibly different
+ * from its hover fill (the "on" state). A border can only ever add a
+ * hairline; a fill change is unambiguous at a glance.
+ */
 const variants: Record<ButtonVariant, string> = {
-  // Solid brand red. Light mode lifts with a soft neutral shadow; dark mode
-  // lifts into a genuine red glow — the two modes are meant to look
-  // different, not just re-colored.
+  // Solid brand red. Rest sits on a hairline shadow; hover rises into a calm
+  // red glow; press settles back flat.
   primary:
-    "border-primary bg-primary text-primary-foreground shadow-[var(--control-shadow)] hover:-translate-y-1 hover:scale-[1.02] hover:border-primary-hover hover:bg-primary-hover hover:shadow-[var(--control-shadow-glow)] active:translate-y-0 active:scale-[0.96] active:shadow-[var(--control-shadow)]",
-  // A confident outlined pill. Light mode: crisp near-black border on
-  // paper-white. Dark mode: the same border logic plus a faint frosted
-  // fill (--control-glass) that light mode doesn't have — its own
-  // deliberate dark-mode character, not an inverted clone.
+    "bg-primary text-primary-foreground shadow-[var(--control-shadow)] hover:-translate-y-0.5 hover:bg-primary-hover hover:shadow-[var(--control-shadow-glow)] active:translate-y-0 active:shadow-[var(--control-shadow)]",
+  // A muted fill at rest, firming up to a visibly darker fill on hover —
+  // the "off"/"on" contrast lives entirely in the fill, not a border.
   secondary:
-    "border-[var(--control-border-strong)] bg-[var(--control-glass)] text-foreground shadow-[var(--control-shadow)] backdrop-blur-sm hover:-translate-y-1 hover:scale-[1.02] hover:border-[var(--control-border-strong-hover)] hover:bg-control-hover hover:shadow-[var(--control-shadow-hover)] active:translate-y-0 active:bg-control-pressed",
-  // Fully inverted fill (foreground/background swap) — solid near-black on
-  // paper-white in light mode, solid near-white on near-black in dark
-  // mode. The starkest, most obviously theme-aware variant.
+    "bg-muted text-foreground hover:-translate-y-0.5 hover:bg-control-hover hover:shadow-[var(--control-shadow-hover)] active:translate-y-0 active:bg-control-pressed",
+  // Inverted fill — near-black on paper / near-white on ink.
   neutral:
-    "border-foreground bg-foreground text-background shadow-[var(--control-shadow)] hover:-translate-y-1 hover:scale-[1.02] hover:bg-foreground/85 hover:shadow-[var(--control-shadow-hover)] active:translate-y-0",
-  // For placement directly over photography/video — always a light pill
-  // regardless of site theme, turning brand-red on hover.
+    "bg-foreground text-background shadow-[var(--control-shadow)] hover:-translate-y-0.5 hover:bg-foreground/90 hover:shadow-[var(--control-shadow-hover)] active:translate-y-0 active:shadow-[var(--control-shadow)]",
+  // Sits over photography/video — a light pill that turns brand-red on hover.
   onMedia:
-    "border-brand-light bg-brand-light text-brand-dark shadow-[var(--control-shadow)] hover:-translate-y-1 hover:scale-[1.02] hover:border-primary hover:bg-primary hover:text-primary-foreground hover:shadow-[var(--control-shadow-glow)] active:translate-y-0",
+    "bg-brand-light text-brand-dark shadow-[var(--control-shadow)] hover:-translate-y-0.5 hover:bg-primary hover:text-primary-foreground hover:shadow-[var(--control-shadow-glow)] active:translate-y-0 active:shadow-[var(--control-shadow)]",
   ghost:
-    "border-transparent text-foreground shadow-none hover:bg-control-hover active:bg-control-pressed",
+    "text-foreground hover:bg-control-hover active:bg-control-pressed active:scale-[0.98]",
+  // A quiet brand-tinted fill at rest that solidifies to the full brand red
+  // on hover — the clearest possible off/on read of any variant.
   outline:
-    "border-primary/35 bg-transparent text-primary hover:-translate-y-1 hover:scale-[1.02] hover:border-primary hover:bg-primary-subtle active:translate-y-0",
+    "bg-primary-subtle text-primary hover:-translate-y-0.5 hover:bg-primary hover:text-primary-foreground hover:shadow-[var(--control-shadow-glow)] active:translate-y-0",
   destructive:
-    "border-destructive bg-destructive text-destructive-foreground shadow-[var(--control-shadow)] hover:-translate-y-1 hover:scale-[1.02] hover:brightness-90 hover:shadow-[var(--control-shadow-hover)] active:translate-y-0",
-  link: "h-auto rounded-none border-transparent p-0 text-primary underline-offset-4 hover:underline active:scale-100",
+    "bg-destructive text-destructive-foreground shadow-[var(--control-shadow)] hover:-translate-y-0.5 hover:brightness-95 hover:shadow-[var(--control-shadow-hover)] active:translate-y-0 active:shadow-[var(--control-shadow)]",
+  link: "h-auto rounded-none p-0 text-primary underline-offset-4 hover:text-primary-hover hover:underline active:scale-100 [&_svg:last-child]:opacity-100 [&_svg:last-child]:translate-x-0",
 };
+
 const sizes: Record<ButtonSize, string> = {
   sm: "h-[var(--control-height-sm)] px-[var(--control-padding-sm)] text-xs",
   md: "h-[var(--control-height-md)] px-[var(--control-padding-md)]",
   lg: "h-[var(--control-height-lg)] px-[var(--control-padding-lg)] text-sm",
-  icon: "size-[var(--control-height-md)] p-0",
+  // A single centred glyph — no tuck, a gentle grow on hover instead.
+  icon: "size-[var(--control-height-md)] p-0 [&_svg:last-child]:translate-x-0 [&_svg:last-child]:opacity-100 group-hover/btn:[&_svg:last-child]:translate-x-0 group-hover/btn:[&_svg:last-child]:scale-110",
 };
 
 export function buttonClassName({
@@ -96,7 +121,7 @@ export function Button({
       {loading && (
         <span
           aria-hidden
-          className="size-3.5 animate-spin rounded-full border border-current border-r-transparent"
+          className="size-3.5 animate-spin rounded-full border-2 border-current border-r-transparent"
         />
       )}
       {children}

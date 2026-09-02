@@ -1,5 +1,6 @@
 export * from "./cta-band";
 export * from "./editorial-hero";
+export * from "./expertise-marquee";
 export * from "./faq-accordion";
 export * from "./landing-hero";
 export * from "./media-panel";

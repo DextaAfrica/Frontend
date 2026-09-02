@@ -11,8 +11,14 @@ const sectionHeadingSchema = z.object({
 export const homePageContentSchema = z.object({
   hero: z.object({
     badge: nonEmptyString,
-    titleLines: nonEmptyStringArray,
-    description: nonEmptyString,
+    slides: z
+      .array(
+        z.object({
+          titleLines: nonEmptyStringArray,
+          description: nonEmptyString,
+        }),
+      )
+      .min(1),
     primary: z.object({ label: nonEmptyString, href: nonEmptyString }),
     secondary: z.object({ label: nonEmptyString, href: nonEmptyString }),
     video: nonEmptyString,

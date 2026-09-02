@@ -34,9 +34,12 @@ utilities) → `@layer base` and component classes. Section banners mark each pa
 - **`--brand-dark` / `--brand-dark-elevated` / `--brand-light`** are the fixed
   near-black / near-white neutrals for surfaces that never invert (footer,
   cinematic sections).
-- **Three font roles only:** `--font-display` (Bricolage Grotesque),
-  `--font-sans` (DM Sans), `--font-serif` (Playfair Display, used only by the
-  word-level `<Accent>` primitive). Each has a real fallback stack.
+- **Two typefaces.** `--font-sans` (Manrope) carries the whole UI — body,
+  controls, and every heading via `--font-display`, which is just an alias of
+  `--font-sans`. `--font-serif` (Playfair Display) is the editorial counterpoint
+  and appears in exactly two places: the `EditorialHeading` primitive (section
+  headlines) and the italic `*accent*` words (`<Accent>` / `renderWithAccents`).
+  Each has a real fallback stack.
 - **`src/config/theme.ts`** holds a small flat mirror of a few colours for the
   `<meta name="theme-color">` tags and the `global-error.tsx` crash screen, which
   render with no access to `globals.css`. Keep its `light`/`dark` tracking

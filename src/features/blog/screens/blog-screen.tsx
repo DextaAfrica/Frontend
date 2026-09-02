@@ -19,7 +19,7 @@ export function BlogScreen() {
     <Page>
       <EditorialHero
         eyebrow="Blog"
-        title="Ideas for a more considered world."
+        title="Ideas for a more considered *world*."
         description="Perspectives on architecture, material, place, culture, and the evolving meaning of home."
       />
       <Section tone="surface">

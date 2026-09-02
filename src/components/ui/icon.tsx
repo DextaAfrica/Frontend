@@ -5,6 +5,12 @@ import {
   Building2,
   ChevronDown,
   Clock,
+  Compass,
+  FileText,
+  Handshake,
+  HardHat,
+  LandPlot,
+  LineChart,
   Monitor,
   Mail,
   MapPin,
@@ -16,6 +22,8 @@ import {
   Play,
   Quote,
   Sun,
+  TrendingUp,
+  Wrench,
   X,
   type LucideProps,
 } from "lucide-react";
@@ -47,7 +55,15 @@ export type IconName =
   | "facebook"
   | "instagram"
   | "linkedin"
-  | "youtube";
+  | "youtube"
+  | "land-plot"
+  | "development"
+  | "handshake"
+  | "valuation"
+  | "advisory"
+  | "facility"
+  | "planning"
+  | "legal";
 
 export interface IconProps extends LucideProps {
   name: IconName;
@@ -86,6 +102,14 @@ const icons: Record<IconName, ComponentType<GlyphProps>> = {
   instagram: InstagramIcon,
   linkedin: LinkedInIcon,
   youtube: YouTubeIcon,
+  "land-plot": LandPlot,
+  development: HardHat,
+  handshake: Handshake,
+  valuation: TrendingUp,
+  advisory: LineChart,
+  facility: Wrench,
+  planning: Compass,
+  legal: FileText,
 };
 
 export function Icon({

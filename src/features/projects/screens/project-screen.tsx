@@ -23,8 +23,8 @@ export function ProjectScreen({ project }: { project: Project }) {
         eyebrow={`${project.name} · ${project.location}`}
         title={
           project.status === "Completed"
-            ? "An enduring expression of home."
-            : "Private by nature. Remarkable by design."
+            ? "An enduring expression of *home*."
+            : "Private by nature. *Remarkable* by design."
         }
         description={project.description}
         primary={{ label: "Register your interest", href: "/contact" }}

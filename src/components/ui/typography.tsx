@@ -6,11 +6,20 @@ import { cn } from "@/lib/utils";
  * words inside an otherwise sans headline (e.g. "Building the future of
  * *real estate*"). Never wraps a whole heading: it's a word-level accent,
  * matching the pattern used throughout the approved designs.
+ *
+ * Carries the theme's red (`--color-primary`) as a slow, continuous gradient
+ * shimmer — quiet and always-on rather than a one-shot animation, same spirit
+ * as the hero badge's light sweep (see `.hero-badge` in globals.css). Pure
+ * CSS, so it costs nothing at rest and simply becomes a flat accent color
+ * under `prefers-reduced-motion` (see `.accent-highlight` in globals.css).
  */
 export function Accent({ className, ...props }: React.ComponentProps<"span">) {
   return (
     <span
-      className={cn("font-serif font-normal italic", className)}
+      className={cn(
+        "accent-highlight font-serif font-normal italic",
+        className,
+      )}
       {...props}
     />
   );
@@ -48,6 +57,58 @@ export function renderWithAccents(text: string): React.ReactNode {
 /** Applies accent parsing only when children is a plain string. */
 function withAccents(children: React.ReactNode): React.ReactNode {
   return typeof children === "string" ? renderWithAccents(children) : children;
+}
+
+export interface AccentWord {
+  word: string;
+  accented: boolean;
+}
+
+/**
+ * Same `*word*` convention as {@link renderWithAccents}, but tokenized down
+ * to individual words rather than rendered to JSX — for callers (like the
+ * word-by-word scroll reveal) that need to wrap every word in their own
+ * element and still know which ones fall inside an accent phrase.
+ *
+ * Strips the asterisks first, tracking which character ranges they wrapped,
+ * then splits the *clean* text on whitespace — so a word touching an accent
+ * boundary with no space (`*addresses*.`) still comes out as one token
+ * ("addresses.") instead of splitting its trailing punctuation into a
+ * floating word of its own.
+ */
+export function splitAccentWords(text: string): AccentWord[] {
+  const accentRanges: Array<[number, number]> = [];
+  const pattern = new RegExp(ACCENT_PATTERN);
+  let lastIndex = 0;
+  let match: RegExpExecArray | null;
+  let clean = "";
+
+  while ((match = pattern.exec(text))) {
+    clean += text.slice(lastIndex, match.index);
+    const start = clean.length;
+    clean += match[1] ?? "";
+    accentRanges.push([start, clean.length]);
+    lastIndex = match.index + match[0].length;
+  }
+  clean += text.slice(lastIndex);
+
+  const isAccented = (start: number, end: number) =>
+    accentRanges.some(
+      ([rangeStart, rangeEnd]) => start < rangeEnd && end > rangeStart,
+    );
+
+  const tokens: AccentWord[] = [];
+  const wordPattern = /\S+/g;
+  let wordMatch: RegExpExecArray | null;
+  while ((wordMatch = wordPattern.exec(clean))) {
+    const word = wordMatch[0];
+    tokens.push({
+      word,
+      accented: isAccented(wordMatch.index, wordMatch.index + word.length),
+    });
+  }
+
+  return tokens;
 }
 
 export function Heading({
@@ -150,6 +211,11 @@ export function Eyebrow({
   );
 }
 
+/**
+ * The site's editorial voice — Playfair Display, reserved for section
+ * headlines. Roman here; an `*accent*` word inside renders in Playfair
+ * italic (see `Accent`) for a quiet emphasis rather than a font clash.
+ */
 export function EditorialHeading({
   className,
   children,
@@ -158,7 +224,7 @@ export function EditorialHeading({
   return (
     <h2
       className={cn(
-        "font-display text-editorial leading-editorial font-semibold tracking-editorial text-balance",
+        "font-serif text-editorial leading-[1.14] font-medium tracking-normal text-balance",
         className,
       )}
       {...props}

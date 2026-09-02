@@ -14,7 +14,7 @@ export function CareersScreen() {
     <Page>
       <EditorialHero
         eyebrow="Careers"
-        title="Build places that outlast us."
+        title="Build places that *outlast* us."
         description="Join a multidisciplinary team committed to thoughtful work, exacting craft, and a more meaningful built environment."
         primary={{ label: "Introduce yourself", href: "/contact" }}
       />

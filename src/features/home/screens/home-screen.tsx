@@ -1,5 +1,11 @@
 import { Page } from "@/components/layout";
-import { CtaBand, FaqAccordion, LandingHero } from "@/components/marketing";
+import {
+  CtaBand,
+  ExpertiseMarquee,
+  FaqAccordion,
+  LandingHero,
+} from "@/components/marketing";
+import { expertiseItems } from "../data/expertise";
 import { faqItems } from "../data/faq";
 import {
   BlogSection,
@@ -17,11 +23,12 @@ export function HomeScreen({ content }: { content: HomePageContent }) {
       <LandingHero {...content.hero} />
       <WhoWeAreSection content={content.intro} />
       <ServicesSection services={content.services} />
-      <StatisticsSection statistics={content.statistics} />
+      <ExpertiseMarquee eyebrow="Our expertise" items={expertiseItems} />
       <FeaturedProjectsSection
         projects={content.projects}
         heading={content.projectsSection}
       />
+      <StatisticsSection statistics={content.statistics} />
       <TestimonialSection
         testimonials={content.testimonials}
         heading={content.testimonialSection}
