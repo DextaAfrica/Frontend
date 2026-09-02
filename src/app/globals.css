@@ -589,6 +589,12 @@ body {
   background: var(--mist-soft);
 }
 
+.stat-mist-quaternary {
+  top: 10%;
+  right: 20%;
+  background: var(--mist-medium);
+}
+
 @media (min-width: 40rem) {
   .site-navigation-scroll {
     padding-bottom: max(
