@@ -6,7 +6,7 @@ import {
   FaqAccordion,
   LandingHero,
   NewsletterSection,
-  PressMarquee,
+  PressLogos,
 } from "@/components/marketing";
 import { expertiseItems } from "../data/expertise";
 import { faqItems } from "../data/faq";
@@ -25,7 +25,7 @@ export function HomeScreen({ content }: { content: HomePageContent }) {
   return (
     <Page>
       <LandingHero {...content.hero} />
-      <PressMarquee />
+      <PressLogos />
       <WhoWeAreSection content={content.intro} />
       <ServicesSection services={content.services} />
       <ExpertiseMarquee
