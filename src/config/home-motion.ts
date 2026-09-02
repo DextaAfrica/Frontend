@@ -1,15 +1,24 @@
 /** Responsive homepage motion values shared by marketing primitives and features. */
 export const homeMotion = {
   intro: {
-    revealSpan: 0.76,
-    wordTransitionSpan: 0.24,
-    mutedOpacity: 0.32,
-    smoothing: 0.14,
-    wordOffsetEm: 0.4,
-    wordBlurPx: 7,
-    viewportStart: 0.7,
-    sectionEnd: 0.02,
-    settleThreshold: 0.0005,
+    enabledMedia: "(prefers-reduced-motion: no-preference)",
+    desktopMedia: "(min-width: 64rem)",
+    /** Resting opacity of a not-yet-revealed word. */
+    mutedOpacity: 0.2,
+    /** How far each word rises into place, in em. */
+    wordOffsetEm: 0.5,
+    /**
+     * Fraction of the whole scrubbed range one word's transition occupies —
+     * lower means a cleaner cascade with fewer words mid-move at once (0.24
+     * had ~8 overlapping and read as mush).
+     */
+    wordTransitionSpan: 0.14,
+    /* Desktop: the stage is a full viewport tall. The reveal runs from the
+       copy entering (top 75%) to it sitting roughly centred (top 12%), so it
+       finishes while the paragraph is in the comfortable reading zone, not as
+       it leaves. Compact: a tighter range keyed to the shorter section. */
+    desktop: { start: "top 75%", end: "top 12%", scrub: 0.8 },
+    compact: { start: "top 82%", end: "top 24%", scrub: 0.5 },
   },
   services: {
     enabledMedia: "(prefers-reduced-motion: no-preference)",

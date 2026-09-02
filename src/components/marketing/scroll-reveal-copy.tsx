@@ -19,23 +19,21 @@ export interface ScrollRevealCopyProps extends Omit<
 }
 
 /**
- * Word-by-word scroll reveal: each word rises into place, sharpens out of a
- * blur, and brightens from a dim resting opacity — three properties moving
- * together rather than a flat opacity fade, which is what actually reads as
- * a deliberate reveal instead of a fade wearing one as a label. A `*word*`
- * (or `*multi word phrase*`) inside a paragraph gets the site's red accent
- * treatment, same convention as every heading — see <Accent>.
+ * Word-by-word scroll reveal: each word rises into place and brightens from a
+ * dim resting opacity as the copy scrolls through its reading zone — two
+ * compositor-cheap properties (opacity + translate), staggered into a clean
+ * cascade rather than a flat block fade. A `*word*` (or `*multi word phrase*`)
+ * inside a paragraph gets the site's red accent treatment — see <Accent>.
  *
- * Driven by GSAP ScrollTrigger's own scrub + stagger rather than a bespoke
- * scroll-listener/rAF/lerp loop, so this section finally shares the same
- * animation engine as the hero, the services stack, and every other
- * scroll-tied piece of this site instead of hand-rolling its own.
+ * Driven by GSAP ScrollTrigger's scrub + stagger. On desktop the stage is a
+ * full viewport tall so the reveal has real scroll room and finishes while
+ * the paragraph sits centred; on compact viewports the range is tighter,
+ * keyed to the shorter section (see homeMotion.intro).
  *
- * The resting/no-JS state is fully visible (see .scroll-reveal-word in
- * globals.css) — GSAP's `gsap.set` establishes the dim, blurred starting
- * point only once it actually runs, inside the reduced-motion check below.
- * Same rule as the hero and editorial banner: a failed or skipped animation
- * leaves the copy simply visible, never stuck dim.
+ * The resting / no-JS / reduced-motion state is fully visible (see
+ * .scroll-reveal-word in globals.css) — `gsap.set` establishes the dim
+ * starting point only once the animation actually runs. A failed or skipped
+ * animation leaves the copy simply visible, never stuck dim.
  */
 export function ScrollRevealCopy({
   heading,
@@ -61,39 +59,52 @@ export function ScrollRevealCopy({
       const motion = homeMotion.intro;
       const mm = gsap.matchMedia();
 
-      mm.add("(prefers-reduced-motion: no-preference)", () => {
-        gsap.set(animated, {
-          opacity: motion.mutedOpacity,
-          y: `${motion.wordOffsetEm}em`,
-          filter: `blur(${motion.wordBlurPx}px)`,
-        });
+      mm.add(
+        {
+          motion: motion.enabledMedia,
+          desktop: motion.desktopMedia,
+        },
+        (context) => {
+          const conditions = context.conditions as
+            { motion?: boolean; desktop?: boolean } | undefined;
+          if (!conditions?.motion) return;
+          const profile = conditions.desktop ? motion.desktop : motion.compact;
 
-        // A single word's own transition should span wordTransitionSpan of
-        // the total scrubbed range, however many words there are — so the
-        // per-word stagger step is derived from the word count rather than
-        // fixed, keeping that proportion true for any paragraph length.
-        const wordDuration = 1;
-        const totalSpan = wordDuration / motion.wordTransitionSpan;
-        const stagger =
-          animated.length > 1
-            ? (totalSpan - wordDuration) / (animated.length - 1)
-            : 0;
+          // Only opacity + transform per word — no `filter: blur`. Several
+          // words are always mid-transition under a scrub, and animating
+          // `filter` on each one is a paint every frame; opacity/translate
+          // stay on the compositor and read just as clearly as a reveal.
+          gsap.set(animated, {
+            opacity: motion.mutedOpacity,
+            y: `${motion.wordOffsetEm}em`,
+          });
 
-        gsap.to(animated, {
-          opacity: 1,
-          y: 0,
-          filter: "blur(0px)",
-          ease: "none",
-          duration: wordDuration,
-          stagger: { each: stagger, from: "start" },
-          scrollTrigger: {
-            trigger: stage,
-            start: "top 80%",
-            end: "top 20%",
-            scrub: 0.6,
-          },
-        });
-      });
+          // A single word's own transition should span wordTransitionSpan of
+          // the total scrubbed range, however many words there are — so the
+          // per-word stagger step is derived from the word count rather than
+          // fixed, keeping that proportion true for any paragraph length.
+          const wordDuration = 1;
+          const totalSpan = wordDuration / motion.wordTransitionSpan;
+          const stagger =
+            animated.length > 1
+              ? (totalSpan - wordDuration) / (animated.length - 1)
+              : 0;
+
+          gsap.to(animated, {
+            opacity: 1,
+            y: 0,
+            ease: "none",
+            duration: wordDuration,
+            stagger: { each: stagger, from: "start" },
+            scrollTrigger: {
+              trigger: stage,
+              start: profile.start,
+              end: profile.end,
+              scrub: profile.scrub,
+            },
+          });
+        },
+      );
 
       return () => mm.revert();
     },
