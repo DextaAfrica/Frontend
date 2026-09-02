@@ -910,7 +910,7 @@ dialog[open]::backdrop {
   display: flex;
   align-items: center;
   gap: 1.25rem;
-  padding-block: 1.5rem;
+  padding-block: 1.15rem;
   border-bottom: 1px solid var(--border);
 }
 
@@ -1898,97 +1898,149 @@ dialog[open]::backdrop {
   }
 }
 
-/* --- Press logos ("As featured in") ---------------------------------------
- * Deliberately not a text ticker: one quiet label, then a row of real logo
- * tiles built on the site's own `Card` surface. See press-logos.tsx for the
- * DOM structure and the entrance/hover choreography. */
-.press-logos {
+/* --- Press marquee ("As featured in") -----------------------------------
+ * A slim credibility strip directly under the hero: one quiet mono label,
+ * then a continuously scrolling row of press marks. Same seamless-loop
+ * mechanism as the expertise marquee (real list + aria-hidden copies,
+ * track translated exactly -50%), pure CSS scroll, edges masked. Kept
+ * deliberately short — it earns its place by being glanceable, not tall. */
+.press-marquee {
   position: relative;
   isolation: isolate;
+  overflow: hidden;
+  padding-block: clamp(1.75rem, 3vw, 2.5rem);
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+}
+
+.press-marquee__inner {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 2.25rem;
-  padding-block: clamp(3rem, 5vw, 4rem);
-  background: var(--surface);
+  gap: 1.25rem;
 }
 
-.press-logos__signal {
-  display: flex;
+.press-marquee__signal {
+  display: inline-flex;
   align-items: center;
-  justify-content: center;
-  gap: 0.625rem;
+  gap: 0.5rem;
 }
 
-.press-logos__dot {
+.press-marquee__dot {
   flex-shrink: 0;
-  width: 0.5rem;
-  height: 0.5rem;
+  width: 0.4375rem;
+  height: 0.4375rem;
   border-radius: 999px;
   background: var(--primary);
-  box-shadow: 0 0 0 4px rgb(from var(--primary) r g b / 0.2);
+  box-shadow: 0 0 0 3px rgb(from var(--primary) r g b / 0.2);
   animation: expertise-pulse 2.2s ease-in-out infinite;
 }
 
-.press-logos__label {
+.press-marquee__label {
   font-family: var(--font-mono);
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   font-weight: 600;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.14em;
   color: var(--muted-foreground);
   text-transform: uppercase;
 }
 
-.press-logos__grid {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: stretch;
-  justify-content: center;
-  gap: 1rem;
+.press-marquee__viewport {
+  position: relative;
   width: 100%;
+  overflow: hidden;
+  mask-image: linear-gradient(
+    to right,
+    transparent,
+    black 10%,
+    black 90%,
+    transparent
+  );
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent,
+    black 10%,
+    black 90%,
+    transparent
+  );
 }
 
-.press-logos__tile {
-  width: 9.5rem;
+/* No flex `gap` here on purpose: the seamless -50% loop needs the track's
+   second half to be a pixel-exact copy of the first, so the spacing lives
+   as symmetric padding on each item instead (same reason the expertise
+   marquee spaces its items this way). */
+.press-marquee__track {
+  display: flex;
+  width: max-content;
+  align-items: center;
+  animation: press-marquee-scroll 42s linear infinite;
+}
+
+.press-marquee:hover .press-marquee__track {
+  animation-play-state: paused;
+}
+
+.press-marquee__item {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  padding-inline: clamp(1.5rem, 3.2vw, 2.75rem);
+}
+
+.press-marquee__logo {
+  width: auto;
+  height: 1.375rem;
+  object-fit: contain;
+  filter: grayscale(1);
+  opacity: 0.5;
+  transition:
+    opacity 300ms var(--motion-ease-premium),
+    filter 300ms var(--motion-ease-premium);
 }
 
 @media (min-width: 40rem) {
-  .press-logos__tile {
-    width: 10.5rem;
+  .press-marquee__logo {
+    height: 1.625rem;
   }
 }
 
-.press-logos__card {
-  display: flex;
-  height: 6rem;
-  width: 100%;
-  align-items: center;
-  justify-content: center;
-  padding: 1.25rem;
-}
-
-.press-logos__mark {
-  position: relative;
-  width: 100%;
-  height: 100%;
-}
-
-.press-logos__image {
-  filter: grayscale(1);
-  opacity: 0.6;
-  transition:
-    opacity 400ms var(--motion-ease-premium),
-    filter 400ms var(--motion-ease-premium);
-}
-
-.press-logos__card:hover .press-logos__image {
+.press-marquee__item:hover .press-marquee__logo {
   filter: grayscale(0);
   opacity: 1;
 }
 
+/* Black source files need inverting to stay legible on the dark theme. */
+.dark .press-marquee__logo {
+  filter: grayscale(1) invert(1) brightness(1.7);
+  opacity: 0.68;
+}
+
+.dark .press-marquee__item:hover .press-marquee__logo {
+  filter: invert(1) brightness(2);
+  opacity: 1;
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .press-logos__dot {
+  .press-marquee__track {
     animation: none;
+    flex-wrap: wrap;
+    justify-content: center;
+    row-gap: 1.25rem;
+  }
+  .press-marquee__track [data-duplicate] {
+    display: none;
+  }
+  .press-marquee__dot {
+    animation: none;
+  }
+}
+
+@keyframes press-marquee-scroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
   }
 }
 

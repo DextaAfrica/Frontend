@@ -245,7 +245,7 @@ export function FeaturedProjectsSection({
         />
 
         {/* Desktop: index list + sticky crossfading stage. */}
-        <div className="mt-14 hidden gap-16 lg:grid lg:grid-cols-[1fr_1.15fr] lg:items-start">
+        <div className="mt-10 hidden gap-12 lg:grid lg:grid-cols-[1fr_1.1fr] lg:items-start">
           <div ref={listRef} className="relative">
             <span
               ref={indicatorRef}
@@ -285,7 +285,7 @@ export function FeaturedProjectsSection({
               {heading.cardCtaLabel}
             </div>
 
-            <div className="mt-10 flex items-center justify-between gap-6 border-t border-border pt-8">
+            <div className="mt-8 flex items-center justify-between gap-6 border-t border-border pt-6">
               <span className="font-mono text-xs tracking-project-index text-muted-foreground uppercase">
                 {String(projects.length).padStart(2, "0")} developments and
                 counting
@@ -299,7 +299,7 @@ export function FeaturedProjectsSection({
 
           <div
             ref={stageRef}
-            className="project-stage relative aspect-[4/3] overflow-hidden rounded-panel bg-muted lg:sticky lg:top-28"
+            className="project-stage relative aspect-[3/2] max-h-[30rem] overflow-hidden rounded-panel bg-muted lg:sticky lg:top-28"
           >
             {projects.map((project, index) => (
               <div
@@ -338,11 +338,11 @@ export function FeaturedProjectsSection({
         {/* Mobile / no fine pointer: a plain stacked list, each with its own
             strong scroll-reveal entrance — no hover to drive here, so the
             crossfade stage and follow pill simply don't apply. */}
-        <RevealGroup className="mt-14 flex flex-col gap-12 lg:hidden">
+        <RevealGroup className="mt-10 flex flex-col gap-10 lg:hidden">
           {projects.map((project, index) => (
             <RevealItem as="article" key={project.id}>
               <Link href={project.href} className="group block">
-                <div className="relative aspect-[4/3] overflow-hidden rounded-panel bg-muted">
+                <div className="relative aspect-[3/2] overflow-hidden rounded-panel bg-muted">
                   <Image
                     src={project.image}
                     alt={project.name}
