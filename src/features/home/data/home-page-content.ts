@@ -61,7 +61,7 @@ export const homePageContent = {
     },
   ],
   projectsSection: {
-    eyebrow: "Featured Projects",
+    eyebrow: "Our Portfolio",
     title: "Projects that speak for themselves",
     ctaLabel: "View all projects",
     ctaHref: "/projects",
@@ -70,20 +70,24 @@ export const homePageContent = {
   projects: [
     {
       id: "dlodge-apartment",
-      name: "D'lodge Apartment",
-      location: "Lekki Peninsula 2",
+      name: "D'Lodge Apartments",
+      location: "Lekki Peninsula 2, Ajah",
       status: "Now selling",
+      description:
+        "Ultra-premium 1 & 2 bedroom apartments in the heart of Lekki, built around smart-home technology, world-class amenities, and a genuinely prime address.",
       image: "/images/project-dlodge.jpg",
-      href: "/projects",
+      href: "/projects/dlodge-apartment",
       layout: "feature",
     },
     {
       id: "olumo-county-estate",
       name: "Olumo County Estate",
-      location: "Kobape, Ogun state",
+      location: "Kobape, Ogun State",
       status: "Available plots",
+      description:
+        "Fully serviced plots inside a secured, master-planned estate — roads, drainage, and utilities already in place before you break ground.",
       image: "/images/project-olumo.jpg",
-      href: "/projects",
+      href: "/projects/olumo-county-estate",
       layout: "compact",
     },
     {
@@ -91,8 +95,10 @@ export const homePageContent = {
       name: "Kingsway Estate",
       location: "Ijebu-Ode, Ogun State",
       status: "Now selling",
+      description:
+        "A gated residential estate built around wide roads, green spaces, and long-term value for families and investors alike.",
       image: "/images/project-kingsway.jpg",
-      href: "/projects",
+      href: "/projects/kingsway-estate",
       layout: "compact",
     },
   ],

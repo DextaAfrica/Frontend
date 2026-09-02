@@ -52,6 +52,7 @@ export const homePageContentSchema = z.object({
         name: nonEmptyString,
         location: nonEmptyString,
         status: nonEmptyString,
+        description: nonEmptyString,
         image: nonEmptyString,
         href: nonEmptyString,
         layout: z.enum(["feature", "compact"]),

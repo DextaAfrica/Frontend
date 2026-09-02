@@ -155,10 +155,7 @@
   --width-divider: 3.25rem;
   --space-section-editorial: clamp(5rem, 8.75vw, 8rem);
   --layout-hero-cta: 10.625rem;
-  --layout-projects-cta: 13.875rem;
   --layout-project-mosaic-height: clamp(36rem, 52vw, 46rem);
-  --layout-project-feature-mobile-height: 32rem;
-  --layout-project-compact-mobile-height: 21rem;
   --layout-newsletter-title: 28.8125rem;
   --layout-newsletter-button: 8.875rem;
   --layout-newsletter-card-width: 19.4375rem;
@@ -239,13 +236,18 @@
   --space-blog-row: 3.25rem;
   --elevation-service-panel: 0 12px 32px rgb(20 18 14 / 0.12);
   --elevation-service-row: 0 6px 20px rgb(20 18 14 / 0.1);
-  --motion-project-media: 900ms;
-  --transform-project-media-scale: 1.025;
   --layer-header: 70;
   --layer-notice: 80;
   /* Above the header and the consent notice: while the mobile menu is open
      it is the only thing on screen, full-bleed and opaque. */
   --layer-navigation: 90;
+
+  /* -- About page ------------------------------------------------------- */
+  --type-about-statement: clamp(1.5rem, 2.6vw, 2.5rem);
+  --type-ceo-kicker: clamp(1.375rem, 2.4vw, 2rem);
+  --layout-about-hero-media: clamp(20rem, 42vw, 34rem);
+  --layout-ceo-portrait: clamp(17rem, 32vw, 25rem);
+  --space-about: clamp(4.5rem, 9vw, 8rem);
 }
 
 /* ===========================================================================
@@ -414,11 +416,11 @@
   --container-newsletter-copy: var(--width-newsletter-copy);
   --container-newsletter-title: var(--layout-newsletter-title);
   --width-hero-cta: var(--layout-hero-cta);
-  --width-projects-cta: var(--layout-projects-cta);
   --width-newsletter-button: var(--layout-newsletter-button);
   --width-newsletter-card: var(--layout-newsletter-card-width);
   --height-newsletter-card: var(--layout-newsletter-card-height);
   --height-newsletter-input: var(--layout-newsletter-input-height);
+  --height-mosaic: var(--layout-project-mosaic-height);
   --height-service-panel: var(--layout-service-panel-height);
   --min-height-page-state: var(--layout-page-state-min-height);
   --min-height-article-media: var(--layout-article-media-min-height);
@@ -444,9 +446,11 @@
   --radius-service-panel: var(--shape-service-panel);
   --radius-panel: var(--shape-panel);
   --radius-testimonial-avatar: var(--shape-testimonial-avatar);
-  --duration-project-media: var(--motion-project-media);
-  --scale-project-media: var(--transform-project-media-scale);
   --shadow-service-panel: var(--elevation-service-panel);
+
+  --height-about-hero-media: var(--layout-about-hero-media);
+  --container-ceo-portrait: var(--layout-ceo-portrait);
+  --spacing-about: var(--space-about);
 }
 
 /* ===========================================================================
@@ -844,21 +848,19 @@ dialog[open]::backdrop {
   overflow: hidden;
 }
 
+/* --- Project mosaic ----------------------------------------------------------
+   Several projects at once, in the asymmetric feature/compact grid the
+   client specifically asked to keep — elevated with the same glass-badge
+   and frosted-panel language the rest of the site now uses. One column,
+   stacked, on mobile (each card sized by aspect-ratio, not a fixed height);
+   the true mosaic only assembles at md+. */
 .project-mosaic {
   grid-auto-flow: dense;
 }
 
-.project-card-feature {
-  height: var(--layout-project-feature-mobile-height);
-}
-
-.project-card-compact {
-  height: var(--layout-project-compact-mobile-height);
-}
-
 @media (min-width: 48rem) {
   .project-mosaic {
-    height: var(--layout-project-mosaic-height);
+    height: var(--height-mosaic);
   }
 
   .project-card-feature,
@@ -867,15 +869,68 @@ dialog[open]::backdrop {
   }
 }
 
-.project-card-panel {
-  border-top: 0.1875rem solid var(--primary);
-  transform: none;
-  box-shadow: 0 -1rem 2.5rem rgb(0 0 0 / 0.16);
+/* The "Now Selling" chip: a glass shimmer, reused wherever a project's live
+   status needs to sit directly on top of its photography (this grid, the
+   product-listing detail pages). */
+.project-badge {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
 }
 
-.project-card-shade {
-  opacity: 1;
-  transition: opacity var(--motion-base) var(--motion-ease-premium);
+.project-badge::after {
+  content: "";
+  position: absolute;
+  inset-block: -20%;
+  width: 45%;
+  background: linear-gradient(
+    105deg,
+    transparent,
+    rgb(255 255 255 / 0.45),
+    transparent
+  );
+  transform: translateX(-160%) skewX(-12deg);
+  animation: hero-badge-shimmer 3.8s ease-in-out infinite;
+  animation-delay: 1.4s;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .project-badge::after {
+    animation: none;
+    display: none;
+  }
+}
+
+.project-card-media img {
+  animation: hero-kenburns 24s var(--motion-ease-premium) alternate infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .project-card-media img {
+    animation: none;
+  }
+}
+
+/* A frosted-glass panel over the bottom of each card's photo — a soft
+   top-edge highlight plus a deep drop shadow is what reads as "glass"
+   rather than just a dark scrim. Collapsed to almost nothing on a
+   hover-capable pointer (see below), the red top edge is the one sliver
+   that's always visible — the brand-accent line the client's original grid
+   used, kept exactly. */
+.project-card-panel {
+  border-top: 0.1875rem solid var(--primary);
+  background: linear-gradient(
+    165deg,
+    rgb(255 255 255 / 0.16),
+    rgb(255 255 255 / 0.05)
+  );
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.22),
+    0 -1rem 2.5rem rgb(0 0 0 / 0.16);
+  backdrop-filter: blur(20px) saturate(150%);
+  -webkit-backdrop-filter: blur(20px) saturate(150%);
+  transform: translateY(0);
 }
 
 @media (hover: hover) and (pointer: fine) {
@@ -887,17 +942,6 @@ dialog[open]::backdrop {
 
   .project-card:is(:hover, :focus-within) .project-card-panel {
     transform: none;
-  }
-
-  .project-card:is(:hover, :focus-within) .project-card-shade {
-    opacity: 0.65;
-  }
-}
-
-@media (min-width: 48rem) {
-  .project-card-feature .project-card-panel {
-    right: auto;
-    width: min(82%, 34rem);
   }
 }
 
@@ -911,6 +955,33 @@ dialog[open]::backdrop {
 
 .project-card-action:hover {
   transform: translateY(-0.125rem);
+}
+
+/* --- Project gallery (product-listing style) -------------------------------
+   The thumbnail rail: a plain photo at rest, a visible ring plus a slight
+   lift the moment it's the one showing in the primary frame. */
+.project-gallery-thumb {
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+  opacity: 0.6;
+  transition:
+    outline-color var(--motion-fast) var(--motion-ease-premium),
+    opacity var(--motion-fast) var(--motion-ease-premium),
+    transform var(--motion-fast) var(--motion-ease-premium);
+}
+
+.project-gallery-thumb:hover {
+  opacity: 1;
+}
+
+.project-gallery-thumb[data-active="true"] {
+  outline-color: var(--primary);
+  opacity: 1;
+  transform: translateY(-2px);
+}
+
+.project-gallery-thumb:focus-visible {
+  outline-color: var(--ring);
 }
 
 .blog-media {
@@ -1752,6 +1823,290 @@ dialog[open]::backdrop {
   50% {
     opacity: 0.55;
     transform: scale(0.82);
+  }
+}
+
+/* ===========================================================================
+   4b-about. ABOUT PAGE — hero collage, editorial statement, mission/vision,
+   journey rail, CEO letter, Dexta Clan band, team grid. Every colour resolves
+   through a semantic token so light and dark both work with no per-theme
+   rule beyond the two signature/plaque fixes at the end. GSAP-driven pieces
+   gate themselves on prefers-reduced-motion in JS; the CSS-only motion is
+   neutralised in the reduced-motion block below.
+   =========================================================================== */
+.about-hero__glow {
+  background: radial-gradient(
+    circle at 22% 20%,
+    var(--primary-subtle),
+    transparent 42%
+  );
+}
+
+/* Two overlapping framed photos. The rear plate is nudged out from behind
+   the front one; on narrow viewports they stack with a smaller offset. */
+.about-hero__collage {
+  position: relative;
+  isolation: isolate;
+}
+
+.about-hero__plate {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--shape-panel);
+  background: var(--muted);
+  box-shadow: var(--card-shadow);
+}
+
+.about-hero__plate img {
+  object-fit: cover;
+}
+
+.about-hero__plate--rear {
+  position: absolute;
+  right: -8%;
+  bottom: -14%;
+  width: 58%;
+  border: 4px solid var(--background);
+  z-index: -1;
+}
+
+@media (max-width: 47.999rem) {
+  .about-hero__plate--rear {
+    right: -4%;
+    bottom: -10%;
+    width: 52%;
+  }
+}
+
+/* The "About Us" closing line — set apart from the reveal-copy body above it,
+   larger and in the editorial serif, carrying the italic accent. */
+.about-statement__kicker {
+  font-family: var(--font-serif);
+  font-size: var(--type-about-statement);
+  font-weight: 500;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+}
+
+.mission-vision__panel {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: var(--shape-panel);
+  background: var(--surface-elevated);
+}
+
+.mission-vision__media {
+  position: relative;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  background: var(--muted);
+}
+
+.mission-vision__media img {
+  object-fit: cover;
+  transition: transform 900ms var(--motion-ease-premium);
+}
+
+.mission-vision__panel:hover .mission-vision__media img {
+  transform: scale(1.04);
+}
+
+/* --- Our journey (dark band) --------------------------------------------- */
+.about-journey__rail {
+  position: relative;
+  flex: none;
+  width: 2px;
+  align-self: stretch;
+  background: rgb(from var(--brand-light) r g b / 0.16);
+}
+
+/* Fill scaled by --journey-progress (0 → 1), set by GSAP ScrollTrigger.
+   Defaults to 1 so a no-JS / reduced-motion render shows the rail complete. */
+.about-journey__rail::after {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 100%;
+  background: var(--primary);
+  transform: scaleY(var(--journey-progress, 1));
+  transform-origin: top;
+}
+
+.about-journey__marker {
+  position: relative;
+  flex: none;
+  width: 0.75rem;
+  height: 0.75rem;
+  margin-top: 0.35rem;
+  border-radius: 999px;
+  background: var(--primary);
+  box-shadow: 0 0 0 4px rgb(from var(--primary) r g b / 0.22);
+}
+
+/* --- CEO letter --------------------------------------------------------- */
+.ceo-letter {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background: var(--surface);
+}
+
+.ceo-letter__texture {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  object-fit: cover;
+  opacity: 0.05;
+  pointer-events: none;
+}
+
+.ceo-letter__portrait {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--shape-panel);
+  background: var(--muted);
+  box-shadow: var(--card-shadow);
+  clip-path: inset(0 0 0 0);
+}
+
+.ceo-letter__portrait img {
+  object-fit: cover;
+}
+
+/* A deliberately paper-toned plaque so the signature reads the same in both
+   themes — a scanned ink signature can't be recoloured reliably, and a bare
+   PNG would vanish (or box) on the dark surface. */
+.ceo-letter__plaque {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  align-self: start;
+  padding: 1rem 1.5rem;
+  border-radius: var(--shape-panel);
+  background: var(--brand-light);
+  color: var(--brand-dark);
+  box-shadow: var(--control-shadow);
+}
+
+.ceo-letter__signature {
+  width: auto;
+  height: 3.25rem;
+  object-fit: contain;
+  object-position: left center;
+  mix-blend-mode: multiply;
+}
+
+.ceo-letter__kicker {
+  font-family: var(--font-serif);
+  font-size: var(--type-ceo-kicker);
+  font-weight: 500;
+  line-height: 1.2;
+  text-wrap: balance;
+}
+
+/* --- Dexta Clan band --------------------------------------------------- */
+.dexta-clan {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background: var(--brand-dark);
+  color: var(--brand-light);
+}
+
+.dexta-clan__glow {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: radial-gradient(
+    ellipse 70% 60% at 15% 0%,
+    oklch(from var(--primary) l c h / 0.32),
+    transparent 60%
+  );
+  pointer-events: none;
+}
+
+.dexta-clan__dot {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 999px;
+  background: var(--primary);
+  box-shadow: 0 0 0 4px rgb(from var(--primary) r g b / 0.25);
+  animation: expertise-pulse 2.2s ease-in-out infinite;
+}
+
+.dexta-clan__benefit {
+  display: flex;
+  gap: 0.875rem;
+  align-items: flex-start;
+  padding: 1rem 0;
+  border-top: 1px solid rgb(from var(--brand-light) r g b / 0.14);
+}
+
+.dexta-clan__benefit svg {
+  flex: none;
+  margin-top: 0.15rem;
+  color: var(--primary);
+}
+
+/* --- Team grid -------------------------------------------------------- */
+.about-team__card {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: var(--shape-panel);
+  background: var(--surface-elevated);
+  transition:
+    transform 500ms var(--motion-ease-premium),
+    border-color 500ms var(--motion-ease-premium),
+    box-shadow 500ms var(--motion-ease-premium);
+}
+
+.about-team__card:hover {
+  transform: translateY(-0.35rem);
+  border-color: rgb(from var(--primary) r g b / 0.35);
+  box-shadow: var(--card-shadow);
+}
+
+.about-team__media {
+  position: relative;
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  background: var(--muted);
+}
+
+.about-team__media img {
+  object-fit: cover;
+  transition: transform 900ms var(--motion-ease-premium);
+}
+
+.about-team__card:hover .about-team__media img {
+  transform: scale(1.05);
+}
+
+.dark .ceo-letter__signature {
+  mix-blend-mode: normal;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .about-journey__rail::after {
+    transform: scaleY(1);
+  }
+  .ceo-letter__portrait {
+    clip-path: none;
+  }
+  .dexta-clan__dot {
+    animation: none;
+  }
+  .mission-vision__panel:hover .mission-vision__media img,
+  .about-team__card:hover .about-team__media img {
+    transform: none;
+  }
+  .about-team__card:hover {
+    transform: none;
   }
 }
 

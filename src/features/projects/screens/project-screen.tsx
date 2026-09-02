@@ -1,115 +1,101 @@
 import { Grid, Page, Section, Stack } from "@/components/layout";
 import {
+  CtaBand,
   EditorialHero,
   MarketingHeading,
-  MediaPanel,
-  QuoteBlock,
+  ProjectGallery,
 } from "@/components/marketing";
 import type { Project } from "@/components/marketing";
-import {
-  Badge,
-  ButtonLink,
-  Card,
-  CardContent,
-  CardHeading,
-  Text,
-} from "@/components/ui";
-import { residences } from "../data/residences";
+import { Badge, Icon, type IconName } from "@/components/ui";
 
+const factIcons: readonly IconName[] = [
+  "architecture",
+  "badge-check",
+  "system",
+  "pin",
+];
+
+// A project without real campaign copy of its own still needs a title for
+// its hero — this is deliberately generic marketing language, never a
+// factual claim, so it's safe to reuse across any project that hasn't
+// supplied a `tagline` yet.
+const fallbackTagline = (status: string) =>
+  status === "Completed"
+    ? "An enduring expression of *home*."
+    : "Private by nature. *Remarkable* by design.";
+
+/**
+ * A project's own page — a product-listing page for real estate: hero,
+ * then (only when the project actually has the material) a facts strip and
+ * a proper photo gallery, closing on a CTA. Every section past the hero is
+ * conditional on the project actually having that content — no invented
+ * pricing, unit counts, or amenities standing in for a project that hasn't
+ * supplied them.
+ */
 export function ProjectScreen({ project }: { project: Project }) {
+  const hasFacts =
+    Boolean(project.priceFrom) || Boolean(project.features?.length);
+  const hasGallery = Boolean(project.gallery?.length);
+
   return (
     <Page>
       <EditorialHero
         eyebrow={`${project.name} · ${project.location}`}
-        title={
-          project.status === "Completed"
-            ? "An enduring expression of *home*."
-            : "Private by nature. *Remarkable* by design."
-        }
+        title={project.tagline ?? fallbackTagline(project.status)}
         description={project.description}
         primary={{ label: "Register your interest", href: "/contact" }}
-        secondary={{ label: "View residences", href: "#residences" }}
+        secondary={
+          hasGallery ? { label: "View gallery", href: "#gallery" } : undefined
+        }
       />
-      <Section tone="surface">
-        <Grid columns="two" gap="xl" className="items-center">
-          <MediaPanel
-            src={project.image}
-            label={`${project.name} arrival`}
-            tone="ruby"
-            className="min-h-development-hero"
-          />
+
+      {hasFacts && (
+        <Section tone="surface" spacing="sm">
           <Stack gap="lg">
-            <Badge>{project.status}</Badge>
-            <MarketingHeading
-              eyebrow="The residence"
-              title="Composed around how you live."
-            />
-            <Text>
-              Deep terraces, full-height glazing, and carefully framed views
-              create homes that feel open yet protected. Natural stone, warm
-              timber, and crafted metalwork bring calm material richness.
-            </Text>
-            <Grid columns="two" gap="sm">
-              <p>
-                <strong>28</strong>
-                <br />
-                <span className="text-sm text-muted-foreground">
-                  Private residences
-                </span>
-              </p>
-              <p>
-                <strong>2028</strong>
-                <br />
-                <span className="text-sm text-muted-foreground">
-                  Anticipated completion
-                </span>
-              </p>
-            </Grid>
+            <div className="flex flex-wrap items-center gap-4">
+              <Badge>{project.status}</Badge>
+              {project.priceFrom && (
+                <p className="font-display text-lg font-semibold text-primary">
+                  {project.priceFrom}
+                </p>
+              )}
+            </div>
+            {project.features && project.features.length > 0 && (
+              <Grid columns="four" gap="lg">
+                {project.features.map((feature, index) => (
+                  <div key={feature} className="flex items-start gap-3">
+                    <span className="mt-0.5 flex size-9 shrink-0 items-center justify-center rounded-full bg-primary-subtle text-primary">
+                      <Icon
+                        name={
+                          factIcons[index % factIcons.length] ?? "badge-check"
+                        }
+                        size={18}
+                      />
+                    </span>
+                    <p className="text-sm text-foreground">{feature}</p>
+                  </div>
+                ))}
+              </Grid>
+            )}
           </Stack>
-        </Grid>
-      </Section>
-      <Section id="residences">
-        <Stack gap="2xl">
-          <MarketingHeading
-            eyebrow="Residences"
-            title="Space for every chapter."
-          />
-          <Grid columns="four">
-            {residences.map((item) => (
-              <Card key={item.name}>
-                <CardContent className="p-6">
-                  <Stack gap="sm">
-                    <CardHeading>{item.name}</CardHeading>
-                    <Text className="text-sm">{item.area}</Text>
-                    <p className="font-semibold text-primary">{item.price}</p>
-                  </Stack>
-                </CardContent>
-              </Card>
-            ))}
-          </Grid>
-          <ButtonLink href="/contact" size="lg" className="mx-auto">
-            Request availability
-          </ButtonLink>
-        </Stack>
-      </Section>
-      <QuoteBlock
-        quote="Privacy is the ultimate luxury: space, light, calm, and the freedom to live entirely at your own rhythm."
-        author={project.name}
-        role="Design vision"
+        </Section>
+      )}
+
+      {hasGallery && project.gallery && (
+        <Section id="gallery">
+          <Stack gap="xl">
+            <MarketingHeading eyebrow="Gallery" title="Inside the residence." />
+            <ProjectGallery images={project.gallery} />
+          </Stack>
+        </Section>
+      )}
+
+      <CtaBand
+        title={`Ready to make *${project.name}* yours?`}
+        ctaLabel="Register your interest"
+        ctaHref="/contact"
+        image={project.gallery?.[0]?.src ?? project.image}
       />
-      <Section>
-        <Stack gap="2xl">
-          <MarketingHeading
-            eyebrow="Amenities"
-            title="Everyday rituals, elevated."
-          />
-          <Grid columns="three">
-            <MediaPanel label="Residents’ lounge" tone="stone" />
-            <MediaPanel label="Wellness and movement" tone="light" />
-            <MediaPanel label="Garden and pool" tone="dusk" />
-          </Grid>
-        </Stack>
-      </Section>
     </Page>
   );
 }
