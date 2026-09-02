@@ -120,6 +120,9 @@
   --brand-light: #f8f8f7;
   --text-subtle: #666666;
   --stat-value-glow: none;
+  /* The drifting fog tint on the statistics cards — a warm paper-smoke on the
+     light theme, swapped for a cooler blue-grey under dark (see `.dark`). */
+  --stat-fog-tint: #ece7dd;
   /* There is one brand red: the semantic `--primary` scale below. Raw CSS that
      needs it references `var(--primary)` directly — no separate accent token. */
 
@@ -303,6 +306,7 @@
   --warning: oklch(0.78 0.15 80);
   --warning-subtle: oklch(0.27 0.05 70);
   --stat-value-glow: 0 0 28px oklch(from var(--primary) l c h / 0.55);
+  --stat-fog-tint: #cdd3dd;
 }
 
 /* ===========================================================================
@@ -571,28 +575,88 @@ body {
   }
 }
 
-.stat-mist-primary {
-  top: -20%;
-  left: 10%;
-  background: var(--mist-strong);
+/* --- Statistics cards -------------------------------------------------- *
+ * Each card is its own photo (stat.image), held to a rich cinematic dark on
+ * either theme so the value + copy always read; only the section around them
+ * follows the theme. Over the photo: a very slow push-in, then two soft
+ * gradient "fog" fields drifting on their own long loops — atmosphere, like
+ * haze on a lens, rather than the hard white blobs this used to have. */
+.stat-card__image {
+  animation: stat-card-drift 34s var(--motion-ease-premium) alternate infinite;
 }
 
-.stat-mist-secondary {
-  top: 30%;
-  right: -10%;
-  background: var(--mist-medium);
+.stat-card__scrim {
+  background:
+    linear-gradient(
+      to top,
+      rgb(8 8 8 / 0.9) 0%,
+      rgb(8 8 8 / 0.56) 42%,
+      rgb(8 8 8 / 0.22) 78%,
+      rgb(8 8 8 / 0.36) 100%
+    ),
+    radial-gradient(130% 90% at 50% 118%, transparent 42%, rgb(8 8 8 / 0.4));
 }
 
-.stat-mist-tertiary {
-  bottom: -15%;
-  left: 35%;
-  background: var(--mist-soft);
+.stat-card__fog {
+  mix-blend-mode: screen;
+  opacity: 0.5;
+  transition: opacity 900ms var(--motion-ease-premium);
 }
 
-.stat-mist-quaternary {
-  top: 10%;
-  right: 20%;
-  background: var(--mist-medium);
+.stat-fog {
+  position: absolute;
+  inset: -32%;
+  border-radius: 42%;
+  filter: blur(38px);
+  will-change: transform;
+}
+
+.stat-fog--a {
+  background:
+    radial-gradient(
+      46% 56% at 24% 30%,
+      rgb(from var(--stat-fog-tint) r g b / 0.55),
+      transparent 70%
+    ),
+    radial-gradient(
+      40% 46% at 72% 66%,
+      rgb(from var(--stat-fog-tint) r g b / 0.4),
+      transparent 72%
+    );
+  animation: stat-fog-a 26s ease-in-out infinite alternate;
+}
+
+.stat-fog--b {
+  opacity: 0.82;
+  background:
+    radial-gradient(
+      50% 46% at 66% 24%,
+      rgb(from var(--stat-fog-tint) r g b / 0.46),
+      transparent 72%
+    ),
+    radial-gradient(
+      40% 52% at 28% 72%,
+      rgb(from var(--stat-fog-tint) r g b / 0.3),
+      transparent 70%
+    );
+  animation: stat-fog-b 35s ease-in-out infinite alternate;
+}
+
+.stat-card:hover .stat-card__fog {
+  opacity: 0.72;
+}
+
+@media (max-width: 47.999rem) {
+  .stat-fog {
+    filter: blur(26px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stat-card__image,
+  .stat-fog {
+    animation: none;
+  }
 }
 
 @media (min-width: 40rem) {
@@ -1537,8 +1601,17 @@ dialog[open]::backdrop {
   display: grid;
 }
 
+/* Every slide is a flex column so its caption can be pinned to the bottom
+   (`margin-top: auto`) — that's the band the dots align to from 40rem up. */
 .testimonial-stage > [data-slide] {
   grid-area: 1 / 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.testimonial-stage > [data-slide] [data-slide-caption] {
+  margin-top: auto;
+  padding-top: var(--space-testimonial-meta);
 }
 
 .testimonial-stage:not([data-animated]) > [data-slide][data-active="false"] {
@@ -1557,23 +1630,29 @@ dialog[open]::backdrop {
   letter-spacing: 0.02em;
 }
 
-.testimonial-controls {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: clamp(1rem, 3vw, 2rem);
-  margin-top: var(--space-testimonial-meta);
-}
-
+/* The dots are a grid child of .testimonial-stage. Default (narrow screens):
+   a centred row below the slides. From 40rem up: overlaid at the bottom-right
+   of the stage, inline with the author/role caption on the opposite side. */
 .testimonial-dots {
   --testimonial-progress: 0;
   --dot-size: 0.5rem;
-  --dot-gap: clamp(1.75rem, 5vw, 3rem);
+  --dot-gap: clamp(1.25rem, 4vw, 2.25rem);
   position: relative;
   display: flex;
   align-items: center;
   gap: var(--dot-gap);
   padding-block: 0.75rem;
+  justify-self: center;
+  margin-top: var(--space-testimonial-meta);
+}
+
+@media (min-width: 40rem) {
+  .testimonial-dots {
+    grid-area: 1 / 1;
+    align-self: end;
+    justify-self: end;
+    margin-top: 0;
+  }
 }
 
 .testimonial-track,
@@ -2368,6 +2447,34 @@ dialog[open]::backdrop {
   }
   to {
     transform: scale(1.08);
+  }
+}
+
+/* Statistics-card fog: transform-only drift so it stays on the compositor. */
+@keyframes stat-card-drift {
+  from {
+    transform: scale(1);
+  }
+  to {
+    transform: scale(1.07);
+  }
+}
+
+@keyframes stat-fog-a {
+  from {
+    transform: translate3d(-4%, 3%, 0) scale(1) rotate(0deg);
+  }
+  to {
+    transform: translate3d(6%, -5%, 0) scale(1.18) rotate(8deg);
+  }
+}
+
+@keyframes stat-fog-b {
+  from {
+    transform: translate3d(5%, -3%, 0) scale(1.1) rotate(0deg);
+  }
+  to {
+    transform: translate3d(-6%, 5%, 0) scale(1) rotate(-6deg);
   }
 }
 

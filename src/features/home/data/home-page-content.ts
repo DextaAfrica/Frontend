@@ -148,8 +148,9 @@ export const homePageContent = {
     },
   ],
   statisticsSection: {
-    eyebrow: "Track record",
-    title: "Numbers that back up every promise",
+    eyebrow: "Proof over promises",
+    title:
+      "Every figure here is a client served, a partnership built, a project *delivered*.",
   },
   statistics: [
     {
