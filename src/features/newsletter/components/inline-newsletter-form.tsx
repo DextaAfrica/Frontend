@@ -7,7 +7,6 @@ import { cn } from "@/lib/utils";
 import { subscribeToNewsletter } from "../api/subscribe";
 
 type SubmissionState = "idle" | "submitting" | "success" | "error";
-const ERROR_ID = "inline-newsletter-error";
 
 export interface InlineNewsletterFormProps {
   /** Fixed-dark-surface styling for placement on the always-dark footer,
@@ -23,6 +22,12 @@ export function InlineNewsletterForm({
   const [status, setStatus] = React.useState<SubmissionState>("idle");
   const [message, setMessage] = React.useState("");
   const [invalidField, setInvalidField] = React.useState(false);
+
+  // Unique per instance: the footer form and the homepage form both mount on
+  // the same page, so a fixed id/`for` pairing would collide.
+  const uid = React.useId();
+  const emailId = `newsletter-email-${uid}`;
+  const feedbackId = `newsletter-feedback-${uid}`;
 
   async function subscribe(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -55,32 +60,41 @@ export function InlineNewsletterForm({
   }
 
   return (
-    <form onSubmit={subscribe} className={cn("mt-13", className)} noValidate>
-      <div
-        className={cn(
-          "flex min-h-newsletter-input flex-col items-stretch gap-2 rounded border p-2 focus-within:ring-2 focus-within:ring-ring sm:flex-row sm:items-center sm:gap-0",
-          onMedia
-            ? "border-brand-light/25 bg-brand-light/5"
-            : "border-input bg-background",
-        )}
-      >
+    // `@container`: the input row stacks or sits side-by-side based on the
+    // width the FORM actually has, not the viewport — so it works the same in
+    // the narrow homepage card, the wide footer column, and anywhere else.
+    <form
+      onSubmit={subscribe}
+      className={cn("@container mt-6", className)}
+      noValidate
+    >
+      <label htmlFor={emailId} className="sr-only">
+        Your email address
+      </label>
+
+      <div className="flex flex-col gap-2.5 @[20rem]:flex-row @[20rem]:gap-2">
         <input
-          id="landing-email"
+          id={emailId}
           name="email"
           type="email"
           required
           autoComplete="email"
-          aria-label="Your email address"
           placeholder="Your email address"
-          aria-invalid={invalidField}
-          aria-describedby={invalidField ? ERROR_ID : undefined}
+          aria-invalid={invalidField || undefined}
+          aria-describedby={message ? feedbackId : undefined}
+          // `flex-1` / `min-w-0` are scoped to the row layout only: in the
+          // stacked (column) layout `flex-1` would set flex-basis:0 on the
+          // main axis and collapse the field's height instead of honouring
+          // `h-[…]`.
           className={cn(
-            "h-12 min-w-0 flex-1 bg-transparent px-2 text-base outline-none sm:text-lg",
+            "h-[var(--control-height-lg)] w-full rounded-[var(--control-radius)] border px-4 text-base transition-colors @[20rem]:min-w-0 @[20rem]:flex-1",
             onMedia
-              ? "placeholder:text-brand-light/50"
-              : "placeholder:text-muted-foreground",
+              ? "border-brand-light/25 bg-brand-light/5 text-on-media placeholder:text-brand-light/50"
+              : "border-input bg-background text-foreground placeholder:text-muted-foreground",
+            invalidField && "border-destructive",
           )}
         />
+
         {/* Honeypot: real visitors never see or fill this in — hidden by
             inline style rather than a class, so there's no dependency on a
             utility class resolving correctly for it to stay invisible. */}
@@ -102,31 +116,35 @@ export function InlineNewsletterForm({
             border: 0,
           }}
         />
+
         <Button
           type="submit"
           variant={onMedia ? "onMedia" : "neutral"}
           size="lg"
-          className="w-full sm:w-newsletter-button"
+          className="w-full shrink-0 @[20rem]:w-auto"
           disabled={status === "submitting"}
         >
           {status === "submitting" ? "Subscribing…" : "Subscribe"}
           <Icon name="arrow-right" />
         </Button>
       </div>
-      <p
-        id={ERROR_ID}
-        role={status === "error" ? "alert" : "status"}
-        className={cn(
-          "mt-3 text-sm",
-          status === "error"
-            ? "text-destructive"
-            : onMedia
-              ? "text-brand-light/70"
-              : "text-success",
-        )}
-      >
-        {message}
-      </p>
+
+      {message && (
+        <p
+          id={feedbackId}
+          role={status === "error" ? "alert" : "status"}
+          className={cn(
+            "mt-3 text-sm",
+            status === "error"
+              ? "text-destructive"
+              : onMedia
+                ? "text-brand-light/70"
+                : "text-success",
+          )}
+        >
+          {message}
+        </p>
+      )}
     </form>
   );
 }

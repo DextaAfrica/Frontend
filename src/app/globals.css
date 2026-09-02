@@ -137,7 +137,7 @@
      it would wrap inside the hero's single-line reveal mask and clip.
      3.8vw overtakes this floor well before it'd ever visibly shrink a
      wider viewport, so this only changes narrow phones. */
-  --type-hero: clamp(1.5rem, 1.15rem + 1.5vw, 2.5rem);
+  --type-hero: clamp(1.875rem, 1.3rem + 2.2vw, 3.25rem);
   --letter-spacing-hero: -0.02em;
   --letter-spacing-heading: -0.04em;
   --line-height-heading: 1.02;
@@ -741,20 +741,17 @@ dialog[open]::backdrop {
 
 /* The hero's opening slide ("Welcome to Dexta Africa") reads as the site's
    statement of intent, so it carries more weight than the slides that
-   follow it — heavier, tighter, a touch larger. An attribute selector on
+   follow it — heavier and a touch tighter. It stays the SAME size as every
+   other slide (only ~0.2rem larger, and at every viewport, not just wide
+   ones) so cycling between slides never lurches. An attribute selector on
    the element itself (rather than another utility class) beats
    HeroHeading's own font-semibold/text-hero on specificity alone, no
    !important needed, regardless of which rule the stylesheet declares
    later — see the cn()-isn't-a-merge notes elsewhere in this file. */
 .dexta-hero h1[data-commanding] {
+  font-size: clamp(2rem, 1.45rem + 2.3vw, 3.5rem);
   font-weight: 800;
   letter-spacing: -0.03em;
-}
-
-@media (min-width: 40rem) {
-  .dexta-hero h1[data-commanding] {
-    font-size: clamp(1.75rem, 1.35rem + 1.69vw, 2.875rem);
-  }
 }
 
 /* Hero eyebrow badge: a recurring diagonal light sweep, independent of the

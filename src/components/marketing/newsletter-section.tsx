@@ -36,7 +36,7 @@ export function NewsletterSection({
       aria-labelledby="newsletter-heading"
     >
       <Container>
-        <div className="grid gap-10 lg:grid-cols-[1.1fr_0.9fr] lg:items-center lg:gap-16">
+        <div className="grid gap-10 lg:grid-cols-2 lg:items-center lg:gap-12">
           <Reveal className="flex flex-col gap-6">
             <span className="inline-flex w-fit items-center gap-2.5 font-mono text-xs font-bold tracking-[0.24em] text-muted-foreground uppercase">
               <span aria-hidden className="newsletter-cta__dot" />
@@ -73,7 +73,7 @@ export function NewsletterSection({
               aria-hidden
               className="pointer-events-none absolute -inset-6 -z-10 rounded-full bg-primary/10 blur-3xl"
             />
-            <div className="rounded-panel border border-border bg-surface-elevated p-8 shadow-[var(--card-shadow)] sm:p-10">
+            <div className="rounded-panel border border-border bg-surface-elevated p-6 shadow-[var(--card-shadow)] sm:p-8">
               <Badge variant="brand" className="w-fit">
                 Weekly briefing
               </Badge>
