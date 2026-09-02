@@ -135,8 +135,8 @@ export function Heading({
 // the exact same pixel size. clamp() scales continuously across every
 // screen size instead, which is what "responsive" actually means for type.
 const sectionHeadingSizes = {
-  default: "text-[clamp(1.25rem,2.2vw,1.75rem)]",
-  compact: "text-[clamp(1.0625rem,1.5vw,1.25rem)]",
+  default: "text-[clamp(1.125rem,1.8vw,1.5rem)]",
+  compact: "text-[clamp(1rem,1.2vw,1.125rem)]",
 } as const;
 
 export function SectionHeading({

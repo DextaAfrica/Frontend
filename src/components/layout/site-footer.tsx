@@ -27,7 +27,7 @@ export function SiteFooter() {
               height={104}
             />
             <p className={`mt-8 ${labelClass}`}>Lagos office address</p>
-            <p className="mt-4 max-w-xs text-sm leading-6 tracking-footer-copy text-brand-light/75">
+            <p className="mt-4 max-w-xs text-sm leading-5 tracking-footer-copy text-brand-light/75">
               {siteConfig.contact.address}
             </p>
           </div>

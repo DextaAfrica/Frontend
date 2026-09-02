@@ -106,7 +106,7 @@ export function ConsentManager() {
               <h2 className="text-lg font-medium">
                 Your privacy, your choice.
               </h2>
-              <p className="text-sm leading-6 text-muted-foreground">
+              <p className="text-sm leading-5 text-muted-foreground">
                 We use essential cookies to operate this website. With your
                 permission, optional analytics and marketing cookies help us
                 understand and improve the experience.
