@@ -1,5 +1,11 @@
 import * as React from "react";
-import { Icon, type IconName } from "@/components/ui";
+import { Container } from "@/components/layout";
+import {
+  EditorialEyebrow,
+  EditorialHeading,
+  Icon,
+  type IconName,
+} from "@/components/ui";
 import { Reveal } from "./reveal";
 
 export interface ExpertiseMarqueeItem {
@@ -7,46 +13,63 @@ export interface ExpertiseMarqueeItem {
   icon: IconName;
 }
 
-export interface ExpertiseMarqueeProps {
+export interface ExpertiseMarqueeHeading {
   eyebrow: string;
+  title: string;
+  description: string;
+}
+
+export interface ExpertiseMarqueeProps {
+  heading: ExpertiseMarqueeHeading;
   items: readonly ExpertiseMarqueeItem[];
 }
 
 /**
- * A dark, full-bleed ticker band — a broadcast lower-third, not a hero: a
- * pulsing "on air" dot over a signal label, then a continuous strip of
- * capabilities scrolling underneath. The scroll itself is pure CSS
- * (`@keyframes`, no scroll-listener); only the once-per-visit entrance
- * (the signal row, then the ticker a beat behind it) goes through
- * <Reveal>, the same scroll-triggered fade/rise every other section on
- * this page already uses — so arriving at this band feels like the
- * considered entrance every other section gets, not a static strip that
- * happens to already be scrolling when it comes into view.
+ * A full-bleed inverse band that breaks the rhythm between the Services scroll
+ * section and the Portfolio index. It opens like every other section on the
+ * page — an editorial header (eyebrow → hairline rule → headline → one
+ * supporting line, via the shared `EditorialEyebrow` / `EditorialHeading`
+ * primitives) — then a continuous strip of capabilities scrolls underneath it.
+ * The pulsing "on air" dot beside the eyebrow is this band's retained
+ * signature.
  *
- * The strip is one real, accessible <ul> of `items` immediately followed by
- * an `aria-hidden` duplicate of the same list — the two placed edge to edge
- * and the whole track animated exactly -50% is what makes the loop seamless
- * (there's no visible seam because the duplicate is a pixel-perfect
- * continuation of the original). Under `prefers-reduced-motion`, the
- * duplicate is dropped entirely and the track becomes a static, wrapped row
- * of the real list — never two copies sitting stacked and motionless.
+ * The header sits inside `Container` so it aligns to the page grid; the strip
+ * stays full-bleed. Only the header goes through <Reveal> on a beat, then the
+ * strip a beat behind it — the same scroll-triggered entrance every other
+ * section uses, so arriving here feels considered rather than like a strip
+ * that happens to already be scrolling.
  *
- * The edges fade via `mask-image`, not `overflow: hidden` alone — items
- * dissolve into the band rather than getting a hard, guillotined edge.
+ * The strip is one real, accessible <ul> of `items` immediately followed by an
+ * `aria-hidden` duplicate of the same list — the two placed edge to edge and
+ * the whole track animated exactly -50% is what makes the loop seamless (the
+ * duplicate is a pixel-perfect continuation of the original). Under
+ * `prefers-reduced-motion` the duplicate is dropped and the track becomes a
+ * static, wrapped, centred row of the real list. The edges dissolve via
+ * `mask-image`, not a hard `overflow` clip.
  */
-export function ExpertiseMarquee({ eyebrow, items }: ExpertiseMarqueeProps) {
+export function ExpertiseMarquee({ heading, items }: ExpertiseMarqueeProps) {
   const headingId = React.useId();
 
   return (
     <section aria-labelledby={headingId} className="expertise-marquee">
-      <h2 id={headingId} className="sr-only">
-        {eyebrow}
-      </h2>
-
-      <Reveal as="div" className="expertise-marquee__signal">
-        <span aria-hidden className="expertise-marquee__dot" />
-        <span className="expertise-marquee__label">{eyebrow}</span>
-      </Reveal>
+      <Container>
+        <Reveal className="mx-auto flex max-w-editorial-heading flex-col items-center text-center">
+          <EditorialEyebrow className="expertise-marquee__eyebrow text-primary uppercase">
+            <span aria-hidden className="expertise-marquee__dot" />
+            {heading.eyebrow}
+          </EditorialEyebrow>
+          <span
+            aria-hidden
+            className="mt-5 block h-px w-divider bg-background/25"
+          />
+          <EditorialHeading id={headingId} className="mt-5">
+            {heading.title}
+          </EditorialHeading>
+          <p className="mt-4 text-[0.95rem] leading-relaxed text-background/70">
+            {heading.description}
+          </p>
+        </Reveal>
+      </Container>
 
       <Reveal as="div" delay={0.15} className="expertise-marquee__viewport">
         <ul className="expertise-marquee__track">

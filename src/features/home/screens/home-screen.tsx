@@ -26,7 +26,10 @@ export function HomeScreen({ content }: { content: HomePageContent }) {
       <LandingHero {...content.hero} />
       <WhoWeAreSection content={content.intro} />
       <ServicesSection services={content.services} />
-      <ExpertiseMarquee eyebrow="Our expertise" items={expertiseItems} />
+      <ExpertiseMarquee
+        heading={content.expertiseSection}
+        items={expertiseItems}
+      />
       <FeaturedProjectsSection
         projects={content.projects}
         heading={content.projectsSection}

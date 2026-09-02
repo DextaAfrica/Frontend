@@ -1725,35 +1725,26 @@ dialog[open]::backdrop {
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  gap: 1.25rem;
-  padding-block: 1.75rem;
+  gap: clamp(2.5rem, 5vw, 4rem);
+  padding-block: var(--space-section-editorial);
   background: var(--foreground);
   color: var(--background);
 }
 
-.expertise-marquee__signal {
-  display: flex;
+.expertise-marquee__eyebrow {
+  display: inline-flex;
   align-items: center;
-  justify-content: center;
   gap: 0.625rem;
 }
 
 .expertise-marquee__dot {
+  flex-shrink: 0;
   width: 0.5rem;
   height: 0.5rem;
   border-radius: 999px;
   background: var(--primary);
   box-shadow: 0 0 0 4px rgb(from var(--primary) r g b / 0.25);
   animation: expertise-pulse 2.2s ease-in-out infinite;
-}
-
-.expertise-marquee__label {
-  font-family: var(--font-mono);
-  font-size: 0.7rem;
-  font-weight: 700;
-  letter-spacing: 0.24em;
-  color: rgb(from var(--background) r g b / 0.72);
-  text-transform: uppercase;
 }
 
 .expertise-marquee__viewport {
@@ -1930,10 +1921,10 @@ dialog[open]::backdrop {
 /* The "About Us" closing line — set apart from the reveal-copy body above it,
    larger and in the editorial serif, carrying the italic accent. */
 .about-statement__kicker {
-  font-family: var(--font-serif);
+  font-family: var(--font-display);
   font-size: var(--type-about-statement);
-  font-weight: 500;
-  line-height: 1.15;
+  font-weight: 600;
+  line-height: 1.25;
   letter-spacing: -0.01em;
   text-wrap: balance;
 }

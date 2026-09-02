@@ -189,7 +189,7 @@ export function Text({ className, ...props }: React.ComponentProps<"p">) {
   return (
     <p
       className={cn(
-        "font-sans text-body-small leading-6 text-muted-foreground",
+        "font-sans text-body-small leading-5 text-muted-foreground",
         className,
       )}
       {...props}
