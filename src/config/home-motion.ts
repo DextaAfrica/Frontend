@@ -18,21 +18,34 @@ export const homeMotion = {
     collapsedExitAt: 0.78,
     expandedEnterAt: 0.8,
     contentTransition: 0.2,
+    // `end` isn't set here: the section pins a viewport-tall stage via
+    // `position: sticky` and adds exactly `(count - 1) * scroll-step` of
+    // scroll room below it (see the `.service-*` block in globals.css). The
+    // component derives the ScrollTrigger range from that same measured gap
+    // (section height minus the sticky stage height), so the scrubbed
+    // timeline and the pin can never disagree about where the scene ends.
     start: "top top",
-    end: "bottom bottom",
+    // The image parallax is a single axis: the active service image rests at
+    // yPercent 0, an incoming one is pre-shifted to `mediaFromPercent` and an
+    // outgoing one travels to `mediaToPercent`. One property in motion reads
+    // as depth; pairing it with a simultaneous scale drift (as this used to)
+    // reads as a wobble under a scrubbed, slightly-lagged playhead.
     compact: {
-      scrub: 0.72,
-      mediaScale: 1.075,
-      mediaOffsetPercent: 6,
-      mediaExitScale: 1.025,
-      mediaExitPercent: -2.5,
+      scrub: 0.5,
+      mediaFromPercent: 9,
+      mediaToPercent: -9,
     },
     wide: {
-      scrub: 1,
-      mediaScale: 1.055,
-      mediaOffsetPercent: 4.5,
-      mediaExitScale: 1.02,
-      mediaExitPercent: -2,
+      scrub: 0.8,
+      mediaFromPercent: 12,
+      mediaToPercent: -12,
+    },
+    // Releasing mid-transition settles onto the nearest card rather than
+    // stranding one half-revealed. Snap only fires once scrolling actually
+    // stops, so it never fights an in-progress drag.
+    snap: {
+      duration: { min: 0.15, max: 0.4 },
+      ease: "power2.inOut",
     },
   },
   testimonials: {

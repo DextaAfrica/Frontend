@@ -11,3 +11,5 @@ export type TestimonialContent = HomePageContent["testimonials"][number];
 export type StatisticContent = HomePageContent["statistics"][number];
 export type BlogPostContent = HomePageContent["blog"][number];
 export type SectionHeadingContent = HomePageContent["blogSection"];
+export type AboutTeaserContent = HomePageContent["aboutTeaser"];
+export type HomeDextaClanContent = HomePageContent["dextaClan"];

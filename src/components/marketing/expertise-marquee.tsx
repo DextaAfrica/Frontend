@@ -1,5 +1,6 @@
 import * as React from "react";
 import { Icon, type IconName } from "@/components/ui";
+import { Reveal } from "./reveal";
 
 export interface ExpertiseMarqueeItem {
   label: string;
@@ -14,8 +15,13 @@ export interface ExpertiseMarqueeProps {
 /**
  * A dark, full-bleed ticker band — a broadcast lower-third, not a hero: a
  * pulsing "on air" dot over a signal label, then a continuous strip of
- * capabilities scrolling underneath. Pure CSS (`@keyframes`, no JS, no
- * scroll-listener), so it costs nothing and never needs hydration.
+ * capabilities scrolling underneath. The scroll itself is pure CSS
+ * (`@keyframes`, no scroll-listener); only the once-per-visit entrance
+ * (the signal row, then the ticker a beat behind it) goes through
+ * <Reveal>, the same scroll-triggered fade/rise every other section on
+ * this page already uses — so arriving at this band feels like the
+ * considered entrance every other section gets, not a static strip that
+ * happens to already be scrolling when it comes into view.
  *
  * The strip is one real, accessible <ul> of `items` immediately followed by
  * an `aria-hidden` duplicate of the same list — the two placed edge to edge
@@ -37,12 +43,12 @@ export function ExpertiseMarquee({ eyebrow, items }: ExpertiseMarqueeProps) {
         {eyebrow}
       </h2>
 
-      <div className="expertise-marquee__signal">
+      <Reveal as="div" className="expertise-marquee__signal">
         <span aria-hidden className="expertise-marquee__dot" />
         <span className="expertise-marquee__label">{eyebrow}</span>
-      </div>
+      </Reveal>
 
-      <div className="expertise-marquee__viewport">
+      <Reveal as="div" delay={0.15} className="expertise-marquee__viewport">
         <ul className="expertise-marquee__track">
           {items.map((item) => (
             <MarqueeItem key={item.label} item={item} />
@@ -51,7 +57,7 @@ export function ExpertiseMarquee({ eyebrow, items }: ExpertiseMarqueeProps) {
             <MarqueeItem key={`${item.label}-repeat`} item={item} duplicate />
           ))}
         </ul>
-      </div>
+      </Reveal>
     </section>
   );
 }

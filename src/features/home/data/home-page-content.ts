@@ -61,7 +61,7 @@ export const homePageContent = {
     },
   ],
   projectsSection: {
-    eyebrow: "Featured Projects",
+    eyebrow: "Our Portfolio",
     title: "Projects that speak for themselves",
     ctaLabel: "View all projects",
     ctaHref: "/projects",
@@ -70,20 +70,24 @@ export const homePageContent = {
   projects: [
     {
       id: "dlodge-apartment",
-      name: "D'lodge Apartment",
-      location: "Lekki Peninsula 2",
+      name: "D'Lodge Apartments",
+      location: "Lekki Peninsula 2, Ajah",
       status: "Now selling",
+      description:
+        "Ultra-premium 1 & 2 bedroom apartments in the heart of Lekki, built around smart-home technology, world-class amenities, and a genuinely prime address.",
       image: "/images/project-dlodge.jpg",
-      href: "/projects",
+      href: "/projects/dlodge-apartment",
       layout: "feature",
     },
     {
       id: "olumo-county-estate",
       name: "Olumo County Estate",
-      location: "Kobape, Ogun state",
+      location: "Kobape, Ogun State",
       status: "Available plots",
+      description:
+        "Fully serviced plots inside a secured, master-planned estate — roads, drainage, and utilities already in place before you break ground.",
       image: "/images/project-olumo.jpg",
-      href: "/projects",
+      href: "/projects/olumo-county-estate",
       layout: "compact",
     },
     {
@@ -91,8 +95,10 @@ export const homePageContent = {
       name: "Kingsway Estate",
       location: "Ijebu-Ode, Ogun State",
       status: "Now selling",
+      description:
+        "A gated residential estate built around wide roads, green spaces, and long-term value for families and investors alike.",
       image: "/images/project-kingsway.jpg",
-      href: "/projects",
+      href: "/projects/kingsway-estate",
       layout: "compact",
     },
   ],
@@ -206,6 +212,23 @@ export const homePageContent = {
     publishedAt: "July 28, 2026",
     readingTime: "4 min read",
   })),
+  aboutTeaser: {
+    eyebrow: "Our story",
+    title:
+      "There's a team, a method, and a standard behind every Dexta project.",
+    cta: { label: "Read our story", href: "/about" },
+  },
+  dextaClan: {
+    eyebrow: "Dexta Clan",
+    title: "Learning how property works? There's a place for you.",
+    copy: "Dexta Clan is our learning community for first-time buyers, diaspora investors, and anyone figuring out African real estate — no jargon, no gatekeeping.",
+    benefits: [
+      "Live workshops and open Q&As with the Dexta team",
+      "Plain-language guides to buying, documentation, and due diligence",
+      "Early looks at new estates and serviced plots",
+    ],
+    cta: { label: "Join the Dexta Clan", href: "/contact" },
+  },
   newsletter: {
     eyebrow: "Stay informed",
     title: "Get the latest updates from Dexta",

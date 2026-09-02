@@ -20,6 +20,16 @@ export interface Project {
   description: string;
   tone: "ruby" | "stone" | "dusk" | "light";
   image?: string;
+  /** A short marketing line for the detail page's hero; falls back to a
+   *  generic one when a project doesn't have real campaign copy yet. */
+  tagline?: string;
+  /** e.g. "Starting from ₦15M initial deposit" — only ever real, supplied
+   *  figures, never invented to fill the slot. */
+  priceFrom?: string;
+  /** Headline selling points, shown as a facts strip on the detail page. */
+  features?: readonly string[];
+  /** The detail page's product-listing-style photo gallery. */
+  gallery?: readonly { src: string; alt: string }[];
 }
 export function ProjectCard({ project }: { project: Project }) {
   const href = `/projects/${project.slug}`;
@@ -30,7 +40,7 @@ export function ProjectCard({ project }: { project: Project }) {
           label={`${project.name}, ${project.location}`}
           tone={project.tone}
           src={project.image}
-          className="min-h-80 rounded-none transition-transform duration-700 group-hover:scale-project-media"
+          className="group-hover:scale-project-media min-h-80 rounded-none transition-transform duration-700"
         />
         <CardContent className="p-6">
           <Stack gap="md">

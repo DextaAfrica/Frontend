@@ -36,7 +36,7 @@ export function BlogSection({
                     fill
                     sizes="(min-width: 1024px) 29vw, (min-width: 768px) 45vw, 100vw"
                     unoptimized={isRemoteAsset(post.image)}
-                    className="object-cover transition-transform duration-700 ease-premium group-hover:scale-project-media"
+                    className="group-hover:scale-project-media object-cover transition-transform duration-700 ease-premium"
                   />
                 </div>
                 <h3 className="mt-5 font-display text-xl leading-editorial font-semibold tracking-editorial">
