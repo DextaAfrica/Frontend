@@ -29,14 +29,14 @@ export function SiteFooter() {
   return (
     <footer className="bg-brand-dark text-brand-light">
       <Container className="py-16 sm:py-20 lg:py-24">
-        <div className="grid gap-x-8 gap-y-12 sm:grid-cols-2 lg:grid-cols-[1.6fr_1fr_1fr_1.2fr] lg:gap-x-12">
-          <div className="sm:col-span-2 lg:col-span-1">
+        <div className="grid gap-x-8 gap-y-12 sm:grid-cols-3 lg:grid-cols-[1.6fr_1fr_1fr_1.2fr] lg:gap-x-12">
+          <div className="sm:col-span-3 lg:col-span-1">
             <Image
               src="/images/dexta-logo-on-dark.svg"
               alt={siteConfig.name}
               width={238}
               height={104}
-              className="h-9 w-auto"
+              className="h-10 w-auto"
             />
             <span
               aria-hidden
@@ -85,9 +85,9 @@ export function SiteFooter() {
           </nav>
         </div>
 
-        <div className="mt-14 grid gap-x-12 gap-y-6 border-t border-brand-light/12 pt-10 sm:mt-16 lg:grid-cols-[1fr_minmax(0,32rem)] lg:items-center">
-          <div>
-            <h2 className="font-display text-lg leading-snug font-medium text-brand-light sm:text-xl">
+        <div className="mt-14 grid gap-x-12 gap-y-5 border-t border-brand-light/12 pt-10 sm:mt-16 md:grid-cols-2 md:items-center lg:grid-cols-[1fr_minmax(0,30rem)]">
+          <div className="max-w-md">
+            <h2 className="font-display text-lg leading-snug font-medium text-balance text-brand-light sm:text-xl">
               Updates, insights &amp; stories — straight to your{" "}
               <Accent>inbox</Accent>
             </h2>
@@ -95,7 +95,7 @@ export function SiteFooter() {
               A considered note now and then. No noise, unsubscribe anytime.
             </p>
           </div>
-          <InlineNewsletterForm onMedia className="lg:mt-0" />
+          <InlineNewsletterForm onMedia className="mt-0! w-full" />
         </div>
 
         <div className="mt-12 flex flex-col gap-6 border-t border-brand-light/12 pt-8 text-xs tracking-footer-copy text-brand-light/45 sm:flex-row sm:items-center sm:justify-between">

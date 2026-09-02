@@ -53,7 +53,7 @@ export function Modal({
           <Stack gap="xs">
             <h2
               id={titleId}
-              className="text-[clamp(1.0625rem,1.3vw,1.25rem)] font-semibold"
+              className="text-[clamp(1.0625rem,1rem_+_0.28vw,1.25rem)] font-semibold"
             >
               {title}
             </h2>

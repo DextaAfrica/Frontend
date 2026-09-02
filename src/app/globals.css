@@ -90,11 +90,11 @@
   --control-padding-lg: 1.25rem;
 
   /* -- Typography: fonts, plus small global type/tracking values --------- */
-  --type-control: 0.75rem;
+  --type-control: clamp(0.75rem, 0.73rem + 0.09vw, 0.8125rem);
   --type-control-compact: 0.6875rem;
   --type-status: 0.6875rem;
-  --type-body-small: clamp(0.8125rem, 0.9vw, 0.9375rem);
-  --type-navigation-display: clamp(1.375rem, 5vw, 1.75rem);
+  --type-body-small: clamp(0.8125rem, 0.75rem + 0.28vw, 1rem);
+  --type-navigation-display: clamp(1.375rem, 1.2rem + 0.75vw, 1.875rem);
   --letter-spacing-control: 0.04em;
   --letter-spacing-control-compact: 0.08em;
   /* Calmer than the old 0.2em: a small sentence-case label still reads as
@@ -130,14 +130,14 @@
    * most are mapped to a utility in the @theme block and consumed as e.g.
    * `min-h-service-panel`, `max-w-editorial-heading`, `py-section-editorial`.  */
   --section-intro-height: clamp(26rem, 35vw, 32rem);
-  --scroll-copy-size: clamp(0.8125rem, 0.9vw, 0.9375rem);
+  --scroll-copy-size: clamp(1rem, 0.91rem + 0.38vw, 1.25rem);
   /* Floor lowered from 2.25rem: at ~375px the old floor left roughly 335px
      of column width (after Container's padding) against a longer slide
      line like "opportunity for you", which needs ~376px at that size —
      it would wrap inside the hero's single-line reveal mask and clip.
      3.8vw overtakes this floor well before it'd ever visibly shrink a
      wider viewport, so this only changes narrow phones. */
-  --type-hero: clamp(1.375rem, 2.7vw, 2.375rem);
+  --type-hero: clamp(1.5rem, 1.15rem + 1.5vw, 2.5rem);
   --letter-spacing-hero: -0.02em;
   --letter-spacing-heading: -0.04em;
   --line-height-heading: 1.02;
@@ -146,10 +146,10 @@
   --space-page: clamp(1rem, 1.181vw, 1.0625rem);
   --space-services-y: clamp(1.5rem, 2vw, 2rem);
   --space-service-inline: clamp(1.5rem, 5.694vw, 5.125rem);
-  --type-section-display: clamp(1rem, 1.1vw, 1.125rem);
-  --type-editorial: clamp(1.125rem, 1.4vw, 1.5rem);
-  --type-project-title: clamp(1.0625rem, 1.4vw, 1.5rem);
-  --type-metric: clamp(2.25rem, 3.4vw, 3.25rem);
+  --type-section-display: clamp(1rem, 0.93rem + 0.28vw, 1.1875rem);
+  --type-editorial: clamp(1.125rem, 0.95rem + 0.75vw, 1.625rem);
+  --type-project-title: clamp(1.0625rem, 0.91rem + 0.66vw, 1.5rem);
+  --type-metric: clamp(2.5rem, 2.15rem + 1.5vw, 3.5rem);
   --line-height-editorial: 1.15;
   --letter-spacing-editorial: -0.02em;
   /* Proportional (em), not the old fixed 0.2625rem — that stayed wide even
@@ -203,14 +203,14 @@
   --width-dialog-wide: 52rem;
   --layout-newsletter-stack-width: 43rem;
   --layout-newsletter-stack-height: 18rem;
-  --type-service-title: clamp(1.375rem, 1.8vw, 1.75rem);
-  --type-service-copy: clamp(0.875rem, 1.1vw, 1rem);
+  --type-service-title: clamp(1.375rem, 1.2rem + 0.75vw, 1.875rem);
+  --type-service-copy: clamp(0.875rem, 0.83rem + 0.19vw, 1rem);
   --type-service-label: 0.8125rem;
   --type-service-number: clamp(2.25rem, 5vw, 4.5rem);
-  --type-service-tab: clamp(0.875rem, 1.1vw, 1rem);
-  --type-service-tab-number: clamp(0.8125rem, 0.9vw, 0.9375rem);
-  --type-testimonial: clamp(1rem, 1.2vw, 1.125rem);
-  --type-testimonial-author: clamp(0.875rem, 1vw, 1rem);
+  --type-service-tab: clamp(0.875rem, 0.83rem + 0.19vw, 1rem);
+  --type-service-tab-number: clamp(0.8125rem, 0.77rem + 0.19vw, 0.9375rem);
+  --type-testimonial: clamp(1rem, 0.96rem + 0.19vw, 1.125rem);
+  --type-testimonial-author: clamp(0.875rem, 0.83rem + 0.19vw, 1rem);
   --letter-spacing-service-title: -0.06397rem;
   --letter-spacing-service-label: -0.0427rem;
   --letter-spacing-service-number: -0.293rem;
@@ -249,8 +249,8 @@
   --layer-navigation: 90;
 
   /* -- About page ------------------------------------------------------- */
-  --type-about-statement: clamp(1.125rem, 1.4vw, 1.5rem);
-  --type-ceo-kicker: clamp(1.0625rem, 1.3vw, 1.3125rem);
+  --type-about-statement: clamp(1.125rem, 0.95rem + 0.75vw, 1.625rem);
+  --type-ceo-kicker: clamp(1.0625rem, 1rem + 0.28vw, 1.25rem);
   --layout-about-hero-media: clamp(20rem, 42vw, 34rem);
   --layout-ceo-portrait: clamp(17rem, 32vw, 25rem);
   --space-about: clamp(3.5rem, 6.5vw, 6rem);
@@ -707,8 +707,8 @@ dialog[open]::backdrop {
   font-family: var(--font-display);
   font-size: var(--scroll-copy-size);
   font-weight: 400;
-  line-height: 1.05;
-  letter-spacing: -0.0625rem;
+  line-height: 1.4;
+  letter-spacing: -0.01em;
   text-align: center;
   text-wrap: balance;
 }
@@ -747,7 +747,7 @@ dialog[open]::backdrop {
 
 @media (min-width: 40rem) {
   .dexta-hero h1[data-commanding] {
-    font-size: clamp(2.75rem, 4.6vw, 4.75rem);
+    font-size: clamp(1.75rem, 1.35rem + 1.69vw, 2.875rem);
   }
 }
 
@@ -925,7 +925,7 @@ dialog[open]::backdrop {
 
 .project-index-name {
   font-family: var(--font-display);
-  font-size: 1.375rem;
+  font-size: clamp(1.125rem, 0.99rem + 0.56vw, 1.5rem);
   font-weight: 600;
   letter-spacing: -0.01em;
   color: var(--foreground);

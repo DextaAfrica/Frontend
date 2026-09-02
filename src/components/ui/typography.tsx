@@ -135,8 +135,8 @@ export function Heading({
 // the exact same pixel size. clamp() scales continuously across every
 // screen size instead, which is what "responsive" actually means for type.
 const sectionHeadingSizes = {
-  default: "text-[clamp(1.125rem,1.8vw,1.5rem)]",
-  compact: "text-[clamp(1rem,1.2vw,1.125rem)]",
+  default: "text-[clamp(1.125rem,0.99rem_+_0.56vw,1.5rem)]",
+  compact: "text-[clamp(1rem,0.93rem_+_0.28vw,1.1875rem)]",
 } as const;
 
 export function SectionHeading({
@@ -160,9 +160,9 @@ export function SectionHeading({
 }
 
 const cardHeadingSizes = {
-  sm: "text-[clamp(0.8125rem,0.9vw,0.9375rem)]",
-  md: "text-[clamp(0.9375rem,1vw,1.0625rem)]",
-  lg: "text-[clamp(1rem,1.2vw,1.1875rem)]",
+  sm: "text-[clamp(0.8125rem,0.77rem_+_0.19vw,0.9375rem)]",
+  md: "text-[clamp(0.9375rem,0.89rem_+_0.19vw,1.0625rem)]",
+  lg: "text-[clamp(1rem,0.93rem_+_0.28vw,1.1875rem)]",
 } as const;
 
 export function CardHeading({
