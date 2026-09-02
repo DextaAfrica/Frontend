@@ -1177,6 +1177,12 @@ dialog[open]::backdrop {
   isolation: isolate;
   overflow: clip;
   background: var(--surface);
+  /* Sizes the shell and the first (active) card only — deliberately NOT part
+     of the pin math below. The clamp keeps the whole shell
+     (active card + the collapsed rows beneath it) inside one viewport with
+     the section's vertical gutter to spare, so the sticky stage can stay a
+     flat 100svh and simply centre a shorter shell rather than every height
+     here having to agree with the viewport exactly. */
   --service-active-height: clamp(
     28rem,
     calc(
@@ -1185,11 +1191,10 @@ dialog[open]::backdrop {
     ),
     var(--layout-service-mobile-height)
   );
+  /* One source of truth for the scene: exactly one viewport of pinned stage,
+     plus one scroll "step" of travel for each transition between cards. */
   height: calc(
-    var(--service-active-height) +
-      ((var(--service-count) - 1) * var(--layout-service-row-height)) +
-      (var(--space-services-y) * 2) +
-      ((var(--service-count) - 1) * var(--layout-service-scroll-travel))
+    100svh + ((var(--service-count) - 1) * var(--layout-service-scroll-travel))
   );
 }
 
@@ -1197,11 +1202,12 @@ dialog[open]::backdrop {
   position: sticky;
   top: 0;
   display: grid;
-  height: calc(
-    var(--service-active-height) +
-      ((var(--service-count) - 1) * var(--layout-service-row-height)) +
-      (var(--space-services-y) * 2)
-  );
+  /* Always exactly the viewport — never the composed height it used to be,
+     which fell short of a tall viewport and left a band of bare background
+     under the cards for the whole scroll. A shorter shell is centred in
+     here; the leftover space is split above and below and reads as breathing
+     room, not a gap. */
+  height: 100svh;
   min-height: 0;
   place-items: center;
   overflow: clip;
@@ -1236,7 +1242,19 @@ dialog[open]::backdrop {
   box-shadow: var(--elevation-service-panel);
   transform-origin: 50% 0%;
   contain: paint;
-  will-change: transform, opacity;
+  will-change: transform, clip-path, opacity;
+}
+
+/* A zero-width probe the scroll script measures to get the live pixel value
+   of --layout-service-row-height (a vw-based clamp) without reading it off a
+   card that GSAP is mid-tween on. */
+.service-row-metric {
+  position: absolute;
+  inset: 0 auto auto 0;
+  width: 0;
+  height: var(--layout-service-row-height);
+  visibility: hidden;
+  pointer-events: none;
 }
 
 [data-service-media] {
@@ -1336,15 +1354,12 @@ dialog[open]::backdrop {
       var(--layout-service-panel-height)
     );
     height: calc(
-      var(--service-active-height) +
-        ((var(--service-count) - 1) * var(--layout-service-row-height)) +
-        (var(--space-services-y) * 2) +
+      100svh +
         (
           (var(--service-count) - 1) *
             var(--layout-service-scroll-travel-desktop)
         )
     );
-    min-height: 48rem;
   }
 }
 
@@ -1370,7 +1385,9 @@ dialog[open]::backdrop {
   .service-card {
     position: relative !important;
     inset: auto;
+    height: auto !important;
     min-height: var(--layout-service-tablet-height);
+    clip-path: none !important;
     transform: none !important;
   }
 

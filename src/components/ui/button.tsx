@@ -228,7 +228,7 @@ export function ButtonLink({
   ref: externalRef,
   ...props
 }: ButtonLinkProps) {
-  const { ref, flash } = useClickFlash<HTMLAnchorElement>(externalRef);
+  const { ref, flash } = useClickFlash<HTMLAnchorElement>(externalRef, variant);
 
   return (
     <Link
@@ -243,7 +243,7 @@ export function ButtonLink({
       {...props}
     >
       {children}
-      <FlashSweep />
+      <FlashSweep variant={variant} />
     </Link>
   );
 }

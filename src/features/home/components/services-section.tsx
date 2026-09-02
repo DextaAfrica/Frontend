@@ -39,6 +39,7 @@ export function ServicesSection({
             { motion?: boolean; compact?: boolean } | undefined;
           if (!conditions?.motion) return;
           const profile = conditions.compact ? motion.compact : motion.wide;
+
           const cards = gsap.utils.toArray<HTMLElement>(
             section.querySelectorAll("[data-service-card]"),
           );
@@ -51,209 +52,184 @@ export function ServicesSection({
           const images = gsap.utils.toArray<HTMLElement>(
             section.querySelectorAll("[data-service-media]"),
           );
-          const firstCard = cards[0];
-          const secondCard = cards[1];
+          const stage = section.querySelector<HTMLElement>(
+            ".service-card-stage",
+          );
           const stickyStage = section.querySelector<HTMLElement>(
             ".service-sticky-stage",
           );
-          if (!firstCard || !secondCard || !stickyStage) return;
+          const rowProbe =
+            section.querySelector<HTMLElement>("[data-service-row]");
+          if (cards.length < 2 || !stage || !stickyStage || !rowProbe) return;
 
+          const lastIndex = cards.length - 1;
+
+          // rowHeight comes off the probe span (CSS-sized, never animated);
+          // activeHeight is whatever's left of the card stage once the
+          // collapsed rows are subtracted — i.e. the resolved value of
+          // --service-active-height, without trusting a card GSAP may be
+          // mid-tween on.
           let activeHeight = 0;
           let rowHeight = 0;
-          const measureCards = () => {
-            activeHeight = firstCard.getBoundingClientRect().height;
-            rowHeight = secondCard.getBoundingClientRect().height;
+          const measure = () => {
+            rowHeight = rowProbe.getBoundingClientRect().height;
+            activeHeight =
+              stage.getBoundingClientRect().height - lastIndex * rowHeight;
           };
-          measureCards();
+          measure();
 
-          const layoutFor = (cardIndex: number, active: number) => {
-            if (cardIndex < active) {
-              return { height: rowHeight, y: cardIndex * rowHeight };
-            }
-            if (cardIndex === active) {
-              return { height: activeHeight, y: active * rowHeight };
-            }
-            return {
-              height: rowHeight,
-              y:
-                active * rowHeight +
-                activeHeight +
-                (cardIndex - active - 1) * rowHeight,
-            };
+          // Only the top edge (`y`) moves now — never `height`. Cards already
+          // seen collapse to a row at the top, the active card sits at full
+          // height right below them, the rest stack as rows underneath it.
+          const yFor = (index: number, active: number) => {
+            if (index <= active) return index * rowHeight;
+            return (
+              active * rowHeight +
+              activeHeight +
+              (index - active - 1) * rowHeight
+            );
           };
 
-          // The active card must always render above every collapsed one —
-          // guaranteed, not a side effect of array order. zIndex:index+1
-          // alone means whichever card comes LAST in the list always sits
-          // highest regardless of which one is actually active; if any
-          // card's geometry is ever off by even a rounding pixel during a
-          // scrubbed transition, a later, collapsed card can paint over the
-          // active one. The active card explicitly outranks the rest here.
+          // The active card is fully open; every other card is clipped down
+          // to just its top row. clip-path is a compositor property, so this
+          // is the whole reveal with no per-frame layout.
+          const clipFor = (index: number, active: number) =>
+            index === active
+              ? "inset(0px 0px 0px 0px)"
+              : `inset(0px 0px ${Math.max(0, activeHeight - rowHeight)}px 0px)`;
+
+          // The active card always outranks the rest outright, rather than
+          // relying on paint order — a collapsed neighbour can never bleed
+          // over it even if a scrubbed frame lands a rounding pixel off.
+          const zFor = (index: number, active: number) =>
+            index === active ? cards.length + 1 : index + 1;
+
           gsap.set(cards, {
             position: "absolute",
             insetInline: 0,
             top: 0,
-            zIndex: (index) => (index === 0 ? cards.length + 1 : index + 1),
-            scale: 1,
-            opacity: 1,
+            height: activeHeight,
+            force3D: true,
             transformOrigin: "50% 0%",
-            height: (index) => layoutFor(index, 0).height,
-            y: (index) => layoutFor(index, 0).y,
+            y: (index) => yFor(index, 0),
+            clipPath: (index) => clipFor(index, 0),
+            zIndex: (index) => zFor(index, 0),
           });
           gsap.set(expanded, {
             autoAlpha: (index) => (index === 0 ? 1 : 0),
-            y: (index) => (index === 0 ? 0 : 16),
+            y: (index) => (index === 0 ? 0 : 12),
           });
           gsap.set(collapsed, {
             autoAlpha: (index) => (index === 0 ? 0 : 1),
+            y: 0,
           });
           gsap.set(images, {
             force3D: true,
-            scale: (index) => (index === 0 ? 1 : profile.mediaScale),
-            yPercent: (index) => (index === 0 ? 0 : profile.mediaOffsetPercent),
+            yPercent: (index) => (index === 0 ? 0 : profile.mediaFromPercent),
           });
 
-          const timeline = gsap.timeline({ paused: true });
+          const timeline = gsap.timeline({
+            paused: true,
+            defaults: { ease: "none" },
+          });
 
-          for (let nextIndex = 1; nextIndex < cards.length; nextIndex += 1) {
-            const position = nextIndex - 1;
-            const previousExpanded = expanded[nextIndex - 1];
-            const previousCollapsed = collapsed[nextIndex - 1];
-            const currentExpanded = expanded[nextIndex];
-            const currentCollapsed = collapsed[nextIndex];
-            const previousImage = images[nextIndex - 1];
-            const currentImage = images[nextIndex];
-            if (
-              !previousExpanded ||
-              !previousCollapsed ||
-              !currentExpanded ||
-              !currentCollapsed ||
-              !previousImage ||
-              !currentImage
-            ) {
-              continue;
-            }
+          for (let next = 1; next < cards.length; next += 1) {
+            const at = next - 1;
+            const prevExpanded = expanded[next - 1];
+            const prevCollapsed = collapsed[next - 1];
+            const currentExpanded = expanded[next];
+            const currentCollapsed = collapsed[next];
+            const prevImage = images[next - 1];
+            const currentImage = images[next];
 
-            timeline
-              .to(
-                previousExpanded,
-                {
-                  autoAlpha: 0,
-                  y: -6,
-                  duration: motion.contentTransition,
-                  ease: "none",
-                },
-                position + motion.collapsedExitAt,
-              )
-              .to(
-                previousCollapsed,
-                {
-                  autoAlpha: 1,
-                  y: 0,
-                  duration: motion.contentTransition,
-                  ease: "none",
-                },
-                position + motion.collapsedExitAt,
-              )
-              .to(
-                currentCollapsed,
-                {
-                  autoAlpha: 0,
-                  y: -6,
-                  duration: motion.contentTransition,
-                  ease: "none",
-                },
-                position + motion.collapsedExitAt,
-              )
-              .to(
-                currentExpanded,
-                {
-                  autoAlpha: 1,
-                  y: 0,
-                  duration: motion.contentTransition,
-                  ease: "none",
-                },
-                position + motion.expandedEnterAt,
-              )
-              .to(
-                previousImage,
-                {
-                  scale: profile.mediaExitScale,
-                  yPercent: profile.mediaExitPercent,
-                  duration: motion.cardTransition,
-                  ease: "none",
-                },
-                position,
-              )
-              .to(
-                currentImage,
-                {
-                  scale: 1,
-                  yPercent: 0,
-                  duration: motion.cardTransition,
-                  ease: "none",
-                },
-                position,
-              );
-
-            cards.forEach((card, cardIndex) => {
-              // Instant, not tweened: z-index isn't a property that means
-              // anything "partway" between two values, so the about-to-be
-              // active card should outrank every other one for this whole
-              // transition, from its very first frame — not just once the
-              // height/y tween below finishes.
-              timeline.set(
-                card,
-                {
-                  zIndex:
-                    cardIndex === nextIndex ? cards.length + 1 : cardIndex + 1,
-                },
-                position,
-              );
+            cards.forEach((card, index) => {
+              timeline.set(card, { zIndex: zFor(index, next) }, at);
               timeline.to(
                 card,
                 {
-                  height: () => layoutFor(cardIndex, nextIndex).height,
-                  y: () => layoutFor(cardIndex, nextIndex).y,
+                  y: () => yFor(index, next),
+                  clipPath: () => clipFor(index, next),
                   duration: motion.cardTransition,
-                  ease: "none",
                 },
-                position,
+                at,
               );
             });
-          }
 
-          ScrollTrigger.addEventListener("refreshInit", measureCards);
+            if (
+              prevExpanded &&
+              prevCollapsed &&
+              currentExpanded &&
+              currentCollapsed
+            ) {
+              timeline
+                .to(
+                  prevExpanded,
+                  { autoAlpha: 0, y: -6, duration: motion.contentTransition },
+                  at + motion.collapsedExitAt,
+                )
+                .to(
+                  prevCollapsed,
+                  { autoAlpha: 1, y: 0, duration: motion.contentTransition },
+                  at + motion.collapsedExitAt,
+                )
+                .to(
+                  currentCollapsed,
+                  { autoAlpha: 0, y: -6, duration: motion.contentTransition },
+                  at + motion.collapsedExitAt,
+                )
+                .to(
+                  currentExpanded,
+                  { autoAlpha: 1, y: 0, duration: motion.contentTransition },
+                  at + motion.expandedEnterAt,
+                );
+            }
+
+            if (prevImage && currentImage) {
+              timeline
+                .to(
+                  prevImage,
+                  {
+                    yPercent: profile.mediaToPercent,
+                    duration: motion.cardTransition,
+                  },
+                  at,
+                )
+                .to(
+                  currentImage,
+                  { yPercent: 0, duration: motion.cardTransition },
+                  at,
+                );
+            }
+          }
 
           const trigger = ScrollTrigger.create({
             trigger: section,
             start: motion.start,
-            // Not "bottom bottom": that ties the timeline's whole range to
-            // the section's total height, which only matches the pin's
-            // actual scroll room when the sticky stage happens to land
-            // exactly viewport-tall — true some of the time (that's what
-            // --service-active-height's clamp is aiming for), not
-            // guaranteed on every real viewport height. Measuring the live
-            // difference is what the browser's own `position: sticky` is
-            // actually pinning for, so the timeline can never finish before
-            // the section releases (the last card sitting fully revealed
-            // with the scroll seemingly doing nothing) or the reverse.
+            // Exactly the pin's own scroll room: the section is
+            // `100svh + (count - 1) * step` tall and the sticky stage is
+            // `100svh`, so this gap is `(count - 1) * step` — measured live so
+            // it stays correct through a resize or a late font swap.
             end: () => `+=${section.offsetHeight - stickyStage.offsetHeight}`,
             animation: timeline,
             scrub: profile.scrub,
             invalidateOnRefresh: true,
+            onRefreshInit: measure,
+            snap: {
+              snapTo: lastIndex > 0 ? 1 / lastIndex : 1,
+              duration: motion.snap.duration,
+              ease: motion.snap.ease,
+            },
             onUpdate: ({ progress }) => {
-              const completedTransitions = Math.floor(
-                progress * (services.length - 1) + 0.0001,
+              const next = Math.min(
+                lastIndex,
+                Math.floor(progress * lastIndex + 0.0001),
               );
-              const next = Math.min(services.length - 1, completedTransitions);
               setActiveIndex((current) => (current === next ? current : next));
             },
           });
           scrollTriggerRef.current = trigger;
 
           return () => {
-            ScrollTrigger.removeEventListener("refreshInit", measureCards);
             scrollTriggerRef.current = null;
             trigger.kill();
             timeline.kill();
@@ -304,11 +280,10 @@ export function ServicesSection({
                   key={service.id}
                   data-service-card
                   data-active={isActive || undefined}
-                  // Sizing is fully owned by .service-card's own CSS rules
-                  // (:first-child/:not(:first-child), driven by
-                  // --service-active-height etc.) — a min-h-* utility here
-                  // would only ever lose to that more specific rule, so it
-                  // isn't one.
+                  // Resting size comes from .service-card's own CSS
+                  // (:first-child / :not(:first-child)); once the scroll
+                  // timeline mounts, GSAP owns height / y / clip-path. A
+                  // min-h-* utility here would only fight both.
                   className="service-card relative isolate overflow-hidden bg-muted text-on-media"
                   style={
                     {
@@ -353,7 +328,10 @@ export function ServicesSection({
                     tabIndex={isActive ? -1 : 0}
                     aria-label={`Show ${service.title}`}
                     onClick={() => goToService(index)}
-                    className="service-collapsed-control group absolute inset-x-0 bottom-0 isolate flex h-service-row w-full items-center gap-5 px-service text-left text-foreground transition-colors focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none focus-visible:ring-inset"
+                    // top-0, not bottom-0: every card is full height now and
+                    // clipped down to its top row when collapsed, so the
+                    // control has to live in that visible top band.
+                    className="service-collapsed-control group absolute inset-x-0 top-0 isolate flex h-service-row w-full items-center gap-5 px-service text-left text-foreground transition-colors focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none focus-visible:ring-inset"
                   >
                     <span className="font-mono text-xs tracking-service-label text-muted-foreground uppercase">
                       {service.label}
@@ -369,6 +347,10 @@ export function ServicesSection({
                 </article>
               );
             })}
+
+            {/* CSS-sized to --layout-service-row-height; the scroll script
+                measures this instead of a card it may be animating. */}
+            <span aria-hidden data-service-row className="service-row-metric" />
           </div>
         </div>
       </div>
