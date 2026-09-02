@@ -122,7 +122,10 @@ export function buttonClassName({
  * full sweep plays out on every click regardless of how briefly the button
  * was actually pressed, on touch exactly as on a mouse.
  */
-function useClickFlash<T extends HTMLElement>(externalRef?: React.Ref<T>) {
+function useClickFlash<T extends HTMLElement>(
+  externalRef: React.Ref<T> | undefined,
+  variant: ButtonVariant | undefined,
+) {
   const ref = React.useRef<T>(null);
 
   // Both this hook's own DOM access and a caller's forwarded ref (e.g.
@@ -134,6 +137,9 @@ function useClickFlash<T extends HTMLElement>(externalRef?: React.Ref<T>) {
   React.useImperativeHandle(externalRef, () => ref.current as T, []);
 
   const flash = React.useCallback(() => {
+    // `link` never renders a <FlashSweep>, so there's nothing for this
+    // class to animate — see FlashSweep for why.
+    if (variant === "link") return;
     const el = ref.current;
     if (!el) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
@@ -144,12 +150,17 @@ function useClickFlash<T extends HTMLElement>(externalRef?: React.Ref<T>) {
     // of the class-add being a no-op because the class was never removed.
     void el.offsetWidth;
     el.classList.add("btn-flash-active");
-  }, []);
+  }, [variant]);
 
   return { ref, flash };
 }
 
-function FlashSweep() {
+function FlashSweep({ variant }: { variant?: ButtonVariant }) {
+  // The sweep is a bright streak crossing a filled or bordered chip — on
+  // the borderless, padding-less `link` variant there's no chip for it to
+  // cross, just bare text, so it would read as a stray flicker rather than
+  // feedback. Every other, CTA-shaped variant gets it.
+  if (variant === "link") return null;
   return <span aria-hidden className="btn-flash-sweep" />;
 }
 
@@ -170,7 +181,7 @@ export function Button({
   ref: externalRef,
   ...props
 }: ButtonProps) {
-  const { ref, flash } = useClickFlash<HTMLButtonElement>(externalRef);
+  const { ref, flash } = useClickFlash<HTMLButtonElement>(externalRef, variant);
 
   return (
     <button
@@ -193,7 +204,7 @@ export function Button({
         />
       )}
       {children}
-      <FlashSweep />
+      <FlashSweep variant={variant} />
     </button>
   );
 }
