@@ -52,7 +52,7 @@ const base = cn(
   "disabled:pointer-events-none disabled:translate-none disabled:scale-100 disabled:border-transparent disabled:bg-control-disabled disabled:text-control-disabled-foreground disabled:shadow-none",
   "aria-busy:cursor-wait",
   // Icons: sized, non-interactive, and animated on the compositor.
-  "[&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
+  "[&_svg]:pointer-events-none [&_svg]:size-3.5 [&_svg]:shrink-0",
   "[&_svg]:transition-[translate,opacity,scale] [&_svg]:duration-[240ms] [&_svg]:ease-premium",
   // A trailing icon rests behind the label, then leads on interaction.
   "[&_svg:last-child]:-translate-x-0.5 [&_svg:last-child]:opacity-70",
@@ -99,9 +99,9 @@ const variants: Record<ButtonVariant, string> = {
 };
 
 const sizes: Record<ButtonSize, string> = {
-  sm: "h-[var(--control-height-sm)] px-[var(--control-padding-sm)] text-xs",
+  sm: "h-[var(--control-height-sm)] px-[var(--control-padding-sm)] text-control-compact",
   md: "h-[var(--control-height-md)] px-[var(--control-padding-md)]",
-  lg: "h-[var(--control-height-lg)] px-[var(--control-padding-lg)] text-sm",
+  lg: "h-[var(--control-height-lg)] px-[var(--control-padding-lg)] text-[0.8125rem]",
   // A single centred glyph — no tuck, a gentle grow on hover instead.
   icon: "size-[var(--control-height-md)] p-0 [&_svg:last-child]:translate-x-0 [&_svg:last-child]:opacity-100 group-hover/btn:[&_svg:last-child]:translate-x-0 group-hover/btn:[&_svg:last-child]:scale-110",
 };
