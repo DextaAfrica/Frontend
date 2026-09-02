@@ -1,5 +1,5 @@
 import { Container, Section } from "@/components/layout";
-import { Badge, Icon, type IconName } from "@/components/ui";
+import { Badge, Icon, renderWithAccents, type IconName } from "@/components/ui";
 import { InlineNewsletterForm } from "@/features/newsletter/components/inline-newsletter-form";
 import { Reveal } from "./reveal";
 
@@ -19,14 +19,14 @@ export interface NewsletterSectionProps {
  * The homepage newsletter ask — a split, card-led layout (copy + benefit
  * chips on one side, a standalone signup card on the other) rather than the
  * centered editorial-heading treatment used for content sections: this is a
- * conversion moment, not an article intro, so it skips the serif/Playfair
- * voice entirely and leans on the same bold sans, pulsing "signal" dot, and
- * primary-tinted glow already established by the expertise marquee and
- * Dexta Clan band elsewhere on the page.
+ * conversion moment, not an article intro. The heading stays in the bold sans
+ * (never a full Playfair headline), but its `*word*` accent renders in the
+ * same red Playfair-italic treatment as every other section heading, for
+ * consistency across the page.
  */
 export function NewsletterSection({
   eyebrow = "Join the insider list",
-  title = "The insights investors act on — before everyone else does.",
+  title = "The insights investors act on — *before* everyone else does.",
   description = "Off-market listings, market intelligence and expert analysis — delivered straight to your inbox. No noise, no spam.",
 }: NewsletterSectionProps) {
   return (
@@ -46,7 +46,7 @@ export function NewsletterSection({
               id="newsletter-heading"
               className="max-w-xl font-display text-[clamp(1.25rem,1.07rem_+_0.75vw,1.75rem)] leading-[1.2] font-semibold tracking-section-heading text-balance"
             >
-              {title}
+              {renderWithAccents(title)}
             </h2>
             <p className="max-w-md text-body-small leading-5 text-pretty text-muted-foreground">
               {description}

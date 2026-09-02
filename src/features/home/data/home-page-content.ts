@@ -36,7 +36,7 @@ export const homePageContent = {
   },
   expertiseSection: {
     eyebrow: "Our Expertise",
-    title: "Full-spectrum property expertise, under one roof.",
+    title: "Complete property expertise, *in-house*.",
     description:
       "Eight disciplines, one accountable team — from first land search to final handover and beyond.",
   },
@@ -68,7 +68,7 @@ export const homePageContent = {
   ],
   projectsSection: {
     eyebrow: "Our Portfolio",
-    title: "Projects that speak for themselves",
+    title: "Projects that *speak* for themselves",
     ctaLabel: "View all projects",
     ctaHref: "/projects",
     cardCtaLabel: "View project",
@@ -107,7 +107,7 @@ export const homePageContent = {
   ],
   testimonialSection: {
     eyebrow: "Testimonials",
-    title: "Words from those who trusted us",
+    title: "Words from those who *trusted* us",
   },
   testimonials: [
     {
@@ -177,7 +177,7 @@ export const homePageContent = {
   ],
   blogSection: {
     eyebrow: "Blog",
-    title: "Insights for smarter real estate decisions",
+    title: "Insights for *smarter* real estate decisions",
   },
   blog: (
     [
@@ -223,12 +223,12 @@ export const homePageContent = {
   aboutTeaser: {
     eyebrow: "Our story",
     title:
-      "There's a team, a method, and a standard behind every Dexta project.",
+      "There's a team, a method, and a standard behind every Dexta *project*.",
     cta: { label: "Read our story", href: "/about" },
   },
   dextaClan: {
     eyebrow: "Dexta Clan",
-    title: "Learning how property works? There's a place for you.",
+    title: "Learning how property works? There's a *place* for you.",
     copy: "Dexta Clan is our learning community for first-time buyers, diaspora investors, and anyone figuring out African real estate — no jargon, no gatekeeping.",
     benefits: [
       "Live workshops and open Q&As with the Dexta team",
@@ -239,7 +239,7 @@ export const homePageContent = {
   },
   newsletter: {
     eyebrow: "Join the insider list",
-    title: "The insights investors act on — before everyone else does.",
+    title: "The insights investors act on — *before* everyone else does.",
     description:
       "Off-market listings, market intelligence and expert analysis — delivered straight to your inbox. No noise, no spam.",
   },

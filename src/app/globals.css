@@ -34,6 +34,11 @@
   --control-pressed: #e2e0da;
   --control-disabled: #f0efec;
   --control-disabled-foreground: #9c988f;
+  /* Bordered buttons (secondary): the outline is near-black on the light
+     theme (matching the neutral palette) and brand red under dark — see the
+     .dark override. */
+  --control-border: rgb(from var(--foreground) r g b / 0.3);
+  --control-border-hover: rgb(from var(--foreground) r g b / 0.6);
   --control-shadow: 0 1px 2px rgb(20 18 14 / 0.07);
   --control-shadow-hover: 0 10px 24px rgb(20 18 14 / 0.13);
   --control-shadow-glow: 0 8px 22px oklch(from var(--primary) l c h / 0.3);
@@ -278,6 +283,9 @@
   --control-pressed: #383129;
   --control-disabled: #211e1a;
   --control-disabled-foreground: #756d64;
+  /* Bordered buttons go brand red under dark (near-black outline on light). */
+  --control-border: rgb(from var(--primary) r g b / 0.6);
+  --control-border-hover: var(--primary);
   --control-shadow: 0 1px 2px rgb(0 0 0 / 0.4);
   --control-shadow-hover: 0 14px 30px rgb(0 0 0 / 0.5);
   --control-shadow-glow: 0 10px 26px oklch(from var(--primary) l c h / 0.45);
@@ -328,6 +336,8 @@
   --color-control-pressed: var(--control-pressed);
   --color-control-disabled: var(--control-disabled);
   --color-control-disabled-foreground: var(--control-disabled-foreground);
+  --color-control-border: var(--control-border);
+  --color-control-border-hover: var(--control-border-hover);
   --color-primary: var(--primary);
   --color-primary-hover: var(--primary-hover);
   --color-primary-foreground: var(--primary-foreground);
