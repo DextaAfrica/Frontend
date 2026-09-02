@@ -984,6 +984,54 @@ dialog[open]::backdrop {
   }
 }
 
+/* --- Button click-flash ----------------------------------------------------
+   A bright diagonal streak that sweeps once across a button's fill on every
+   click (button.tsx toggles .btn-flash-active; see useClickFlash there for
+   why that's a class toggle and not a plain :active rule — :active can't be
+   trusted to outlive a fast tap on touch). The sweep is a real sibling
+   element, not a pseudo-element, so it composites independently of
+   variant-specific background/border transitions and never needs its own
+   background painted per variant. */
+.btn-flash-sweep {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border-radius: inherit;
+  background: linear-gradient(
+    115deg,
+    transparent 35%,
+    rgb(255 255 255 / 0.55) 50%,
+    transparent 65%
+  );
+  transform: translateX(-130%);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.btn-flash-active .btn-flash-sweep {
+  animation: btn-flash-sweep 560ms var(--motion-ease-premium);
+}
+
+@keyframes btn-flash-sweep {
+  0% {
+    transform: translateX(-130%);
+    opacity: 0;
+  }
+  12% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(130%);
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .btn-flash-active .btn-flash-sweep {
+    animation: none;
+  }
+}
+
 /* --- Theme toggle ---------------------------------------------------------- */
 .theme-toggle {
   position: relative;
@@ -1527,17 +1575,23 @@ dialog[open]::backdrop {
  * from two copies of the same list placed edge to edge (see
  * expertise-marquee.tsx) and translated exactly -50% — because the second
  * copy is a pixel-perfect continuation of the first, the loop has no visible
- * seam. Edges dissolve via mask-image rather than a hard overflow clip. */
+ * seam. Edges dissolve via mask-image rather than a hard overflow clip.
+ *
+ * bg-foreground/text-background, not the fixed --brand-dark/--brand-light:
+ * same "inverse" tone Section already uses elsewhere in this codebase, so
+ * the band actually inverts relative to *whichever* theme is active — a
+ * dark strip on the light theme, a light strip on the dark theme — rather
+ * than being a fixed dark band regardless of the visitor's theme choice. */
 .expertise-marquee {
   position: relative;
   isolation: isolate;
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  gap: 1.75rem;
-  padding-block: 3rem;
-  background: var(--brand-dark);
-  color: var(--brand-light);
+  gap: 1.25rem;
+  padding-block: 1.75rem;
+  background: var(--foreground);
+  color: var(--background);
 }
 
 .expertise-marquee__signal {
@@ -1559,8 +1613,9 @@ dialog[open]::backdrop {
 .expertise-marquee__label {
   font-family: var(--font-mono);
   font-size: 0.7rem;
+  font-weight: 700;
   letter-spacing: 0.24em;
-  color: rgb(from var(--brand-light) r g b / 0.6);
+  color: rgb(from var(--background) r g b / 0.72);
   text-transform: uppercase;
 }
 
@@ -1599,33 +1654,48 @@ dialog[open]::backdrop {
   display: flex;
   flex-shrink: 0;
   align-items: center;
-  gap: 0.875rem;
-  padding-inline: 2.25rem;
-  border-right: 1px solid rgb(from var(--brand-light) r g b / 0.12);
+  gap: 0.75rem;
+  padding-inline: 1.5rem;
+  border-right: 1px solid rgb(from var(--background) r g b / 0.12);
   font-family: var(--font-mono);
-  font-size: 0.95rem;
+  font-size: 0.85rem;
   letter-spacing: 0.02em;
   text-transform: uppercase;
-  color: rgb(from var(--brand-light) r g b / 0.85);
+  color: rgb(from var(--background) r g b / 0.78);
   white-space: nowrap;
+  transition: color 240ms var(--motion-ease-premium);
+}
+
+.expertise-marquee__item:hover {
+  color: var(--background);
 }
 
 .expertise-marquee__icon {
   display: grid;
   flex-shrink: 0;
   place-items: center;
-  width: 2.25rem;
-  height: 2.25rem;
+  width: 1.875rem;
+  height: 1.875rem;
   border-radius: 999px;
-  border: 1px solid rgb(from var(--brand-light) r g b / 0.15);
-  background: rgb(from var(--brand-light) r g b / 0.06);
+  border: 1px solid rgb(from var(--background) r g b / 0.15);
+  background: rgb(from var(--background) r g b / 0.06);
   color: var(--primary);
+  transition:
+    background-color 240ms var(--motion-ease-premium),
+    border-color 240ms var(--motion-ease-premium),
+    transform 240ms var(--motion-ease-premium);
+}
+
+.expertise-marquee__item:hover .expertise-marquee__icon {
+  border-color: rgb(from var(--primary) r g b / 0.55);
+  background: rgb(from var(--primary) r g b / 0.16);
+  transform: scale(1.08);
 }
 
 @media (max-width: 639px) {
   .expertise-marquee__item {
-    padding-inline: 1.5rem;
-    font-size: 0.85rem;
+    padding-inline: 1.125rem;
+    font-size: 0.78rem;
   }
 }
 

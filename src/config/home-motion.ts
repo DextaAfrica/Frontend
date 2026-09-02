@@ -18,26 +18,29 @@ export const homeMotion = {
     collapsedExitAt: 0.78,
     expandedEnterAt: 0.8,
     contentTransition: 0.2,
+    // `end` isn't set here: the section computes its own scroll distance at
+    // runtime by measuring the live gap between the section and its sticky
+    // stage (see services-section.tsx) rather than trusting "bottom bottom"
+    // to line up with a CSS clamp that doesn't always land on the branch it
+    // was aiming for.
     start: "top top",
-    end: "bottom bottom",
     // mediaScale/mediaOffsetPercent prime an incoming image slightly zoomed
     // and shifted before it becomes active; mediaExitScale/mediaExitPercent
     // carry it further as it exits. The gap between those two states *is*
-    // the parallax — too small (this used to top out around 1.075/6%) and
-    // it reads as a jitter rather than depth, however smooth the easing is.
+    // the parallax.
     compact: {
       scrub: 0.72,
-      mediaScale: 1.12,
-      mediaOffsetPercent: 9,
-      mediaExitScale: 1.05,
-      mediaExitPercent: -5,
-    },
-    wide: {
-      scrub: 1,
       mediaScale: 1.16,
       mediaOffsetPercent: 11,
       mediaExitScale: 1.07,
       mediaExitPercent: -6.5,
+    },
+    wide: {
+      scrub: 1,
+      mediaScale: 1.22,
+      mediaOffsetPercent: 14,
+      mediaExitScale: 1.1,
+      mediaExitPercent: -9,
     },
   },
   testimonials: {

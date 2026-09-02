@@ -53,7 +53,10 @@ export function ServicesSection({
           );
           const firstCard = cards[0];
           const secondCard = cards[1];
-          if (!firstCard || !secondCard) return;
+          const stickyStage = section.querySelector<HTMLElement>(
+            ".service-sticky-stage",
+          );
+          if (!firstCard || !secondCard || !stickyStage) return;
 
           let activeHeight = 0;
           let rowHeight = 0;
@@ -79,11 +82,18 @@ export function ServicesSection({
             };
           };
 
+          // The active card must always render above every collapsed one —
+          // guaranteed, not a side effect of array order. zIndex:index+1
+          // alone means whichever card comes LAST in the list always sits
+          // highest regardless of which one is actually active; if any
+          // card's geometry is ever off by even a rounding pixel during a
+          // scrubbed transition, a later, collapsed card can paint over the
+          // active one. The active card explicitly outranks the rest here.
           gsap.set(cards, {
             position: "absolute",
             insetInline: 0,
             top: 0,
-            zIndex: (index) => index + 1,
+            zIndex: (index) => (index === 0 ? cards.length + 1 : index + 1),
             scale: 1,
             opacity: 1,
             transformOrigin: "50% 0%",
@@ -187,6 +197,19 @@ export function ServicesSection({
               );
 
             cards.forEach((card, cardIndex) => {
+              // Instant, not tweened: z-index isn't a property that means
+              // anything "partway" between two values, so the about-to-be
+              // active card should outrank every other one for this whole
+              // transition, from its very first frame — not just once the
+              // height/y tween below finishes.
+              timeline.set(
+                card,
+                {
+                  zIndex:
+                    cardIndex === nextIndex ? cards.length + 1 : cardIndex + 1,
+                },
+                position,
+              );
               timeline.to(
                 card,
                 {
@@ -205,7 +228,17 @@ export function ServicesSection({
           const trigger = ScrollTrigger.create({
             trigger: section,
             start: motion.start,
-            end: motion.end,
+            // Not "bottom bottom": that ties the timeline's whole range to
+            // the section's total height, which only matches the pin's
+            // actual scroll room when the sticky stage happens to land
+            // exactly viewport-tall — true some of the time (that's what
+            // --service-active-height's clamp is aiming for), not
+            // guaranteed on every real viewport height. Measuring the live
+            // difference is what the browser's own `position: sticky` is
+            // actually pinning for, so the timeline can never finish before
+            // the section releases (the last card sitting fully revealed
+            // with the scroll seemingly doing nothing) or the reverse.
+            end: () => `+=${section.offsetHeight - stickyStage.offsetHeight}`,
             animation: timeline,
             scrub: profile.scrub,
             invalidateOnRefresh: true,
@@ -302,14 +335,14 @@ export function ServicesSection({
                     className="service-expanded-content absolute inset-0 flex flex-col justify-between gap-6 p-service"
                   >
                     <div>
-                      <p className="mb-4 font-mono text-service-label tracking-service-label uppercase">
+                      <p className="mb-4 font-mono text-service-label tracking-service-label uppercase [text-shadow:0_1px_12px_rgb(0_0_0/0.5)]">
                         {service.label}
                       </p>
-                      <h3 className="max-w-[18ch] text-service-title leading-service-title font-medium tracking-service-title">
+                      <h3 className="max-w-[18ch] text-service-title leading-service-title font-semibold tracking-service-title [text-shadow:0_2px_20px_rgb(0_0_0/0.5)]">
                         {service.title}
                       </h3>
                     </div>
-                    <p className="max-w-service-copy self-end text-service-copy leading-service-copy font-normal">
+                    <p className="max-w-service-copy self-end text-service-copy leading-service-copy font-normal [text-shadow:0_1px_16px_rgb(0_0_0/0.45)]">
                       {service.description}
                     </p>
                   </div>
