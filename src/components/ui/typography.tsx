@@ -203,7 +203,7 @@ export function Eyebrow({
   return (
     <Tag
       className={cn(
-        "font-sans text-xs font-medium tracking-eyebrow text-primary uppercase",
+        "font-sans text-xs font-semibold tracking-eyebrow text-primary",
         className,
       )}
       {...props}
@@ -241,7 +241,7 @@ export function EditorialEyebrow({
   return (
     <p
       className={cn(
-        "font-sans text-sm font-normal tracking-editorial-label uppercase",
+        "font-sans text-sm font-semibold tracking-editorial-label",
         className,
       )}
       {...props}

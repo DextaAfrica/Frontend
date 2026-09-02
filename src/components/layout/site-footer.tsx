@@ -8,10 +8,11 @@ import { InlineNewsletterForm } from "@/features/newsletter/components/inline-ne
 import { Container } from "./container";
 
 const labelClass =
-  "font-display text-xs font-semibold tracking-footer-heading text-brand-light uppercase";
+  "font-display text-xs font-semibold tracking-footer-heading text-brand-light";
 const linkListClass =
-  "mt-5 flex flex-col gap-3 text-sm tracking-footer text-brand-light/75 uppercase";
-const linkClass = "transition-colors hover:text-brand-light";
+  "mt-5 flex flex-col gap-3 text-sm tracking-footer text-brand-light/75";
+const linkClass =
+  "transition-colors duration-[240ms] ease-premium hover:text-brand-light";
 
 export function SiteFooter() {
   return (

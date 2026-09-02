@@ -3,8 +3,12 @@
 import * as React from "react";
 import { gsap, useGSAP } from "@/lib/gsap";
 
-const REVEAL_FROM = { opacity: 0, y: 24 };
-const REVEAL_DURATION = 0.72;
+// A heavier entrance than a plain fade+rise — more travel, a soft blur
+// sharpening into focus — so arriving at a section reads as a deliberate,
+// premium reveal rather than a barely-there fade. Every consumer of
+// Reveal/RevealGroup site-wide gets this from one place.
+const REVEAL_FROM = { opacity: 0, y: 40, filter: "blur(8px)" };
+const REVEAL_DURATION = 0.95;
 const REVEAL_EASE = "power3.out";
 
 type RevealTag = "div" | "figure" | "article" | "span" | "li";
@@ -27,11 +31,12 @@ export function Reveal({ as: Tag = "div", delay = 0, ...props }: RevealProps) {
       gsap.fromTo(ref.current, REVEAL_FROM, {
         opacity: 1,
         y: 0,
+        filter: "blur(0px)",
         duration: REVEAL_DURATION,
         delay,
         ease: REVEAL_EASE,
         force3D: true,
-        clearProps: "transform,willChange",
+        clearProps: "transform,filter,willChange",
         scrollTrigger: {
           trigger: ref.current,
           start: "top 88%",
@@ -54,7 +59,7 @@ export interface RevealGroupProps extends React.HTMLAttributes<HTMLElement> {
 /** Reveals its [data-reveal-item] children in sequence as the group enters the viewport. */
 export function RevealGroup({
   as: Tag = "div",
-  stagger = 0.12,
+  stagger = 0.14,
   ...props
 }: RevealGroupProps) {
   const ref = React.useRef<HTMLElement>(null);
@@ -71,10 +76,11 @@ export function RevealGroup({
       gsap.fromTo(items, REVEAL_FROM, {
         opacity: 1,
         y: 0,
+        filter: "blur(0px)",
         duration: REVEAL_DURATION,
         ease: REVEAL_EASE,
         force3D: true,
-        clearProps: "transform,willChange",
+        clearProps: "transform,filter,willChange",
         stagger,
         scrollTrigger: {
           trigger: ref.current,

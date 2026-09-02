@@ -84,7 +84,7 @@ export function StatCard({
       <MetricValue className="relative text-brand-light [text-shadow:var(--stat-value-glow)]">
         {stat.value}
       </MetricValue>
-      <p className="relative max-w-stat-copy text-2xl leading-[1.2] font-light text-brand-light/80">
+      <p className="relative max-w-stat-copy text-base leading-[1.4] font-normal text-brand-light/80">
         <StatCopy copy={stat.copy} highlight={stat.highlight} />
       </p>
     </div>

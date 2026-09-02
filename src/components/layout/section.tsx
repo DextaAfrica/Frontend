@@ -8,7 +8,7 @@ const spacings: Record<Spacing, string> = {
   none: "py-0",
   sm: "py-10 sm:py-12",
   md: "py-16 sm:py-20",
-  lg: "py-20 sm:py-28 lg:py-32",
+  lg: "py-16 sm:py-20 lg:py-24",
   editorial: "py-section-editorial",
 };
 const tones: Record<Tone, string> = {
