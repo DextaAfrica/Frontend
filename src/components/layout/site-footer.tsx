@@ -110,7 +110,7 @@ export function SiteFooter() {
                     target="_blank"
                     rel="noreferrer noopener"
                     aria-label={profile.label}
-                    className="footer-social-link grid size-9 place-items-center rounded-full border border-brand-light/15 text-brand-light/70 transition-colors duration-[240ms] ease-premium hover:border-primary hover:text-primary"
+                    className="footer-social-link grid size-9 place-items-center rounded-full"
                   >
                     <Icon name={profile.icon} size={15} />
                   </a>

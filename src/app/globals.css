@@ -1624,9 +1624,21 @@ dialog[open]::backdrop {
 
 /* Same expanded-hit-area technique as the testimonial dots above: the
    visible circle (site-footer.tsx) stays a deliberately understated 36px,
-   but the actual tap target reaches the ~44px guideline. */
+   but the actual tap target reaches the ~44px guideline. Rest/hover colours
+   live here (not as utilities) so the whole circle — border + glyph — moves
+   to the brand red together, the same way `.footer-link` is handled. */
 .footer-social-link {
   position: relative;
+  border: 1px solid rgb(from var(--brand-light) r g b / 0.15);
+  color: rgb(from var(--brand-light) r g b / 0.7);
+  transition:
+    color 240ms var(--motion-ease-premium),
+    border-color 240ms var(--motion-ease-premium);
+}
+
+.footer-social-link:hover {
+  border-color: var(--primary);
+  color: var(--primary);
 }
 
 .footer-social-link::after {
@@ -1874,6 +1886,123 @@ dialog[open]::backdrop {
     border-right: none;
   }
   .expertise-marquee__dot {
+    animation: none;
+  }
+}
+
+/* --- Press marquee ("As featured in") ------------------------------------
+ * The light-toned counterpart to the expertise marquee — same scroll/pulse
+ * mechanism (reuses expertise-scroll / expertise-pulse below), quiet surface
+ * instead of an inverse band. See press-marquee.tsx for the DOM structure. */
+.press-marquee {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  padding-block: clamp(3rem, 5vw, 4rem);
+  background: var(--surface);
+}
+
+.press-marquee__signal {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.625rem;
+}
+
+.press-marquee__dot {
+  flex-shrink: 0;
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 999px;
+  background: var(--primary);
+  box-shadow: 0 0 0 4px rgb(from var(--primary) r g b / 0.2);
+  animation: expertise-pulse 2.2s ease-in-out infinite;
+}
+
+.press-marquee__label {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: var(--muted-foreground);
+  text-transform: uppercase;
+}
+
+.press-marquee__viewport {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  mask-image: linear-gradient(
+    to right,
+    transparent,
+    black 8%,
+    black 92%,
+    transparent
+  );
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent,
+    black 8%,
+    black 92%,
+    transparent
+  );
+}
+
+.press-marquee__track {
+  display: flex;
+  width: max-content;
+  align-items: center;
+  animation: expertise-scroll 30s linear infinite;
+}
+
+.press-marquee:hover .press-marquee__track {
+  animation-play-state: paused;
+}
+
+.press-marquee__item {
+  flex-shrink: 0;
+  padding-inline: 2.25rem;
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--muted-foreground);
+  white-space: nowrap;
+  filter: grayscale(1);
+  opacity: 0.55;
+  transition:
+    color 300ms var(--motion-ease-premium),
+    opacity 300ms var(--motion-ease-premium),
+    filter 300ms var(--motion-ease-premium);
+}
+
+.press-marquee__item:hover {
+  color: var(--primary);
+  opacity: 1;
+  filter: grayscale(0);
+}
+
+@media (max-width: 639px) {
+  .press-marquee__item {
+    padding-inline: 1.5rem;
+    font-size: 1.0625rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .press-marquee__track {
+    animation: none;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.75rem 1.5rem;
+  }
+  .press-marquee__track [data-duplicate] {
+    display: none;
+  }
+  .press-marquee__dot {
     animation: none;
   }
 }
