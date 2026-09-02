@@ -5,6 +5,7 @@ import {
   ExpertiseMarquee,
   FaqAccordion,
   LandingHero,
+  NewsletterSection,
 } from "@/components/marketing";
 import { expertiseItems } from "../data/expertise";
 import { faqItems } from "../data/faq";
@@ -30,16 +31,20 @@ export function HomeScreen({ content }: { content: HomePageContent }) {
         projects={content.projects}
         heading={content.projectsSection}
       />
-      <StatisticsSection statistics={content.statistics} />
+      <StatisticsSection
+        statistics={content.statistics}
+        heading={content.statisticsSection}
+      />
       <AboutTeaser content={content.aboutTeaser} />
       <TestimonialSection
         testimonials={content.testimonials}
         heading={content.testimonialSection}
       />
-      <BlogSection posts={content.blog} heading={content.blogSection} />
       <DextaClanBand {...content.dextaClan} />
+      <NewsletterSection {...content.newsletter} />
       <FaqAccordion items={faqItems} />
       <CtaBand />
+      <BlogSection posts={content.blog} heading={content.blogSection} />
     </Page>
   );
 }

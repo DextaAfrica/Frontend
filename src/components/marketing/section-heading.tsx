@@ -40,11 +40,15 @@ export function EditorialSectionHeading({
   title,
   align = "start",
   className,
+  headingId,
 }: {
   eyebrow: string;
   title: string;
   align?: "start" | "center";
   className?: string;
+  /** Applied to the underlying <h2> so an ancestor <section> can point its
+   * `aria-labelledby` at it, giving the section an accessible name. */
+  headingId?: string;
 }) {
   return (
     <header
@@ -56,7 +60,7 @@ export function EditorialSectionHeading({
     >
       <EditorialEyebrow>{eyebrow}</EditorialEyebrow>
       <span className="block h-px w-divider bg-current" aria-hidden />
-      <EditorialHeading>{title}</EditorialHeading>
+      <EditorialHeading id={headingId}>{title}</EditorialHeading>
     </header>
   );
 }

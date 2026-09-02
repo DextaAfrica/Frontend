@@ -22,7 +22,7 @@ export function FaqAccordion({
   title = "Got *Questions*?",
 }: FaqAccordionProps) {
   return (
-    <Section tone="surface">
+    <Section tone="surface" aria-labelledby="faq-heading">
       <Grid columns="two" gap="xl" className="items-start">
         <Reveal>
           <Stack gap="md" className="lg:sticky lg:top-28">
@@ -30,7 +30,7 @@ export function FaqAccordion({
               <Icon name="quote" size={12} />
               FAQ
             </Badge>
-            <EditorialHeading>{title}</EditorialHeading>
+            <EditorialHeading id="faq-heading">{title}</EditorialHeading>
           </Stack>
         </Reveal>
 

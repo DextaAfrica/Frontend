@@ -28,7 +28,7 @@ export const homePageContent = {
     poster: "/images/dexta-hero-poster.jpg",
   },
   intro: {
-    heading: "Your partner in *building* wealth",
+    heading: "Built on *integrity*, delivered with precision",
     paragraphs: [
       "From site to skyline, Dexta Africa delivers value-driven real estate solutions that turn dreams into *addresses*.",
       "Whether you're investing, living, or learning, we have the right *opportunity* for you.",
@@ -144,6 +144,10 @@ export const homePageContent = {
       role: "Principal Architect, Studio Lattice",
     },
   ],
+  statisticsSection: {
+    eyebrow: "Track record",
+    title: "Numbers that back up every promise",
+  },
   statistics: [
     {
       id: "clients",
@@ -230,7 +234,9 @@ export const homePageContent = {
     cta: { label: "Join the Dexta Clan", href: "/contact" },
   },
   newsletter: {
-    eyebrow: "Stay informed",
-    title: "Get the latest updates from Dexta",
+    eyebrow: "Join the insider list",
+    title: "The insights investors act on — before everyone else does.",
+    description:
+      "Off-market listings, market intelligence and expert analysis — delivered straight to your inbox. No noise, no spam.",
   },
 } satisfies HomePageContent;

@@ -17,11 +17,12 @@ export function BlogSection({
   heading: HomePageContent["blogSection"];
 }) {
   return (
-    <Section spacing="editorial" tone="default">
+    <Section spacing="editorial" tone="default" aria-labelledby="blog-heading">
       <EditorialSectionHeading
         eyebrow={heading.eyebrow}
         title={heading.title}
         align="center"
+        headingId="blog-heading"
       />
 
       <RevealGroup>

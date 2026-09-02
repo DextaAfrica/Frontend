@@ -2108,6 +2108,19 @@ dialog[open]::backdrop {
   .about-team__card:hover {
     transform: none;
   }
+  .newsletter-cta__dot {
+    animation: none;
+  }
+}
+
+/* --- Newsletter CTA ------------------------------------------------------ */
+.newsletter-cta__dot {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 999px;
+  background: var(--primary);
+  box-shadow: 0 0 0 4px rgb(from var(--primary) r g b / 0.25);
+  animation: expertise-pulse 2.2s ease-in-out infinite;
 }
 
 /* ===========================================================================

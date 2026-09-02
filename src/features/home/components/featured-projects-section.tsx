@@ -39,10 +39,15 @@ export function FeaturedProjectsSection({
   heading: HomePageContent["projectsSection"];
 }) {
   return (
-    <Section spacing="editorial" tone="surface">
+    <Section
+      spacing="editorial"
+      tone="surface"
+      aria-labelledby="projects-heading"
+    >
       <EditorialSectionHeading
         eyebrow={heading.eyebrow}
         title={heading.title}
+        headingId="projects-heading"
       />
 
       <RevealGroup className="project-mosaic mt-14 grid gap-project-grid md:grid-cols-12 md:grid-rows-2">
