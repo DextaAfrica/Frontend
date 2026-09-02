@@ -188,8 +188,8 @@
   --layout-stat-card-height: 20.375rem;
   --layout-service-mobile-height: 34rem;
   --layout-service-tablet-height: 38rem;
-  --layout-service-scroll-travel: 52svh;
-  --layout-service-scroll-travel-desktop: 64svh;
+  --layout-service-scroll-travel: 36svh;
+  --layout-service-scroll-travel-desktop: 42svh;
   --layout-service-row-height: clamp(5.25rem, 6.5vw, 6.25rem);
   --width-services: 90rem;
   --width-testimonial-heading: 32.8125rem;
@@ -203,7 +203,7 @@
   --width-dialog-wide: 52rem;
   --layout-newsletter-stack-width: 43rem;
   --layout-newsletter-stack-height: 18rem;
-  --type-service-title: clamp(2rem, 3.333vw, 3rem);
+  --type-service-title: clamp(1.75rem, 2.6vw, 2.5rem);
   --type-service-copy: clamp(1rem, 1.4vw, 1.25rem);
   --type-service-label: 0.875rem;
   --type-service-number: clamp(3rem, 6.65vw, 6rem);

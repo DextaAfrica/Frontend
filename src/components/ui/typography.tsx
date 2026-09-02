@@ -212,9 +212,12 @@ export function Eyebrow({
 }
 
 /**
- * The site's editorial voice — Playfair Display, reserved for section
- * headlines. Roman here; an `*accent*` word inside renders in Playfair
- * italic (see `Accent`) for a quiet emphasis rather than a font clash.
+ * Section headlines, site-wide. Sans (the same grotesque as everything
+ * else) rather than a serif display face — a serif at heading size reads
+ * noticeably heavier than a sans headline of the same pixel size, which was
+ * a real contributor to the site feeling "bulky." Playfair now survives only
+ * as the quiet, restrained `*accent*` italic word inside a headline (see
+ * `Accent`), never as the voice of a whole headline.
  */
 export function EditorialHeading({
   className,
@@ -224,7 +227,7 @@ export function EditorialHeading({
   return (
     <h2
       className={cn(
-        "font-serif text-editorial leading-[1.14] font-medium tracking-normal text-balance",
+        "font-display text-editorial leading-[1.2] font-semibold tracking-tight text-balance",
         className,
       )}
       {...props}

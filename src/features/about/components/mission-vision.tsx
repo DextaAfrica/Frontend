@@ -30,7 +30,7 @@ export function MissionVision({ content }: { content: MissionVisionContent }) {
               </div>
               <div className="flex flex-1 flex-col gap-4 p-7 sm:p-9">
                 <Eyebrow>{item.label}</Eyebrow>
-                <p className="font-serif text-editorial leading-[1.2] text-balance">
+                <p className="font-display text-editorial leading-[1.2] font-semibold tracking-tight text-balance">
                   {renderWithAccents(item.text)}
                 </p>
               </div>
