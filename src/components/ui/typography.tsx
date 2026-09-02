@@ -129,9 +129,14 @@ export function Heading({
   );
 }
 
+// Fluid clamp()s, not a flat Tailwind breakpoint jump: a two-step class like
+// "text-2xl sm:text-4xl" holds one fixed size below 640px and another fixed
+// size at every viewport above it — a tablet and an ultra-wide monitor get
+// the exact same pixel size. clamp() scales continuously across every
+// screen size instead, which is what "responsive" actually means for type.
 const sectionHeadingSizes = {
-  default: "text-2xl sm:text-4xl",
-  compact: "text-xl sm:text-2xl",
+  default: "text-[clamp(1.25rem,2.2vw,1.75rem)]",
+  compact: "text-[clamp(1.0625rem,1.5vw,1.25rem)]",
 } as const;
 
 export function SectionHeading({
@@ -155,9 +160,9 @@ export function SectionHeading({
 }
 
 const cardHeadingSizes = {
-  sm: "text-base",
-  md: "text-lg",
-  lg: "text-xl",
+  sm: "text-[clamp(0.8125rem,0.9vw,0.9375rem)]",
+  md: "text-[clamp(0.9375rem,1vw,1.0625rem)]",
+  lg: "text-[clamp(1rem,1.2vw,1.1875rem)]",
 } as const;
 
 export function CardHeading({
@@ -184,7 +189,7 @@ export function Text({ className, ...props }: React.ComponentProps<"p">) {
   return (
     <p
       className={cn(
-        "font-sans text-body-small leading-6 text-muted-foreground sm:text-base",
+        "font-sans text-body-small leading-6 text-muted-foreground",
         className,
       )}
       {...props}

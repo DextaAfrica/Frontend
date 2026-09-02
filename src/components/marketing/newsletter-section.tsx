@@ -44,11 +44,11 @@ export function NewsletterSection({
             </span>
             <h2
               id="newsletter-heading"
-              className="max-w-xl font-display text-3xl leading-[1.08] font-semibold tracking-section-heading text-balance sm:text-4xl lg:text-[2.75rem]"
+              className="max-w-xl font-display text-[clamp(1.5rem,2.6vw,2.25rem)] leading-[1.15] font-semibold tracking-section-heading text-balance"
             >
               {title}
             </h2>
-            <p className="max-w-md text-body-small leading-6 text-pretty text-muted-foreground sm:text-base">
+            <p className="max-w-md text-body-small leading-6 text-pretty text-muted-foreground">
               {description}
             </p>
             <ul className="flex flex-wrap gap-3">
@@ -77,7 +77,7 @@ export function NewsletterSection({
               <Badge variant="brand" className="w-fit">
                 Weekly briefing
               </Badge>
-              <h3 className="mt-4 font-display text-xl font-semibold tracking-tight sm:text-2xl">
+              <h3 className="mt-4 font-display text-[clamp(1.0625rem,1.4vw,1.25rem)] font-semibold tracking-tight">
                 Get the Dexta brief in your inbox
               </h3>
               <p className="mt-2 text-sm text-muted-foreground">

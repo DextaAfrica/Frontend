@@ -90,11 +90,11 @@
   --control-padding-lg: 1.5rem;
 
   /* -- Typography: fonts, plus small global type/tracking values --------- */
-  --type-control: 0.8125rem;
-  --type-control-compact: 0.7rem;
+  --type-control: 0.75rem;
+  --type-control-compact: 0.6875rem;
   --type-status: 0.6875rem;
-  --type-body-small: 0.9375rem;
-  --type-navigation-display: clamp(1.625rem, 6.5vw, 2rem);
+  --type-body-small: clamp(0.8125rem, 0.9vw, 0.9375rem);
+  --type-navigation-display: clamp(1.375rem, 5vw, 1.75rem);
   --letter-spacing-control: 0.04em;
   --letter-spacing-control-compact: 0.08em;
   /* Calmer than the old 0.2em: a small sentence-case label still reads as
@@ -137,7 +137,7 @@
      it would wrap inside the hero's single-line reveal mask and clip.
      3.8vw overtakes this floor well before it'd ever visibly shrink a
      wider viewport, so this only changes narrow phones. */
-  --type-hero: clamp(1.75rem, 3.6vw, 3.5rem);
+  --type-hero: clamp(1.5rem, 3.1vw, 2.75rem);
   --letter-spacing-hero: -0.02em;
   --letter-spacing-heading: -0.04em;
   --line-height-heading: 1.02;
@@ -146,10 +146,10 @@
   --space-page: clamp(1rem, 1.181vw, 1.0625rem);
   --space-services-y: clamp(1.5rem, 2vw, 2rem);
   --space-service-inline: clamp(1.5rem, 5.694vw, 5.125rem);
-  --type-section-display: clamp(1.25rem, 1.6vw, 1.5rem);
-  --type-editorial: clamp(1.5rem, 2vw, 2.125rem);
-  --type-project-title: clamp(1.375rem, 2vw, 2rem);
-  --type-metric: clamp(3.5rem, 5.25vw, 4.75rem);
+  --type-section-display: clamp(1.125rem, 1.3vw, 1.25rem);
+  --type-editorial: clamp(1.25rem, 1.6vw, 1.75rem);
+  --type-project-title: clamp(1.125rem, 1.6vw, 1.625rem);
+  --type-metric: clamp(2.75rem, 4vw, 3.75rem);
   --line-height-editorial: 1.15;
   --letter-spacing-editorial: -0.02em;
   /* Proportional (em), not the old fixed 0.2625rem — that stayed wide even
@@ -203,14 +203,14 @@
   --width-dialog-wide: 52rem;
   --layout-newsletter-stack-width: 43rem;
   --layout-newsletter-stack-height: 18rem;
-  --type-service-title: clamp(1.75rem, 2.6vw, 2.5rem);
-  --type-service-copy: clamp(1rem, 1.4vw, 1.25rem);
-  --type-service-label: 0.875rem;
-  --type-service-number: clamp(3rem, 6.65vw, 6rem);
-  --type-service-tab: clamp(1rem, 1.4vw, 1.25rem);
-  --type-service-tab-number: clamp(0.875rem, 1.111vw, 1rem);
-  --type-testimonial: clamp(1.125rem, 1.5vw, 1.375rem);
-  --type-testimonial-author: clamp(1rem, 1.4vw, 1.25rem);
+  --type-service-title: clamp(1.5rem, 2.1vw, 2rem);
+  --type-service-copy: clamp(0.875rem, 1.1vw, 1rem);
+  --type-service-label: 0.8125rem;
+  --type-service-number: clamp(2.25rem, 5vw, 4.5rem);
+  --type-service-tab: clamp(0.875rem, 1.1vw, 1rem);
+  --type-service-tab-number: clamp(0.8125rem, 0.9vw, 0.9375rem);
+  --type-testimonial: clamp(1rem, 1.2vw, 1.125rem);
+  --type-testimonial-author: clamp(0.875rem, 1vw, 1rem);
   --letter-spacing-service-title: -0.06397rem;
   --letter-spacing-service-label: -0.0427rem;
   --letter-spacing-service-number: -0.293rem;
@@ -249,8 +249,8 @@
   --layer-navigation: 90;
 
   /* -- About page ------------------------------------------------------- */
-  --type-about-statement: clamp(1.5rem, 2.2vw, 2.125rem);
-  --type-ceo-kicker: clamp(1.25rem, 2vw, 1.75rem);
+  --type-about-statement: clamp(1.25rem, 1.7vw, 1.75rem);
+  --type-ceo-kicker: clamp(1.125rem, 1.5vw, 1.5rem);
   --layout-about-hero-media: clamp(20rem, 42vw, 34rem);
   --layout-ceo-portrait: clamp(17rem, 32vw, 25rem);
   --space-about: clamp(3.5rem, 6.5vw, 6rem);
@@ -471,7 +471,7 @@ html {
 }
 
 body {
-  font-size: 0.9375rem;
+  font-size: 0.875rem;
   font-weight: 400;
   line-height: 1.6;
   text-rendering: optimizeLegibility;

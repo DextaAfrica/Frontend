@@ -20,7 +20,7 @@ export function QuoteBlock({
           className="mx-auto max-w-4xl text-center"
         >
           <Icon name="quote" size={32} className="text-primary" />
-          <blockquote className="text-xl leading-tight font-medium text-balance sm:text-2xl lg:text-3xl">
+          <blockquote className="text-[clamp(1.125rem,1.8vw,1.5rem)] leading-tight font-medium text-balance">
             “{quote}”
           </blockquote>
           <Eyebrow className="text-background/55">
