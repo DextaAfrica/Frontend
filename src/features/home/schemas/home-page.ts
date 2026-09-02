@@ -55,7 +55,6 @@ export const homePageContentSchema = z.object({
         description: nonEmptyString,
         image: nonEmptyString,
         href: nonEmptyString,
-        layout: z.enum(["feature", "compact"]),
       }),
     )
     .min(1),

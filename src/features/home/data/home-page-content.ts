@@ -77,7 +77,6 @@ export const homePageContent = {
         "Ultra-premium 1 & 2 bedroom apartments in the heart of Lekki, built around smart-home technology, world-class amenities, and a genuinely prime address.",
       image: "/images/project-dlodge.jpg",
       href: "/projects/dlodge-apartment",
-      layout: "feature",
     },
     {
       id: "olumo-county-estate",
@@ -88,7 +87,6 @@ export const homePageContent = {
         "Fully serviced plots inside a secured, master-planned estate — roads, drainage, and utilities already in place before you break ground.",
       image: "/images/project-olumo.jpg",
       href: "/projects/olumo-county-estate",
-      layout: "compact",
     },
     {
       id: "kingsway-estate",
@@ -99,7 +97,6 @@ export const homePageContent = {
         "A gated residential estate built around wide roads, green spaces, and long-term value for families and investors alike.",
       image: "/images/project-kingsway.jpg",
       href: "/projects/kingsway-estate",
-      layout: "compact",
     },
   ],
   testimonialSection: {
