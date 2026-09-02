@@ -28,7 +28,7 @@ export const homePageContent = {
     poster: "/images/dexta-hero-poster.jpg",
   },
   intro: {
-    heading: "Your partner in *building* wealth",
+    heading: "Built on *integrity*, delivered with precision",
     paragraphs: [
       "From site to skyline, Dexta Africa delivers value-driven real estate solutions that turn dreams into *addresses*.",
       "Whether you're investing, living, or learning, we have the right *opportunity* for you.",
@@ -77,7 +77,6 @@ export const homePageContent = {
         "Ultra-premium 1 & 2 bedroom apartments in the heart of Lekki, built around smart-home technology, world-class amenities, and a genuinely prime address.",
       image: "/images/project-dlodge.jpg",
       href: "/projects/dlodge-apartment",
-      layout: "feature",
     },
     {
       id: "olumo-county-estate",
@@ -88,7 +87,6 @@ export const homePageContent = {
         "Fully serviced plots inside a secured, master-planned estate — roads, drainage, and utilities already in place before you break ground.",
       image: "/images/project-olumo.jpg",
       href: "/projects/olumo-county-estate",
-      layout: "compact",
     },
     {
       id: "kingsway-estate",
@@ -99,7 +97,6 @@ export const homePageContent = {
         "A gated residential estate built around wide roads, green spaces, and long-term value for families and investors alike.",
       image: "/images/project-kingsway.jpg",
       href: "/projects/kingsway-estate",
-      layout: "compact",
     },
   ],
   testimonialSection: {
@@ -144,6 +141,10 @@ export const homePageContent = {
       role: "Principal Architect, Studio Lattice",
     },
   ],
+  statisticsSection: {
+    eyebrow: "Track record",
+    title: "Numbers that back up every promise",
+  },
   statistics: [
     {
       id: "clients",
@@ -230,7 +231,9 @@ export const homePageContent = {
     cta: { label: "Join the Dexta Clan", href: "/contact" },
   },
   newsletter: {
-    eyebrow: "Stay informed",
-    title: "Get the latest updates from Dexta",
+    eyebrow: "Join the insider list",
+    title: "The insights investors act on — before everyone else does.",
+    description:
+      "Off-market listings, market intelligence and expert analysis — delivered straight to your inbox. No noise, no spam.",
   },
 } satisfies HomePageContent;

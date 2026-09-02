@@ -277,12 +277,17 @@ export function TestimonialSection({
   const activeItem = testimonials[active];
 
   return (
-    <Section spacing="editorial" tone="default">
+    <Section
+      spacing="editorial"
+      tone="default"
+      aria-labelledby="testimonials-heading"
+    >
       <EditorialSectionHeading
         eyebrow={heading.eyebrow}
         title={heading.title}
         align="center"
         className="max-w-testimonial-heading"
+        headingId="testimonials-heading"
       />
 
       <Reveal className="mx-auto mt-testimonial w-full max-w-testimonial-body">

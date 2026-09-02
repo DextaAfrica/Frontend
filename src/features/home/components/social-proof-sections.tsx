@@ -1,15 +1,28 @@
 import { Section } from "@/components/layout";
-import { RevealGroup, RevealItem } from "@/components/marketing";
-import type { StatisticContent } from "../types/home-page";
+import {
+  EditorialSectionHeading,
+  RevealGroup,
+  RevealItem,
+} from "@/components/marketing";
+import type { HomePageContent, StatisticContent } from "../types/home-page";
 import { StatCard } from "./stat-card";
 
 export function StatisticsSection({
   statistics,
+  heading,
 }: {
   statistics: readonly StatisticContent[];
+  heading: HomePageContent["statisticsSection"];
 }) {
   return (
-    <Section spacing="lg" tone="surface">
+    <Section spacing="lg" tone="default" aria-labelledby="statistics-heading">
+      <EditorialSectionHeading
+        eyebrow={heading.eyebrow}
+        title={heading.title}
+        align="center"
+        headingId="statistics-heading"
+        className="mb-14"
+      />
       <RevealGroup className="grid border-y border-border md:grid-cols-3">
         {statistics.map((stat, index) => (
           <RevealItem

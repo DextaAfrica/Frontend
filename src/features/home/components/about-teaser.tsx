@@ -15,11 +15,17 @@ import type { AboutTeaserContent } from "../types/home-page";
  */
 export function AboutTeaser({ content }: { content: AboutTeaserContent }) {
   return (
-    <Section spacing="editorial" tone="surface">
+    <Section
+      spacing="editorial"
+      tone="surface"
+      aria-labelledby="about-teaser-heading"
+    >
       <Reveal className="flex flex-col gap-8 border-t border-border pt-12 md:flex-row md:items-end md:justify-between md:gap-16">
         <div className="flex max-w-2xl flex-col gap-5">
           <EditorialEyebrow>{content.eyebrow}</EditorialEyebrow>
-          <EditorialHeading>{content.title}</EditorialHeading>
+          <EditorialHeading id="about-teaser-heading">
+            {content.title}
+          </EditorialHeading>
         </div>
         <ButtonLink
           href={content.cta.href}

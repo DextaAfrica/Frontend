@@ -55,7 +55,6 @@ export const homePageContentSchema = z.object({
         description: nonEmptyString,
         image: nonEmptyString,
         href: nonEmptyString,
-        layout: z.enum(["feature", "compact"]),
       }),
     )
     .min(1),
@@ -72,6 +71,7 @@ export const homePageContentSchema = z.object({
       }),
     )
     .min(1),
+  statisticsSection: sectionHeadingSchema,
   statistics: z
     .array(
       z.object({
@@ -108,8 +108,7 @@ export const homePageContentSchema = z.object({
     benefits: nonEmptyStringArray,
     cta: z.object({ label: nonEmptyString, href: nonEmptyString }),
   }),
-  newsletter: z.object({
-    eyebrow: nonEmptyString,
-    title: nonEmptyString,
+  newsletter: sectionHeadingSchema.extend({
+    description: nonEmptyString,
   }),
 });

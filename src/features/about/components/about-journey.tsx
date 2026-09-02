@@ -80,10 +80,10 @@ export function AboutJourney({ content }: { content: AboutJourneyContent }) {
                 <Reveal as="li" key={milestone.year} className="flex gap-5">
                   <span className="about-journey__marker" aria-hidden />
                   <div className="flex flex-col gap-2">
-                    <span className="font-mono text-sm tracking-[0.16em] text-primary uppercase">
+                    <span className="font-mono text-sm tracking-[0.06em] text-primary">
                       {milestone.year}
                     </span>
-                    <p className="max-w-md text-pretty text-brand-light/80">
+                    <p className="max-w-md text-sm text-pretty text-brand-light/80">
                       {milestone.text}
                     </p>
                   </div>

@@ -347,8 +347,8 @@ function HeaderLink({
       href={item.href as Route}
       aria-current={active ? "page" : undefined}
       className={cn(
-        "text-control-compact font-medium tracking-control-compact whitespace-nowrap uppercase transition-colors hover:text-primary",
-        active && "text-primary",
+        "text-sm font-medium whitespace-nowrap opacity-80 transition-[color,opacity] duration-[240ms] ease-premium hover:text-primary hover:opacity-100",
+        active && "text-primary opacity-100",
       )}
     >
       {item.label}
