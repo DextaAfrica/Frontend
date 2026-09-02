@@ -2,89 +2,121 @@ import Image from "next/image";
 import Link from "next/link";
 import type { Route } from "next";
 import { CookieSettingsButton } from "@/components/consent/consent-manager";
-import { Icon } from "@/components/ui";
+import { Accent, Icon } from "@/components/ui";
 import { siteConfig } from "@/config/site";
 import { InlineNewsletterForm } from "@/features/newsletter/components/inline-newsletter-form";
 import { Container } from "./container";
 
-const labelClass =
-  "font-display text-xs font-semibold tracking-footer-heading text-brand-light";
-const linkListClass =
-  "mt-5 flex flex-col gap-3 text-sm tracking-footer text-brand-light/75";
-const linkClass =
-  "transition-colors duration-[240ms] ease-premium hover:text-brand-light";
+/**
+ * The footer is a deliberate fixed-dark anchor in BOTH themes — the same
+ * brand-invariant surface as `CtaBand` / `DextaClanBand`, built on the
+ * `--brand-dark` / `--brand-light` tokens rather than the theme-reactive
+ * semantic scale. So there is no `useTheme` branch here by design: it renders
+ * identically whichever appearance the visitor has chosen. "Following the theme
+ * architecture" for this surface means consuming brand/semantic tokens (never
+ * raw hex) and letting the one brand red (`--primary`) carry every accent.
+ */
+
+const columnHeading =
+  "font-display text-[0.7rem] font-semibold tracking-footer-heading text-brand-light/55 uppercase";
+const linkList =
+  "mt-4 flex flex-col gap-2.5 text-sm tracking-footer text-brand-light/75";
+const footerLink = "footer-link w-fit";
 
 export function SiteFooter() {
+  const telHref = `tel:${siteConfig.contact.phone.replace(/[^\d+]/g, "")}`;
+
   return (
-    <footer className="bg-brand-dark py-16 text-brand-light sm:py-20">
-      <Container>
-        <div className="grid gap-12 sm:grid-cols-2 lg:grid-cols-[2fr_1fr_1fr_1.4fr]">
-          <div>
+    <footer className="bg-brand-dark text-brand-light">
+      <Container className="py-16 sm:py-20 lg:py-24">
+        <div className="grid gap-x-8 gap-y-12 sm:grid-cols-3 lg:grid-cols-[1.6fr_1fr_1fr_1.2fr] lg:gap-x-12">
+          <div className="sm:col-span-3 lg:col-span-1">
             <Image
               src="/images/dexta-logo-on-dark.svg"
-              alt="Dexta"
+              alt={siteConfig.name}
               width={238}
               height={104}
+              className="h-10 w-auto"
             />
-            <p className={`mt-8 ${labelClass}`}>Lagos office address</p>
-            <p className="mt-4 max-w-xs text-sm leading-6 tracking-footer-copy text-brand-light/75">
-              {siteConfig.contact.address}
+            <span
+              aria-hidden
+              className="mt-6 block h-0.5 w-10 rounded-full bg-primary"
+            />
+            <p className="mt-6 max-w-xs text-sm leading-6 tracking-footer-copy text-brand-light/60">
+              {siteConfig.description}
             </p>
+            <address className="mt-5 max-w-xs text-sm leading-6 tracking-footer-copy text-brand-light/60 not-italic">
+              <span className="block text-brand-light/40">Lagos office</span>
+              {siteConfig.contact.address}
+            </address>
           </div>
 
           {siteConfig.footer.groups.map((group) => (
             <FooterGroup key={group.title} {...group} />
           ))}
 
-          <div>
-            <p className={labelClass}>Contact</p>
-            <div className={linkListClass}>
-              <a
-                href={`mailto:${siteConfig.contact.email}`}
-                className={linkClass}
-              >
-                {siteConfig.contact.email}
-              </a>
-              <a href={`tel:${siteConfig.contact.phone}`} className={linkClass}>
-                {siteConfig.contact.phone}
-              </a>
-              <span>{siteConfig.contact.shortCode}</span>
-              <span>{siteConfig.contact.supportLabel}</span>
-            </div>
-            <p className="mt-8 text-sm tracking-footer-copy text-brand-light/60 normal-case">
+          <nav aria-label="Contact">
+            <h2 className={columnHeading}>Contact</h2>
+            <ul className={linkList}>
+              <li>
+                <a
+                  href={`mailto:${siteConfig.contact.email}`}
+                  className={footerLink}
+                >
+                  {siteConfig.contact.email}
+                </a>
+              </li>
+              <li>
+                <a href={telHref} className={footerLink}>
+                  {siteConfig.contact.phone}
+                </a>
+              </li>
+              <li className="text-brand-light/60">
+                {siteConfig.contact.shortCode}
+              </li>
+              <li className="text-brand-light/45">
+                {siteConfig.contact.supportLabel}
+              </li>
+            </ul>
+            <p className="mt-4 flex items-center gap-2 text-xs tracking-footer-copy text-brand-light/45">
+              <span aria-hidden className="size-1.5 rounded-full bg-success" />
               {siteConfig.contact.availability}
             </p>
+          </nav>
+        </div>
+
+        <div className="footer-divider mt-14 grid gap-x-12 gap-y-5 border-t pt-10 sm:mt-16 md:grid-cols-2 md:items-center lg:grid-cols-[1fr_minmax(0,30rem)]">
+          <div className="max-w-md">
+            <h2 className="font-display text-lg leading-snug font-medium text-balance text-brand-light sm:text-xl">
+              Updates, insights &amp; stories — straight to your{" "}
+              <Accent>inbox</Accent>
+            </h2>
+            <p className="mt-2 text-sm tracking-footer-copy text-brand-light/50">
+              A considered note now and then. No noise, unsubscribe anytime.
+            </p>
           </div>
+          <InlineNewsletterForm onMedia className="mt-0! w-full" />
         </div>
 
-        <div className="mt-16 border-t border-on-media-border pt-10 sm:mt-20">
-          <p className="font-display text-sm font-medium text-brand-light">
-            Updates, insights &amp; stories straight to your inbox
-          </p>
-          <InlineNewsletterForm
-            onMedia
-            className="mt-4 max-w-newsletter-title"
-          />
-        </div>
-
-        <div className="mt-10 flex flex-col gap-5 border-t border-on-media-border pt-8 text-sm tracking-footer-copy text-brand-light/60 sm:flex-row sm:items-center sm:justify-between">
+        <div className="footer-divider mt-12 flex flex-col gap-6 border-t pt-8 text-xs tracking-footer-copy text-brand-light/45 sm:flex-row sm:items-center sm:justify-between">
           <p>{siteConfig.legal.registration}</p>
-          <div className="flex flex-wrap items-center gap-4">
-            <CookieSettingsButton />
-            <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center gap-x-5 gap-y-3">
+            <CookieSettingsButton className="footer-link" />
+            <ul className="flex items-center gap-2.5">
               {siteConfig.social.map((profile) => (
-                <a
-                  key={profile.label}
-                  href={profile.href}
-                  target="_blank"
-                  rel="noreferrer noopener"
-                  aria-label={profile.label}
-                  className="footer-social-link grid size-8 place-items-center rounded-full border border-on-media-border text-brand-light transition-colors hover:border-brand-light hover:bg-brand-light/10"
-                >
-                  <Icon name={profile.icon} size={14} />
-                </a>
+                <li key={profile.label}>
+                  <a
+                    href={profile.href}
+                    target="_blank"
+                    rel="noreferrer noopener"
+                    aria-label={profile.label}
+                    className="footer-social-link grid size-9 place-items-center rounded-full"
+                  >
+                    <Icon name={profile.icon} size={15} />
+                  </a>
+                </li>
               ))}
-            </div>
+            </ul>
           </div>
         </div>
       </Container>
@@ -97,19 +129,17 @@ function FooterGroup({
   links,
 }: (typeof siteConfig.footer.groups)[number]) {
   return (
-    <div>
-      <p className={labelClass}>{title}</p>
-      <nav className={linkListClass}>
+    <nav aria-label={title}>
+      <h2 className={columnHeading}>{title}</h2>
+      <ul className={linkList}>
         {links.map((link) => (
-          <Link
-            key={link.label}
-            href={link.href as Route}
-            className={linkClass}
-          >
-            {link.label}
-          </Link>
+          <li key={link.label}>
+            <Link href={link.href as Route} className={footerLink}>
+              {link.label}
+            </Link>
+          </li>
         ))}
-      </nav>
-    </div>
+      </ul>
+    </nav>
   );
 }

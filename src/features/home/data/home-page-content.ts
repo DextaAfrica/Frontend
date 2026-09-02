@@ -34,6 +34,12 @@ export const homePageContent = {
       "Whether you're investing, living, or learning, we have the right *opportunity* for you.",
     ],
   },
+  expertiseSection: {
+    eyebrow: "Our Expertise",
+    title: "Full-spectrum property expertise, under one roof.",
+    description:
+      "Eight disciplines, one accountable team — from first land search to final handover and beyond.",
+  },
   services: [
     {
       id: "residential-development",

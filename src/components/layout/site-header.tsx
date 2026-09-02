@@ -276,7 +276,7 @@ export function SiteHeader() {
               <div className="grid gap-5 border-t border-border pt-5 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end sm:gap-8 sm:pt-6">
                 <Stack gap="sm" className="max-w-md">
                   <Eyebrow>{siteConfig.navigation.appointmentEyebrow}</Eyebrow>
-                  <p className="text-sm leading-6 text-muted-foreground">
+                  <p className="text-sm leading-5 text-muted-foreground">
                     {siteConfig.navigation.appointmentDescription}
                   </p>
                 </Stack>

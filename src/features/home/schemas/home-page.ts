@@ -29,6 +29,9 @@ export const homePageContentSchema = z.object({
     heading: nonEmptyString,
     paragraphs: nonEmptyStringArray,
   }),
+  expertiseSection: sectionHeadingSchema.extend({
+    description: nonEmptyString,
+  }),
   services: z
     .array(
       z.object({

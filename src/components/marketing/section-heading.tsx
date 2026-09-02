@@ -23,7 +23,7 @@ export function MarketingHeading({
   return (
     <Reveal>
       <Stack
-        gap="lg"
+        gap="md"
         align={centered ? "center" : "start"}
         className={centered ? "mx-auto max-w-3xl text-center" : "max-w-3xl"}
       >
@@ -53,7 +53,7 @@ export function EditorialSectionHeading({
   return (
     <header
       className={cn(
-        "flex max-w-editorial-heading flex-col gap-6",
+        "flex max-w-editorial-heading flex-col gap-4",
         align === "center" && "mx-auto items-center text-center",
         className,
       )}

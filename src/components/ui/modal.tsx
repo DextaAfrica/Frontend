@@ -51,7 +51,10 @@ export function Modal({
       <Stack gap="lg" className="p-6 sm:p-8">
         <header className="flex items-start justify-between gap-6">
           <Stack gap="xs">
-            <h2 id={titleId} className="text-2xl font-semibold">
+            <h2
+              id={titleId}
+              className="text-[clamp(1.0625rem,1rem_+_0.28vw,1.25rem)] font-semibold"
+            >
               {title}
             </h2>
             {description && (

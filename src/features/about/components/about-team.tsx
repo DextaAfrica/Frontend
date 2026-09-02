@@ -32,7 +32,7 @@ export function AboutTeam({ content }: { content: AboutTeamContent }) {
               />
             </div>
             <div className="flex flex-col gap-1 p-5">
-              <h3 className="font-display font-medium tracking-tight">
+              <h3 className="font-display text-sm font-semibold tracking-tight">
                 {member.name}
               </h3>
               <p className="text-sm text-muted-foreground">{member.role}</p>

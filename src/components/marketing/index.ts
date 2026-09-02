@@ -6,6 +6,7 @@ export * from "./faq-accordion";
 export * from "./landing-hero";
 export * from "./media-panel";
 export * from "./newsletter-section";
+export * from "./press-logos";
 export * from "./project-card";
 export * from "./project-gallery";
 export * from "./quote-block";

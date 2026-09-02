@@ -156,7 +156,7 @@ export function CeoLetter({ content }: { content: CeoLetterContent }) {
               <p
                 key={index}
                 data-ceo-para
-                className="font-serif text-lg leading-relaxed text-pretty text-foreground/90 sm:text-xl"
+                className="font-sans text-[clamp(1rem,0.91rem_+_0.38vw,1.25rem)] leading-[1.5] text-pretty text-foreground/90"
               >
                 {renderWithAccents(paragraph)}
               </p>

@@ -110,13 +110,9 @@ export function ScrollRevealCopy({
       <div className="scroll-reveal-frame">
         <Container size="editorial">
           <Reveal as="div">
-            {/* !font-bold: EditorialHeading's own font-medium is a plain
-                utility class too, and cn() is a plain join, not a
-                Tailwind-aware merge — so an unforced override here isn't
-                guaranteed to win the cascade. !important makes it certain. */}
             <EditorialHeading
               id={headingId}
-              className="mx-auto mb-8 max-w-3xl text-center !font-bold sm:mb-10"
+              className="mx-auto mb-8 max-w-3xl text-center sm:mb-10"
             >
               {heading}
             </EditorialHeading>

@@ -4,6 +4,7 @@ import type { homePageContentSchema } from "../schemas/home-page";
 export type HomePageContent = z.infer<typeof homePageContentSchema>;
 export type HomeHeroContent = HomePageContent["hero"];
 export type HomeIntroContent = HomePageContent["intro"];
+export type ExpertiseSectionContent = HomePageContent["expertiseSection"];
 export type ServiceContent = HomePageContent["services"][number];
 export type ProjectContent = HomePageContent["projects"][number];
 export type TestimonialContent = HomePageContent["testimonials"][number];
