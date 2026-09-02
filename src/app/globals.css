@@ -1647,6 +1647,14 @@ dialog[open]::backdrop {
   inset: -0.25rem;
 }
 
+/* Footer hairline dividers. The global `* { border-color: var(--border) }`
+   default (unlayered, so it outranks Tailwind's border utilities) would tint
+   these with the theme border colour — near-white on the always-dark footer
+   under the light theme. Scope the colour here instead. */
+.footer-divider {
+  border-color: rgb(from var(--brand-light) r g b / 0.12);
+}
+
 /* Footer text links: an underline that wipes in from the left on hover,
    drawn with a background-image gradient so only `background-size` animates
    (compositor-friendly, no layout). Colour still eases alongside it. Under

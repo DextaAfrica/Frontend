@@ -85,7 +85,7 @@ export function SiteFooter() {
           </nav>
         </div>
 
-        <div className="mt-14 grid gap-x-12 gap-y-5 border-t border-brand-light/12 pt-10 sm:mt-16 md:grid-cols-2 md:items-center lg:grid-cols-[1fr_minmax(0,30rem)]">
+        <div className="footer-divider mt-14 grid gap-x-12 gap-y-5 border-t pt-10 sm:mt-16 md:grid-cols-2 md:items-center lg:grid-cols-[1fr_minmax(0,30rem)]">
           <div className="max-w-md">
             <h2 className="font-display text-lg leading-snug font-medium text-balance text-brand-light sm:text-xl">
               Updates, insights &amp; stories — straight to your{" "}
@@ -98,7 +98,7 @@ export function SiteFooter() {
           <InlineNewsletterForm onMedia className="mt-0! w-full" />
         </div>
 
-        <div className="mt-12 flex flex-col gap-6 border-t border-brand-light/12 pt-8 text-xs tracking-footer-copy text-brand-light/45 sm:flex-row sm:items-center sm:justify-between">
+        <div className="footer-divider mt-12 flex flex-col gap-6 border-t pt-8 text-xs tracking-footer-copy text-brand-light/45 sm:flex-row sm:items-center sm:justify-between">
           <p>{siteConfig.legal.registration}</p>
           <div className="flex flex-wrap items-center gap-x-5 gap-y-3">
             <CookieSettingsButton className="footer-link" />
