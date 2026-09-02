@@ -1,6 +1,7 @@
 import { Page } from "@/components/layout";
 import {
   CtaBand,
+  DextaClanBand,
   ExpertiseMarquee,
   FaqAccordion,
   LandingHero,
@@ -8,6 +9,7 @@ import {
 import { expertiseItems } from "../data/expertise";
 import { faqItems } from "../data/faq";
 import {
+  AboutTeaser,
   BlogSection,
   FeaturedProjectsSection,
   ServicesSection,
@@ -29,11 +31,13 @@ export function HomeScreen({ content }: { content: HomePageContent }) {
         heading={content.projectsSection}
       />
       <StatisticsSection statistics={content.statistics} />
+      <AboutTeaser content={content.aboutTeaser} />
       <TestimonialSection
         testimonials={content.testimonials}
         heading={content.testimonialSection}
       />
       <BlogSection posts={content.blog} heading={content.blogSection} />
+      <DextaClanBand {...content.dextaClan} />
       <FaqAccordion items={faqItems} />
       <CtaBand />
     </Page>

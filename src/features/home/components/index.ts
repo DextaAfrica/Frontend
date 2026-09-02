@@ -1,4 +1,5 @@
 export * from "./who-we-are-section";
+export * from "./about-teaser";
 export * from "./services-section";
 export * from "./featured-projects-section";
 export * from "./social-proof-sections";

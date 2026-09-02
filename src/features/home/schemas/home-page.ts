@@ -96,6 +96,18 @@ export const homePageContentSchema = z.object({
       }),
     )
     .min(1),
+  aboutTeaser: z.object({
+    eyebrow: nonEmptyString,
+    title: nonEmptyString,
+    cta: z.object({ label: nonEmptyString, href: nonEmptyString }),
+  }),
+  dextaClan: z.object({
+    eyebrow: nonEmptyString,
+    title: nonEmptyString,
+    copy: nonEmptyString,
+    benefits: nonEmptyStringArray,
+    cta: z.object({ label: nonEmptyString, href: nonEmptyString }),
+  }),
   newsletter: z.object({
     eyebrow: nonEmptyString,
     title: nonEmptyString,

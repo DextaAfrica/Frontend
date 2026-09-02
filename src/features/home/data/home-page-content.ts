@@ -212,6 +212,23 @@ export const homePageContent = {
     publishedAt: "July 28, 2026",
     readingTime: "4 min read",
   })),
+  aboutTeaser: {
+    eyebrow: "Our story",
+    title:
+      "There's a team, a method, and a standard behind every Dexta project.",
+    cta: { label: "Read our story", href: "/about" },
+  },
+  dextaClan: {
+    eyebrow: "Dexta Clan",
+    title: "Learning how property works? There's a place for you.",
+    copy: "Dexta Clan is our learning community for first-time buyers, diaspora investors, and anyone figuring out African real estate — no jargon, no gatekeeping.",
+    benefits: [
+      "Live workshops and open Q&As with the Dexta team",
+      "Plain-language guides to buying, documentation, and due diligence",
+      "Early looks at new estates and serviced plots",
+    ],
+    cta: { label: "Join the Dexta Clan", href: "/contact" },
+  },
   newsletter: {
     eyebrow: "Stay informed",
     title: "Get the latest updates from Dexta",
