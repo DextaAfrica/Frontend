@@ -130,7 +130,7 @@
    * most are mapped to a utility in the @theme block and consumed as e.g.
    * `min-h-service-panel`, `max-w-editorial-heading`, `py-section-editorial`.  */
   --section-intro-height: clamp(26rem, 35vw, 32rem);
-  --scroll-copy-size: clamp(1.0625rem, 1.5vw, 1.4375rem);
+  --scroll-copy-size: clamp(0.8125rem, 0.9vw, 0.9375rem);
   /* Floor lowered from 2.25rem: at ~375px the old floor left roughly 335px
      of column width (after Container's padding) against a longer slide
      line like "opportunity for you", which needs ~376px at that size —
