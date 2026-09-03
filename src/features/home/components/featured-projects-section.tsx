@@ -31,8 +31,8 @@ function reducedMotion() {
  *
  * The numbered rows and the closing rule + "view all" link at the bottom of
  * the list give the section an obvious start and end, rather than just
- * trailing off into whatever comes next. Every animated property here is
- * transform/opacity/filter — compositor-only — and every interaction has a
+ * trailing off into whatever comes next. Everything animates transform +
+ * opacity only (no blur on the photo container), and every interaction has a
  * static, fully visible resting state so a failed or skipped animation never
  * leaves the section stuck hidden.
  */
@@ -173,56 +173,68 @@ export function FeaturedProjectsSection({
     };
   }, []);
 
-  // Heavy entrance: the stage settles out of a soft blur/zoom, the index
-  // rows rise and sharpen in a stagger a beat behind it. Every start value
-  // is set only once this actually runs, under a matchMedia gate — the
-  // resting DOM (see the mobile stack below, and the plain CSS classes here)
-  // is already fully visible, so a skipped or interrupted animation can
-  // never strand the section hidden.
+  // Entrance: the stage lifts + fades in, the index rows follow in a stagger
+  // a beat behind. Every start value is set only once this runs, under a
+  // matchMedia gate — the resting DOM is already fully visible, so a skipped
+  // or interrupted animation can never strand the section hidden.
   useGSAP(
     () => {
       const mm = gsap.matchMedia();
       mm.add("(prefers-reduced-motion: no-preference)", () => {
+        const stage = stageRef.current;
         const rows = gsap.utils.toArray<HTMLElement>(
           rootRef.current?.querySelectorAll("[data-index-row]") ?? [],
         );
-        if (!rows.length || !stageRef.current) return;
+        if (!rows.length || !stage) return;
 
-        gsap.set(stageRef.current, {
-          opacity: 0,
-          scale: 1.08,
-          filter: "blur(18px)",
+        // Hand each crossfade layer to GSAP. `data-armed` on the stage flips
+        // the CSS that held the first layer visible pre-JS off, so a React
+        // re-render can never fight a running opacity tween.
+        const layers = gsap.utils.toArray<HTMLElement>(
+          stage.querySelectorAll("[data-stage-image]"),
+        );
+        gsap.set(layers, {
+          autoAlpha: (index) => (index === activeIndexRef.current ? 1 : 0),
         });
-        gsap.set(rows, { opacity: 0, y: 56, filter: "blur(10px)" });
+        stage.dataset.armed = "true";
+
+        // Entrance: opacity + a small lift only — no blur/heavy zoom on the
+        // photo container (a filter animation on an image box is a paint
+        // every frame and can render oddly mid-tween).
+        gsap.set(stage, { opacity: 0, y: 24 });
+        gsap.set(rows, { opacity: 0, y: 40 });
 
         const timeline = gsap.timeline({
           scrollTrigger: {
             trigger: rootRef.current,
-            start: "top 78%",
+            start: "top 80%",
             once: true,
           },
         });
         timeline
-          .to(stageRef.current, {
+          .to(stage, {
             opacity: 1,
-            scale: 1,
-            filter: "blur(0px)",
-            duration: 1.2,
+            y: 0,
+            duration: 0.9,
             ease: "power3.out",
+            clearProps: "transform",
           })
           .to(
             rows,
             {
               opacity: 1,
               y: 0,
-              filter: "blur(0px)",
-              duration: 0.9,
-              stagger: 0.12,
+              duration: 0.8,
+              stagger: 0.1,
               ease: "power3.out",
-              clearProps: "filter,transform",
+              clearProps: "transform",
             },
-            "-=0.9",
+            "-=0.7",
           );
+
+        return () => {
+          delete stage.dataset.armed;
+        };
       });
       return () => mm.revert();
     },
@@ -299,34 +311,33 @@ export function FeaturedProjectsSection({
 
           <div
             ref={stageRef}
-            className="project-stage relative aspect-[3/2] max-h-[30rem] overflow-hidden rounded-panel bg-muted lg:sticky lg:top-28"
+            className="project-stage relative h-[clamp(20rem,26vw,26rem)] overflow-hidden rounded-panel bg-muted lg:sticky lg:top-28"
           >
             {projects.map((project, index) => (
               <div
                 key={project.id}
                 data-stage-image
                 className="absolute inset-0"
-                style={{ opacity: index === 0 ? 1 : 0 }}
               >
                 <Image
                   src={project.image}
                   alt={project.name}
                   fill
                   priority={index === 0}
-                  sizes="(min-width: 1024px) 50vw, 100vw"
+                  sizes="(min-width: 1024px) 55vw, 100vw"
                   unoptimized={isRemoteAsset(project.image)}
-                  className="project-stage-media object-cover"
+                  className="project-stage-media object-cover object-center"
                 />
                 <span
                   aria-hidden
-                  className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/5 to-transparent"
+                  className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/10 to-black/15"
                 />
-                <span className="project-badge absolute top-5 right-5 inline-flex items-center gap-1.5 rounded-full border border-on-media-border bg-on-media-surface px-3 py-1.5 text-status tracking-project-status text-on-media uppercase backdrop-blur-md">
+                <span className="project-badge absolute top-4 left-4 inline-flex items-center gap-1.5 rounded-full border border-on-media-border bg-on-media-surface px-2.5 py-1 text-status tracking-project-status text-on-media uppercase backdrop-blur-md">
                   <Icon name="badge-check" size={12} />
                   {project.status}
                 </span>
                 <div className="absolute inset-x-0 bottom-0 p-project-card text-on-media">
-                  <p className="max-w-md text-sm text-on-media/85">
+                  <p className="max-w-md text-sm leading-snug text-on-media/85">
                     {project.description}
                   </p>
                 </div>

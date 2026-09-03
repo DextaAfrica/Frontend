@@ -137,7 +137,7 @@
    * designs. Grouped here so the component classes further down stay small;
    * most are mapped to a utility in the @theme block and consumed as e.g.
    * `min-h-service-panel`, `max-w-editorial-heading`, `py-section-editorial`.  */
-  --section-intro-height: clamp(26rem, 35vw, 32rem);
+  --section-intro-height: clamp(24rem, 38vh, 32rem);
   --scroll-copy-size: clamp(1rem, 0.91rem + 0.38vw, 1.25rem);
   /* Floor lowered from 2.25rem: at ~375px the old floor left roughly 335px
      of column width (after Container's padding) against a longer slide
@@ -775,15 +775,6 @@ dialog[open]::backdrop {
   overflow: clip;
 }
 
-/* Desktop: a full viewport tall so the word-by-word reveal has real scroll
-   room and the copy reads while it sits centred, instead of racing through
-   in a ~500px section that's done before it's even prominent. */
-@media (min-width: 64rem) {
-  .scroll-reveal-stage {
-    min-height: 100svh;
-  }
-}
-
 .scroll-reveal-frame {
   display: grid;
   width: 100%;
@@ -977,6 +968,22 @@ dialog[open]::backdrop {
    side, a single sticky crossfading stage on the other. */
 .project-stage-media {
   animation: hero-kenburns 24s var(--motion-ease-premium) alternate infinite;
+}
+
+/* Pre-JS / reduced-motion resting state: only the first photo shows. Once
+   the component sets `data-armed`, GSAP owns every layer's opacity. */
+.project-stage:not([data-armed]) [data-stage-image] {
+  opacity: 0;
+}
+
+.project-stage:not([data-armed]) [data-stage-image]:first-child {
+  opacity: 1;
+}
+
+/* Belt-and-braces: the photo always covers the stage, whatever its ratio. */
+.project-stage [data-stage-image] img {
+  object-fit: cover;
+  object-position: center;
 }
 
 @media (prefers-reduced-motion: reduce) {

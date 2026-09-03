@@ -13,12 +13,13 @@ export const homeMotion = {
      * had ~8 overlapping and read as mush).
      */
     wordTransitionSpan: 0.14,
-    /* Desktop: the stage is a full viewport tall. The reveal runs from the
-       copy entering (top 75%) to it sitting roughly centred (top 12%), so it
-       finishes while the paragraph is in the comfortable reading zone, not as
-       it leaves. Compact: a tighter range keyed to the shorter section. */
-    desktop: { start: "top 75%", end: "top 12%", scrub: 0.8 },
-    compact: { start: "top 82%", end: "top 24%", scrub: 0.5 },
+    /* The stage stays compact (~28–32vh). The reveal range deliberately
+       spans more than the section itself — it starts as the copy enters
+       (top 82%) and finishes as the section clears the middle of the
+       viewport (bottom 55%), so the cascade has room to breathe without the
+       section ever needing to be tall. */
+    desktop: { start: "top 82%", end: "bottom 52%", scrub: 0.7 },
+    compact: { start: "top 85%", end: "bottom 60%", scrub: 0.5 },
   },
   services: {
     enabledMedia: "(prefers-reduced-motion: no-preference)",
