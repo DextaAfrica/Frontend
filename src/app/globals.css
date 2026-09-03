@@ -616,16 +616,6 @@ body {
   }
 }
 
-/* ScrollFade / ScrollFadeGroup (reveal.tsx): a keyboard/AT safety net, not a
- * visual effect. GSAP only ever animates opacity/y/blur on these — never
- * visibility or display — so dimmed content stays reachable; this rule
- * makes sure it's also legible the instant focus actually lands there,
- * overriding whatever inline opacity/filter GSAP has set at that moment. */
-.scroll-fade:focus-within {
-  opacity: 1 !important;
-  filter: none !important;
-}
-
 .editorial-hero-glow {
   background: radial-gradient(
     circle at 78% 18%,
@@ -842,43 +832,64 @@ dialog[open]::backdrop {
   animation: loader-breathe 2.4s ease-in-out infinite alternate;
 }
 
-.app-loader__mark {
+.app-loader__logo {
   position: relative;
-  display: grid;
-  width: 4.5rem;
-  height: 4.5rem;
-  place-items: center;
-  border: 1px solid var(--primary);
-  color: var(--primary);
-  font-size: 0.72rem;
-  letter-spacing: 0.16em;
-  animation: loader-mark 1.2s var(--motion-ease-premium) both;
+  height: auto;
+  width: 7rem;
+  animation: loader-mark 0.8s var(--motion-ease-premium) both;
 }
 
-.app-loader__name {
+/* Four balls, a red↔white brand gradient (not two arbitrary pairs): deep
+   red, the site's hover-red, brand white, and a blush-white a shade off it
+   — same relationship as --primary/--primary-hover already have to each
+   other. Each squashes on landing and launches a beat after the last, the
+   classic staggered boot-loader wave. */
+.app-loader__balls {
   position: relative;
-  margin-top: 1.5rem;
-  font-size: 0.65rem;
-  font-weight: 400;
-  letter-spacing: 0.28em;
-  text-transform: uppercase;
+  display: flex;
+  gap: 0.875rem;
+  margin-top: 2.25rem;
 }
 
-.app-loader__track {
-  position: relative;
-  width: 9rem;
-  height: 1px;
-  margin-top: 1.5rem;
-  overflow: hidden;
-  background: var(--border);
+.app-loader__ball {
+  width: 0.875rem;
+  height: 0.875rem;
+  border-radius: 999px;
+  animation: loader-ball-bounce 1.1s var(--motion-ease-premium) infinite;
 }
 
-.app-loader__track span {
-  display: block;
-  width: 45%;
-  height: 100%;
+.app-loader__ball--a {
   background: var(--primary);
-  animation: loader-track 1.4s var(--motion-ease-premium) infinite;
+  animation-delay: 0ms;
+}
+
+.app-loader__ball--b {
+  background: var(--primary-hover);
+  animation-delay: 110ms;
+}
+
+/* c/d are near-white — invisible against a white `.app-loader` background
+   in light mode without a visible edge, so unlike a/b they carry a hairline
+   ring that holds up on either theme's background. */
+.app-loader__ball--c {
+  background: var(--brand-light);
+  box-shadow: 0 0 0 1px rgb(from var(--foreground) r g b / 0.14);
+  animation-delay: 220ms;
+}
+
+.app-loader__ball--d {
+  background: var(--primary-subtle);
+  box-shadow: 0 0 0 1px rgb(from var(--foreground) r g b / 0.14);
+  animation-delay: 330ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .app-loader__logo {
+    animation: none;
+  }
+  .app-loader__ball {
+    animation: loader-ball-pulse 1.6s ease-in-out infinite;
+  }
 }
 
 .media-panel::after {
@@ -2625,42 +2636,43 @@ dialog[open]::backdrop {
 .about-teaser__droplet {
   position: absolute;
   border-radius: 999px;
-  filter: blur(56px);
+  filter: blur(64px);
   background: radial-gradient(
     circle,
-    oklch(from var(--primary) l c h / 0.3),
+    oklch(from var(--primary) l c h / 0.18),
     transparent 70%
   );
 }
 
-/* Spread across the full section bleed, not clustered in a content column. */
+/* Spread to frame the full section bleed — a corner-ish glow at each edge
+   rather than a pool in one spot. */
 .about-teaser__droplet--a {
-  top: 4%;
-  left: 5%;
-  width: 10rem;
-  height: 10rem;
+  top: -3%;
+  left: 3%;
+  width: 11rem;
+  height: 11rem;
 }
 
 .about-teaser__droplet--b {
-  top: 44%;
-  right: 6%;
+  top: 38%;
+  right: 4%;
   width: 13rem;
   height: 13rem;
 }
 
 .about-teaser__droplet--c {
-  bottom: 2%;
-  left: 38%;
-  width: 8rem;
-  height: 8rem;
+  bottom: -6%;
+  left: 30%;
+  width: 10rem;
+  height: 10rem;
 }
 
 .about-teaser__droplet--d {
-  top: 18%;
-  left: 52%;
-  width: 9rem;
-  height: 9rem;
-  opacity: 0.7;
+  top: 6%;
+  left: 58%;
+  width: 8rem;
+  height: 8rem;
+  opacity: 0.6;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -3392,14 +3404,41 @@ dialog[open]::backdrop {
   }
 }
 
-@keyframes loader-track {
-  from {
-    transform: translateX(-120%);
+/* The squash-and-launch: touches down flattened and wide, rebounds slightly
+   past round on the way up past its peak, settles — the "ball" reads as
+   having real weight instead of just sliding on a sine wave. */
+@keyframes loader-ball-bounce {
+  0%,
+  100% {
+    transform: translateY(0) scale(1, 1);
   }
-  to {
-    transform: translateX(260%);
+  8% {
+    transform: translateY(0) scale(1.2, 0.78);
+  }
+  38% {
+    transform: translateY(-1.5rem) scale(0.94, 1.08);
+  }
+  62% {
+    transform: translateY(0) scale(1.18, 0.8);
+  }
+  78% {
+    transform: translateY(0) scale(0.96, 1.04);
+  }
+  90% {
+    transform: translateY(0) scale(1, 1);
   }
 }
+
+@keyframes loader-ball-pulse {
+  0%,
+  100% {
+    opacity: 0.4;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
 ::selection {
   background: var(--primary);
   color: var(--primary-foreground);
