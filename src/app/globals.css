@@ -616,6 +616,16 @@ body {
   }
 }
 
+/* ScrollFade / ScrollFadeGroup (reveal.tsx): a keyboard/AT safety net, not a
+ * visual effect. GSAP only ever animates opacity/y/blur on these — never
+ * visibility or display — so dimmed content stays reachable; this rule
+ * makes sure it's also legible the instant focus actually lands there,
+ * overriding whatever inline opacity/filter GSAP has set at that moment. */
+.scroll-fade:focus-within {
+  opacity: 1 !important;
+  filter: none !important;
+}
+
 .editorial-hero-glow {
   background: radial-gradient(
     circle at 78% 18%,
