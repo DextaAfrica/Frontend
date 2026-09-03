@@ -39,12 +39,14 @@ export function LiteYouTube({
   className,
 }: LiteYouTubeProps) {
   const [playing, setPlaying] = React.useState(false);
+  const [ready, setReady] = React.useState(false);
   const playRef = React.useRef<HTMLButtonElement>(null);
   const closeRef = React.useRef<HTMLButtonElement>(null);
 
   const open = () => setPlaying(true);
   const close = React.useCallback(() => {
     setPlaying(false);
+    setReady(false);
     // Return focus to where the interaction started.
     requestAnimationFrame(() => playRef.current?.focus());
   }, []);
@@ -83,8 +85,18 @@ export function LiteYouTube({
             allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
             allowFullScreen
             loading="lazy"
-            className="absolute inset-0 size-full"
+            onLoad={() => setReady(true)}
+            className={cn(
+              "absolute inset-0 size-full transition-opacity duration-500 ease-premium",
+              ready ? "opacity-100" : "opacity-0",
+            )}
           />
+          {!ready && (
+            <span
+              aria-hidden
+              className="absolute top-1/2 left-1/2 size-8 -translate-x-1/2 -translate-y-1/2 animate-spin rounded-full border-2 border-white/30 border-t-white"
+            />
+          )}
           <span
             aria-hidden
             className="pointer-events-none absolute inset-x-0 top-0 z-10 h-16 bg-gradient-to-b from-black/55 to-transparent"
