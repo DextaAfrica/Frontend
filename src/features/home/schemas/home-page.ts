@@ -102,6 +102,7 @@ export const homePageContentSchema = z.object({
   aboutTeaser: z.object({
     eyebrow: nonEmptyString,
     title: nonEmptyString,
+    image: nonEmptyString,
     cta: z.object({ label: nonEmptyString, href: nonEmptyString }),
   }),
   dextaClan: z.object({

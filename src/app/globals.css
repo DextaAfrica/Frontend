@@ -34,11 +34,12 @@
   --control-pressed: #e2e0da;
   --control-disabled: #f0efec;
   --control-disabled-foreground: #9c988f;
-  /* Bordered buttons (secondary): the outline is near-black on the light
-     theme (matching the neutral palette) and brand red under dark — see the
-     .dark override. */
-  --control-border: rgb(from var(--foreground) r g b / 0.3);
-  --control-border-hover: rgb(from var(--foreground) r g b / 0.6);
+  /* Bordered buttons (secondary): a brand-red outline in both themes — the
+     house CTA rests as a red hairline that floods red from the cursor on
+     hover (see `.btn-liquid`). Consumed only by the button `secondary`
+     variant. */
+  --control-border: rgb(from var(--primary) r g b / 0.5);
+  --control-border-hover: var(--primary);
   /* Header nav links. Light theme reads as editorial — muted grey text that
      firms to near-black on hover/active, with brand red kept to the animated
      underline. Dark theme leans into the red: the text itself goes red on
@@ -94,15 +95,25 @@
   /* -- Radius & controls ------------------------------------------------- */
   --radius: 0.625rem;
   --control-radius: 999px;
-  --control-height-sm: 2rem;
-  --control-height-md: 2.375rem;
-  --control-height-lg: 2.75rem;
-  --control-padding-sm: 0.75rem;
-  --control-padding-md: 1rem;
-  --control-padding-lg: 1.25rem;
+  /* Fluid so a control is proportionate to the viewport it sits in — the
+     same `lg` button no longer reads oversized on a phone and undersized on
+     a wide desktop. Every size keeps a firm floor (touch target) and ceiling. */
+  --control-height-sm: clamp(1.875rem, 1.72rem + 0.5vw, 2.125rem);
+  --control-height-md: clamp(2.25rem, 2.02rem + 0.8vw, 2.625rem);
+  --control-height-lg: clamp(2.625rem, 2.3rem + 1.3vw, 3.25rem);
+  --control-padding-sm: clamp(0.75rem, 0.68rem + 0.3vw, 0.9375rem);
+  --control-padding-md: clamp(1rem, 0.86rem + 0.6vw, 1.375rem);
+  --control-padding-lg: clamp(1.25rem, 0.98rem + 1.1vw, 1.9375rem);
+  /* The moving flood behind the house CTA (`.btn-liquid`): brand red on the
+     light theme, the lighter `--primary-hover` under dark (where the button
+     already rests red). `--btn-fill-ink` is the label colour once flooded. */
+  --btn-fill: var(--primary);
+  --btn-fill-ink: var(--primary-foreground);
+  --btn-fill-duration: 480ms;
 
   /* -- Typography: fonts, plus small global type/tracking values --------- */
   --type-control: clamp(0.75rem, 0.73rem + 0.09vw, 0.8125rem);
+  --type-control-lg: clamp(0.8125rem, 0.78rem + 0.16vw, 0.9375rem);
   --type-control-compact: 0.6875rem;
   --type-nav-link: clamp(0.8125rem, 0.78rem + 0.16vw, 0.875rem);
   --type-status: 0.6875rem;
@@ -296,9 +307,13 @@
   --control-pressed: #383129;
   --control-disabled: #211e1a;
   --control-disabled-foreground: #756d64;
-  /* Bordered buttons go brand red under dark (near-black outline on light). */
+  /* Bordered buttons: a slightly firmer red hairline under dark. */
   --control-border: rgb(from var(--primary) r g b / 0.6);
   --control-border-hover: var(--primary);
+  /* The house CTA rests filled red under dark, so its flood is the lighter
+     `--primary-hover` — the hover reads as the button brightening from the
+     cursor rather than a same-tone wash. */
+  --btn-fill: var(--primary-hover);
   --control-shadow: 0 1px 2px rgb(0 0 0 / 0.4);
   --control-shadow-hover: 0 14px 30px rgb(0 0 0 / 0.5);
   --control-shadow-glow: 0 10px 26px oklch(from var(--primary) l c h / 0.45);
@@ -398,6 +413,7 @@
   --text-service-tab: var(--type-service-tab);
   --text-service-tab-number: var(--type-service-tab-number);
   --text-control: var(--type-control);
+  --text-control-lg: var(--type-control-lg);
   --text-control-compact: var(--type-control-compact);
   --text-nav-link: var(--type-nav-link);
   --text-status: var(--type-status);
@@ -705,6 +721,11 @@ body {
     transition: none !important;
     translate: none !important;
     scale: 1 !important;
+  }
+  /* The house-CTA flood still switches state on hover/focus — it just snaps
+     instead of flowing in from the cursor. */
+  .btn-liquid {
+    transition: none !important;
   }
 }
 
@@ -1336,6 +1357,65 @@ dialog[open]::backdrop {
   .btn-flash-active .btn-flash-sweep {
     animation: none;
   }
+}
+
+/* --- House CTA: the liquid fill ------------------------------------------------
+   `primary` / `secondary` / `onMedia` share one interaction. They rest as a
+   red hairline outline (light) or a solid red fill (dark `primary`); on
+   hover/focus a red flood grows from the cursor — button.tsx sets `--btn-x` /
+   `--btn-y` to the pointer position (and leaves them at the exit point so the
+   flood retracts toward it). The label flips to `--btn-fill-ink` as it fills.
+   Only the resting palette differs between the three variants; the flood, the
+   ink flip and the timing are shared. `data-cta` is the variant name, set by
+   button.tsx only for these three. */
+[data-cta]:not(:disabled) {
+  border: 1px solid var(--control-border);
+  background-color: transparent;
+  color: var(--primary);
+}
+
+/* `primary` keeps a faint tint so it still outweighs a `secondary` beside it. */
+[data-cta="primary"]:not(:disabled) {
+  background-color: var(--primary-subtle);
+}
+
+/* `onMedia` sits over photography/video — a blur scrim keeps it legible, but
+   the flood interaction is identical. */
+[data-cta="onMedia"]:not(:disabled) {
+  border-color: var(--on-media-border);
+  background-color: var(--on-media-surface);
+  color: var(--on-media);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+}
+
+/* Dark: `primary` rests already flooded. */
+.dark [data-cta="primary"]:not(:disabled) {
+  border-color: var(--primary);
+  background-color: var(--primary);
+  color: var(--primary-foreground);
+}
+
+[data-cta]:not(:disabled):hover,
+[data-cta]:not(:disabled):focus-visible {
+  border-color: var(--btn-fill);
+  color: var(--btn-fill-ink);
+}
+
+.btn-liquid {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background: var(--btn-fill);
+  clip-path: circle(0% at var(--btn-x, 50%) var(--btn-y, 50%));
+  transition: clip-path var(--btn-fill-duration) var(--motion-ease-premium);
+  pointer-events: none;
+}
+
+[data-cta]:hover .btn-liquid,
+[data-cta]:focus-visible .btn-liquid {
+  clip-path: circle(150% at var(--btn-x, 50%) var(--btn-y, 50%));
 }
 
 /* --- Theme toggle ---------------------------------------------------------- */

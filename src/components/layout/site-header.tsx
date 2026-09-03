@@ -246,7 +246,7 @@ export function SiteHeader() {
                   href={siteConfig.navigation.appointmentHref}
                   size="sm"
                   variant={overlaysHero ? "onMedia" : "primary"}
-                  className="hidden text-control-compact tracking-control-compact uppercase lg:inline-flex"
+                  className="hidden lg:inline-flex"
                 >
                   {siteConfig.navigation.appointmentCta}
                 </ButtonLink>
@@ -257,7 +257,7 @@ export function SiteHeader() {
                 variant="secondary"
                 size="sm"
                 data-on-media={overlaysHero || undefined}
-                className="header-menu-trigger shrink-0 text-control-compact tracking-control-compact uppercase lg:hidden"
+                className="header-menu-trigger lg:hidden"
                 onClick={() => setOpen((current) => !current)}
                 aria-expanded={open}
                 aria-controls="site-navigation"
@@ -295,7 +295,6 @@ export function SiteHeader() {
             variant="secondary"
             size="sm"
             tabIndex={open ? 0 : -1}
-            className="text-control-compact tracking-control-compact uppercase"
             onClick={closeMenu}
             aria-label="Close navigation"
           >
@@ -347,9 +346,10 @@ export function SiteHeader() {
                 <ButtonLink
                   href={siteConfig.navigation.appointmentHref}
                   size="lg"
+                  fullWidth
                   tabIndex={open ? 0 : -1}
                   onClick={closeMenu}
-                  className="w-full justify-between sm:w-auto sm:min-w-52"
+                  className="justify-between sm:w-auto sm:min-w-52"
                 >
                   {siteConfig.navigation.appointmentCta}
                   <Icon name="arrow-right" />

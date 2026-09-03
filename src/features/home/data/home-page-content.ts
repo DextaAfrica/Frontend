@@ -224,6 +224,7 @@ export const homePageContent = {
     eyebrow: "Our story",
     title:
       "There's a team, a method, and a standard behind every Dexta *project*.",
+    image: "/images/testimonial-shaka.jpg",
     cta: { label: "Read our story", href: "/about" },
   },
   dextaClan: {

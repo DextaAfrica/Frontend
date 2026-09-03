@@ -121,7 +121,8 @@ export function InlineNewsletterForm({
           type="submit"
           variant={onMedia ? "onMedia" : "neutral"}
           size="lg"
-          className="w-full shrink-0 @[20rem]:w-auto"
+          fullWidth
+          className="@[20rem]:w-auto"
           disabled={status === "submitting"}
         >
           {status === "submitting" ? "Subscribing…" : "Subscribe"}
