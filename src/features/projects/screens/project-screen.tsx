@@ -14,23 +14,11 @@ const factIcons: readonly IconName[] = [
   "pin",
 ];
 
-// A project without real campaign copy of its own still needs a title for
-// its hero — this is deliberately generic marketing language, never a
-// factual claim, so it's safe to reuse across any project that hasn't
-// supplied a `tagline` yet.
 const fallbackTagline = (status: string) =>
   status === "Completed"
     ? "An enduring expression of *home*."
     : "Private by nature. *Remarkable* by design.";
 
-/**
- * A project's own page — a product-listing page for real estate: hero,
- * then (only when the project actually has the material) a facts strip and
- * a proper photo gallery, closing on a CTA. Every section past the hero is
- * conditional on the project actually having that content — no invented
- * pricing, unit counts, or amenities standing in for a project that hasn't
- * supplied them.
- */
 export function ProjectScreen({ project }: { project: Project }) {
   const hasFacts =
     Boolean(project.priceFrom) || Boolean(project.features?.length);
@@ -45,6 +33,7 @@ export function ProjectScreen({ project }: { project: Project }) {
           </p>
           <MarketingHeading
             title={project.tagline ?? fallbackTagline(project.status)}
+            eyebrow={project.name}
           />
           <p className="max-w-2xl text-lg text-muted-foreground">
             {project.description}
