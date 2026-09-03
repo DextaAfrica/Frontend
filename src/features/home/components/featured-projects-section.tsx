@@ -7,7 +7,7 @@ import { Section } from "@/components/layout";
 import { EditorialSectionHeading, Reveal } from "@/components/marketing";
 import { ButtonLink, Icon } from "@/components/ui";
 import { gsap, useGSAP } from "@/lib/gsap";
-import { isRemoteAsset } from "@/lib/media";
+import { IMAGE_PLACEHOLDER, isRemoteAsset } from "@/lib/media";
 import { cn } from "@/lib/utils";
 import type { HomePageContent, ProjectContent } from "../types/home-page";
 
@@ -321,6 +321,8 @@ export function FeaturedProjectsSection({
                   fill
                   priority={index === 0}
                   sizes="(min-width: 1024px) 55vw, 100vw"
+                  placeholder="blur"
+                  blurDataURL={IMAGE_PLACEHOLDER}
                   unoptimized={isRemoteAsset(project.image)}
                   className="project-stage-media object-cover object-center"
                 />
@@ -416,7 +418,10 @@ function ProjectsCarousel({
                 src={project.image}
                 alt={project.name}
                 fill
+                loading="lazy"
                 sizes="82vw"
+                placeholder="blur"
+                blurDataURL={IMAGE_PLACEHOLDER}
                 unoptimized={isRemoteAsset(project.image)}
                 className="object-cover"
               />

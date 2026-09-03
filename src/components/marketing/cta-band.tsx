@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { Container } from "@/components/layout";
 import { ButtonLink, EditorialHeading, Icon } from "@/components/ui";
+import { IMAGE_PLACEHOLDER } from "@/lib/media";
 import { ScrollFade } from "./reveal";
 
 export interface CtaBandProps {
@@ -23,7 +24,10 @@ export function CtaBand({
         src={image}
         alt=""
         fill
+        loading="lazy"
         sizes="100vw"
+        placeholder="blur"
+        blurDataURL={IMAGE_PLACEHOLDER}
         className="object-cover opacity-60"
       />
       <span

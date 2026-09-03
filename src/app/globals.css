@@ -1081,6 +1081,7 @@ dialog[open]::backdrop {
 .blog-media {
   position: relative;
   overflow: hidden;
+  background: var(--muted);
 }
 
 /* The "Now Selling" chip: a glass shimmer, reused wherever a project's live

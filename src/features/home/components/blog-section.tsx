@@ -6,7 +6,7 @@ import {
   RevealItem,
   ScrollFadeGroup,
 } from "@/components/marketing";
-import { isRemoteAsset } from "@/lib/media";
+import { IMAGE_PLACEHOLDER, isRemoteAsset } from "@/lib/media";
 import type { BlogPostContent, HomePageContent } from "../types/home-page";
 
 export function BlogSection({
@@ -35,7 +35,10 @@ export function BlogSection({
                     src={post.image}
                     alt=""
                     fill
+                    loading="lazy"
                     sizes="(min-width: 1024px) 29vw, (min-width: 768px) 45vw, 100vw"
+                    placeholder="blur"
+                    blurDataURL={IMAGE_PLACEHOLDER}
                     unoptimized={isRemoteAsset(post.image)}
                     className="group-hover:scale-project-media object-cover transition-transform duration-700 ease-premium"
                   />

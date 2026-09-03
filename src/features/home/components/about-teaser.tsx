@@ -10,7 +10,7 @@ import {
   Icon,
 } from "@/components/ui";
 import { gsap, useGSAP } from "@/lib/gsap";
-import { isRemoteAsset } from "@/lib/media";
+import { IMAGE_PLACEHOLDER, isRemoteAsset } from "@/lib/media";
 import type { AboutTeaserContent } from "../types/home-page";
 
 /**
@@ -141,7 +141,10 @@ export function AboutTeaser({ content }: { content: AboutTeaserContent }) {
               src={content.image}
               alt=""
               fill
+              loading="lazy"
               sizes="(min-width: 768px) 45vw, 100vw"
+              placeholder="blur"
+              blurDataURL={IMAGE_PLACEHOLDER}
               unoptimized={isRemoteAsset(content.image)}
               className="object-cover"
             />
