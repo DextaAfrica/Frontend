@@ -243,10 +243,9 @@
   --letter-spacing-service-number: -0.293rem;
   --line-height-service-title: 1.2;
   --line-height-service-copy: 1.1;
-  --space-testimonial: clamp(5rem, 8vw, 7rem);
+  --space-testimonial: clamp(2.5rem, 3.5vw, 3.25rem);
   --space-testimonial-quote: clamp(1rem, 1.667vw, 1.5rem);
-  --space-testimonial-meta: clamp(2.5rem, 3.472vw, 3.125rem);
-  --space-testimonial-copy: calc(4.375rem + clamp(1rem, 1.667vw, 1.5rem));
+  --space-testimonial-meta: clamp(1.5rem, 2.2vw, 2rem);
   --space-testimonial-progress: 0.75rem;
   --layout-testimonial-progress-width: 4.125rem;
   --grid-testimonial: 4.375rem minmax(0, 1fr);
@@ -489,7 +488,6 @@
   --spacing-testimonial: var(--space-testimonial);
   --spacing-testimonial-quote: var(--space-testimonial-quote);
   --spacing-testimonial-meta: var(--space-testimonial-meta);
-  --spacing-testimonial-copy: var(--space-testimonial-copy);
   --spacing-testimonial-progress: var(--space-testimonial-progress);
   --spacing-testimonial-avatar: var(--size-testimonial-avatar);
   --width-testimonial-progress: var(--layout-testimonial-progress-width);
@@ -539,6 +537,23 @@ body {
 
 .section-surface {
   background: var(--section-surface);
+}
+
+/* A deterministic section boundary (see Section's `divider` prop) rather
+ * than relying on the background-colour step between adjacent sections —
+ * that step is the same *absolute* delta in both themes, but reads as
+ * near-invisible in the dark theme's low-luminance range even though it's
+ * clearly visible in light. A foreground-tinted hairline at a fixed opacity
+ * sidesteps that: --foreground is already dark in light mode and light in
+ * dark mode, so this is always a soft, legible line regardless of theme. */
+.section-divider::before {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  top: 0;
+  height: 1px;
+  background: rgb(from var(--foreground) r g b / 0.08);
+  pointer-events: none;
 }
 
 .editorial-hero-glow {
@@ -1875,9 +1890,34 @@ dialog[open]::backdrop {
   flex-direction: column;
 }
 
+/* The quote is a two-column band: a fixed avatar column, then the quote text
+   in an aligned column beside it (`--grid-testimonial`). Every line of the
+   quote starts at the same left edge — no ragged first-line indent from an
+   inline avatar. */
+.testimonial-stage > [data-slide] blockquote {
+  display: grid;
+  grid-template-columns: var(--grid-testimonial);
+  column-gap: var(--space-testimonial-quote);
+  align-items: start;
+}
+
+/* The caption lines up under the quote column, not the avatar. */
 .testimonial-stage > [data-slide] [data-slide-caption] {
   margin-top: auto;
   padding-top: var(--space-testimonial-meta);
+  padding-left: calc(
+    var(--size-testimonial-avatar) + var(--space-testimonial-quote)
+  );
+}
+
+@media (max-width: 33rem) {
+  .testimonial-stage > [data-slide] blockquote {
+    grid-template-columns: 1fr;
+    row-gap: var(--space-testimonial-quote);
+  }
+  .testimonial-stage > [data-slide] [data-slide-caption] {
+    padding-left: 0;
+  }
 }
 
 .testimonial-stage:not([data-animated]) > [data-slide][data-active="false"] {
@@ -2628,6 +2668,28 @@ dialog[open]::backdrop {
 }
 
 .dexta-clan__benefit svg {
+  flex: none;
+  margin-top: 0.15rem;
+  color: var(--primary);
+}
+
+/* Compact benefits — used under the copy when the second column is taken by
+   the video. A quiet checklist, not full-width bordered rows. */
+.dexta-clan__benefits {
+  display: flex;
+  flex-direction: column;
+  gap: 0.625rem;
+}
+
+.dexta-clan__benefits li {
+  display: flex;
+  gap: 0.625rem;
+  align-items: flex-start;
+  font-size: 0.875rem;
+  color: rgb(from var(--brand-light) r g b / 0.8);
+}
+
+.dexta-clan__benefits svg {
   flex: none;
   margin-top: 0.15rem;
   color: var(--primary);

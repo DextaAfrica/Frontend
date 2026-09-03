@@ -111,6 +111,15 @@ export const homePageContentSchema = z.object({
     copy: nonEmptyString,
     benefits: nonEmptyStringArray,
     cta: z.object({ label: nonEmptyString, href: nonEmptyString }),
+    // When present, the band shows this video where the benefits list would
+    // otherwise sit, and the benefits move to a compact list under the copy.
+    video: z
+      .object({
+        id: nonEmptyString,
+        title: nonEmptyString,
+        poster: nonEmptyString,
+      })
+      .optional(),
   }),
   newsletter: sectionHeadingSchema.extend({
     description: nonEmptyString,

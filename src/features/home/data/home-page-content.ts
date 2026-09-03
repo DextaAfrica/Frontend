@@ -31,7 +31,7 @@ export const homePageContent = {
     heading: "Built on *integrity*, delivered with precision",
     paragraphs: [
       "From site to skyline, Dexta Africa delivers value-driven real estate solutions that turn dreams into *addresses*.",
-      "Whether you're investing, living, or learning, we have the right *opportunity* for you.",
+      "Whether you're investing for returns, building a home, or learning how property works, there's a *place* for you at Dexta Africa.",
     ],
   },
   expertiseSection: {
@@ -237,6 +237,11 @@ export const homePageContent = {
       "Early looks at new estates and serviced plots",
     ],
     cta: { label: "Join the Dexta Clan", href: "/contact" },
+    video: {
+      id: "Bh60Ut_d0Bo",
+      title: "Inside the Dexta Clan",
+      poster: "/images/dexta-clan-video-poster.jpg",
+    },
   },
   newsletter: {
     eyebrow: "Join the insider list",

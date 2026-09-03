@@ -7,7 +7,7 @@ import { ApiRequestError } from "@/lib/api-error";
 import { submitEnquiry } from "../api/submit-enquiry";
 
 const fieldClass =
-  "h-12 w-full rounded-lg border border-input bg-background px-4 text-sm outline-none transition-shadow placeholder:text-muted-foreground focus:ring-2 focus:ring-ring";
+  "h-12 w-full rounded-lg border border-input bg-background px-4 text-sm text-foreground outline-none transition-shadow placeholder:text-muted-foreground focus:ring-2 focus:ring-ring";
 const ERROR_ID = "enquiry-form-error";
 
 export function EnquiryForm() {

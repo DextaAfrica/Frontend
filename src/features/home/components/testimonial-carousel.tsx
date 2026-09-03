@@ -23,7 +23,7 @@ function initials(name: string) {
 
 function Avatar({ testimonial }: { testimonial: TestimonialContent }) {
   const shared =
-    "testimonial-avatar mr-testimonial-quote mb-1 inline-block size-testimonial-avatar rounded-testimonial-avatar align-middle";
+    "testimonial-avatar block size-testimonial-avatar rounded-testimonial-avatar";
 
   if (testimonial.portrait) {
     return (
@@ -323,7 +323,8 @@ export function TestimonialSection({
                 aria-hidden={index !== active}
               >
                 <blockquote className="text-testimonial leading-testimonial font-medium tracking-testimonial">
-                  <Avatar testimonial={testimonial} />“{testimonial.quote}”
+                  <Avatar testimonial={testimonial} />
+                  <p>“{testimonial.quote}”</p>
                 </blockquote>
                 <figcaption
                   data-slide-caption

@@ -4,6 +4,7 @@ export * from "./editorial-hero";
 export * from "./expertise-marquee";
 export * from "./faq-accordion";
 export * from "./landing-hero";
+export * from "./lite-youtube";
 export * from "./media-frame";
 export * from "./media-panel";
 export * from "./newsletter-section";
