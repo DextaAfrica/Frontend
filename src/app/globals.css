@@ -549,8 +549,14 @@ body {
  * at both edges, with the same pulsing "signal" dot already used at the
  * expertise marquee, the press logos and the Dexta Clan band — marking
  * every section boundary in the site's own accent language rather than a
- * generic reset-style rule. Both pieces are intensity/opacity only, so they
- * hold up in both themes without a separate dark-mode override. */
+ * generic reset-style rule.
+ *
+ * "Live": Section wires up a ScrollTrigger that stamps `data-active` on
+ * whichever section is currently the one in view (see section.tsx) — that
+ * section's marker brightens and its dot's glow grows, every other one
+ * settles back to this quiet resting state. A scroll-position fact, not a
+ * motion effect, so it keeps working under reduced motion; only the CSS
+ * transition between the two states goes instant there. */
 .section-divider::before {
   content: "";
   position: absolute;
@@ -563,7 +569,13 @@ body {
     rgb(from var(--primary) r g b / 0.5) 50%,
     transparent
   );
+  opacity: 0.55;
+  transition: opacity 500ms var(--motion-ease-premium);
   pointer-events: none;
+}
+
+.section-divider[data-active="true"]::before {
+  opacity: 1;
 }
 
 .section-divider::after {
@@ -573,19 +585,34 @@ body {
   left: 50%;
   width: 0.5rem;
   height: 0.5rem;
+  scale: 0.8;
   translate: -50% -50%;
   border-radius: 999px;
   background: var(--primary);
   box-shadow:
-    0 0 0 4px rgb(from var(--primary) r g b / 0.2),
-    0 0 18px 3px rgb(from var(--primary) r g b / 0.55);
+    0 0 0 3px rgb(from var(--primary) r g b / 0.14),
+    0 0 10px 1px rgb(from var(--primary) r g b / 0.3);
   animation: expertise-pulse 2.2s ease-in-out infinite;
+  transition:
+    scale 500ms var(--motion-ease-premium),
+    box-shadow 500ms var(--motion-ease-premium);
   pointer-events: none;
+}
+
+.section-divider[data-active="true"]::after {
+  scale: 1;
+  box-shadow:
+    0 0 0 4px rgb(from var(--primary) r g b / 0.22),
+    0 0 20px 4px rgb(from var(--primary) r g b / 0.6);
 }
 
 @media (prefers-reduced-motion: reduce) {
   .section-divider::after {
     animation: none;
+  }
+  .section-divider::before,
+  .section-divider::after {
+    transition: none;
   }
 }
 

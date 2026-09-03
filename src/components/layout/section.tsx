@@ -1,6 +1,9 @@
+"use client";
+
 import * as React from "react";
 import { Container } from "./container";
 import { cn } from "@/lib/utils";
+import { ScrollTrigger, useGSAP } from "@/lib/gsap";
 
 type Spacing = "none" | "sm" | "md" | "lg" | "editorial";
 type Tone = "default" | "surface" | "brand" | "inverse" | "brandDark";
@@ -49,8 +52,46 @@ export function Section({
   ...props
 }: SectionProps) {
   const showDivider = divider ?? dividerDefaults[tone];
+  const ref = React.useRef<HTMLElement>(null);
+
+  // The divider (see globals.css `.section-divider`) is "lit" — a brighter
+  // line, a bigger dot glow — only while this section is the one actually in
+  // view, and settles back to its quiet resting state once it isn't.
+  // onEnter/onEnterBack both mean "just became the active section";
+  // onLeave/onLeaveBack both mean "no longer is" — scrolling either
+  // direction gets the same handoff. This is a scroll-position *fact*, not
+  // a motion effect, so it stays wired up even under reduced motion — only
+  // the CSS transition on it goes instant there (see globals.css).
+  useGSAP(
+    () => {
+      const el = ref.current;
+      if (!el || !showDivider) return;
+
+      const activate = () => {
+        el.dataset.active = "true";
+      };
+      const deactivate = () => {
+        delete el.dataset.active;
+      };
+
+      const trigger = ScrollTrigger.create({
+        trigger: el,
+        start: "top 60%",
+        end: "bottom 40%",
+        onEnter: activate,
+        onEnterBack: activate,
+        onLeave: deactivate,
+        onLeaveBack: deactivate,
+      });
+
+      return () => trigger.kill();
+    },
+    { scope: ref, dependencies: [showDivider] },
+  );
+
   return (
     <section
+      ref={ref}
       className={cn(
         "relative",
         spacings[spacing],
