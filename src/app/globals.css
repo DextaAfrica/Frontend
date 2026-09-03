@@ -2821,9 +2821,9 @@ dialog[open]::backdrop {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .chat-panel {
-    animation: none;
-  }
+  .chat-panel,
+  .chat-launcher,
+  .chat-widget--nudge .chat-launcher,
   .chat-widget--nudge .chat-launcher__ring {
     animation: none;
   }

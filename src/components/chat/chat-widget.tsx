@@ -28,11 +28,13 @@ const quickReplies = [
 type FormStatus = "idle" | "submitting" | "success" | "error";
 
 /**
- * A floating concierge widget, mounted once in the app shell. The button sits
- * bottom-right on every page (below the consent notice and mobile nav in the
- * stack); opening it reveals a non-modal panel with WhatsApp / call / email /
- * inspection shortcuts and a short message form that posts to `/api/chat-lead`.
- * No AI — architecture leaves room for an `/api/chat` mode later.
+ * DexSmart Assistance — a floating concierge widget mounted once in the app
+ * shell. The button sits bottom-right on every page (below the consent notice
+ * and mobile nav in the stack), bounces in and — on a first visit — hops for
+ * attention until the visitor comes near it. Opening it reveals a non-modal
+ * panel: WhatsApp / call / email / inspection shortcuts and a short message
+ * form that posts to `/api/chat-lead`. No AI yet — the structure leaves room
+ * for an `/api/chat` mode later.
  */
 export function ChatWidget() {
   const [open, setOpen] = React.useState(false);
