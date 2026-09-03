@@ -27,6 +27,62 @@ export function SiteHeader() {
   const headerRef = React.useRef<HTMLElement>(null);
   const menuButtonRef = React.useRef<HTMLButtonElement>(null);
   const panelRef = React.useRef<HTMLDivElement>(null);
+  const barRef = React.useRef<HTMLDivElement>(null);
+
+  // Header entrance: the bar drops in, then logo → nav links → the right
+  // cluster follow in a stagger. Runs once on mount. Purely cosmetic — the
+  // resting DOM is already full-opacity, so an interrupted tween can never
+  // strand the header hidden; `clearProps` drops the inline styles after.
+  useGSAP(
+    () => {
+      const bar = barRef.current;
+      if (
+        !bar ||
+        window.matchMedia("(prefers-reduced-motion: reduce)").matches
+      ) {
+        return;
+      }
+      const navLinks = gsap.utils.toArray<HTMLElement>(
+        bar.querySelectorAll("[data-nav-link]"),
+      );
+      const sides = bar.querySelectorAll<HTMLElement>("[data-header-side]");
+
+      const timeline = gsap.timeline({
+        defaults: { ease: "power3.out" },
+        delay: 0.1,
+      });
+      timeline
+        .from(bar, {
+          y: -14,
+          autoAlpha: 0,
+          duration: 0.5,
+          clearProps: "opacity,visibility,transform",
+        })
+        .from(
+          sides,
+          {
+            y: -8,
+            autoAlpha: 0,
+            duration: 0.5,
+            stagger: 0.08,
+            clearProps: "opacity,visibility,transform",
+          },
+          "-=0.3",
+        )
+        .from(
+          navLinks,
+          {
+            y: -8,
+            autoAlpha: 0,
+            duration: 0.45,
+            stagger: 0.05,
+            clearProps: "opacity,visibility,transform",
+          },
+          "-=0.35",
+        );
+    },
+    { scope: barRef },
+  );
 
   // Mobile menu entrance: stagger the links in when the panel opens. This is
   // a cosmetic layer only — the panel's own visibility (see `.mobile-nav` in
@@ -149,11 +205,15 @@ export function SiteHeader() {
               its visual center off the header's true center. Two equal `1fr`
               side columns guarantee the nav's own column is centered
               regardless of how wide either side's content is. */}
-          <div className="grid h-full grid-cols-[1fr_auto_1fr] items-center gap-4">
+          <div
+            ref={barRef}
+            className="grid h-full grid-cols-[1fr_auto_1fr] items-center gap-x-6 xl:gap-x-12"
+          >
             <Link
               href="/"
               onClick={closeMenu}
               aria-label={`${siteConfig.name} home`}
+              data-header-side
               className="site-header__logo shrink-0 justify-self-start"
             >
               <Wordmark overlaysHero={overlaysHero} className="h-7 sm:h-8" />
@@ -161,28 +221,32 @@ export function SiteHeader() {
 
             <nav
               aria-label="Primary"
-              className="hidden items-center gap-7 justify-self-center lg:flex"
+              className="hidden min-w-0 items-center gap-x-5 justify-self-center lg:flex xl:gap-x-7"
             >
               {siteConfig.navItems.map((item) => (
                 <HeaderLink key={item.href} item={item} pathname={pathname} />
               ))}
             </nav>
 
-            <div className="flex items-center gap-2.5 justify-self-end sm:gap-4">
-              {/* The toggle is a wide 3-segment control — on anything
-                  narrower than the full nav, it has nowhere to sit without
-                  crowding the CTA/menu button, so it moves into the mobile
-                  menu panel instead (below) rather than squeezing in here. */}
-              <div className="hidden lg:block">
-                <ThemeToggle data-on-media={overlaysHero || undefined} />
-              </div>
+            <div
+              data-header-side
+              className="flex items-center gap-2 justify-self-end sm:gap-3 lg:gap-4"
+            >
+              {/* Compact icon toggle here (cycles); the full 3-segment
+                  control lives in the mobile menu panel below. Shows from
+                  tablet up now that it's small enough not to crowd. */}
+              <ThemeToggle
+                variant="compact"
+                data-on-media={overlaysHero || undefined}
+                className="hidden sm:flex"
+              />
 
               {!open && (
                 <ButtonLink
                   href={siteConfig.navigation.appointmentHref}
                   size="sm"
                   variant={overlaysHero ? "onMedia" : "primary"}
-                  className="hidden text-control-compact tracking-control-compact uppercase md:inline-flex"
+                  className="hidden text-control-compact tracking-control-compact uppercase lg:inline-flex"
                 >
                   {siteConfig.navigation.appointmentCta}
                 </ButtonLink>
@@ -345,13 +409,12 @@ function HeaderLink({
   return (
     <Link
       href={item.href as Route}
+      data-nav-link
       aria-current={active ? "page" : undefined}
-      className={cn(
-        "text-sm font-medium whitespace-nowrap opacity-80 transition-[color,opacity] duration-[240ms] ease-premium hover:text-primary hover:opacity-100",
-        active && "text-primary opacity-100",
-      )}
+      className="site-header__link"
     >
       {item.label}
+      <span aria-hidden className="site-header__underline" />
     </Link>
   );
 }

@@ -19,12 +19,32 @@ const options: readonly {
 
 type ToggleStyle = CSSProperties & { "--thumb-index": number };
 
+export interface ThemeToggleProps extends React.ComponentProps<"div"> {
+  /** `segmented` (default) = the 3-option control; `compact` = a single icon
+   *  button that cycles through the options — for tight spots like the header. */
+  variant?: "segmented" | "compact";
+}
+
 export function ThemeToggle({
   className,
+  variant = "segmented",
   ...props
-}: React.ComponentProps<"div">) {
+}: ThemeToggleProps) {
   const mounted = useMounted();
   const { theme, resolvedTheme, setTheme } = useTheme();
+
+  if (variant === "compact") {
+    return (
+      <CompactThemeToggle
+        mounted={mounted}
+        theme={theme}
+        resolvedTheme={resolvedTheme}
+        setTheme={setTheme}
+        className={className}
+        {...(props as React.ComponentProps<"button">)}
+      />
+    );
+  }
 
   if (!mounted) {
     return (
@@ -74,5 +94,54 @@ export function ThemeToggle({
         );
       })}
     </div>
+  );
+}
+
+function CompactThemeToggle({
+  mounted,
+  theme,
+  resolvedTheme,
+  setTheme,
+  className,
+  ...props
+}: {
+  mounted: boolean;
+  theme: ThemePreference;
+  resolvedTheme: "light" | "dark";
+  setTheme: (theme: ThemePreference) => void;
+} & React.ComponentProps<"button">) {
+  if (!mounted) {
+    return (
+      <span
+        aria-hidden
+        className={cn(
+          "block size-9 rounded-full border border-border/60 bg-surface-elevated/70",
+          className,
+        )}
+      />
+    );
+  }
+
+  const nextTheme: ThemePreference =
+    theme === "light" ? "dark" : theme === "dark" ? "system" : "light";
+  const icon: IconName =
+    theme === "light" ? "sun" : theme === "dark" ? "moon" : "system";
+  const currentLabel = theme === "system" ? `system (${resolvedTheme})` : theme;
+
+  return (
+    <button
+      type="button"
+      onClick={() => setTheme(nextTheme)}
+      data-theme={theme}
+      aria-label={`Theme: ${currentLabel}. Switch to ${nextTheme}.`}
+      title={`Theme: ${currentLabel}`}
+      className={cn("theme-toggle-compact", className)}
+      {...props}
+    >
+      {/* keyed so the glyph re-mounts and replays its rotate-in on each change */}
+      <span key={theme} aria-hidden className="theme-toggle-compact__glyph">
+        <Icon name={icon} size={16} strokeWidth={1.9} />
+      </span>
+    </button>
   );
 }
