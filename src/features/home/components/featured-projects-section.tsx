@@ -4,7 +4,11 @@ import Image from "next/image";
 import Link from "next/link";
 import * as React from "react";
 import { Section } from "@/components/layout";
-import { EditorialSectionHeading, Reveal } from "@/components/marketing";
+import {
+  EditorialSectionHeading,
+  Reveal,
+  RevealGroup,
+} from "@/components/marketing";
 import { ButtonLink, Icon } from "@/components/ui";
 import { gsap, useGSAP } from "@/lib/gsap";
 import { IMAGE_PLACEHOLDER, isRemoteAsset } from "@/lib/media";
@@ -18,19 +22,19 @@ function reducedMotion() {
 }
 
 /**
- * The homepage portfolio, rebuilt as an editorial index rather than a static
- * mosaic: a numbered list of developments on one side, a single sticky
- * preview stage on the other. Hovering (or focusing) a row crossfades the
- * stage photo and slides a red indicator bar to match — the same
- * stacked-layer crossfade `ProjectGallery` uses on the detail pages — while a
- * small "View project" pill trails the pointer, agency-portfolio style.
+ * The homepage portfolio, built as an editorial index rather than a static
+ * mosaic: a numbered list of developments on one side, a sticky preview
+ * stage on the other. Hovering (or focusing) a row crossfades the stage —
+ * now a four-tile mosaic of that project's photography — and slides a red
+ * indicator bar to match, while a small "View project" pill trails the
+ * pointer, agency-portfolio style.
  *
- * The numbered rows and the closing rule + "view all" link at the bottom of
- * the list give the section an obvious start and end, rather than just
- * trailing off into whatever comes next. Everything animates transform +
- * opacity only (no blur on the photo container), and every interaction has a
- * static, fully visible resting state so a failed or skipped animation never
- * leaves the section stuck hidden.
+ * The section's entrance is the site-wide {@link Reveal} / {@link RevealGroup}
+ * scroll-reveal, same as every other section: heading, index rows and stage
+ * blur-rise in on entry and ease back to a dim resting state on leaving,
+ * from either scroll direction. The per-project mosaic swap is a separate
+ * GSAP crossfade layered on top, and every interaction has a static, fully
+ * visible resting state so a skipped animation never strands the section.
  */
 export function FeaturedProjectsSection({
   projects,
@@ -65,7 +69,7 @@ export function FeaturedProjectsSection({
     (index: number) => {
       if (index === activeIndexRef.current || isCrossfadingRef.current) return;
       const layers = gsap.utils.toArray<HTMLElement>(
-        stageRef.current?.querySelectorAll("[data-stage-image]") ?? [],
+        stageRef.current?.querySelectorAll("[data-stage-collage]") ?? [],
       );
       const outgoing = layers[activeIndexRef.current];
       const incoming = layers[index];
@@ -93,6 +97,22 @@ export function FeaturedProjectsSection({
           duration: CROSSFADE_DURATION,
           ease: "power2.out",
         });
+
+        // The incoming set assembles tile by tile rather than hard-cutting.
+        const tiles =
+          incoming.querySelectorAll<HTMLElement>("[data-mosaic-tile]");
+        gsap.fromTo(
+          tiles,
+          { autoAlpha: 0, y: 14 },
+          {
+            autoAlpha: 1,
+            y: 0,
+            duration: 0.5,
+            stagger: 0.06,
+            ease: "power2.out",
+            clearProps: "opacity,visibility,transform",
+          },
+        );
       }
 
       activeIndexRef.current = index;
@@ -102,20 +122,43 @@ export function FeaturedProjectsSection({
     [moveIndicator],
   );
 
-  // Position the indicator once rows exist, and keep it aligned through any
-  // layout shift (a font swap, a resize) without re-triggering the slide.
+  // Position the indicator once rows exist, keep it aligned through any
+  // layout shift (a font swap, a resize), and hand the mosaic layers to GSAP
+  // so the crossfade owns their opacity. The resting DOM (and reduced motion)
+  // is covered by the `.project-stage:not([data-armed])` CSS below.
   useGSAP(
     () => {
       moveIndicator(activeIndexRef.current, false);
+
+      const stage = stageRef.current;
+      if (stage && !reducedMotion()) {
+        const collages = gsap.utils.toArray<HTMLElement>(
+          stage.querySelectorAll("[data-stage-collage]"),
+        );
+        if (collages.length) {
+          gsap.set(collages, {
+            autoAlpha: (i) => (i === activeIndexRef.current ? 1 : 0),
+          });
+          stage.dataset.armed = "true";
+        }
+      }
+
       const list = listRef.current;
-      if (!list || typeof ResizeObserver === "undefined") return;
+      if (!list || typeof ResizeObserver === "undefined") {
+        return () => {
+          if (stage) delete stage.dataset.armed;
+        };
+      }
       const observer = new ResizeObserver(() =>
         moveIndicator(activeIndexRef.current, false),
       );
       observer.observe(list);
-      return () => observer.disconnect();
+      return () => {
+        observer.disconnect();
+        if (stage) delete stage.dataset.armed;
+      };
     },
-    { scope: listRef, dependencies: [projects, moveIndicator] },
+    { scope: rootRef, dependencies: [projects, moveIndicator] },
   );
 
   // A small pill that trails the pointer while it's over the index list —
@@ -169,74 +212,6 @@ export function FeaturedProjectsSection({
     };
   }, []);
 
-  // Entrance: the stage lifts + fades in, the index rows follow in a stagger
-  // a beat behind. Every start value is set only once this runs, under a
-  // matchMedia gate — the resting DOM is already fully visible, so a skipped
-  // or interrupted animation can never strand the section hidden.
-  useGSAP(
-    () => {
-      const mm = gsap.matchMedia();
-      mm.add("(prefers-reduced-motion: no-preference)", () => {
-        const stage = stageRef.current;
-        const rows = gsap.utils.toArray<HTMLElement>(
-          rootRef.current?.querySelectorAll("[data-index-row]") ?? [],
-        );
-        if (!rows.length || !stage) return;
-
-        // Hand each crossfade layer to GSAP. `data-armed` on the stage flips
-        // the CSS that held the first layer visible pre-JS off, so a React
-        // re-render can never fight a running opacity tween.
-        const layers = gsap.utils.toArray<HTMLElement>(
-          stage.querySelectorAll("[data-stage-image]"),
-        );
-        gsap.set(layers, {
-          autoAlpha: (index) => (index === activeIndexRef.current ? 1 : 0),
-        });
-        stage.dataset.armed = "true";
-
-        // Entrance: opacity + a small lift only — no blur/heavy zoom on the
-        // photo container (a filter animation on an image box is a paint
-        // every frame and can render oddly mid-tween).
-        gsap.set(stage, { opacity: 0, y: 24 });
-        gsap.set(rows, { opacity: 0, y: 40 });
-
-        const timeline = gsap.timeline({
-          scrollTrigger: {
-            trigger: rootRef.current,
-            start: "top 80%",
-            once: true,
-          },
-        });
-        timeline
-          .to(stage, {
-            opacity: 1,
-            y: 0,
-            duration: 0.9,
-            ease: "power3.out",
-            clearProps: "transform",
-          })
-          .to(
-            rows,
-            {
-              opacity: 1,
-              y: 0,
-              duration: 0.8,
-              stagger: 0.1,
-              ease: "power3.out",
-              clearProps: "transform",
-            },
-            "-=0.7",
-          );
-
-        return () => {
-          delete stage.dataset.armed;
-        };
-      });
-      return () => mm.revert();
-    },
-    { scope: rootRef, dependencies: [projects] },
-  );
-
   if (!projects.length) return null;
 
   return (
@@ -246,102 +221,123 @@ export function FeaturedProjectsSection({
       aria-labelledby="projects-heading"
     >
       <div ref={rootRef}>
-        <EditorialSectionHeading
-          eyebrow={heading.eyebrow}
-          title={heading.title}
-          headingId="projects-heading"
-        />
+        <Reveal>
+          <EditorialSectionHeading
+            eyebrow={heading.eyebrow}
+            title={heading.title}
+            headingId="projects-heading"
+          />
+        </Reveal>
 
-        {/* Desktop: index list + sticky crossfading stage. */}
+        {/* Desktop: index list + sticky crossfading mosaic. */}
         <div className="mt-10 hidden gap-12 lg:grid lg:grid-cols-[1fr_1.1fr] lg:items-start">
-          <div ref={listRef} className="relative">
-            <span
-              ref={indicatorRef}
-              aria-hidden
-              className="project-index-indicator"
-            />
-            {projects.map((project, index) => (
-              <Link
-                key={project.id}
-                href={project.href}
-                data-index-row
-                data-active={index === activeIndex || undefined}
-                className="project-index-row group"
-                aria-label={`${heading.cardCtaLabel}: ${project.name}`}
-                onMouseEnter={() => setActive(index)}
-                onFocus={() => setActive(index)}
-              >
-                <span className="project-index-number">
-                  {String(index + 1).padStart(2, "0")}
-                </span>
-                <span className="project-index-copy">
-                  <span className="project-index-name">{project.name}</span>
-                  <span className="project-index-location">
-                    {project.location}
+          <RevealGroup as="div">
+            <div ref={listRef} className="relative">
+              <span
+                ref={indicatorRef}
+                aria-hidden
+                className="project-index-indicator"
+              />
+              {projects.map((project, index) => (
+                <Link
+                  key={project.id}
+                  href={project.href}
+                  data-index-row
+                  data-reveal-item
+                  data-active={index === activeIndex || undefined}
+                  className="project-index-row group"
+                  aria-label={`${heading.cardCtaLabel}: ${project.name}`}
+                  onMouseEnter={() => setActive(index)}
+                  onFocus={() => setActive(index)}
+                >
+                  <span className="project-index-number">
+                    {String(index + 1).padStart(2, "0")}
                   </span>
-                </span>
-                <Icon name="arrow-right" className="project-index-arrow" />
-              </Link>
-            ))}
+                  <span className="project-index-copy">
+                    <span className="project-index-name">{project.name}</span>
+                    <span className="project-index-location">
+                      {project.location}
+                    </span>
+                  </span>
+                  <Icon name="arrow-right" className="project-index-arrow" />
+                </Link>
+              ))}
 
-            <div
-              ref={pillRef}
-              aria-hidden
-              data-visible="false"
-              className="project-follow-pill"
-            >
-              {heading.cardCtaLabel}
-            </div>
-
-            <div className="mt-8 flex items-center justify-between gap-6 border-t border-border pt-6">
-              <span className="font-mono text-xs tracking-project-index text-muted-foreground uppercase">
-                {String(projects.length).padStart(2, "0")} developments and
-                counting
-              </span>
-              <ButtonLink href={heading.ctaHref} variant="link">
-                {heading.ctaLabel}
-                <Icon name="arrow-right" />
-              </ButtonLink>
-            </div>
-          </div>
-
-          <div
-            ref={stageRef}
-            className="project-stage relative h-[clamp(20rem,26vw,26rem)] overflow-hidden rounded-panel bg-muted lg:sticky lg:top-28"
-          >
-            {projects.map((project, index) => (
               <div
-                key={project.id}
-                data-stage-image
-                className="absolute inset-0"
+                ref={pillRef}
+                aria-hidden
+                data-visible="false"
+                className="project-follow-pill"
               >
-                <Image
-                  src={project.image}
-                  alt={project.name}
-                  fill
-                  priority={index === 0}
-                  sizes="(min-width: 1024px) 55vw, 100vw"
-                  placeholder="blur"
-                  blurDataURL={IMAGE_PLACEHOLDER}
-                  unoptimized={isRemoteAsset(project.image)}
-                  className="project-stage-media object-cover object-center"
-                />
-                <span
-                  aria-hidden
-                  className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/10 to-black/15"
-                />
-                <span className="project-badge absolute top-4 left-4 inline-flex items-center gap-1.5 rounded-full border border-on-media-border bg-on-media-surface px-2.5 py-1 text-status tracking-project-status text-on-media uppercase backdrop-blur-md">
-                  <Icon name="badge-check" size={12} />
-                  {project.status}
-                </span>
-                <div className="absolute inset-x-0 bottom-0 p-project-card text-on-media">
-                  <p className="max-w-md text-sm leading-snug text-on-media/85">
-                    {project.description}
-                  </p>
-                </div>
+                {heading.cardCtaLabel}
               </div>
-            ))}
-          </div>
+
+              <div
+                data-reveal-item
+                className="mt-8 flex items-center justify-between gap-6 border-t border-border pt-6"
+              >
+                <span className="font-mono text-xs tracking-project-index text-muted-foreground uppercase">
+                  {String(projects.length).padStart(2, "0")} developments and
+                  counting
+                </span>
+                <ButtonLink href={heading.ctaHref} variant="link">
+                  {heading.ctaLabel}
+                  <Icon name="arrow-right" />
+                </ButtonLink>
+              </div>
+            </div>
+          </RevealGroup>
+
+          <Reveal className="lg:sticky lg:top-28">
+            <div
+              ref={stageRef}
+              className="project-stage relative overflow-hidden rounded-panel bg-muted"
+            >
+              {projects.map((project) => (
+                <div
+                  key={project.id}
+                  data-stage-collage
+                  className="absolute inset-0"
+                >
+                  <div className="project-mosaic">
+                    {project.images.slice(0, 4).map((src, tileIndex) => (
+                      <figure
+                        key={`${project.id}-${src}`}
+                        data-mosaic-tile
+                        className="project-mosaic__tile"
+                      >
+                        <Image
+                          src={src}
+                          alt={tileIndex === 0 ? project.name : ""}
+                          fill
+                          sizes="(min-width: 1024px) 28vw, 0px"
+                          placeholder="blur"
+                          blurDataURL={IMAGE_PLACEHOLDER}
+                          unoptimized={isRemoteAsset(src)}
+                          className="object-cover"
+                        />
+                        {tileIndex === 0 && (
+                          <>
+                            <span
+                              aria-hidden
+                              className="project-mosaic__scrim"
+                            />
+                            <span className="project-badge absolute top-4 left-4 inline-flex items-center gap-1.5 rounded-full border border-on-media-border bg-on-media-surface px-2.5 py-1 text-status tracking-project-status text-on-media uppercase backdrop-blur-md">
+                              <Icon name="badge-check" size={12} />
+                              {project.status}
+                            </span>
+                            <p className="project-mosaic__caption">
+                              {project.description}
+                            </p>
+                          </>
+                        )}
+                      </figure>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </Reveal>
         </div>
 
         {/* Mobile / no fine pointer: a horizontal snap carousel — one project

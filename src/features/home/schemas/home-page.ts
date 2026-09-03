@@ -56,7 +56,11 @@ export const homePageContentSchema = z.object({
         location: nonEmptyString,
         status: nonEmptyString,
         description: nonEmptyString,
+        // The mobile carousel card + a safe fallback everywhere else.
         image: nonEmptyString,
+        // The desktop preview mosaic: a lead shot first, then supporting
+        // views. Three minimum; the section renders the first four.
+        images: z.array(nonEmptyString).min(3),
         href: nonEmptyString,
       }),
     )

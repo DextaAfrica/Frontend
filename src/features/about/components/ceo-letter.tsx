@@ -19,9 +19,9 @@ import type { CeoLetterContent } from "../types/about-page";
  *
  * On first view: the envelope pops in, then the portrait and the letter
  * body slide in together from their own outer edge and converge toward the
- * centre — the same mechanism the homepage's about-teaser uses for its
- * copy/media pair (see about-teaser.tsx) — before the paragraphs, closing
- * line, and signature stagger in on their own.
+ * centre — a bespoke effect for the letter, the page's one hand-tuned
+ * centrepiece — before the paragraphs, closing line, and signature stagger
+ * in on their own.
  */
 export function CeoLetter({ content }: { content: CeoLetterContent }) {
   const rootRef = React.useRef<HTMLElement>(null);
@@ -54,9 +54,8 @@ export function CeoLetter({ content }: { content: CeoLetterContent }) {
         }
 
         // Portrait and letter body converge toward the centre from their
-        // own outer edge — the exact mechanism the homepage's about-teaser
-        // uses for its copy/media pair: both start pushed past their column
-        // and hidden (gsap.set, not fromTo — the resting DOM is already
+        // own outer edge: both start pushed past their column and hidden
+        // (gsap.set, not fromTo — the resting DOM is already
         // fully visible, so a skipped/interrupted tween never strands
         // either half off-screen), then animate together on one timeline so
         // they visibly arrive from opposite sides at the same moment.

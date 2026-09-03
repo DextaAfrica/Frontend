@@ -3,6 +3,7 @@
 import Image from "next/image";
 import * as React from "react";
 import { Container, Section } from "@/components/layout";
+import { RevealGroup } from "@/components/marketing";
 import {
   ButtonLink,
   EditorialEyebrow,
@@ -17,24 +18,19 @@ import type { AboutTeaserContent } from "../types/home-page";
  * A quiet strip between the statistics and the rest of the page — the
  * numbers above have a story behind them, and this points at it.
  *
- * The copy slides in from the left, the portrait from the right, both
- * converging toward the centre on one timeline — `back.out` easing means
- * each overshoots its resting spot by a few pixels before settling, which
- * reads as the two halves arriving and gently bouncing into place rather
- * than sliding to a dead stop.
+ * The copy and the portrait enter on the site-wide {@link RevealGroup}
+ * scroll-reveal — the same staggered blur-rise every other section uses,
+ * bidirectional and inert under `prefers-reduced-motion` — rather than a
+ * one-off animation of its own.
  *
  * Behind it, edge to edge across the whole section (the background field is
  * section-level, outside the Container): a radial-masked architect's grid
  * for structure, one soft shaft of warm light, and two oversized aurora
  * fields of brand red that drift on their own slow cycles. Transform/opacity
  * only, so it's effectively free at rest and fully inert under
- * `prefers-reduced-motion` — the field then simply holds still, still
- * commanding through scale rather than motion.
+ * `prefers-reduced-motion` — the field then simply holds still.
  */
 export function AboutTeaser({ content }: { content: AboutTeaserContent }) {
-  const rootRef = React.useRef<HTMLDivElement>(null);
-  const copyRef = React.useRef<HTMLDivElement>(null);
-  const mediaRef = React.useRef<HTMLDivElement>(null);
   const auroraRef = React.useRef<HTMLDivElement>(null);
   const beamRef = React.useRef<HTMLSpanElement>(null);
 
@@ -42,25 +38,6 @@ export function AboutTeaser({ content }: { content: AboutTeaserContent }) {
     () => {
       const mm = gsap.matchMedia();
       mm.add("(prefers-reduced-motion: no-preference)", () => {
-        const copy = copyRef.current;
-        const media = mediaRef.current;
-        if (copy && media) {
-          gsap.set(copy, { x: -72, opacity: 0 });
-          gsap.set(media, { x: 72, opacity: 0 });
-
-          gsap.to([copy, media], {
-            x: 0,
-            opacity: 1,
-            duration: 1.3,
-            ease: "back.out(1.6)",
-            scrollTrigger: {
-              trigger: rootRef.current,
-              start: "top 78%",
-              once: true,
-            },
-          });
-        }
-
         // Aurora fields: slow, independent, endless drift + swell — never in
         // lockstep, so the glow never reads as a single repeating loop.
         const blobs = gsap.utils.toArray<HTMLElement>(
@@ -94,7 +71,7 @@ export function AboutTeaser({ content }: { content: AboutTeaserContent }) {
       });
       return () => mm.revert();
     },
-    { scope: rootRef, dependencies: [content] },
+    { scope: auroraRef },
   );
 
   return (
@@ -115,14 +92,11 @@ export function AboutTeaser({ content }: { content: AboutTeaserContent }) {
       </div>
 
       <Container>
-        <div
-          ref={rootRef}
+        <RevealGroup
+          as="div"
           className="relative grid gap-10 md:grid-cols-[1fr_0.8fr] md:items-center md:gap-16"
         >
-          <div
-            ref={copyRef}
-            className="flex flex-col items-start gap-6 will-change-transform"
-          >
+          <div data-reveal-item className="flex flex-col items-start gap-6">
             <EditorialEyebrow>{content.eyebrow}</EditorialEyebrow>
             <EditorialHeading id="about-teaser-heading">
               {content.title}
@@ -133,9 +107,9 @@ export function AboutTeaser({ content }: { content: AboutTeaserContent }) {
             </ButtonLink>
           </div>
 
-          <div
-            ref={mediaRef}
-            className="relative aspect-[5/4] overflow-hidden rounded-panel border border-border bg-muted will-change-transform"
+          <figure
+            data-reveal-item
+            className="relative m-0 aspect-[5/4] overflow-hidden rounded-panel border border-border bg-muted"
           >
             <Image
               src={content.image}
@@ -152,8 +126,8 @@ export function AboutTeaser({ content }: { content: AboutTeaserContent }) {
               aria-hidden
               className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent"
             />
-          </div>
-        </div>
+          </figure>
+        </RevealGroup>
       </Container>
     </Section>
   );

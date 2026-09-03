@@ -1122,29 +1122,83 @@ dialog[open]::backdrop {
 
 /* --- Project index (featured-projects-section.tsx) ----------------------
    An editorial index rather than a static grid: a numbered list on one
-   side, a single sticky crossfading stage on the other. */
-.project-stage-media {
-  animation: hero-kenburns 24s var(--motion-ease-premium) alternate infinite;
+   side, a sticky crossfading mosaic on the other. The stage carries its own
+   height so the absolutely-stacked `[data-stage-collage]` layers have
+   something to fill. */
+.project-stage {
+  height: clamp(24rem, 30vw, 32rem);
 }
 
-/* Pre-JS / reduced-motion resting state: only the first photo shows. Once
+/* Pre-JS / reduced-motion resting state: only the first mosaic shows. Once
    the component sets `data-armed`, GSAP owns every layer's opacity. */
-.project-stage:not([data-armed]) [data-stage-image] {
+.project-stage:not([data-armed]) [data-stage-collage] {
   opacity: 0;
 }
 
-.project-stage:not([data-armed]) [data-stage-image]:first-child {
+.project-stage:not([data-armed]) [data-stage-collage]:first-child {
   opacity: 1;
 }
 
-/* Belt-and-braces: the photo always covers the stage, whatever its ratio. */
-.project-stage [data-stage-image] img {
+/* The mosaic: one tall lead tile + three stacked supporting views. */
+.project-mosaic {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  grid-template-rows: repeat(3, 1fr);
+  gap: 0.5rem;
+  height: 100%;
+}
+
+.project-mosaic > :first-child {
+  grid-row: 1 / -1;
+}
+
+.project-mosaic__tile {
+  position: relative;
+  overflow: hidden;
+  border-radius: calc(var(--radius-panel) * 0.6);
+  background: var(--muted);
+}
+
+.project-mosaic__tile:first-child {
+  border-radius: var(--radius-panel);
+}
+
+.project-mosaic__tile img {
   object-fit: cover;
   object-position: center;
 }
 
+/* A slow, tiny drift on the lead tile only — enough life without the whole
+   grid moving at once. */
+.project-mosaic__tile:first-child img {
+  animation: hero-kenburns 24s var(--motion-ease-premium) alternate infinite;
+}
+
+.project-mosaic__scrim {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to top,
+    rgb(0 0 0 / 0.78),
+    rgb(0 0 0 / 0.1) 45%,
+    rgb(0 0 0 / 0.18)
+  );
+  pointer-events: none;
+}
+
+.project-mosaic__caption {
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0;
+  max-width: 32rem;
+  padding: var(--space-project-card);
+  font-size: 0.875rem;
+  line-height: 1.45;
+  color: rgb(from var(--on-media) r g b / 0.85);
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .project-stage-media {
+  .project-mosaic__tile:first-child img {
     animation: none;
   }
 }
