@@ -1,7 +1,7 @@
 import { Container } from "@/components/layout";
 import { ButtonLink, EditorialHeading, Icon } from "@/components/ui";
 import { LiteYouTube, type LiteYouTubeProps } from "./lite-youtube";
-import { Reveal, RevealGroup, RevealItem } from "./reveal";
+import { RevealItem, ScrollFade, ScrollFadeGroup } from "./reveal";
 
 export interface DextaClanBandProps {
   eyebrow: string;
@@ -38,7 +38,7 @@ export function DextaClanBand({
     >
       <span aria-hidden className="dexta-clan__glow" />
       <Container className="relative grid gap-12 lg:grid-cols-[1fr_1fr] lg:items-center lg:gap-16">
-        <Reveal className="flex flex-col items-start gap-6">
+        <ScrollFade className="flex flex-col items-start gap-6">
           <span className="inline-flex items-center gap-2.5 font-mono text-xs font-bold tracking-[0.24em] text-brand-light/70 uppercase">
             <span aria-hidden className="dexta-clan__dot" />
             {eyebrow}
@@ -68,12 +68,12 @@ export function DextaClanBand({
             {cta.label}
             <Icon name="arrow-right" />
           </ButtonLink>
-        </Reveal>
+        </ScrollFade>
 
         {video ? (
           <LiteYouTube {...video} />
         ) : (
-          <RevealGroup>
+          <ScrollFadeGroup>
             <ul className="flex flex-col">
               {benefits.map((benefit) => (
                 <RevealItem
@@ -86,7 +86,7 @@ export function DextaClanBand({
                 </RevealItem>
               ))}
             </ul>
-          </RevealGroup>
+          </ScrollFadeGroup>
         )}
       </Container>
     </section>

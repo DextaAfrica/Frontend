@@ -2570,19 +2570,26 @@ dialog[open]::backdrop {
 }
 
 /* --- About teaser: wave + droplet background (about-teaser.tsx) ----------
+ * Section-level (outside the Container), so the wave/droplet field runs the
+ * full bleed of the section rather than only behind the content column.
  * Two SVG wave layers, each built as two identical cycles side by side in
  * one viewBox — translating exactly -50% is then a perfect seamless loop,
  * same trick as the marquee tracks elsewhere. Plus a few low-opacity red
- * "droplet" glows that drift independently via GSAP (see the component). */
+ * "droplet" glows that drift independently via GSAP (see the component).
+ * Both layers sit at `z-index: -1`; `isolation: isolate` keeps that behind
+ * the section's own content but never punches through to whatever is behind
+ * the section. */
 .about-teaser {
   position: relative;
   isolation: isolate;
   overflow: hidden;
 }
 
-.about-teaser__waves {
+.about-teaser__waves,
+.about-teaser__droplets {
   position: absolute;
   inset: 0;
+  z-index: -1;
   overflow: hidden;
   pointer-events: none;
 }
@@ -2591,7 +2598,7 @@ dialog[open]::backdrop {
   position: absolute;
   left: 0;
   width: 200%;
-  height: 65%;
+  height: 72%;
 }
 
 .about-teaser__wave--back {
@@ -2615,17 +2622,10 @@ dialog[open]::backdrop {
   }
 }
 
-.about-teaser__droplets {
-  position: absolute;
-  inset: 0;
-  overflow: hidden;
-  pointer-events: none;
-}
-
 .about-teaser__droplet {
   position: absolute;
   border-radius: 999px;
-  filter: blur(48px);
+  filter: blur(56px);
   background: radial-gradient(
     circle,
     oklch(from var(--primary) l c h / 0.3),
@@ -2633,25 +2633,34 @@ dialog[open]::backdrop {
   );
 }
 
+/* Spread across the full section bleed, not clustered in a content column. */
 .about-teaser__droplet--a {
-  top: 6%;
-  left: 10%;
-  width: 9rem;
-  height: 9rem;
+  top: 4%;
+  left: 5%;
+  width: 10rem;
+  height: 10rem;
 }
 
 .about-teaser__droplet--b {
-  top: 52%;
-  right: 8%;
-  width: 11rem;
-  height: 11rem;
+  top: 44%;
+  right: 6%;
+  width: 13rem;
+  height: 13rem;
 }
 
 .about-teaser__droplet--c {
-  bottom: 4%;
-  left: 42%;
-  width: 7rem;
-  height: 7rem;
+  bottom: 2%;
+  left: 38%;
+  width: 8rem;
+  height: 8rem;
+}
+
+.about-teaser__droplet--d {
+  top: 18%;
+  left: 52%;
+  width: 9rem;
+  height: 9rem;
+  opacity: 0.7;
 }
 
 @media (prefers-reduced-motion: reduce) {

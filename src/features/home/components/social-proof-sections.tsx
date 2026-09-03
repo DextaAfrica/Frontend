@@ -1,8 +1,8 @@
 import { Section } from "@/components/layout";
 import {
   EditorialSectionHeading,
-  RevealGroup,
   RevealItem,
+  ScrollFadeGroup,
 } from "@/components/marketing";
 import type { HomePageContent, StatisticContent } from "../types/home-page";
 import { StatCard } from "./stat-card";
@@ -23,7 +23,7 @@ export function StatisticsSection({
         headingId="statistics-heading"
         className="mb-14"
       />
-      <RevealGroup className="grid border-y border-border md:grid-cols-3">
+      <ScrollFadeGroup className="grid border-y border-border md:grid-cols-3">
         {statistics.map((stat, index) => (
           <RevealItem
             as="article"
@@ -33,7 +33,7 @@ export function StatisticsSection({
             <StatCard stat={stat} priority={index === 0} />
           </RevealItem>
         ))}
-      </RevealGroup>
+      </ScrollFadeGroup>
     </Section>
   );
 }

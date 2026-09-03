@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import * as React from "react";
-import { Section } from "@/components/layout";
+import { Container, Section } from "@/components/layout";
 import {
   ButtonLink,
   EditorialEyebrow,
@@ -23,11 +23,12 @@ import type { AboutTeaserContent } from "../types/home-page";
  * reads as the two halves arriving and gently bouncing into place rather
  * than sliding to a dead stop.
  *
- * Behind it, a slow looping SVG wave plus a few drifting red "droplet"
- * glows — pure CSS/SVG (an animated `transform`, nothing else), so it's
- * effectively free at rest and fully inert under `prefers-reduced-motion`.
- * No video file, but the same "always gently moving" quality one would
- * carry, without the weight.
+ * Behind it, edge to edge across the whole section (the wave/droplet layers
+ * are section-level, outside the Container), a slow looping SVG wave plus a
+ * few drifting red "droplet" glows — pure CSS/SVG (an animated `transform`,
+ * nothing else), so it's effectively free at rest and fully inert under
+ * `prefers-reduced-motion`. No video file, but the same "always gently
+ * moving" quality one would carry, without the weight.
  */
 export function AboutTeaser({ content }: { content: AboutTeaserContent }) {
   const rootRef = React.useRef<HTMLDivElement>(null);
@@ -85,33 +86,38 @@ export function AboutTeaser({ content }: { content: AboutTeaserContent }) {
     <Section
       spacing="editorial"
       tone="surface"
+      contained={false}
       aria-labelledby="about-teaser-heading"
       className="about-teaser"
     >
-      <div ref={rootRef} className="relative">
-        <div aria-hidden className="about-teaser__waves">
-          <svg
-            className="about-teaser__wave about-teaser__wave--back"
-            viewBox="0 0 2400 200"
-            preserveAspectRatio="none"
-          >
-            <path d="M0,90 C150,30 300,150 600,90 C750,30 900,150 1200,90 C1350,30 1500,150 1800,90 C1950,30 2100,150 2400,90 L2400,200 L0,200 Z" />
-          </svg>
-          <svg
-            className="about-teaser__wave about-teaser__wave--front"
-            viewBox="0 0 2400 200"
-            preserveAspectRatio="none"
-          >
-            <path d="M0,120 C200,60 400,170 700,110 C900,60 1100,170 1400,110 C1600,60 1800,170 2100,110 C2300,60 2350,150 2400,120 L2400,200 L0,200 Z" />
-          </svg>
-        </div>
-        <div ref={dropletsRef} aria-hidden className="about-teaser__droplets">
-          <span className="about-teaser__droplet about-teaser__droplet--a" />
-          <span className="about-teaser__droplet about-teaser__droplet--b" />
-          <span className="about-teaser__droplet about-teaser__droplet--c" />
-        </div>
+      <div aria-hidden className="about-teaser__waves">
+        <svg
+          className="about-teaser__wave about-teaser__wave--back"
+          viewBox="0 0 2400 200"
+          preserveAspectRatio="none"
+        >
+          <path d="M0,90 C150,30 300,150 600,90 C750,30 900,150 1200,90 C1350,30 1500,150 1800,90 C1950,30 2100,150 2400,90 L2400,200 L0,200 Z" />
+        </svg>
+        <svg
+          className="about-teaser__wave about-teaser__wave--front"
+          viewBox="0 0 2400 200"
+          preserveAspectRatio="none"
+        >
+          <path d="M0,120 C200,60 400,170 700,110 C900,60 1100,170 1400,110 C1600,60 1800,170 2100,110 C2300,60 2350,150 2400,120 L2400,200 L0,200 Z" />
+        </svg>
+      </div>
+      <div ref={dropletsRef} aria-hidden className="about-teaser__droplets">
+        <span className="about-teaser__droplet about-teaser__droplet--a" />
+        <span className="about-teaser__droplet about-teaser__droplet--b" />
+        <span className="about-teaser__droplet about-teaser__droplet--c" />
+        <span className="about-teaser__droplet about-teaser__droplet--d" />
+      </div>
 
-        <div className="relative grid gap-10 md:grid-cols-[1fr_0.8fr] md:items-center md:gap-16">
+      <Container>
+        <div
+          ref={rootRef}
+          className="relative grid gap-10 md:grid-cols-[1fr_0.8fr] md:items-center md:gap-16"
+        >
           <div
             ref={copyRef}
             className="flex flex-col items-start gap-6 will-change-transform"
@@ -144,7 +150,7 @@ export function AboutTeaser({ content }: { content: AboutTeaserContent }) {
             />
           </div>
         </div>
-      </div>
+      </Container>
     </Section>
   );
 }

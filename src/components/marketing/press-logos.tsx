@@ -2,7 +2,7 @@ import Image from "next/image";
 import * as React from "react";
 import { Container } from "@/components/layout";
 import { isRemoteAsset } from "@/lib/media";
-import { Reveal } from "./reveal";
+import { ScrollFade } from "./reveal";
 
 export interface PressLogo {
   name: string;
@@ -77,14 +77,14 @@ export function PressLogos({
   return (
     <section aria-labelledby={headingId} className="press-marquee">
       <Container className="press-marquee__inner">
-        <Reveal as="div" className="press-marquee__signal">
+        <ScrollFade as="div" className="press-marquee__signal">
           <span aria-hidden className="press-marquee__dot" />
           <span id={headingId} className="press-marquee__label">
             {eyebrow}
           </span>
-        </Reveal>
+        </ScrollFade>
 
-        <Reveal as="div" delay={0.1} className="press-marquee__viewport">
+        <ScrollFade as="div" delay={0.1} className="press-marquee__viewport">
           <ul className="press-marquee__track">
             {loop.map((logo, index) => {
               const duplicate = index >= items.length;
@@ -107,7 +107,7 @@ export function PressLogos({
               );
             })}
           </ul>
-        </Reveal>
+        </ScrollFade>
       </Container>
     </section>
   );

@@ -3,7 +3,7 @@
 import * as React from "react";
 import Image from "next/image";
 import { Section } from "@/components/layout";
-import { EditorialSectionHeading, Reveal } from "@/components/marketing";
+import { EditorialSectionHeading, ScrollFade } from "@/components/marketing";
 import { homeMotion } from "@/config/home-motion";
 import { gsap, useGSAP } from "@/lib/gsap";
 import { isRemoteAsset } from "@/lib/media";
@@ -290,7 +290,7 @@ export function TestimonialSection({
         headingId="testimonials-heading"
       />
 
-      <Reveal className="mx-auto mt-testimonial w-full max-w-testimonial-body">
+      <ScrollFade className="mx-auto mt-testimonial w-full max-w-testimonial-body">
         <div
           ref={rootRef}
           className="testimonial-carousel"
@@ -381,7 +381,7 @@ export function TestimonialSection({
             )}
           </div>
         </div>
-      </Reveal>
+      </ScrollFade>
     </Section>
   );
 }

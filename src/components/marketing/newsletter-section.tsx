@@ -1,7 +1,7 @@
 import { Container, Section } from "@/components/layout";
 import { Badge, Icon, renderWithAccents, type IconName } from "@/components/ui";
 import { InlineNewsletterForm } from "@/features/newsletter/components/inline-newsletter-form";
-import { Reveal } from "./reveal";
+import { Reveal, ScrollFade } from "./reveal";
 
 const benefits: ReadonlyArray<{ icon: IconName; label: string }> = [
   { icon: "land-plot", label: "Off-market listings" },
@@ -37,7 +37,7 @@ export function NewsletterSection({
     >
       <Container>
         <div className="grid gap-10 lg:grid-cols-2 lg:items-center lg:gap-12">
-          <Reveal className="flex flex-col gap-6">
+          <ScrollFade className="flex flex-col gap-6">
             <span className="inline-flex w-fit items-center gap-2.5 font-mono text-xs font-bold tracking-[0.24em] text-muted-foreground uppercase">
               <span aria-hidden className="newsletter-cta__dot" />
               {eyebrow}
@@ -66,7 +66,7 @@ export function NewsletterSection({
                 </li>
               ))}
             </ul>
-          </Reveal>
+          </ScrollFade>
 
           <Reveal delay={0.12} className="relative isolate">
             <span

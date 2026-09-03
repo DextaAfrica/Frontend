@@ -3,8 +3,8 @@ import Link from "next/link";
 import { Grid, Section } from "@/components/layout";
 import {
   EditorialSectionHeading,
-  RevealGroup,
   RevealItem,
+  ScrollFadeGroup,
 } from "@/components/marketing";
 import { isRemoteAsset } from "@/lib/media";
 import type { BlogPostContent, HomePageContent } from "../types/home-page";
@@ -25,7 +25,7 @@ export function BlogSection({
         headingId="blog-heading"
       />
 
-      <RevealGroup>
+      <ScrollFadeGroup>
         <Grid columns="three" gap="sm" className="mt-blog-grid gap-y-blog-row">
           {posts.map((post) => (
             <RevealItem as="article" key={post.id}>
@@ -51,7 +51,7 @@ export function BlogSection({
             </RevealItem>
           ))}
         </Grid>
-      </RevealGroup>
+      </ScrollFadeGroup>
     </Section>
   );
 }
