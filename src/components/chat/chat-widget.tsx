@@ -180,7 +180,7 @@ export function ChatWidget() {
               data-chat-autofocus
               className="chat-action chat-action--wa"
             >
-              <Icon name="chat" size={18} />
+              <Icon name="whatsapp" size={18} className="chat-action__wa" />
               <span>Chat on WhatsApp</span>
               <Icon name="arrow-right" size={16} className="chat-action__go" />
             </a>
@@ -284,7 +284,7 @@ export function ChatWidget() {
         className="chat-launcher"
       >
         <span aria-hidden className="chat-launcher__ring" />
-        <Icon name={open ? "close" : "chat"} size={24} />
+        <Icon name={open ? "close" : "whatsapp"} size={26} />
       </button>
     </div>
   );

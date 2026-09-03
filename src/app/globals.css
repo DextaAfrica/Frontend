@@ -2652,6 +2652,12 @@ dialog[open]::backdrop {
   background: rgb(37 211 102 / 0.14);
 }
 
+/* The WhatsApp mark keeps its own brand green so it's recognisable at a
+   glance — a trust cue, not a theme colour. */
+.chat-action__wa {
+  color: #25d366;
+}
+
 .chat-action--sm {
   flex: 1;
   justify-content: center;
