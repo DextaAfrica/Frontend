@@ -23,12 +23,14 @@ export interface LiteYouTubeProps {
  * (`youtube-nocookie.com`) iframe with `autoplay=1`; the click is the user
  * gesture that lets autoplay through.
  *
- * The poster stays mounted underneath the iframe, so there's no white flash
- * while the YouTube player paints its first frame.
+ * While playing, a close control (also Escape) returns to the poster and
+ * unmounts the iframe, which stops playback outright — the visitor is never
+ * trapped in the embed. Closing returns focus to the play button.
  *
- * Framed to match the site's other rounded-panel media (`project-card`, the
- * about-teaser portrait): a hairline border, clipped corners, a slow poster
- * zoom on hover while it's still a facade.
+ * The poster stays mounted underneath the iframe, so there's no white flash
+ * while the YouTube player paints its first frame. Frame styling (border,
+ * radius) lives in `.lite-youtube` in globals.css so a host surface — e.g. the
+ * always-dark Dexta Clan band — can retune the hairline for its background.
  */
 export function LiteYouTube({
   id,
@@ -37,12 +39,31 @@ export function LiteYouTube({
   className,
 }: LiteYouTubeProps) {
   const [playing, setPlaying] = React.useState(false);
+  const playRef = React.useRef<HTMLButtonElement>(null);
+  const closeRef = React.useRef<HTMLButtonElement>(null);
+
+  const open = () => setPlaying(true);
+  const close = React.useCallback(() => {
+    setPlaying(false);
+    // Return focus to where the interaction started.
+    requestAnimationFrame(() => playRef.current?.focus());
+  }, []);
+
+  React.useEffect(() => {
+    if (!playing) return;
+    closeRef.current?.focus();
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape") close();
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [playing, close]);
 
   return (
     <Reveal
       as="figure"
       className={cn(
-        "group/video relative aspect-video overflow-hidden rounded-panel border border-border bg-brand-dark",
+        "lite-youtube group/video relative aspect-video overflow-hidden rounded-panel bg-brand-dark",
         className,
       )}
     >
@@ -55,18 +76,35 @@ export function LiteYouTube({
       />
 
       {playing ? (
-        <iframe
-          src={`https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0&modestbranding=1`}
-          title={title}
-          allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
-          allowFullScreen
-          loading="lazy"
-          className="absolute inset-0 size-full"
-        />
+        <>
+          <iframe
+            src={`https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0&modestbranding=1`}
+            title={title}
+            allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
+            allowFullScreen
+            loading="lazy"
+            className="absolute inset-0 size-full"
+          />
+          <span
+            aria-hidden
+            className="pointer-events-none absolute inset-x-0 top-0 z-10 h-16 bg-gradient-to-b from-black/55 to-transparent"
+          />
+          <button
+            ref={closeRef}
+            type="button"
+            onClick={close}
+            aria-label="Close video"
+            title="Close video"
+            className="lite-youtube__close absolute top-3 right-3 z-10 grid size-9 place-items-center rounded-full border border-white/25 bg-black/55 text-white backdrop-blur-md transition-colors duration-[180ms] hover:border-white/50 hover:bg-black/80 focus-visible:ring-2 focus-visible:ring-white focus-visible:outline-none"
+          >
+            <Icon name="close" size={16} />
+          </button>
+        </>
       ) : (
         <button
+          ref={playRef}
           type="button"
-          onClick={() => setPlaying(true)}
+          onClick={open}
           aria-label={`Play video: ${title}`}
           className="absolute inset-0 size-full cursor-pointer focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none focus-visible:ring-inset"
         >

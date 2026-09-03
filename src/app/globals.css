@@ -2797,6 +2797,18 @@ dialog[open]::backdrop {
   color: var(--primary);
 }
 
+/* LiteYouTube frame. The hairline is theme-driven by default (`--border`);
+   on the always-dark Dexta Clan band that light-theme border would read as a
+   white line against the near-black surface, so the band retunes it to a
+   faint light edge instead. */
+.lite-youtube {
+  border: 1px solid var(--border);
+}
+
+.dexta-clan .lite-youtube {
+  border-color: rgb(from var(--brand-light) r g b / 0.14);
+}
+
 /* Compact benefits — used under the copy when the second column is taken by
    the video. A quiet checklist, not full-width bordered rows. */
 .dexta-clan__benefits {
