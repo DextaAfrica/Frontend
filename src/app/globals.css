@@ -2521,6 +2521,9 @@ dialog[open]::backdrop {
   transition:
     transform 240ms var(--motion-ease-premium),
     background-color 240ms var(--motion-ease-premium);
+  /* Bounces in a beat after the page settles; `backwards` holds it hidden
+     during the delay, then it hands `transform` back so hover/press work. */
+  animation: chat-launcher-in 760ms var(--motion-ease-premium) 400ms backwards;
 }
 
 .chat-launcher:hover {
@@ -2537,6 +2540,13 @@ dialog[open]::backdrop {
   outline-offset: 3px;
 }
 
+/* First-visit attention: the whole button hops a few times (decaying), with
+   a rest between runs. `--nudge` is dropped the moment the pointer nears the
+   widget or on any interaction, so this never fights the hover transform. */
+.chat-widget--nudge .chat-launcher {
+  animation: chat-bounce 2.9s var(--motion-ease-premium) infinite;
+}
+
 .chat-launcher__ring {
   position: absolute;
   inset: 0;
@@ -2547,7 +2557,7 @@ dialog[open]::backdrop {
 }
 
 .chat-widget--nudge .chat-launcher__ring {
-  animation: chat-ping 2s var(--motion-ease-premium) 3;
+  animation: chat-ping 2.9s var(--motion-ease-premium) infinite;
 }
 
 .chat-panel {
@@ -2764,6 +2774,49 @@ dialog[open]::backdrop {
   to {
     opacity: 1;
     transform: none;
+  }
+}
+
+@keyframes chat-launcher-in {
+  0% {
+    opacity: 0;
+    transform: translateY(20px) scale(0.3);
+  }
+  55% {
+    opacity: 1;
+    transform: translateY(-9px) scale(1.14);
+  }
+  72% {
+    transform: translateY(4px) scale(0.93);
+  }
+  86% {
+    transform: translateY(-2px) scale(1.03);
+  }
+  100% {
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes chat-bounce {
+  0%,
+  44%,
+  100% {
+    transform: translateY(0);
+  }
+  10% {
+    transform: translateY(-38%);
+  }
+  21% {
+    transform: translateY(0);
+  }
+  28% {
+    transform: translateY(-16%);
+  }
+  35% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-5%);
   }
 }
 

@@ -49,12 +49,16 @@ export function ChatWidget() {
     writeBrowserStorage(browserStorage.chat, "seen");
   }, []);
 
-  // First-ever visit: a brief attention pulse a few seconds in.
+  // First-ever visit: a brief bounce + ping a few seconds in, then it settles.
   React.useEffect(() => {
     if (readBrowserStorage(browserStorage.chat)) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    const id = window.setTimeout(() => setNudge(true), 3500);
-    return () => window.clearTimeout(id);
+    const start = window.setTimeout(() => setNudge(true), 3200);
+    const stop = window.setTimeout(() => setNudge(false), 15000);
+    return () => {
+      window.clearTimeout(start);
+      window.clearTimeout(stop);
+    };
   }, []);
 
   // Any CTA elsewhere can open the panel.
@@ -143,6 +147,7 @@ export function ChatWidget() {
 
   return (
     <div
+      onPointerEnter={nudge ? markSeen : undefined}
       className={cn(
         "chat-widget",
         open && "chat-widget--open",
@@ -154,18 +159,18 @@ export function ChatWidget() {
           ref={panelRef}
           id={PANEL_ID}
           role="dialog"
-          aria-label="Chat with Dexta Africa"
+          aria-label="DexSmart Assistance"
           className="chat-panel"
         >
           <header className="chat-panel__head">
             <div>
-              <p className="chat-panel__title">Chat with Dexta</p>
+              <p className="chat-panel__title">DexSmart Assistance</p>
               <p className="chat-panel__meta">{chat.availability}</p>
             </div>
             <button
               type="button"
               onClick={close}
-              aria-label="Close chat"
+              aria-label="Close DexSmart Assistance"
               className="chat-panel__close"
             >
               <Icon name="close" size={18} />
@@ -280,7 +285,9 @@ export function ChatWidget() {
         onClick={toggle}
         aria-expanded={open}
         aria-controls={open ? PANEL_ID : undefined}
-        aria-label={open ? "Close chat" : "Chat with Dexta"}
+        aria-label={
+          open ? "Close DexSmart Assistance" : "Open DexSmart Assistance"
+        }
         className="chat-launcher"
       >
         <span aria-hidden className="chat-launcher__ring" />
