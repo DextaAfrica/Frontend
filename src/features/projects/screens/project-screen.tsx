@@ -1,7 +1,6 @@
 import { Grid, Page, Section, Stack } from "@/components/layout";
 import {
   CtaBand,
-  EditorialHero,
   MarketingHeading,
   ProjectGallery,
 } from "@/components/marketing";
@@ -39,15 +38,35 @@ export function ProjectScreen({ project }: { project: Project }) {
 
   return (
     <Page>
-      <EditorialHero
-        eyebrow={`${project.name} · ${project.location}`}
-        title={project.tagline ?? fallbackTagline(project.status)}
-        description={project.description}
-        primary={{ label: "Register your interest", href: "/contact" }}
-        secondary={
-          hasGallery ? { label: "View gallery", href: "#gallery" } : undefined
-        }
-      />
+      <Section>
+        <Stack gap="lg">
+          <p className="text-sm font-semibold tracking-[0.18em] text-primary uppercase">
+            {project.name} · {project.location}
+          </p>
+          <MarketingHeading
+            title={project.tagline ?? fallbackTagline(project.status)}
+          />
+          <p className="max-w-2xl text-lg text-muted-foreground">
+            {project.description}
+          </p>
+          <div className="flex flex-wrap items-center gap-4">
+            <a
+              className="inline-flex items-center justify-center rounded-full bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground"
+              href="/contact"
+            >
+              Register your interest
+            </a>
+            {hasGallery && (
+              <a
+                className="inline-flex items-center justify-center rounded-full border border-border px-5 py-3 text-sm font-semibold text-foreground"
+                href="#gallery"
+              >
+                View gallery
+              </a>
+            )}
+          </div>
+        </Stack>
+      </Section>
 
       {hasFacts && (
         <Section tone="surface" spacing="sm">
