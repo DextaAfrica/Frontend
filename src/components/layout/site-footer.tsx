@@ -95,7 +95,7 @@ export function SiteFooter() {
               A considered note now and then. No noise, unsubscribe anytime.
             </p>
           </div>
-          <InlineNewsletterForm onMedia className="mt-0! w-full" />
+          <InlineNewsletterForm onMedia className="mt-5 w-full md:mt-0" />
         </div>
 
         <div className="footer-divider mt-12 flex flex-col gap-6 border-t pt-8 text-xs tracking-footer-copy text-brand-light/45 sm:flex-row sm:items-center sm:justify-between">

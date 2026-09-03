@@ -13,10 +13,10 @@ export interface InlineNewsletterFormProps {
    * instead of the theme-relative styling used on a light/dark-toggling page. */
   onMedia?: boolean;
   className?: string;
-  /** "lg" (default) is right for a wide column, like the footer. "md" is
-   * the modest, compact size for a narrower card context, like the
-   * Newsletter section's signup panel. */
-  size?: "md" | "lg";
+  /** "lg" (default) suits a wide column like the footer; "md" a narrower
+   * card; "sm" the slim, understated inline field used in the Newsletter
+   * section. Drives the input height + text and the button size together. */
+  size?: "sm" | "md" | "lg";
 }
 
 export function InlineNewsletterForm({
@@ -70,7 +70,7 @@ export function InlineNewsletterForm({
     // the narrow homepage card, the wide footer column, and anywhere else.
     <form
       onSubmit={subscribe}
-      className={cn("@container mt-6", className)}
+      className={cn("@container", className)}
       noValidate
     >
       <label htmlFor={emailId} className="sr-only">
@@ -93,9 +93,9 @@ export function InlineNewsletterForm({
           // `h-[…]`.
           className={cn(
             "w-full rounded-[var(--control-radius)] border transition-colors @[20rem]:min-w-0 @[20rem]:flex-1",
-            size === "lg"
-              ? "h-[var(--control-height-lg)] px-4 text-base"
-              : "h-[var(--control-height-md)] px-3.5 text-sm",
+            size === "lg" && "h-[var(--control-height-lg)] px-4 text-base",
+            size === "md" && "h-[var(--control-height-md)] px-3.5 text-sm",
+            size === "sm" && "h-[var(--control-height-sm)] px-3 text-sm",
             onMedia
               ? "border-brand-light/25 bg-brand-light/5 text-on-media placeholder:text-brand-light/50"
               : "border-input bg-background text-foreground placeholder:text-muted-foreground",

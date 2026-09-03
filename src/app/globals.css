@@ -282,7 +282,6 @@
   /* -- About page ------------------------------------------------------- */
   --type-about-statement: clamp(1.125rem, 0.95rem + 0.75vw, 1.625rem);
   --type-ceo-kicker: clamp(1.0625rem, 1rem + 0.28vw, 1.25rem);
-  --layout-about-hero-media: clamp(20rem, 42vw, 34rem);
   --layout-ceo-portrait: clamp(17rem, 32vw, 25rem);
   --space-about: clamp(3.5rem, 6.5vw, 6rem);
 }
@@ -498,7 +497,6 @@
   --radius-testimonial-avatar: var(--shape-testimonial-avatar);
   --shadow-service-panel: var(--elevation-service-panel);
 
-  --height-about-hero-media: var(--layout-about-hero-media);
   --container-ceo-portrait: var(--layout-ceo-portrait);
   --spacing-about: var(--space-about);
 }
@@ -614,6 +612,17 @@ body {
   .section-divider::after {
     transition: none;
   }
+}
+
+/* Reveal / RevealGroup / RevealItem (reveal.tsx): a keyboard/AT safety net,
+ * not a visual effect. GSAP only ever animates opacity/y/blur on these — never
+ * visibility or display — so a dimmed (scrolled-away) section stays reachable;
+ * this rule makes sure it's also legible the instant focus actually lands
+ * there, overriding whatever inline opacity/filter/transform GSAP has set. */
+.reveal-fade:focus-within {
+  opacity: 1 !important;
+  filter: none !important;
+  transform: none !important;
 }
 
 .editorial-hero-glow {
@@ -1052,8 +1061,17 @@ dialog[open]::backdrop {
   will-change: transform;
 }
 
+/* Image-only hero (no <video>): the same grade + push-in, applied to the
+   poster instead so it carries the same "alive" quality. */
+.hero-video-media[data-video="false"] .hero-video-media__poster {
+  filter: brightness(1.04) contrast(1.06) saturate(1.1);
+  animation: hero-kenburns 30s var(--motion-ease-premium) alternate infinite;
+  will-change: transform;
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .hero-video-media video {
+  .hero-video-media video,
+  .hero-video-media[data-video="false"] .hero-video-media__poster {
     animation: none;
     filter: none;
   }
@@ -2529,75 +2547,33 @@ dialog[open]::backdrop {
 }
 
 /* ===========================================================================
-   4b-about. ABOUT PAGE — hero collage, editorial statement, mission/vision,
-   journey rail, CEO letter, Dexta Clan band, team grid. Every colour resolves
-   through a semantic token so light and dark both work with no per-theme
-   rule beyond the two signature/plaque fixes at the end. GSAP-driven pieces
-   gate themselves on prefers-reduced-motion in JS; the CSS-only motion is
+   4b-about. ABOUT PAGE — full-bleed media hero (shares the homepage hero's
+   `.dexta-hero` shell), editorial statement, mission/vision, journey rail,
+   CEO letter, Dexta Clan band, team grid. Every colour resolves through a
+   semantic token so light and dark both work with no per-theme rule beyond
+   the two signature/plaque fixes at the end. GSAP-driven pieces gate
+   themselves on prefers-reduced-motion in JS; the CSS-only motion is
    neutralised in the reduced-motion block below.
    =========================================================================== */
-.about-hero__glow {
-  background: radial-gradient(
-    circle at 22% 20%,
-    var(--primary-subtle),
-    transparent 42%
-  );
-}
 
-/* Two overlapping framed photos. The rear plate is nudged out from behind
-   the front one; on narrow viewports they stack with a smaller offset. */
-.about-hero__collage {
-  position: relative;
-  isolation: isolate;
-}
-
-.about-hero__plate {
-  position: relative;
-  overflow: hidden;
-  border-radius: var(--shape-panel);
-  background: var(--muted);
-  box-shadow: var(--card-shadow);
-}
-
-.about-hero__plate img {
-  object-fit: cover;
-}
-
-.about-hero__plate--rear {
-  position: absolute;
-  right: -8%;
-  bottom: -14%;
-  width: 58%;
-  border: 4px solid var(--background);
-  z-index: -1;
-}
-
-@media (max-width: 47.999rem) {
-  .about-hero__plate--rear {
-    right: -4%;
-    bottom: -10%;
-    width: 52%;
-  }
-}
-
-/* --- About teaser: wave + droplet background (about-teaser.tsx) ----------
- * Section-level (outside the Container), so the wave/droplet field runs the
- * full bleed of the section rather than only behind the content column.
- * Two SVG wave layers, each built as two identical cycles side by side in
- * one viewBox — translating exactly -50% is then a perfect seamless loop,
- * same trick as the marquee tracks elsewhere. Plus a few low-opacity red
- * "droplet" glows that drift independently via GSAP (see the component).
- * Both layers sit at `z-index: -1`; `isolation: isolate` keeps that behind
- * the section's own content but never punches through to whatever is behind
- * the section. */
+/* --- About teaser: engineered-grid + aurora background (about-teaser.tsx) -
+ * Section-level (outside the Container), so the field runs the full bleed of
+ * the section rather than only behind the content column. Three layers, all
+ * at `z-index: -1` under `isolation: isolate` so they stay behind this
+ * section's content and never punch through to what's behind the section:
+ *   1. `__grid`  — a faint architect's rule, radial-masked so it dissolves
+ *                  well before any edge; static, reads as depth not wallpaper.
+ *   2. `__beam`  — one soft diagonal shaft of warm light.
+ *   3. `__aurora` — two oversized, heavily blurred fields of brand red.
+ * Only `__beam` and the aurora blobs move, and only via transform/opacity on
+ * a slow GSAP loop; with no JS / reduced motion the whole field holds still. */
 .about-teaser {
   position: relative;
   isolation: isolate;
   overflow: hidden;
 }
 
-.about-teaser__waves,
-.about-teaser__droplets {
+.about-teaser__bg {
   position: absolute;
   inset: 0;
   z-index: -1;
@@ -2605,84 +2581,81 @@ dialog[open]::backdrop {
   pointer-events: none;
 }
 
-/* One big, graceful wave filling the section's full background — commanding
-   through scale and shape, kept subtle through low-contrast colour rather
-   than through being small. Each layer's path is the same broad crest
-   repeated exactly once (0-1200 and 1200-2400 of the 2400-wide viewBox are
-   identical), so translateX(-50%) loops it with no visible seam even at
-   this size. */
-.about-teaser__wave {
+/* Architect's grid — thin rules on a generous module, faded to nothing by a
+   radial mask anchored top-right so it never meets an edge. Static: the
+   precision is the point, motion would only cheapen it. */
+.about-teaser__grid {
   position: absolute;
-  left: 0;
-  top: 0;
-  width: 200%;
-  height: 100%;
+  inset: 0;
+  background-image:
+    linear-gradient(to right, var(--border) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--border) 1px, transparent 1px);
+  background-size: 4rem 4rem;
+  opacity: 0.55;
+  -webkit-mask: radial-gradient(115% 78% at 82% 8%, #000 0%, transparent 60%);
+  mask: radial-gradient(115% 78% at 82% 8%, #000 0%, transparent 60%);
 }
 
-.about-teaser__wave--back {
-  fill: rgb(from var(--primary) r g b / 0.07);
-  animation: about-teaser-wave 38s linear infinite;
+/* Warm light shaft. A vertical plate carrying a diagonal gradient, softly
+   blurred — the direction reads from the gradient angle, not from rotating
+   the box (which GSAP would fight). */
+.about-teaser__beam {
+  position: absolute;
+  top: -25%;
+  left: 14%;
+  width: 46%;
+  height: 150%;
+  opacity: 0.6;
+  filter: blur(44px);
+  will-change: transform, opacity;
+  background: linear-gradient(
+    108deg,
+    transparent 20%,
+    rgb(from var(--primary) r g b / 0.1) 46%,
+    rgb(from var(--primary) r g b / 0.03) 58%,
+    transparent 78%
+  );
 }
 
-.about-teaser__wave--front {
-  fill: rgb(from var(--primary) r g b / 0.11);
-  animation: about-teaser-wave 26s linear infinite reverse;
+.about-teaser__aurora {
+  position: absolute;
+  inset: -20%;
 }
 
-@keyframes about-teaser-wave {
-  from {
-    transform: translateX(0);
-  }
-  to {
-    transform: translateX(-50%);
-  }
-}
-
-.about-teaser__droplet {
+.about-teaser__blob {
   position: absolute;
   border-radius: 999px;
-  filter: blur(64px);
+  filter: blur(80px);
+  will-change: transform;
+}
+
+.about-teaser__blob--1 {
+  top: 2%;
+  right: 0%;
+  width: 34rem;
+  height: 34rem;
   background: radial-gradient(
     circle,
-    oklch(from var(--primary) l c h / 0.18),
+    rgb(from var(--primary) r g b / 0.16),
+    transparent 68%
+  );
+}
+
+.about-teaser__blob--2 {
+  bottom: -16%;
+  left: -8%;
+  width: 26rem;
+  height: 26rem;
+  background: radial-gradient(
+    circle,
+    rgb(from var(--primary) r g b / 0.11),
     transparent 70%
   );
 }
 
-/* Spread to frame the full section bleed — a corner-ish glow at each edge
-   rather than a pool in one spot. */
-.about-teaser__droplet--a {
-  top: -3%;
-  left: 3%;
-  width: 11rem;
-  height: 11rem;
-}
-
-.about-teaser__droplet--b {
-  top: 38%;
-  right: 4%;
-  width: 13rem;
-  height: 13rem;
-}
-
-.about-teaser__droplet--c {
-  bottom: -6%;
-  left: 30%;
-  width: 10rem;
-  height: 10rem;
-}
-
-.about-teaser__droplet--d {
-  top: 6%;
-  left: 58%;
-  width: 8rem;
-  height: 8rem;
-  opacity: 0.6;
-}
-
 @media (prefers-reduced-motion: reduce) {
-  .about-teaser__wave {
-    animation: none;
+  .about-teaser__beam {
+    opacity: 0.7;
   }
 }
 
@@ -2701,26 +2674,60 @@ dialog[open]::backdrop {
   position: relative;
   display: flex;
   flex-direction: column;
+  align-items: flex-start;
+  gap: 1.5rem;
   overflow: hidden;
+  padding: clamp(1.75rem, 1rem + 3.4vw, 3rem);
   border: 1px solid var(--border);
   border-radius: var(--shape-panel);
   background: var(--surface-elevated);
+  box-shadow: var(--card-shadow);
+  transition:
+    transform 400ms var(--motion-ease-premium),
+    border-color 400ms var(--motion-ease-premium);
 }
 
-.mission-vision__media {
-  position: relative;
-  aspect-ratio: 16 / 10;
-  overflow: hidden;
-  background: var(--muted);
+/* Red top rule, fading out to the right. */
+.mission-vision__panel::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 3px;
+  background: linear-gradient(
+    to right,
+    var(--primary),
+    rgb(from var(--primary) r g b / 0) 72%
+  );
 }
 
-.mission-vision__media img {
-  object-fit: cover;
-  transition: transform 900ms var(--motion-ease-premium);
+@media (hover: hover) {
+  .mission-vision__panel:hover {
+    transform: translateY(-4px);
+    border-color: rgb(from var(--primary) r g b / 0.35);
+  }
 }
 
-.mission-vision__panel:hover .mission-vision__media img {
-  transform: scale(1.04);
+.mission-vision__icon {
+  display: grid;
+  place-items: center;
+  width: 3.5rem;
+  height: 3.5rem;
+  flex: none;
+  border-radius: 999px;
+  color: var(--primary);
+  background: var(--primary-subtle);
+  border: 1px solid rgb(from var(--primary) r g b / 0.22);
+}
+
+.mission-vision__index {
+  position: absolute;
+  top: clamp(1.5rem, 1rem + 2vw, 2.25rem);
+  right: clamp(1.5rem, 1rem + 2vw, 2.25rem);
+  font-family: var(--font-display);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  color: rgb(from var(--primary) r g b / 0.5);
 }
 
 /* --- Our journey (dark band) --------------------------------------------- */
@@ -2837,6 +2844,90 @@ dialog[open]::backdrop {
   pointer-events: none;
 }
 
+/* --- Dexta Clan band, video-background variant -------------------------
+ * When a `video` is supplied, the whole band becomes a full-bleed backdrop
+ * (see YouTubeBackground) with the copy sitting on top instead of beside it
+ * — a scrim carries all the contrast work so text stays legible over
+ * whatever frame of the video happens to be showing, the same job
+ * `--hero-copy`/the hero's own gradient already do for the homepage video. */
+.dexta-clan--video {
+  isolation: isolate;
+}
+
+.dexta-clan__video {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+}
+
+.dexta-clan__scrim {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(
+    100deg,
+    rgb(from var(--brand-dark) r g b / 0.94) 0%,
+    rgb(from var(--brand-dark) r g b / 0.82) 32%,
+    rgb(from var(--brand-dark) r g b / 0.35) 68%,
+    rgb(from var(--brand-dark) r g b / 0.55) 100%
+  );
+  pointer-events: none;
+}
+
+/* The container-relative "cover" fill: sized in units of the CONTAINER's
+   own box (cqw/cqh), not the viewport, so it works inside a section instead
+   of only full-screen. Whichever axis the container is more extreme on,
+   the other clause is what actually constrains the size — the video always
+   overflows the container on both axes, never letterboxing. */
+.youtube-bg {
+  container-type: size;
+}
+
+.youtube-bg__frame {
+  top: 50%;
+  left: 50%;
+  translate: -50% -50%;
+  width: 177.78cqh;
+  height: 100cqh;
+  min-width: 100cqw;
+  min-height: 56.25cqw;
+  border: 0;
+  pointer-events: none;
+  /* A slow Ken Burns drift, not a static crop — also doubles as an overscan
+     margin (never below 1.1×) that keeps YouTube's own edge-of-frame chrome
+     (its paused-state play button/title bar, which `controls=0` doesn't
+     remove) safely outside the visible, clipped area at every point in the
+     cycle, on top of `.youtube-bg`'s own overflow:hidden. */
+  animation: youtube-bg-drift 26s ease-in-out infinite alternate;
+  transform-origin: center;
+}
+
+/* The poster carries the same slow drift while it's the only thing visible
+   (before the iframe loads, or if it never does) — reuses the hero/project
+   cards' own kenburns keyframe rather than a bespoke one. */
+.youtube-bg__poster {
+  animation: hero-kenburns 26s ease-in-out infinite alternate;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .youtube-bg__frame {
+    animation: none;
+    scale: 1.1;
+  }
+  .youtube-bg__poster {
+    animation: none;
+  }
+}
+
+@keyframes youtube-bg-drift {
+  from {
+    scale: 1.1;
+  }
+  to {
+    scale: 1.22;
+  }
+}
+
 .dexta-clan__dot {
   width: 0.5rem;
   height: 0.5rem;
@@ -2943,11 +3034,11 @@ dialog[open]::backdrop {
   .dexta-clan__dot {
     animation: none;
   }
-  .mission-vision__panel:hover .mission-vision__media img,
   .about-team__card:hover .about-team__media img {
     transform: none;
   }
-  .about-team__card:hover {
+  .about-team__card:hover,
+  .mission-vision__panel:hover {
     transform: none;
   }
   .newsletter-cta__dot {

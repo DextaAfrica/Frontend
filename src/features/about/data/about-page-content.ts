@@ -12,12 +12,13 @@ import type { AboutPageContent } from "../types/about-page";
 export const aboutPageContent = {
   hero: {
     eyebrow: "About Dexta Africa",
-    title: "We turn *intent* into ownership.",
+    titleLines: ["We turn intent", "into *ownership*"],
     lede: "A trusted name in African real estate — delivering value-focused services from land acquisition to development and beyond.",
-    images: {
-      people: "/images/about/hero-people.png",
-      property: "/images/about/hero-property.png",
-    },
+    image: "/images/about/hero-people.png",
+    // PLACEHOLDER — drop a dedicated About brand film here when it's ready;
+    // until then the hero runs as an image background.
+    primary: { label: "Explore our projects", href: "/projects" },
+    secondary: { label: "Talk to us", href: "/contact" },
   },
   statement: {
     heading: "Value, delivered — then *raised*.",
@@ -30,13 +31,13 @@ export const aboutPageContent = {
   missionVision: {
     mission: {
       label: "Our mission",
-      text: "To deliver real estate services and developments that create measurable, lasting value for every client — grounded in integrity, quality, and follow-through.",
-      image: "/images/about/mission.png",
+      text: "To deliver real estate services and developments that create measurable, lasting value for every client — grounded in *integrity, quality, and follow-through*.",
+      icon: "target",
     },
     vision: {
       label: "Our vision",
-      text: "To be Africa's most trusted name in real estate — the standard others are measured against, from a single plot of land to a finished skyline.",
-      image: "/images/about/vision.png",
+      text: "To be Africa's most trusted name in real estate — *the standard others are measured against*, from a single plot of land to a finished skyline.",
+      icon: "telescope",
     },
   },
   journey: {

@@ -73,18 +73,18 @@ export function NewsletterSection({
               aria-hidden
               className="pointer-events-none absolute -inset-6 -z-10 rounded-full bg-primary/10 blur-3xl"
             />
-            <div className="rounded-panel border border-border bg-surface-elevated p-6 shadow-[var(--card-shadow)] sm:p-8">
+            <div className="rounded-panel border border-border bg-surface-elevated p-5 shadow-[var(--card-shadow)] sm:p-6">
               <Badge variant="brand" className="w-fit">
                 Weekly briefing
               </Badge>
-              <h3 className="mt-4 font-display text-[clamp(1rem,0.96rem_+_0.19vw,1.125rem)] font-semibold tracking-tight">
+              <h3 className="mt-3.5 font-display text-[clamp(0.9375rem,0.9rem_+_0.19vw,1.0625rem)] font-semibold tracking-tight">
                 Get the Dexta brief in your inbox
               </h3>
-              <p className="mt-2 text-sm text-muted-foreground">
+              <p className="mt-1.5 text-sm text-muted-foreground">
                 One email. Real opportunities. No noise.
               </p>
-              <InlineNewsletterForm className="w-full" />
-              <p className="mt-4 text-xs text-muted-foreground">
+              <InlineNewsletterForm size="sm" className="mt-4 w-full" />
+              <p className="mt-3 text-xs text-muted-foreground">
                 Join 3,000+ investors and developers already subscribed.
                 Unsubscribe anytime.
               </p>

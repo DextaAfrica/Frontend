@@ -7,20 +7,20 @@ export const aboutMotion = {
   enabledMedia: "(prefers-reduced-motion: no-preference)",
 
   hero: {
-    // Entrance timeline (mirrors editorial-hero.tsx cadence). `overlap` is a
-    // relative GSAP position ("-=0.3" → start 0.3s before the previous tween
-    // ends), never a bare number.
+    // Full-bleed media hero, entrance only — mirrors <LandingHero>'s mount
+    // choreography (badge punches in, heading lines rise line-by-line from a
+    // clipped baseline, description follows through a blur). `overlap` is a
+    // relative GSAP position string, never a bare number.
     enter: {
-      eyebrow: { y: 8, duration: 0.5 },
-      title: { y: 16, blur: 8, duration: 0.7, overlap: "-=0.3" },
-      lede: { y: 10, duration: 0.5, overlap: "-=0.35" },
-      collage: { y: 24, duration: 0.9, overlap: "-=0.5" },
-    },
-    // Scrubbed parallax on the two collage images once scrolling past.
-    parallax: {
-      scrub: 0.6,
-      peopleFromPercent: -6,
-      propertyFromPercent: 8,
+      badge: { scaleFrom: 0.8, y: 10, blur: 6, duration: 0.8 },
+      line: {
+        yPercentFrom: 110,
+        scaleFrom: 0.94,
+        duration: 1.1,
+        stagger: 0.14,
+        overlap: "-=0.35",
+      },
+      lede: { y: 14, blur: 10, duration: 0.9, overlap: "-=0.55" },
     },
   },
 

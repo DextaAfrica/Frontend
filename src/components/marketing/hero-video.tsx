@@ -2,9 +2,13 @@
 
 import * as React from "react";
 import Image from "next/image";
+import { isRemoteAsset } from "@/lib/media";
 
 export interface HeroVideoProps {
-  video: string;
+  /** Full-bleed ambient loop. Omit for an image-only hero — the poster then
+   *  carries the frame on its own (with a slow push-in so it still feels
+   *  alive). */
+  video?: string;
   mobileVideo?: string;
   poster: string;
 }
@@ -16,6 +20,10 @@ export interface HeroVideoProps {
  * leaves the static photo showing. The video is a fade-in enhancement
  * layered on top once it actually has a frame ready, and only plays at all
  * when the visitor hasn't asked for reduced motion.
+ *
+ * With no `video` the component is an image background: same full-bleed
+ * frame, same colour grade and Ken Burns push-in applied to the poster
+ * instead (see `.hero-video-media[data-video="false"]` in globals.css).
  */
 export function HeroVideo({ video, mobileVideo, poster }: HeroVideoProps) {
   const ref = React.useRef<HTMLVideoElement>(null);
@@ -29,37 +37,43 @@ export function HeroVideo({ video, mobileVideo, poster }: HeroVideoProps) {
   }, []);
 
   return (
-    <div className="hero-video-media absolute inset-0 size-full overflow-hidden bg-brand-dark">
+    <div
+      className="hero-video-media absolute inset-0 size-full overflow-hidden bg-brand-dark"
+      data-video={video ? "true" : "false"}
+    >
       <Image
         src={poster}
         alt=""
         fill
         priority
         sizes="100vw"
-        className="object-cover"
+        className="hero-video-media__poster object-cover"
+        unoptimized={isRemoteAsset(poster)}
       />
-      <video
-        ref={ref}
-        muted
-        loop
-        playsInline
-        preload="metadata"
-        poster={poster}
-        aria-hidden="true"
-        onCanPlay={() => setReady(true)}
-        onError={() => setReady(false)}
-        className="absolute inset-0 size-full object-cover opacity-0 transition-opacity duration-700 ease-out data-[ready=true]:opacity-100"
-        data-ready={ready}
-      >
-        {mobileVideo && (
-          <source
-            media="(max-width: 767px)"
-            src={mobileVideo}
-            type="video/webm"
-          />
-        )}
-        <source src={video} type="video/webm" />
-      </video>
+      {video && (
+        <video
+          ref={ref}
+          muted
+          loop
+          playsInline
+          preload="metadata"
+          poster={poster}
+          aria-hidden="true"
+          onCanPlay={() => setReady(true)}
+          onError={() => setReady(false)}
+          className="absolute inset-0 size-full object-cover opacity-0 transition-opacity duration-700 ease-out data-[ready=true]:opacity-100"
+          data-ready={ready}
+        >
+          {mobileVideo && (
+            <source
+              media="(max-width: 767px)"
+              src={mobileVideo}
+              type="video/webm"
+            />
+          )}
+          <source src={video} type="video/webm" />
+        </video>
+      )}
     </div>
   );
 }
