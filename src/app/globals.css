@@ -34,11 +34,12 @@
   --control-pressed: #e2e0da;
   --control-disabled: #f0efec;
   --control-disabled-foreground: #9c988f;
-  /* Bordered buttons (secondary): the outline is near-black on the light
-     theme (matching the neutral palette) and brand red under dark — see the
-     .dark override. */
-  --control-border: rgb(from var(--foreground) r g b / 0.3);
-  --control-border-hover: rgb(from var(--foreground) r g b / 0.6);
+  /* Bordered buttons (secondary): a brand-red outline in both themes — the
+     house CTA rests as a red hairline that floods red from the cursor on
+     hover (see `.btn-liquid`). Consumed only by the button `secondary`
+     variant. */
+  --control-border: rgb(from var(--primary) r g b / 0.5);
+  --control-border-hover: var(--primary);
   /* Header nav links. Light theme reads as editorial — muted grey text that
      firms to near-black on hover/active, with brand red kept to the animated
      underline. Dark theme leans into the red: the text itself goes red on
@@ -94,15 +95,25 @@
   /* -- Radius & controls ------------------------------------------------- */
   --radius: 0.625rem;
   --control-radius: 999px;
-  --control-height-sm: 2rem;
-  --control-height-md: 2.375rem;
-  --control-height-lg: 2.75rem;
-  --control-padding-sm: 0.75rem;
-  --control-padding-md: 1rem;
-  --control-padding-lg: 1.25rem;
+  /* Fluid so a control is proportionate to the viewport it sits in — the
+     same `lg` button no longer reads oversized on a phone and undersized on
+     a wide desktop. Every size keeps a firm floor (touch target) and ceiling. */
+  --control-height-sm: clamp(1.875rem, 1.72rem + 0.5vw, 2.125rem);
+  --control-height-md: clamp(2.25rem, 2.02rem + 0.8vw, 2.625rem);
+  --control-height-lg: clamp(2.625rem, 2.3rem + 1.3vw, 3.25rem);
+  --control-padding-sm: clamp(0.75rem, 0.68rem + 0.3vw, 0.9375rem);
+  --control-padding-md: clamp(1rem, 0.86rem + 0.6vw, 1.375rem);
+  --control-padding-lg: clamp(1.25rem, 0.98rem + 1.1vw, 1.9375rem);
+  /* The moving flood behind the house CTA (`.btn-liquid`): brand red on the
+     light theme, the lighter `--primary-hover` under dark (where the button
+     already rests red). `--btn-fill-ink` is the label colour once flooded. */
+  --btn-fill: var(--primary);
+  --btn-fill-ink: var(--primary-foreground);
+  --btn-fill-duration: 480ms;
 
   /* -- Typography: fonts, plus small global type/tracking values --------- */
   --type-control: clamp(0.75rem, 0.73rem + 0.09vw, 0.8125rem);
+  --type-control-lg: clamp(0.8125rem, 0.78rem + 0.16vw, 0.9375rem);
   --type-control-compact: 0.6875rem;
   --type-nav-link: clamp(0.8125rem, 0.78rem + 0.16vw, 0.875rem);
   --type-status: 0.6875rem;
@@ -232,10 +243,9 @@
   --letter-spacing-service-number: -0.293rem;
   --line-height-service-title: 1.2;
   --line-height-service-copy: 1.1;
-  --space-testimonial: clamp(5rem, 8vw, 7rem);
+  --space-testimonial: clamp(2.5rem, 3.5vw, 3.25rem);
   --space-testimonial-quote: clamp(1rem, 1.667vw, 1.5rem);
-  --space-testimonial-meta: clamp(2.5rem, 3.472vw, 3.125rem);
-  --space-testimonial-copy: calc(4.375rem + clamp(1rem, 1.667vw, 1.5rem));
+  --space-testimonial-meta: clamp(1.5rem, 2.2vw, 2rem);
   --space-testimonial-progress: 0.75rem;
   --layout-testimonial-progress-width: 4.125rem;
   --grid-testimonial: 4.375rem minmax(0, 1fr);
@@ -270,9 +280,9 @@
   --layer-navigation: 90;
 
   /* -- About page ------------------------------------------------------- */
-  --type-about-statement: clamp(1.125rem, 0.95rem + 0.75vw, 1.625rem);
-  --type-ceo-kicker: clamp(1.0625rem, 1rem + 0.28vw, 1.25rem);
-  --layout-about-hero-media: clamp(20rem, 42vw, 34rem);
+  /* Closing "pull-lines" — a calm editorial size, well below a headline. */
+  --type-about-statement: clamp(1.0625rem, 0.98rem + 0.4vw, 1.375rem);
+  --type-ceo-kicker: clamp(0.9375rem, 0.9rem + 0.15vw, 1.0625rem);
   --layout-ceo-portrait: clamp(17rem, 32vw, 25rem);
   --space-about: clamp(3.5rem, 6.5vw, 6rem);
 }
@@ -286,8 +296,8 @@
 
   --background: #0d0c0b;
   --foreground: #f4efe7;
-  --surface: #151310;
-  --surface-elevated: #1d1a16;
+  --surface: #1a1714;
+  --surface-elevated: #221e19;
   --muted: #24201b;
   --muted-foreground: #aaa197;
   --border: #39332c;
@@ -296,9 +306,13 @@
   --control-pressed: #383129;
   --control-disabled: #211e1a;
   --control-disabled-foreground: #756d64;
-  /* Bordered buttons go brand red under dark (near-black outline on light). */
+  /* Bordered buttons: a slightly firmer red hairline under dark. */
   --control-border: rgb(from var(--primary) r g b / 0.6);
   --control-border-hover: var(--primary);
+  /* The house CTA rests filled red under dark, so its flood is the lighter
+     `--primary-hover` — the hover reads as the button brightening from the
+     cursor rather than a same-tone wash. */
+  --btn-fill: var(--primary-hover);
   --control-shadow: 0 1px 2px rgb(0 0 0 / 0.4);
   --control-shadow-hover: 0 14px 30px rgb(0 0 0 / 0.5);
   --control-shadow-glow: 0 10px 26px oklch(from var(--primary) l c h / 0.45);
@@ -398,6 +412,7 @@
   --text-service-tab: var(--type-service-tab);
   --text-service-tab-number: var(--type-service-tab-number);
   --text-control: var(--type-control);
+  --text-control-lg: var(--type-control-lg);
   --text-control-compact: var(--type-control-compact);
   --text-nav-link: var(--type-nav-link);
   --text-status: var(--type-status);
@@ -473,7 +488,6 @@
   --spacing-testimonial: var(--space-testimonial);
   --spacing-testimonial-quote: var(--space-testimonial-quote);
   --spacing-testimonial-meta: var(--space-testimonial-meta);
-  --spacing-testimonial-copy: var(--space-testimonial-copy);
   --spacing-testimonial-progress: var(--space-testimonial-progress);
   --spacing-testimonial-avatar: var(--size-testimonial-avatar);
   --width-testimonial-progress: var(--layout-testimonial-progress-width);
@@ -484,7 +498,6 @@
   --radius-testimonial-avatar: var(--shape-testimonial-avatar);
   --shadow-service-panel: var(--elevation-service-panel);
 
-  --height-about-hero-media: var(--layout-about-hero-media);
   --container-ceo-portrait: var(--layout-ceo-portrait);
   --spacing-about: var(--space-about);
 }
@@ -525,12 +538,92 @@ body {
   background: var(--section-surface);
 }
 
-.editorial-hero-glow {
-  background: radial-gradient(
-    circle at 78% 18%,
-    var(--primary-subtle),
-    transparent 38%
+/* A deterministic section boundary (see Section's `divider` prop) rather
+ * than relying on the background-colour step between adjacent sections —
+ * that step is the same *absolute* delta in both themes, but reads as
+ * near-invisible in the dark theme's low-luminance range even though it's
+ * clearly visible in light.
+ *
+ * A brand-red gradient line, brightest at the centre and fading to nothing
+ * at both edges, with the same pulsing "signal" dot already used at the
+ * expertise marquee, the press logos and the Dexta Clan band — marking
+ * every section boundary in the site's own accent language rather than a
+ * generic reset-style rule.
+ *
+ * "Live": Section wires up a ScrollTrigger that stamps `data-active` on
+ * whichever section is currently the one in view (see section.tsx) — that
+ * section's marker brightens and its dot's glow grows, every other one
+ * settles back to this quiet resting state. A scroll-position fact, not a
+ * motion effect, so it keeps working under reduced motion; only the CSS
+ * transition between the two states goes instant there. */
+.section-divider::before {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  top: 0;
+  height: 1px;
+  background: linear-gradient(
+    to right,
+    transparent,
+    rgb(from var(--primary) r g b / 0.5) 50%,
+    transparent
   );
+  opacity: 0.55;
+  transition: opacity 500ms var(--motion-ease-premium);
+  pointer-events: none;
+}
+
+.section-divider[data-active="true"]::before {
+  opacity: 1;
+}
+
+.section-divider::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 0.5rem;
+  height: 0.5rem;
+  scale: 0.8;
+  translate: -50% -50%;
+  border-radius: 999px;
+  background: var(--primary);
+  box-shadow:
+    0 0 0 3px rgb(from var(--primary) r g b / 0.14),
+    0 0 10px 1px rgb(from var(--primary) r g b / 0.3);
+  animation: expertise-pulse 2.2s ease-in-out infinite;
+  transition:
+    scale 500ms var(--motion-ease-premium),
+    box-shadow 500ms var(--motion-ease-premium);
+  pointer-events: none;
+}
+
+.section-divider[data-active="true"]::after {
+  scale: 1;
+  box-shadow:
+    0 0 0 4px rgb(from var(--primary) r g b / 0.22),
+    0 0 20px 4px rgb(from var(--primary) r g b / 0.6);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .section-divider::after {
+    animation: none;
+  }
+  .section-divider::before,
+  .section-divider::after {
+    transition: none;
+  }
+}
+
+/* Reveal / RevealGroup / RevealItem (reveal.tsx): a keyboard/AT safety net,
+ * not a visual effect. GSAP only ever animates opacity/y/blur on these — never
+ * visibility or display — so a dimmed (scrolled-away) section stays reachable;
+ * this rule makes sure it's also legible the instant focus actually lands
+ * there, overriding whatever inline opacity/filter/transform GSAP has set. */
+.reveal-fade:focus-within {
+  opacity: 1 !important;
+  filter: none !important;
+  transform: none !important;
 }
 
 /* --- Mobile navigation panel ------------------------------------------------
@@ -706,6 +799,11 @@ body {
     translate: none !important;
     scale: 1 !important;
   }
+  /* The house-CTA flood still switches state on hover/focus — it just snaps
+     instead of flowing in from the cursor. */
+  .btn-liquid {
+    transition: none !important;
+  }
 }
 
 dialog[open] {
@@ -736,43 +834,64 @@ dialog[open]::backdrop {
   animation: loader-breathe 2.4s ease-in-out infinite alternate;
 }
 
-.app-loader__mark {
+.app-loader__logo {
   position: relative;
-  display: grid;
-  width: 4.5rem;
-  height: 4.5rem;
-  place-items: center;
-  border: 1px solid var(--primary);
-  color: var(--primary);
-  font-size: 0.72rem;
-  letter-spacing: 0.16em;
-  animation: loader-mark 1.2s var(--motion-ease-premium) both;
+  height: auto;
+  width: 7rem;
+  animation: loader-mark 0.8s var(--motion-ease-premium) both;
 }
 
-.app-loader__name {
+/* Four balls, a red↔white brand gradient (not two arbitrary pairs): deep
+   red, the site's hover-red, brand white, and a blush-white a shade off it
+   — same relationship as --primary/--primary-hover already have to each
+   other. Each squashes on landing and launches a beat after the last, the
+   classic staggered boot-loader wave. */
+.app-loader__balls {
   position: relative;
-  margin-top: 1.5rem;
-  font-size: 0.65rem;
-  font-weight: 400;
-  letter-spacing: 0.28em;
-  text-transform: uppercase;
+  display: flex;
+  gap: 0.875rem;
+  margin-top: 2.25rem;
 }
 
-.app-loader__track {
-  position: relative;
-  width: 9rem;
-  height: 1px;
-  margin-top: 1.5rem;
-  overflow: hidden;
-  background: var(--border);
+.app-loader__ball {
+  width: 0.875rem;
+  height: 0.875rem;
+  border-radius: 999px;
+  animation: loader-ball-bounce 1.1s var(--motion-ease-premium) infinite;
 }
 
-.app-loader__track span {
-  display: block;
-  width: 45%;
-  height: 100%;
+.app-loader__ball--a {
   background: var(--primary);
-  animation: loader-track 1.4s var(--motion-ease-premium) infinite;
+  animation-delay: 0ms;
+}
+
+.app-loader__ball--b {
+  background: var(--primary-hover);
+  animation-delay: 110ms;
+}
+
+/* c/d are near-white — invisible against a white `.app-loader` background
+   in light mode without a visible edge, so unlike a/b they carry a hairline
+   ring that holds up on either theme's background. */
+.app-loader__ball--c {
+  background: var(--brand-light);
+  box-shadow: 0 0 0 1px rgb(from var(--foreground) r g b / 0.14);
+  animation-delay: 220ms;
+}
+
+.app-loader__ball--d {
+  background: var(--primary-subtle);
+  box-shadow: 0 0 0 1px rgb(from var(--foreground) r g b / 0.14);
+  animation-delay: 330ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .app-loader__logo {
+    animation: none;
+  }
+  .app-loader__ball {
+    animation: loader-ball-pulse 1.6s ease-in-out infinite;
+  }
 }
 
 .media-panel::after {
@@ -827,6 +946,14 @@ dialog[open]::backdrop {
 
 .dexta-hero {
   min-height: 100svh;
+}
+
+/* Interior pages (<MediaHero size="compact">): a shorter banner than the
+   full-viewport home/about hero, so the page's own content starts to show
+   just below the fold. Same class list as `.dexta-hero`, declared after it,
+   so this wins on source order at equal specificity. */
+.dexta-hero--compact {
+  min-height: clamp(30rem, 72svh, 46rem);
 }
 
 /* The hero's opening slide ("Welcome to Dexta Africa") reads as the site's
@@ -935,8 +1062,17 @@ dialog[open]::backdrop {
   will-change: transform;
 }
 
+/* Image-only hero (no <video>): the same grade + push-in, applied to the
+   poster instead so it carries the same "alive" quality. */
+.hero-video-media[data-video="false"] .hero-video-media__poster {
+  filter: brightness(1.04) contrast(1.06) saturate(1.1);
+  animation: hero-kenburns 30s var(--motion-ease-premium) alternate infinite;
+  will-change: transform;
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .hero-video-media video {
+  .hero-video-media video,
+  .hero-video-media[data-video="false"] .hero-video-media__poster {
     animation: none;
     filter: none;
   }
@@ -1336,6 +1472,65 @@ dialog[open]::backdrop {
   .btn-flash-active .btn-flash-sweep {
     animation: none;
   }
+}
+
+/* --- House CTA: the liquid fill ------------------------------------------------
+   `primary` / `secondary` / `onMedia` share one interaction. They rest as a
+   red hairline outline (light) or a solid red fill (dark `primary`); on
+   hover/focus a red flood grows from the cursor — button.tsx sets `--btn-x` /
+   `--btn-y` to the pointer position (and leaves them at the exit point so the
+   flood retracts toward it). The label flips to `--btn-fill-ink` as it fills.
+   Only the resting palette differs between the three variants; the flood, the
+   ink flip and the timing are shared. `data-cta` is the variant name, set by
+   button.tsx only for these three. */
+[data-cta]:not(:disabled) {
+  border: 1px solid var(--control-border);
+  background-color: transparent;
+  color: var(--primary);
+}
+
+/* `primary` keeps a faint tint so it still outweighs a `secondary` beside it. */
+[data-cta="primary"]:not(:disabled) {
+  background-color: var(--primary-subtle);
+}
+
+/* `onMedia` sits over photography/video — a blur scrim keeps it legible, but
+   the flood interaction is identical. */
+[data-cta="onMedia"]:not(:disabled) {
+  border-color: var(--on-media-border);
+  background-color: var(--on-media-surface);
+  color: var(--on-media);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+}
+
+/* Dark: `primary` rests already flooded. */
+.dark [data-cta="primary"]:not(:disabled) {
+  border-color: var(--primary);
+  background-color: var(--primary);
+  color: var(--primary-foreground);
+}
+
+[data-cta]:not(:disabled):hover,
+[data-cta]:not(:disabled):focus-visible {
+  border-color: var(--btn-fill);
+  color: var(--btn-fill-ink);
+}
+
+.btn-liquid {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background: var(--btn-fill);
+  clip-path: circle(0% at var(--btn-x, 50%) var(--btn-y, 50%));
+  transition: clip-path var(--btn-fill-duration) var(--motion-ease-premium);
+  pointer-events: none;
+}
+
+[data-cta]:hover .btn-liquid,
+[data-cta]:focus-visible .btn-liquid {
+  clip-path: circle(150% at var(--btn-x, 50%) var(--btn-y, 50%));
 }
 
 /* --- Theme toggle ---------------------------------------------------------- */
@@ -1795,9 +1990,34 @@ dialog[open]::backdrop {
   flex-direction: column;
 }
 
+/* The quote is a two-column band: a fixed avatar column, then the quote text
+   in an aligned column beside it (`--grid-testimonial`). Every line of the
+   quote starts at the same left edge — no ragged first-line indent from an
+   inline avatar. */
+.testimonial-stage > [data-slide] blockquote {
+  display: grid;
+  grid-template-columns: var(--grid-testimonial);
+  column-gap: var(--space-testimonial-quote);
+  align-items: start;
+}
+
+/* The caption lines up under the quote column, not the avatar. */
 .testimonial-stage > [data-slide] [data-slide-caption] {
   margin-top: auto;
   padding-top: var(--space-testimonial-meta);
+  padding-left: calc(
+    var(--size-testimonial-avatar) + var(--space-testimonial-quote)
+  );
+}
+
+@media (max-width: 33rem) {
+  .testimonial-stage > [data-slide] blockquote {
+    grid-template-columns: 1fr;
+    row-gap: var(--space-testimonial-quote);
+  }
+  .testimonial-stage > [data-slide] [data-slide-caption] {
+    padding-left: 0;
+  }
 }
 
 .testimonial-stage:not([data-animated]) > [data-slide][data-active="false"] {
@@ -2328,64 +2548,125 @@ dialog[open]::backdrop {
 }
 
 /* ===========================================================================
-   4b-about. ABOUT PAGE — hero collage, editorial statement, mission/vision,
-   journey rail, CEO letter, Dexta Clan band, team grid. Every colour resolves
-   through a semantic token so light and dark both work with no per-theme
-   rule beyond the two signature/plaque fixes at the end. GSAP-driven pieces
-   gate themselves on prefers-reduced-motion in JS; the CSS-only motion is
+   4b-about. ABOUT PAGE — full-bleed media hero (shares the homepage hero's
+   `.dexta-hero` shell), editorial statement, mission/vision, journey rail,
+   CEO letter, Dexta Clan band, team grid. Every colour resolves through a
+   semantic token so light and dark both work with no per-theme rule beyond
+   the two signature/plaque fixes at the end. GSAP-driven pieces gate
+   themselves on prefers-reduced-motion in JS; the CSS-only motion is
    neutralised in the reduced-motion block below.
    =========================================================================== */
-.about-hero__glow {
-  background: radial-gradient(
-    circle at 22% 20%,
-    var(--primary-subtle),
-    transparent 42%
+
+/* --- About teaser: engineered-grid + aurora background (about-teaser.tsx) -
+ * Section-level (outside the Container), so the field runs the full bleed of
+ * the section rather than only behind the content column. Three layers, all
+ * at `z-index: -1` under `isolation: isolate` so they stay behind this
+ * section's content and never punch through to what's behind the section:
+ *   1. `__grid`  — a faint architect's rule, radial-masked so it dissolves
+ *                  well before any edge; static, reads as depth not wallpaper.
+ *   2. `__beam`  — one soft diagonal shaft of warm light.
+ *   3. `__aurora` — two oversized, heavily blurred fields of brand red.
+ * Only `__beam` and the aurora blobs move, and only via transform/opacity on
+ * a slow GSAP loop; with no JS / reduced motion the whole field holds still. */
+.about-teaser {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+}
+
+.about-teaser__bg {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+/* Architect's grid — thin rules on a generous module, faded to nothing by a
+   radial mask anchored top-right so it never meets an edge. Static: the
+   precision is the point, motion would only cheapen it. */
+.about-teaser__grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(to right, var(--border) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--border) 1px, transparent 1px);
+  background-size: 4rem 4rem;
+  opacity: 0.55;
+  -webkit-mask: radial-gradient(115% 78% at 82% 8%, #000 0%, transparent 60%);
+  mask: radial-gradient(115% 78% at 82% 8%, #000 0%, transparent 60%);
+}
+
+/* Warm light shaft. A vertical plate carrying a diagonal gradient, softly
+   blurred — the direction reads from the gradient angle, not from rotating
+   the box (which GSAP would fight). */
+.about-teaser__beam {
+  position: absolute;
+  top: -25%;
+  left: 14%;
+  width: 46%;
+  height: 150%;
+  opacity: 0.6;
+  filter: blur(44px);
+  will-change: transform, opacity;
+  background: linear-gradient(
+    108deg,
+    transparent 20%,
+    rgb(from var(--primary) r g b / 0.1) 46%,
+    rgb(from var(--primary) r g b / 0.03) 58%,
+    transparent 78%
   );
 }
 
-/* Two overlapping framed photos. The rear plate is nudged out from behind
-   the front one; on narrow viewports they stack with a smaller offset. */
-.about-hero__collage {
-  position: relative;
-  isolation: isolate;
-}
-
-.about-hero__plate {
-  position: relative;
-  overflow: hidden;
-  border-radius: var(--shape-panel);
-  background: var(--muted);
-  box-shadow: var(--card-shadow);
-}
-
-.about-hero__plate img {
-  object-fit: cover;
-}
-
-.about-hero__plate--rear {
+.about-teaser__aurora {
   position: absolute;
-  right: -8%;
-  bottom: -14%;
-  width: 58%;
-  border: 4px solid var(--background);
-  z-index: -1;
+  inset: -20%;
 }
 
-@media (max-width: 47.999rem) {
-  .about-hero__plate--rear {
-    right: -4%;
-    bottom: -10%;
-    width: 52%;
+.about-teaser__blob {
+  position: absolute;
+  border-radius: 999px;
+  filter: blur(80px);
+  will-change: transform;
+}
+
+.about-teaser__blob--1 {
+  top: 2%;
+  right: 0%;
+  width: 34rem;
+  height: 34rem;
+  background: radial-gradient(
+    circle,
+    rgb(from var(--primary) r g b / 0.16),
+    transparent 68%
+  );
+}
+
+.about-teaser__blob--2 {
+  bottom: -16%;
+  left: -8%;
+  width: 26rem;
+  height: 26rem;
+  background: radial-gradient(
+    circle,
+    rgb(from var(--primary) r g b / 0.11),
+    transparent 70%
+  );
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .about-teaser__beam {
+    opacity: 0.7;
   }
 }
 
-/* The "About Us" closing line — set apart from the reveal-copy body above it,
-   larger and in the editorial serif, carrying the italic accent. */
+/* The "About Us" closing line — a quiet editorial pull-line set apart from the
+   reveal-copy body above it, carrying the italic accent. Not a headline. */
 .about-statement__kicker {
   font-family: var(--font-display);
   font-size: var(--type-about-statement);
-  font-weight: 600;
-  line-height: 1.25;
+  font-weight: 500;
+  line-height: 1.35;
   letter-spacing: -0.01em;
   text-wrap: balance;
 }
@@ -2394,29 +2675,95 @@ dialog[open]::backdrop {
   position: relative;
   display: flex;
   flex-direction: column;
+  align-items: flex-start;
+  gap: 1.5rem;
   overflow: hidden;
+  padding: clamp(1.75rem, 1rem + 3.4vw, 3rem);
   border: 1px solid var(--border);
   border-radius: var(--shape-panel);
   background: var(--surface-elevated);
+  box-shadow: var(--card-shadow);
+  transition:
+    transform 400ms var(--motion-ease-premium),
+    border-color 400ms var(--motion-ease-premium);
 }
 
-.mission-vision__media {
-  position: relative;
-  aspect-ratio: 16 / 10;
-  overflow: hidden;
-  background: var(--muted);
+/* Red top rule, fading out to the right. */
+.mission-vision__panel::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 3px;
+  background: linear-gradient(
+    to right,
+    var(--primary),
+    rgb(from var(--primary) r g b / 0) 72%
+  );
 }
 
-.mission-vision__media img {
-  object-fit: cover;
-  transition: transform 900ms var(--motion-ease-premium);
+@media (hover: hover) {
+  .mission-vision__panel:hover {
+    transform: translateY(-4px);
+    border-color: rgb(from var(--primary) r g b / 0.35);
+  }
 }
 
-.mission-vision__panel:hover .mission-vision__media img {
-  transform: scale(1.04);
+.mission-vision__icon {
+  display: grid;
+  place-items: center;
+  width: 3.5rem;
+  height: 3.5rem;
+  flex: none;
+  border-radius: 999px;
+  color: var(--primary);
+  background: var(--primary-subtle);
+  border: 1px solid rgb(from var(--primary) r g b / 0.22);
 }
 
-/* --- Our journey (dark band) --------------------------------------------- */
+.mission-vision__index {
+  position: absolute;
+  top: clamp(1.5rem, 1rem + 2vw, 2.25rem);
+  right: clamp(1.5rem, 1rem + 2vw, 2.25rem);
+  font-family: var(--font-display);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  color: rgb(from var(--primary) r g b / 0.5);
+}
+
+/* --- Our journey (dark band, ambient YouTube backdrop) ------------------ *
+ * Same construction as `.dexta-clan--video`: a full-bleed muted loop behind
+ * the whole band, with a scrim doing all the contrast work so the milestone
+ * copy stays legible over any frame of the video. The section keeps its
+ * `bg-brand-dark` base so a blocked embed / reduced motion just reads as the
+ * original dark band. */
+.about-journey__video {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+}
+
+.about-journey__scrim {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    linear-gradient(
+      to bottom,
+      rgb(from var(--brand-dark) r g b / 0.55) 0%,
+      transparent 20%,
+      transparent 68%,
+      rgb(from var(--brand-dark) r g b / 0.72) 100%
+    ),
+    linear-gradient(
+      105deg,
+      rgb(from var(--brand-dark) r g b / 0.92) 0%,
+      rgb(from var(--brand-dark) r g b / 0.8) 42%,
+      rgb(from var(--brand-dark) r g b / 0.62) 100%
+    );
+}
+
 .about-journey__rail {
   position: relative;
   flex: none;
@@ -2504,9 +2851,21 @@ dialog[open]::backdrop {
 .ceo-letter__kicker {
   font-family: var(--font-display);
   font-size: var(--type-ceo-kicker);
-  font-weight: 600;
-  line-height: 1.3;
+  font-weight: 500;
+  line-height: 1.4;
   text-wrap: balance;
+}
+
+/* Mission / Vision statement — the panel's content, prominent but not a
+   headline: display face, medium weight, one editorial step above body. */
+.mission-vision__statement {
+  font-family: var(--font-display);
+  font-size: clamp(1.0625rem, 1rem + 0.3vw, 1.3125rem);
+  font-weight: 500;
+  line-height: 1.4;
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+  color: var(--foreground);
 }
 
 /* --- Dexta Clan band --------------------------------------------------- */
@@ -2530,6 +2889,101 @@ dialog[open]::backdrop {
   pointer-events: none;
 }
 
+/* --- Dexta Clan band, video-background variant -------------------------
+ * When a `video` is supplied, the whole band becomes a full-bleed backdrop
+ * (see YouTubeBackground) with the copy sitting on top instead of beside it
+ * — a scrim carries all the contrast work so text stays legible over
+ * whatever frame of the video happens to be showing, the same job
+ * `--hero-copy`/the hero's own gradient already do for the homepage video. */
+.dexta-clan--video {
+  isolation: isolate;
+}
+
+.dexta-clan__video {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+}
+
+.dexta-clan__scrim {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background:
+    /* Vertical vignette: a cinematic frame, darkest at the top/bottom
+       edges, so the eye settles centre rather than the crop feeling like
+       a flat rectangle of video. */
+    linear-gradient(
+      to bottom,
+      rgb(from var(--brand-dark) r g b / 0.5) 0%,
+      transparent 22%,
+      transparent 78%,
+      rgb(from var(--brand-dark) r g b / 0.6) 100%
+    ),
+    linear-gradient(
+      100deg,
+      rgb(from var(--brand-dark) r g b / 0.94) 0%,
+      rgb(from var(--brand-dark) r g b / 0.82) 32%,
+      rgb(from var(--brand-dark) r g b / 0.35) 68%,
+      rgb(from var(--brand-dark) r g b / 0.55) 100%
+    );
+  pointer-events: none;
+}
+
+/* The container-relative "cover" fill: sized in units of the CONTAINER's
+   own box (cqw/cqh), not the viewport, so it works inside a section instead
+   of only full-screen. Whichever axis the container is more extreme on,
+   the other clause is what actually constrains the size — the video always
+   overflows the container on both axes, never letterboxing. */
+.youtube-bg {
+  container-type: size;
+}
+
+.youtube-bg__frame {
+  top: 50%;
+  left: 50%;
+  translate: -50% -50%;
+  width: 177.78cqh;
+  height: 100cqh;
+  min-width: 100cqw;
+  min-height: 56.25cqw;
+  border: 0;
+  pointer-events: none;
+  /* A slow Ken Burns drift, not a static crop — also doubles as an overscan
+     margin (never below 1.1×) that keeps YouTube's own edge-of-frame chrome
+     (its paused-state play button/title bar, which `controls=0` doesn't
+     remove) safely outside the visible, clipped area at every point in the
+     cycle, on top of `.youtube-bg`'s own overflow:hidden. */
+  animation: youtube-bg-drift 26s ease-in-out infinite alternate;
+  transform-origin: center;
+}
+
+/* The poster carries the same slow drift while it's the only thing visible
+   (before the iframe loads, or if it never does) — reuses the hero/project
+   cards' own kenburns keyframe rather than a bespoke one. */
+.youtube-bg__poster {
+  animation: hero-kenburns 26s ease-in-out infinite alternate;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .youtube-bg__frame {
+    animation: none;
+    scale: 1.1;
+  }
+  .youtube-bg__poster {
+    animation: none;
+  }
+}
+
+@keyframes youtube-bg-drift {
+  from {
+    scale: 1.1;
+  }
+  to {
+    scale: 1.22;
+  }
+}
+
 .dexta-clan__dot {
   width: 0.5rem;
   height: 0.5rem;
@@ -2548,6 +3002,40 @@ dialog[open]::backdrop {
 }
 
 .dexta-clan__benefit svg {
+  flex: none;
+  margin-top: 0.15rem;
+  color: var(--primary);
+}
+
+/* LiteYouTube frame. The hairline is theme-driven by default (`--border`);
+   on the always-dark Dexta Clan band that light-theme border would read as a
+   white line against the near-black surface, so the band retunes it to a
+   faint light edge instead. */
+.lite-youtube {
+  border: 1px solid var(--border);
+}
+
+.dexta-clan .lite-youtube {
+  border-color: rgb(from var(--brand-light) r g b / 0.14);
+}
+
+/* Compact benefits — used under the copy when the second column is taken by
+   the video. A quiet checklist, not full-width bordered rows. */
+.dexta-clan__benefits {
+  display: flex;
+  flex-direction: column;
+  gap: 0.625rem;
+}
+
+.dexta-clan__benefits li {
+  display: flex;
+  gap: 0.625rem;
+  align-items: flex-start;
+  font-size: 0.875rem;
+  color: rgb(from var(--brand-light) r g b / 0.8);
+}
+
+.dexta-clan__benefits svg {
   flex: none;
   margin-top: 0.15rem;
   color: var(--primary);
@@ -2602,11 +3090,11 @@ dialog[open]::backdrop {
   .dexta-clan__dot {
     animation: none;
   }
-  .mission-vision__panel:hover .mission-vision__media img,
   .about-team__card:hover .about-team__media img {
     transform: none;
   }
-  .about-team__card:hover {
+  .about-team__card:hover,
+  .mission-vision__panel:hover {
     transform: none;
   }
   .newsletter-cta__dot {
@@ -3068,14 +3556,41 @@ dialog[open]::backdrop {
   }
 }
 
-@keyframes loader-track {
-  from {
-    transform: translateX(-120%);
+/* The squash-and-launch: touches down flattened and wide, rebounds slightly
+   past round on the way up past its peak, settles — the "ball" reads as
+   having real weight instead of just sliding on a sine wave. */
+@keyframes loader-ball-bounce {
+  0%,
+  100% {
+    transform: translateY(0) scale(1, 1);
   }
-  to {
-    transform: translateX(260%);
+  8% {
+    transform: translateY(0) scale(1.2, 0.78);
+  }
+  38% {
+    transform: translateY(-1.5rem) scale(0.94, 1.08);
+  }
+  62% {
+    transform: translateY(0) scale(1.18, 0.8);
+  }
+  78% {
+    transform: translateY(0) scale(0.96, 1.04);
+  }
+  90% {
+    transform: translateY(0) scale(1, 1);
   }
 }
+
+@keyframes loader-ball-pulse {
+  0%,
+  100% {
+    opacity: 0.4;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
 ::selection {
   background: var(--primary);
   color: var(--primary-foreground);

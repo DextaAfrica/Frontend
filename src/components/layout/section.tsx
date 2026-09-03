@@ -1,6 +1,9 @@
+"use client";
+
 import * as React from "react";
 import { Container } from "./container";
 import { cn } from "@/lib/utils";
+import { ScrollTrigger, useGSAP } from "@/lib/gsap";
 
 type Spacing = "none" | "sm" | "md" | "lg" | "editorial";
 type Tone = "default" | "surface" | "brand" | "inverse" | "brandDark";
@@ -18,22 +21,84 @@ const tones: Record<Tone, string> = {
   inverse: "bg-foreground text-background",
   brandDark: "bg-brand-dark text-brand-light",
 };
+// "default" and "surface" are quiet, low-contrast tones — one can follow
+// another with almost no visible seam (the whole point this fixes), so they
+// get a boundary by default. "brand" / "inverse" / "brandDark" are already
+// strong, self-evident colour blocks against anything beside them.
+const dividerDefaults: Record<Tone, boolean> = {
+  default: true,
+  surface: true,
+  brand: false,
+  inverse: false,
+  brandDark: false,
+};
+
 export interface SectionProps extends React.ComponentProps<"section"> {
   spacing?: Spacing;
   tone?: Tone;
   contained?: boolean;
+  /** A hairline top border marking where this section begins. Defaults to
+   * on for the two quiet tones, off for the three strong-colour ones —
+   * pass explicitly to override either way. */
+  divider?: boolean;
 }
 export function Section({
   className,
   spacing = "md",
   tone = "default",
   contained = true,
+  divider,
   children,
   ...props
 }: SectionProps) {
+  const showDivider = divider ?? dividerDefaults[tone];
+  const ref = React.useRef<HTMLElement>(null);
+
+  // The divider (see globals.css `.section-divider`) is "lit" — a brighter
+  // line, a bigger dot glow — only while this section is the one actually in
+  // view, and settles back to its quiet resting state once it isn't.
+  // onEnter/onEnterBack both mean "just became the active section";
+  // onLeave/onLeaveBack both mean "no longer is" — scrolling either
+  // direction gets the same handoff. This is a scroll-position *fact*, not
+  // a motion effect, so it stays wired up even under reduced motion — only
+  // the CSS transition on it goes instant there (see globals.css).
+  useGSAP(
+    () => {
+      const el = ref.current;
+      if (!el || !showDivider) return;
+
+      const activate = () => {
+        el.dataset.active = "true";
+      };
+      const deactivate = () => {
+        delete el.dataset.active;
+      };
+
+      const trigger = ScrollTrigger.create({
+        trigger: el,
+        start: "top 60%",
+        end: "bottom 40%",
+        onEnter: activate,
+        onEnterBack: activate,
+        onLeave: deactivate,
+        onLeaveBack: deactivate,
+      });
+
+      return () => trigger.kill();
+    },
+    { scope: ref, dependencies: [showDivider] },
+  );
+
   return (
     <section
-      className={cn("relative", spacings[spacing], tones[tone], className)}
+      ref={ref}
+      className={cn(
+        "relative",
+        spacings[spacing],
+        tones[tone],
+        showDivider && "section-divider",
+        className,
+      )}
       {...props}
     >
       {contained ? <Container>{children}</Container> : children}

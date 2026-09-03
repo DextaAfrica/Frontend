@@ -1,5 +1,5 @@
 import { Grid, Page, Section, Stack } from "@/components/layout";
-import { EditorialHero, MarketingHeading } from "@/components/marketing";
+import { MarketingHeading, MediaHero } from "@/components/marketing";
 import {
   ButtonLink,
   Card,
@@ -12,10 +12,11 @@ import { careerAreas } from "../data/roles";
 export function CareersScreen() {
   return (
     <Page>
-      <EditorialHero
+      <MediaHero
         eyebrow="Careers"
-        title="Build places that *outlast* us."
+        title={["Build places", "that *outlast* us."]}
         description="Join a multidisciplinary team committed to thoughtful work, exacting craft, and a more meaningful built environment."
+        image="/images/residence-rooftop.png"
         primary={{ label: "Introduce yourself", href: "/contact" }}
       />
       <Section tone="surface">

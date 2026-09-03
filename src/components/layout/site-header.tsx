@@ -9,6 +9,7 @@ import { ThemeToggle } from "@/components/theme/theme-toggle";
 import { Button, ButtonLink } from "@/components/ui/button";
 import { Icon } from "@/components/ui/icon";
 import { Eyebrow } from "@/components/ui/typography";
+import { routeHasOverlayHero } from "@/config/page-chrome";
 import { siteConfig } from "@/config/site";
 import { gsap, useGSAP } from "@/lib/gsap";
 import { cn } from "@/lib/utils";
@@ -20,9 +21,20 @@ export function SiteHeader() {
   const [scrolled, setScrolled] = React.useState(false);
   const pathname = usePathname();
 
-  const isLandingPage = pathname === "/";
-  const solid = !isLandingPage || scrolled || open;
-  const overlaysHero = isLandingPage && !open && !scrolled;
+  // Does this route open with a full-bleed media hero the header sits over?
+  // Single source of truth is `config/page-chrome.ts` — never a pathname
+  // test in this component.
+  const overlayHeroRoute = routeHasOverlayHero(pathname);
+
+  // `overlaysHero`: the bar is currently transparent and riding over that
+  //   hero in a light palette — only true on an overlay route, at the top,
+  //   with the mobile menu closed.
+  // `solid`: every other state — any scroll away from the top, the menu
+  //   open, or any non-overlay route — shows the opaque bar. Non-overlay
+  //   routes also get this pre-hydration via the CSS `[data-scrolled]`
+  //   fallback, so their header never flashes transparent.
+  const overlaysHero = overlayHeroRoute && !open && !scrolled;
+  const solid = !overlaysHero;
 
   const headerRef = React.useRef<HTMLElement>(null);
   const menuButtonRef = React.useRef<HTMLButtonElement>(null);
@@ -193,7 +205,7 @@ export function SiteHeader() {
     <>
       <header
         ref={headerRef}
-        data-sticky={!isLandingPage}
+        data-sticky={!overlayHeroRoute}
         data-scrolled={solid}
         data-overlays-hero={overlaysHero}
         className="site-header"
@@ -246,7 +258,7 @@ export function SiteHeader() {
                   href={siteConfig.navigation.appointmentHref}
                   size="sm"
                   variant={overlaysHero ? "onMedia" : "primary"}
-                  className="hidden text-control-compact tracking-control-compact uppercase lg:inline-flex"
+                  className="hidden lg:inline-flex"
                 >
                   {siteConfig.navigation.appointmentCta}
                 </ButtonLink>
@@ -257,7 +269,7 @@ export function SiteHeader() {
                 variant="secondary"
                 size="sm"
                 data-on-media={overlaysHero || undefined}
-                className="header-menu-trigger shrink-0 text-control-compact tracking-control-compact uppercase lg:hidden"
+                className="header-menu-trigger lg:hidden"
                 onClick={() => setOpen((current) => !current)}
                 aria-expanded={open}
                 aria-controls="site-navigation"
@@ -295,7 +307,6 @@ export function SiteHeader() {
             variant="secondary"
             size="sm"
             tabIndex={open ? 0 : -1}
-            className="text-control-compact tracking-control-compact uppercase"
             onClick={closeMenu}
             aria-label="Close navigation"
           >
@@ -347,9 +358,10 @@ export function SiteHeader() {
                 <ButtonLink
                   href={siteConfig.navigation.appointmentHref}
                   size="lg"
+                  fullWidth
                   tabIndex={open ? 0 : -1}
                   onClick={closeMenu}
-                  className="w-full justify-between sm:w-auto sm:min-w-52"
+                  className="justify-between sm:w-auto sm:min-w-52"
                 >
                   {siteConfig.navigation.appointmentCta}
                   <Icon name="arrow-right" />

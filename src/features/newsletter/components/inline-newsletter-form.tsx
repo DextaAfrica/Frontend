@@ -13,11 +13,16 @@ export interface InlineNewsletterFormProps {
    * instead of the theme-relative styling used on a light/dark-toggling page. */
   onMedia?: boolean;
   className?: string;
+  /** "lg" (default) suits a wide column like the footer; "md" a narrower
+   * card; "sm" the slim, understated inline field used in the Newsletter
+   * section. Drives the input height + text and the button size together. */
+  size?: "sm" | "md" | "lg";
 }
 
 export function InlineNewsletterForm({
   onMedia = false,
   className,
+  size = "lg",
 }: InlineNewsletterFormProps = {}) {
   const [status, setStatus] = React.useState<SubmissionState>("idle");
   const [message, setMessage] = React.useState("");
@@ -65,7 +70,7 @@ export function InlineNewsletterForm({
     // the narrow homepage card, the wide footer column, and anywhere else.
     <form
       onSubmit={subscribe}
-      className={cn("@container mt-6", className)}
+      className={cn("@container", className)}
       noValidate
     >
       <label htmlFor={emailId} className="sr-only">
@@ -87,7 +92,10 @@ export function InlineNewsletterForm({
           // main axis and collapse the field's height instead of honouring
           // `h-[…]`.
           className={cn(
-            "h-[var(--control-height-lg)] w-full rounded-[var(--control-radius)] border px-4 text-base transition-colors @[20rem]:min-w-0 @[20rem]:flex-1",
+            "w-full rounded-[var(--control-radius)] border transition-colors @[20rem]:min-w-0 @[20rem]:flex-1",
+            size === "lg" && "h-[var(--control-height-lg)] px-4 text-base",
+            size === "md" && "h-[var(--control-height-md)] px-3.5 text-sm",
+            size === "sm" && "h-[var(--control-height-sm)] px-3 text-sm",
             onMedia
               ? "border-brand-light/25 bg-brand-light/5 text-on-media placeholder:text-brand-light/50"
               : "border-input bg-background text-foreground placeholder:text-muted-foreground",
@@ -120,8 +128,9 @@ export function InlineNewsletterForm({
         <Button
           type="submit"
           variant={onMedia ? "onMedia" : "neutral"}
-          size="lg"
-          className="w-full shrink-0 @[20rem]:w-auto"
+          size={size}
+          fullWidth
+          className="@[20rem]:w-auto"
           disabled={status === "submitting"}
         >
           {status === "submitting" ? "Subscribing…" : "Subscribe"}

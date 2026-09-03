@@ -167,7 +167,7 @@ export function NewsletterManager() {
                 placeholder="you@example.com"
                 aria-invalid={invalidField}
                 aria-describedby={invalidField ? ERROR_ID : undefined}
-                className="h-12 border border-input bg-background px-4 outline-none placeholder:text-muted-foreground focus:ring-2 focus:ring-ring"
+                className="h-12 border border-input bg-background px-4 text-foreground outline-none placeholder:text-muted-foreground focus:ring-2 focus:ring-ring"
               />
             </label>
             {/* Honeypot: real visitors never see or fill this in — hidden by

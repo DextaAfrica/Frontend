@@ -1,7 +1,7 @@
 import { Grid, Page, Section, Stack } from "@/components/layout";
 import {
-  EditorialHero,
   MarketingHeading,
+  MediaHero,
   MediaPanel,
 } from "@/components/marketing";
 import {
@@ -17,10 +17,11 @@ import { articles } from "../data/articles";
 export function BlogScreen() {
   return (
     <Page>
-      <EditorialHero
+      <MediaHero
         eyebrow="Blog"
-        title="Ideas for a more considered *world*."
+        title={["Ideas for a more", "considered *world*."]}
         description="Perspectives on architecture, material, place, culture, and the evolving meaning of home."
+        image="/images/residence-interior.png"
       />
       <Section tone="surface">
         <Stack gap="2xl">

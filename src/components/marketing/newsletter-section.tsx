@@ -1,7 +1,7 @@
 import { Container, Section } from "@/components/layout";
 import { Badge, Icon, renderWithAccents, type IconName } from "@/components/ui";
 import { InlineNewsletterForm } from "@/features/newsletter/components/inline-newsletter-form";
-import { Reveal } from "./reveal";
+import { Reveal, ScrollFade } from "./reveal";
 
 const benefits: ReadonlyArray<{ icon: IconName; label: string }> = [
   { icon: "land-plot", label: "Off-market listings" },
@@ -37,7 +37,7 @@ export function NewsletterSection({
     >
       <Container>
         <div className="grid gap-10 lg:grid-cols-2 lg:items-center lg:gap-12">
-          <Reveal className="flex flex-col gap-6">
+          <ScrollFade className="flex flex-col gap-6">
             <span className="inline-flex w-fit items-center gap-2.5 font-mono text-xs font-bold tracking-[0.24em] text-muted-foreground uppercase">
               <span aria-hidden className="newsletter-cta__dot" />
               {eyebrow}
@@ -66,25 +66,25 @@ export function NewsletterSection({
                 </li>
               ))}
             </ul>
-          </Reveal>
+          </ScrollFade>
 
           <Reveal delay={0.12} className="relative isolate">
             <span
               aria-hidden
               className="pointer-events-none absolute -inset-6 -z-10 rounded-full bg-primary/10 blur-3xl"
             />
-            <div className="rounded-panel border border-border bg-surface-elevated p-6 shadow-[var(--card-shadow)] sm:p-8">
+            <div className="rounded-panel border border-border bg-surface-elevated p-5 shadow-[var(--card-shadow)] sm:p-6">
               <Badge variant="brand" className="w-fit">
                 Weekly briefing
               </Badge>
-              <h3 className="mt-4 font-display text-[clamp(1rem,0.96rem_+_0.19vw,1.125rem)] font-semibold tracking-tight">
+              <h3 className="mt-3.5 font-display text-[clamp(0.9375rem,0.9rem_+_0.19vw,1.0625rem)] font-semibold tracking-tight">
                 Get the Dexta brief in your inbox
               </h3>
-              <p className="mt-2 text-sm text-muted-foreground">
+              <p className="mt-1.5 text-sm text-muted-foreground">
                 One email. Real opportunities. No noise.
               </p>
-              <InlineNewsletterForm className="w-full" />
-              <p className="mt-4 text-xs text-muted-foreground">
+              <InlineNewsletterForm size="sm" className="mt-4 w-full" />
+              <p className="mt-3 text-xs text-muted-foreground">
                 Join 3,000+ investors and developers already subscribed.
                 Unsubscribe anytime.
               </p>

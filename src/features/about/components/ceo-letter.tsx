@@ -156,7 +156,7 @@ export function CeoLetter({ content }: { content: CeoLetterContent }) {
               <p
                 key={index}
                 data-ceo-para
-                className="font-sans text-[clamp(1rem,0.91rem_+_0.38vw,1.25rem)] leading-[1.5] text-pretty text-foreground/90"
+                className="max-w-prose font-sans text-sm leading-7 text-pretty text-muted-foreground"
               >
                 {renderWithAccents(paragraph)}
               </p>
@@ -180,8 +180,10 @@ export function CeoLetter({ content }: { content: CeoLetterContent }) {
               unoptimized={isRemoteAsset(content.signature)}
             />
             <div>
-              <p className="font-display font-semibold">{content.name}</p>
-              <p className="text-sm text-brand-dark/70">{content.title}</p>
+              <p className="font-display text-sm font-semibold">
+                {content.name}
+              </p>
+              <p className="text-xs text-brand-dark/70">{content.title}</p>
             </div>
           </div>
         </div>

@@ -259,7 +259,7 @@ export function ChatWidget() {
                 type="submit"
                 variant="primary"
                 size="md"
-                className="w-full"
+                fullWidth
                 disabled={status === "submitting"}
               >
                 {status === "submitting" ? "Sending…" : "Send message"}

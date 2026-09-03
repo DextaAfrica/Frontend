@@ -3,7 +3,7 @@
 import * as React from "react";
 import Image from "next/image";
 import { Section } from "@/components/layout";
-import { EditorialSectionHeading, Reveal } from "@/components/marketing";
+import { EditorialSectionHeading, ScrollFade } from "@/components/marketing";
 import { homeMotion } from "@/config/home-motion";
 import { gsap, useGSAP } from "@/lib/gsap";
 import { isRemoteAsset } from "@/lib/media";
@@ -23,7 +23,7 @@ function initials(name: string) {
 
 function Avatar({ testimonial }: { testimonial: TestimonialContent }) {
   const shared =
-    "testimonial-avatar mr-testimonial-quote mb-1 inline-block size-testimonial-avatar rounded-testimonial-avatar align-middle";
+    "testimonial-avatar block size-testimonial-avatar rounded-testimonial-avatar";
 
   if (testimonial.portrait) {
     return (
@@ -290,7 +290,7 @@ export function TestimonialSection({
         headingId="testimonials-heading"
       />
 
-      <Reveal className="mx-auto mt-testimonial w-full max-w-testimonial-body">
+      <ScrollFade className="mx-auto mt-testimonial w-full max-w-testimonial-body">
         <div
           ref={rootRef}
           className="testimonial-carousel"
@@ -323,7 +323,8 @@ export function TestimonialSection({
                 aria-hidden={index !== active}
               >
                 <blockquote className="text-testimonial leading-testimonial font-medium tracking-testimonial">
-                  <Avatar testimonial={testimonial} />“{testimonial.quote}”
+                  <Avatar testimonial={testimonial} />
+                  <p>“{testimonial.quote}”</p>
                 </blockquote>
                 <figcaption
                   data-slide-caption
@@ -380,7 +381,7 @@ export function TestimonialSection({
             )}
           </div>
         </div>
-      </Reveal>
+      </ScrollFade>
     </Section>
   );
 }

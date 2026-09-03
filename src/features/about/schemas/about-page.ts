@@ -11,7 +11,10 @@ const ctaSchema = z.object({
 const framedStatementSchema = z.object({
   label: nonEmptyString,
   text: nonEmptyString,
-  image: nonEmptyString,
+  // A glyph name from the shared `Icon` registry (`components/ui/icon.tsx`) —
+  // e.g. "target", "telescope". Validated as a non-empty string here; the
+  // component narrows it to `IconName` at the call site.
+  icon: nonEmptyString,
 });
 
 /**
@@ -22,13 +25,19 @@ const framedStatementSchema = z.object({
  */
 export const aboutPageContentSchema = z.object({
   hero: z.object({
+    // Rendered as the pill badge, same as the homepage hero.
     eyebrow: nonEmptyString,
-    title: nonEmptyString,
+    // One line per array entry; `*word*` marks the italic accent.
+    titleLines: nonEmptyStringArray,
     lede: nonEmptyString,
-    images: z.object({
-      people: nonEmptyString,
-      property: nonEmptyString,
-    }),
+    // Full-bleed background. `image` (the poster) is required and always
+    // painted; `video` / `mobileVideo` are an optional ambient loop layered
+    // over it once it has a frame ready.
+    image: nonEmptyString,
+    video: nonEmptyString.optional(),
+    mobileVideo: nonEmptyString.optional(),
+    primary: ctaSchema.optional(),
+    secondary: ctaSchema.optional(),
   }),
   statement: z.object({
     heading: nonEmptyString,
@@ -44,13 +53,10 @@ export const aboutPageContentSchema = z.object({
   journey: z.object({
     eyebrow: nonEmptyString,
     title: nonEmptyString,
-    // Faint full-bleed texture behind the dark journey band.
-    background: nonEmptyString,
-    // Optional framed still that links out to a film; the section drops the
-    // media column entirely when it isn't supplied.
-    video: z
-      .object({ poster: nonEmptyString, href: nonEmptyString })
-      .optional(),
+    // Ambient YouTube backdrop filling the whole dark band (muted, looping,
+    // lazy-loaded) — the same treatment as the Dexta Clan band's video
+    // variant. `poster` is the local still shown until (or instead of) it.
+    video: z.object({ id: nonEmptyString, poster: nonEmptyString }),
     milestones: z
       .array(z.object({ year: nonEmptyString, text: nonEmptyString }))
       .min(1),

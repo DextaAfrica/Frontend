@@ -1,17 +1,23 @@
-import Image from "next/image";
 import { Section } from "@/components/layout";
 import { RevealGroup, RevealItem } from "@/components/marketing";
-import { Eyebrow, renderWithAccents } from "@/components/ui";
-import { isRemoteAsset } from "@/lib/media";
+import { Eyebrow, Icon, renderWithAccents } from "@/components/ui";
+import type { IconName } from "@/components/ui";
 import type { MissionVisionContent } from "../types/about-page";
 
 const order = ["mission", "vision"] as const;
 
+/**
+ * Mission and vision, as a pair of editorial panels. Each carries a red icon
+ * medallion, its label, a faint outline index, and the statement set in the
+ * display face with an italic accent phrase. No photography — the weight is
+ * all type and the brand red — so the section never depends on an art asset
+ * that may not exist yet.
+ */
 export function MissionVision({ content }: { content: MissionVisionContent }) {
   return (
     <Section spacing="editorial" tone="surface">
       <RevealGroup className="grid gap-6 md:grid-cols-2 lg:gap-8">
-        {order.map((key) => {
+        {order.map((key, index) => {
           const item = content[key];
           return (
             <RevealItem
@@ -19,21 +25,16 @@ export function MissionVision({ content }: { content: MissionVisionContent }) {
               key={key}
               className="mission-vision__panel"
             >
-              <div className="mission-vision__media">
-                <Image
-                  src={item.image}
-                  alt=""
-                  fill
-                  sizes="(min-width: 768px) 45vw, 100vw"
-                  unoptimized={isRemoteAsset(item.image)}
-                />
-              </div>
-              <div className="flex flex-1 flex-col gap-4 p-7 sm:p-9">
-                <Eyebrow>{item.label}</Eyebrow>
-                <p className="font-display text-editorial leading-[1.2] font-semibold tracking-tight text-balance">
-                  {renderWithAccents(item.text)}
-                </p>
-              </div>
+              <span aria-hidden className="mission-vision__index">
+                {String(index + 1).padStart(2, "0")}
+              </span>
+              <span aria-hidden className="mission-vision__icon">
+                <Icon name={item.icon as IconName} size={26} />
+              </span>
+              <Eyebrow>{item.label}</Eyebrow>
+              <p className="mission-vision__statement">
+                {renderWithAccents(item.text)}
+              </p>
             </RevealItem>
           );
         })}

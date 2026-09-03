@@ -23,6 +23,8 @@ import {
   Play,
   Quote,
   Sun,
+  Target,
+  Telescope,
   TrendingUp,
   Wrench,
   X,
@@ -42,6 +44,8 @@ export type IconName =
   | "moon"
   | "system"
   | "sun"
+  | "target"
+  | "telescope"
   | "palette"
   | "menu"
   | "close"
@@ -90,6 +94,8 @@ const icons: Record<IconName, ComponentType<GlyphProps>> = {
   moon: Moon,
   system: Monitor,
   sun: Sun,
+  target: Target,
+  telescope: Telescope,
   palette: Palette,
   menu: Menu,
   close: X,

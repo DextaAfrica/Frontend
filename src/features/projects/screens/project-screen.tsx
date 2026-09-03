@@ -1,7 +1,6 @@
 import { Grid, Page, Section, Stack } from "@/components/layout";
 import {
   CtaBand,
-  EditorialHero,
   MarketingHeading,
   ProjectGallery,
 } from "@/components/marketing";
@@ -15,23 +14,11 @@ const factIcons: readonly IconName[] = [
   "pin",
 ];
 
-// A project without real campaign copy of its own still needs a title for
-// its hero — this is deliberately generic marketing language, never a
-// factual claim, so it's safe to reuse across any project that hasn't
-// supplied a `tagline` yet.
 const fallbackTagline = (status: string) =>
   status === "Completed"
     ? "An enduring expression of *home*."
     : "Private by nature. *Remarkable* by design.";
 
-/**
- * A project's own page — a product-listing page for real estate: hero,
- * then (only when the project actually has the material) a facts strip and
- * a proper photo gallery, closing on a CTA. Every section past the hero is
- * conditional on the project actually having that content — no invented
- * pricing, unit counts, or amenities standing in for a project that hasn't
- * supplied them.
- */
 export function ProjectScreen({ project }: { project: Project }) {
   const hasFacts =
     Boolean(project.priceFrom) || Boolean(project.features?.length);
@@ -39,15 +26,36 @@ export function ProjectScreen({ project }: { project: Project }) {
 
   return (
     <Page>
-      <EditorialHero
-        eyebrow={`${project.name} · ${project.location}`}
-        title={project.tagline ?? fallbackTagline(project.status)}
-        description={project.description}
-        primary={{ label: "Register your interest", href: "/contact" }}
-        secondary={
-          hasGallery ? { label: "View gallery", href: "#gallery" } : undefined
-        }
-      />
+      <Section>
+        <Stack gap="lg">
+          <p className="text-sm font-semibold tracking-[0.18em] text-primary uppercase">
+            {project.name} · {project.location}
+          </p>
+          <MarketingHeading
+            title={project.tagline ?? fallbackTagline(project.status)}
+            eyebrow={project.name}
+          />
+          <p className="max-w-2xl text-lg text-muted-foreground">
+            {project.description}
+          </p>
+          <div className="flex flex-wrap items-center gap-4">
+            <a
+              className="inline-flex items-center justify-center rounded-full bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground"
+              href="/contact"
+            >
+              Register your interest
+            </a>
+            {hasGallery && (
+              <a
+                className="inline-flex items-center justify-center rounded-full border border-border px-5 py-3 text-sm font-semibold text-foreground"
+                href="#gallery"
+              >
+                View gallery
+              </a>
+            )}
+          </div>
+        </Stack>
+      </Section>
 
       {hasFacts && (
         <Section tone="surface" spacing="sm">

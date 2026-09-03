@@ -1,7 +1,10 @@
 import { Grid, Page, Section, Stack } from "@/components/layout";
-import { EditorialHero, TocNav } from "@/components/marketing";
+import { MediaHero, TocNav } from "@/components/marketing";
 import { Eyebrow, SectionHeading, Text } from "@/components/ui";
 import { slugify } from "@/lib/utils";
+
+/** Shared banner image for the legal pages — a neutral brand exterior. */
+const LEGAL_HERO_IMAGE = "/images/dexta-hero-poster.jpg";
 
 export interface LegalSection {
   title: string;
@@ -14,12 +17,14 @@ export function LegalScreen({
   description,
   sections,
   lastUpdated = "28 July 2026",
+  image = LEGAL_HERO_IMAGE,
 }: {
   eyebrow: string;
   title: string;
   description: string;
   sections: LegalSection[];
   lastUpdated?: string;
+  image?: string;
 }) {
   const tocItems = sections.map((section) => ({
     id: slugify(section.title),
@@ -28,10 +33,11 @@ export function LegalScreen({
 
   return (
     <Page>
-      <EditorialHero
+      <MediaHero
         eyebrow={eyebrow}
         title={title}
         description={description}
+        image={image}
       />
       <Section tone="surface">
         <Grid columns="four" gap="xl" className="items-start">

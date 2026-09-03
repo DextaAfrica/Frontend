@@ -1,15 +1,16 @@
 import { Page, Section, Stack } from "@/components/layout";
-import { EditorialHero, MediaPanel } from "@/components/marketing";
+import { MediaHero, MediaPanel } from "@/components/marketing";
 import { ButtonLink, SectionHeading, Text } from "@/components/ui";
 import type { Article } from "../data/articles";
 
 export function ArticleScreen({ article }: { article: Article }) {
   return (
     <Page>
-      <EditorialHero
+      <MediaHero
         eyebrow={`${article.category} · ${article.date}`}
         title={article.title}
         description={article.introduction}
+        image={article.image}
       />
       <Section tone="surface">
         <Stack gap="2xl" className="mx-auto max-w-4xl">

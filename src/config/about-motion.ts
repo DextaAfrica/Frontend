@@ -6,23 +6,8 @@
 export const aboutMotion = {
   enabledMedia: "(prefers-reduced-motion: no-preference)",
 
-  hero: {
-    // Entrance timeline (mirrors editorial-hero.tsx cadence). `overlap` is a
-    // relative GSAP position ("-=0.3" → start 0.3s before the previous tween
-    // ends), never a bare number.
-    enter: {
-      eyebrow: { y: 8, duration: 0.5 },
-      title: { y: 16, blur: 8, duration: 0.7, overlap: "-=0.3" },
-      lede: { y: 10, duration: 0.5, overlap: "-=0.35" },
-      collage: { y: 24, duration: 0.9, overlap: "-=0.5" },
-    },
-    // Scrubbed parallax on the two collage images once scrolling past.
-    parallax: {
-      scrub: 0.6,
-      peopleFromPercent: -6,
-      propertyFromPercent: 8,
-    },
-  },
+  // The page hero is the shared <MediaHero>, which carries its own entrance
+  // choreography — nothing to tune here.
 
   journey: {
     // The vertical rule fills from 0 → 100% across the milestone list.

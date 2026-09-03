@@ -1,6 +1,6 @@
 import { Grid, Section, Stack } from "@/components/layout";
 import { Badge, ButtonLink, Icon, SectionHeading, Text } from "@/components/ui";
-import { Reveal, RevealGroup, RevealItem } from "./reveal";
+import { Reveal, RevealItem, ScrollFadeGroup } from "./reveal";
 
 export interface FaqItem {
   question: string;
@@ -48,7 +48,7 @@ export function FaqAccordion({
           </Stack>
         </Reveal>
 
-        <RevealGroup as="div" className="border-t border-border">
+        <ScrollFadeGroup as="div" className="border-t border-border">
           {items.map((item, index) => (
             <RevealItem as="div" key={item.question}>
               <details
@@ -68,7 +68,7 @@ export function FaqAccordion({
               </details>
             </RevealItem>
           ))}
-        </RevealGroup>
+        </ScrollFadeGroup>
       </Grid>
     </Section>
   );
