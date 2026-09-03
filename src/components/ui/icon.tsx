@@ -32,6 +32,7 @@ import {
   FacebookIcon,
   InstagramIcon,
   LinkedInIcon,
+  WhatsAppIcon,
   YouTubeIcon,
 } from "./brand-icons";
 
@@ -57,6 +58,7 @@ export type IconName =
   | "facebook"
   | "instagram"
   | "linkedin"
+  | "whatsapp"
   | "youtube"
   | "land-plot"
   | "development"
@@ -104,6 +106,7 @@ const icons: Record<IconName, ComponentType<GlyphProps>> = {
   facebook: FacebookIcon,
   instagram: InstagramIcon,
   linkedin: LinkedInIcon,
+  whatsapp: WhatsAppIcon,
   youtube: YouTubeIcon,
   "land-plot": LandPlot,
   development: HardHat,
