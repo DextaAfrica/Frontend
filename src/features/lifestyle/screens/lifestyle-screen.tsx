@@ -1,7 +1,7 @@
 import { Grid, Page, Section, Stack } from "@/components/layout";
 import {
-  EditorialHero,
   MarketingHeading,
+  MediaHero,
   MediaPanel,
 } from "@/components/marketing";
 import { Card, CardContent, CardHeading, Text } from "@/components/ui";
@@ -23,10 +23,11 @@ const experiences = [
 export function LifestyleScreen() {
   return (
     <Page>
-      <EditorialHero
+      <MediaHero
         eyebrow="The Dexta Africa experience"
-        title="*Luxury*, felt rather than announced."
+        title={["*Luxury*, felt rather", "than announced."]}
         description="The most meaningful amenities are those that make daily life flow beautifully—from the first coffee to the final arrival home."
+        image="/images/service-hospitality.jpg"
       />
       <Section tone="surface">
         <Grid columns="two" gap="xl" className="items-center">

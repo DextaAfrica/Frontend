@@ -626,14 +626,6 @@ body {
   transform: none !important;
 }
 
-.editorial-hero-glow {
-  background: radial-gradient(
-    circle at 78% 18%,
-    var(--primary-subtle),
-    transparent 38%
-  );
-}
-
 /* --- Mobile navigation panel ------------------------------------------------
  * Full-bleed, opaque, and above everything (see --layer-navigation). Its own
  * visibility is CSS-only — a plain `opacity` transition with `visibility`
@@ -954,6 +946,14 @@ dialog[open]::backdrop {
 
 .dexta-hero {
   min-height: 100svh;
+}
+
+/* Interior pages (<MediaHero size="compact">): a shorter banner than the
+   full-viewport home/about hero, so the page's own content starts to show
+   just below the fold. Same class list as `.dexta-hero`, declared after it,
+   so this wins on source order at equal specificity. */
+.dexta-hero--compact {
+  min-height: clamp(30rem, 72svh, 46rem);
 }
 
 /* The hero's opening slide ("Welcome to Dexta Africa") reads as the site's

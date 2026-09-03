@@ -4,6 +4,8 @@ export interface Article {
   category: string;
   date: string;
   tone: "ruby" | "stone" | "dusk" | "light";
+  /** Full-bleed hero image for the article's own page. */
+  image: string;
   introduction: string;
   sections: ReadonlyArray<{ title: string; body: string }>;
 }
@@ -15,6 +17,7 @@ export const articles: Article[] = [
     category: "Design",
     date: "18 July 2026",
     tone: "ruby",
+    image: "/images/residence-interior.png",
     introduction:
       "A quieter architectural language is reshaping contemporary homes through warmth, proportion, and material honesty.",
     sections: [
@@ -34,6 +37,7 @@ export const articles: Article[] = [
     category: "Architecture",
     date: "03 July 2026",
     tone: "stone",
+    image: "/images/residence-exterior.png",
     introduction:
       "Climate-responsive design can make luxury residences calmer, healthier, and more efficient.",
     sections: [
@@ -53,6 +57,7 @@ export const articles: Article[] = [
     category: "Living",
     date: "22 June 2026",
     tone: "dusk",
+    image: "/images/residence-rooftop.png",
     introduction:
       "The experience of home begins long before the private residence is reached.",
     sections: [
@@ -72,6 +77,7 @@ export const articles: Article[] = [
     category: "Studio",
     date: "08 June 2026",
     tone: "light",
+    image: "/images/dexta-residential.jpg",
     introduction:
       "Every Dexta Africa project begins with a physical conversation between materials.",
     sections: [

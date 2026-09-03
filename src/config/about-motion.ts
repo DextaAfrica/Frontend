@@ -6,23 +6,8 @@
 export const aboutMotion = {
   enabledMedia: "(prefers-reduced-motion: no-preference)",
 
-  hero: {
-    // Full-bleed media hero, entrance only — mirrors <LandingHero>'s mount
-    // choreography (badge punches in, heading lines rise line-by-line from a
-    // clipped baseline, description follows through a blur). `overlap` is a
-    // relative GSAP position string, never a bare number.
-    enter: {
-      badge: { scaleFrom: 0.8, y: 10, blur: 6, duration: 0.8 },
-      line: {
-        yPercentFrom: 110,
-        scaleFrom: 0.94,
-        duration: 1.1,
-        stagger: 0.14,
-        overlap: "-=0.35",
-      },
-      lede: { y: 14, blur: 10, duration: 0.9, overlap: "-=0.55" },
-    },
-  },
+  // The page hero is the shared <MediaHero>, which carries its own entrance
+  // choreography — nothing to tune here.
 
   journey: {
     // The vertical rule fills from 0 → 100% across the milestone list.

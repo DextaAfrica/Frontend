@@ -1,5 +1,5 @@
 import { Grid, Page, Section, Stack } from "@/components/layout";
-import { EditorialHero, MarketingHeading } from "@/components/marketing";
+import { MarketingHeading, MediaHero } from "@/components/marketing";
 import { Icon, Text } from "@/components/ui";
 import { siteConfig } from "@/config/site";
 import { EnquiryForm } from "../components/enquiry-form";
@@ -7,10 +7,12 @@ import { EnquiryForm } from "../components/enquiry-form";
 export function ContactScreen() {
   return (
     <Page>
-      <EditorialHero
+      <MediaHero
         eyebrow="Contact"
-        title="Let’s begin a *conversation*."
+        title={["Let’s begin", "a *conversation*."]}
         description="Whether you are looking for a home, considering an investment, or exploring a partnership, our team is here to help."
+        image="/images/residence-exterior.png"
+        primary={{ label: "Book an inspection", href: "#enquiry" }}
       />
       <Section tone="surface">
         <Grid columns="two" gap="xl" className="items-start">
@@ -36,7 +38,8 @@ export function ContactScreen() {
             </Stack>
           </Stack>
           <section
-            className="rounded-panel border border-border bg-surface-elevated p-6 shadow-[var(--control-shadow)] sm:p-8"
+            id="enquiry"
+            className="scroll-mt-28 rounded-panel border border-border bg-surface-elevated p-6 shadow-[var(--control-shadow)] sm:p-8"
             aria-label="Enquiry form"
           >
             <EnquiryForm />
