@@ -4,9 +4,12 @@ import { usePathname } from "next/navigation";
 import * as React from "react";
 import { InfinityLoaderMark } from "./infinity-loader-mark";
 
-/** Long enough to actually register as a moment, short enough that no one
- *  waits on it needlessly — a deliberate floor, not an accident of timing. */
-const MIN_VISIBLE_MS = 500;
+/** Tuned to the loader mark's forming time (see infinity-loader-mark.tsx /
+ *  the `.infinity-loader-mark__dot` stagger in globals.css): the overlay
+ *  holds until the dots have finished tracing the full figure-eight, so the
+ *  "infinity complete = page ready" read always lands. A deliberate floor,
+ *  not an accident of timing. */
+const MIN_VISIBLE_MS = 2400;
 /** A safety net, not a target: if a navigation is somehow never observed as
  *  complete (an aborted transition, a route that errors), this guarantees
  *  the overlay releases itself instead of covering the site forever. */

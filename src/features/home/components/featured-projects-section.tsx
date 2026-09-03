@@ -12,7 +12,6 @@ import {
 import { ButtonLink, Icon } from "@/components/ui";
 import { gsap, useGSAP } from "@/lib/gsap";
 import { IMAGE_PLACEHOLDER, isRemoteAsset } from "@/lib/media";
-import { cn } from "@/lib/utils";
 import type { HomePageContent, ProjectContent } from "../types/home-page";
 
 const CROSSFADE_DURATION = 0.6;
@@ -400,59 +399,85 @@ function ProjectsCarousel({
     <Reveal className="mt-10 lg:hidden">
       <div
         ref={scrollerRef}
-        className="project-carousel flex snap-x snap-mandatory gap-4 overflow-x-auto overscroll-x-contain pb-1"
+        className="project-carousel flex snap-x snap-mandatory gap-5 overflow-x-auto overscroll-x-contain pb-1"
       >
-        {projects.map((project, index) => (
-          <Link
-            key={project.id}
-            href={project.href}
-            data-carousel-card
-            className="group flex w-[82vw] max-w-[22rem] shrink-0 snap-start flex-col focus-visible:outline-none"
-          >
-            <div className="relative aspect-[4/3] overflow-hidden rounded-panel bg-muted group-focus-visible:ring-2 group-focus-visible:ring-ring">
-              <Image
-                src={project.image}
-                alt={project.name}
-                fill
-                loading="lazy"
-                sizes="82vw"
-                placeholder="blur"
-                blurDataURL={IMAGE_PLACEHOLDER}
-                unoptimized={isRemoteAsset(project.image)}
-                className="object-cover"
-              />
-              <span
-                aria-hidden
-                className="absolute inset-0 bg-gradient-to-t from-black/55 via-transparent to-black/10"
-              />
-              <span className="project-badge absolute top-3 right-3 inline-flex items-center gap-1.5 rounded-full border border-on-media-border bg-on-media-surface px-2.5 py-1 text-status tracking-project-status text-on-media uppercase backdrop-blur-md">
-                <Icon name="badge-check" size={11} />
-                {project.status}
-              </span>
-              <span className="absolute top-3 left-3 font-mono text-xs tracking-project-index text-on-media/70">
-                {String(index + 1).padStart(2, "0")}
-              </span>
-            </div>
-            <h3 className="mt-4 font-display text-lg font-semibold tracking-tight">
-              {project.name}
-            </h3>
-            <p className="mt-1 text-sm text-muted-foreground">
-              {project.location}
-            </p>
-            <p className="mt-2 line-clamp-3 text-sm text-pretty text-muted-foreground">
-              {project.description}
-            </p>
-            <span className="mt-3 inline-flex items-center gap-1.5 text-sm font-semibold text-primary">
-              {heading.cardCtaLabel}
-              <Icon name="arrow-right" size={16} />
-            </span>
-          </Link>
-        ))}
+        {projects.map((project, index) => {
+          const [lead, ...rest] = project.images;
+          return (
+            <Link
+              key={project.id}
+              href={project.href}
+              data-carousel-card
+              data-active={index === active || undefined}
+              className="project-m-card group"
+            >
+              <figure className="project-m-card__frame">
+                <Image
+                  src={lead ?? project.image}
+                  alt={project.name}
+                  fill
+                  loading="lazy"
+                  sizes="86vw"
+                  placeholder="blur"
+                  blurDataURL={IMAGE_PLACEHOLDER}
+                  unoptimized={isRemoteAsset(lead ?? project.image)}
+                  className="project-m-card__img"
+                />
+                <span aria-hidden className="project-m-card__scrim" />
+                <span aria-hidden className="project-m-card__index">
+                  {String(index + 1).padStart(2, "0")}
+                </span>
+                <span className="project-badge project-m-card__badge">
+                  <Icon name="badge-check" size={11} />
+                  {project.status}
+                </span>
+                <figcaption className="project-m-card__body">
+                  <h3 className="project-m-card__name">{project.name}</h3>
+                  <p className="project-m-card__location">{project.location}</p>
+                  <p className="project-m-card__desc">{project.description}</p>
+                  <span className="project-m-card__cta">
+                    {heading.cardCtaLabel}
+                    <Icon name="arrow-right" size={15} />
+                  </span>
+                </figcaption>
+              </figure>
+
+              {rest.length > 0 && (
+                <span aria-hidden className="project-m-card__strip">
+                  {rest.slice(0, 3).map((src) => (
+                    <span key={src} className="project-m-card__thumb">
+                      <Image
+                        src={src}
+                        alt=""
+                        fill
+                        loading="lazy"
+                        sizes="30vw"
+                        placeholder="blur"
+                        blurDataURL={IMAGE_PLACEHOLDER}
+                        unoptimized={isRemoteAsset(src)}
+                        className="object-cover"
+                      />
+                    </span>
+                  ))}
+                </span>
+              )}
+            </Link>
+          );
+        })}
       </div>
 
-      <div className="mt-6 flex items-center justify-between gap-4">
+      <div className="project-m-controls">
+        <span className="project-m-controls__count">
+          <span className="project-m-controls__current">
+            {String(active + 1).padStart(2, "0")}
+          </span>
+          <span className="project-m-controls__total">
+            {" / "}
+            {String(projects.length).padStart(2, "0")}
+          </span>
+        </span>
         <div
-          className="flex items-center gap-1.5"
+          className="project-m-controls__dots"
           role="tablist"
           aria-label="Projects"
         >
@@ -464,10 +489,8 @@ function ProjectsCarousel({
               aria-selected={index === active}
               aria-label={`Show ${project.name}`}
               onClick={() => goTo(index)}
-              className={cn(
-                "h-1.5 rounded-full transition-[width,background-color] duration-300 ease-premium",
-                index === active ? "w-5 bg-primary" : "w-1.5 bg-border",
-              )}
+              data-active={index === active || undefined}
+              className="project-m-controls__dot"
             />
           ))}
         </div>
