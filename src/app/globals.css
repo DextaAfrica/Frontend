@@ -2499,6 +2499,97 @@ dialog[open]::backdrop {
   }
 }
 
+/* --- About teaser: wave + droplet background (about-teaser.tsx) ----------
+ * Two SVG wave layers, each built as two identical cycles side by side in
+ * one viewBox — translating exactly -50% is then a perfect seamless loop,
+ * same trick as the marquee tracks elsewhere. Plus a few low-opacity red
+ * "droplet" glows that drift independently via GSAP (see the component). */
+.about-teaser {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+}
+
+.about-teaser__waves {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.about-teaser__wave {
+  position: absolute;
+  left: 0;
+  width: 200%;
+  height: 65%;
+}
+
+.about-teaser__wave--back {
+  bottom: -1rem;
+  fill: rgb(from var(--primary) r g b / 0.05);
+  animation: about-teaser-wave 30s linear infinite;
+}
+
+.about-teaser__wave--front {
+  bottom: -2.5rem;
+  fill: rgb(from var(--primary) r g b / 0.08);
+  animation: about-teaser-wave 20s linear infinite reverse;
+}
+
+@keyframes about-teaser-wave {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.about-teaser__droplets {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.about-teaser__droplet {
+  position: absolute;
+  border-radius: 999px;
+  filter: blur(48px);
+  background: radial-gradient(
+    circle,
+    oklch(from var(--primary) l c h / 0.3),
+    transparent 70%
+  );
+}
+
+.about-teaser__droplet--a {
+  top: 6%;
+  left: 10%;
+  width: 9rem;
+  height: 9rem;
+}
+
+.about-teaser__droplet--b {
+  top: 52%;
+  right: 8%;
+  width: 11rem;
+  height: 11rem;
+}
+
+.about-teaser__droplet--c {
+  bottom: 4%;
+  left: 42%;
+  width: 7rem;
+  height: 7rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .about-teaser__wave {
+    animation: none;
+  }
+}
+
 /* The "About Us" closing line — set apart from the reveal-copy body above it,
    larger and in the editorial serif, carrying the italic accent. */
 .about-statement__kicker {
