@@ -11,6 +11,13 @@ export interface HeroVideoProps {
   video?: string;
   mobileVideo?: string;
   poster: string;
+  /** `object-position` for the poster (and the video, once it loads) — the
+   *  hero frame is almost always wider than the source photo, so `cover`
+   *  crops top/bottom by default around the vertical centre. That's fine
+   *  for a photo with room to spare on both sides, but wrong for one where
+   *  the subject sits close to the top edge (a building's roofline) or the
+   *  bottom — default is the CSS default (`50% 50%`, i.e. centred). */
+  position?: string;
 }
 
 /**
@@ -25,7 +32,12 @@ export interface HeroVideoProps {
  * frame, same colour grade and Ken Burns push-in applied to the poster
  * instead (see `.hero-video-media[data-video="false"]` in globals.css).
  */
-export function HeroVideo({ video, mobileVideo, poster }: HeroVideoProps) {
+export function HeroVideo({
+  video,
+  mobileVideo,
+  poster,
+  position,
+}: HeroVideoProps) {
   const ref = React.useRef<HTMLVideoElement>(null);
   const [ready, setReady] = React.useState(false);
 
@@ -47,6 +59,7 @@ export function HeroVideo({ video, mobileVideo, poster }: HeroVideoProps) {
         fill
         priority
         sizes="100vw"
+        style={position ? { objectPosition: position } : undefined}
         className="hero-video-media__poster object-cover"
         unoptimized={isRemoteAsset(poster)}
       />
@@ -61,6 +74,7 @@ export function HeroVideo({ video, mobileVideo, poster }: HeroVideoProps) {
           aria-hidden="true"
           onCanPlay={() => setReady(true)}
           onError={() => setReady(false)}
+          style={position ? { objectPosition: position } : undefined}
           className="absolute inset-0 size-full object-cover opacity-0 transition-opacity duration-700 ease-out data-[ready=true]:opacity-100"
           data-ready={ready}
         >

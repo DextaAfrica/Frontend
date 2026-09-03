@@ -212,6 +212,7 @@
   --layout-safe-area-mobile: 1.25rem;
   --layout-safe-area-tablet: 2rem;
   --layout-service-panel-height: clamp(42rem, 61vw, 53rem);
+  --layout-contact-map-min-height: clamp(22rem, 50svh, 32rem);
   --layout-stat-card-height: 20.375rem;
   --layout-service-mobile-height: 34rem;
   --layout-service-tablet-height: 38rem;
@@ -282,8 +283,8 @@
   /* -- About page ------------------------------------------------------- */
   /* Closing "pull-lines" — a calm editorial size, well below a headline. */
   --type-about-statement: clamp(1.0625rem, 0.98rem + 0.4vw, 1.375rem);
-  --type-ceo-kicker: clamp(0.9375rem, 0.9rem + 0.15vw, 1.0625rem);
-  --layout-ceo-portrait: clamp(17rem, 32vw, 25rem);
+  --type-ceo-kicker: clamp(1.375rem, 1.15rem + 1vw, 2rem);
+  --layout-ceo-portrait: clamp(16rem, 30vw, 22rem);
   --space-about: clamp(3.5rem, 6.5vw, 6rem);
 }
 
@@ -473,6 +474,7 @@
   --height-newsletter-input: var(--layout-newsletter-input-height);
   --height-mosaic: var(--layout-project-mosaic-height);
   --height-service-panel: var(--layout-service-panel-height);
+  --min-height-contact-map: var(--layout-contact-map-min-height);
   --min-height-page-state: var(--layout-page-state-min-height);
   --min-height-article-media: var(--layout-article-media-min-height);
   --min-height-lifestyle-hero: var(--layout-lifestyle-hero-min-height);
@@ -1292,6 +1294,34 @@ dialog[open]::backdrop {
 
 .project-gallery-thumb:focus-visible {
   outline-color: var(--ring);
+}
+
+/* --- Contact map -------------------------------------------------------- */
+.contact-map {
+  min-height: var(--min-height-contact-map);
+}
+
+.contact-map__frame {
+  border: 0;
+}
+
+/* A frosted-glass card floating over the map's corner — same recipe used
+   elsewhere for a card sitting on top of imagery: a soft top-edge highlight
+   plus a deep drop shadow is what actually reads as "glass" rather than a
+   flat dark overlay. */
+.contact-map-card {
+  border-radius: var(--radius-xl);
+  border: 1px solid rgb(255 255 255 / 0.16);
+  background: linear-gradient(
+    165deg,
+    rgb(255 255 255 / 0.16),
+    rgb(255 255 255 / 0.05)
+  );
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.22),
+    0 24px 60px -24px rgb(0 0 0 / 0.65);
+  backdrop-filter: blur(22px) saturate(150%);
+  -webkit-backdrop-filter: blur(22px) saturate(150%);
 }
 
 .blog-media {
@@ -2813,48 +2843,145 @@ dialog[open]::backdrop {
   pointer-events: none;
 }
 
+/* The envelope mark opening the letter — centred, in its own circular
+   badge, matching the icon-in-a-circle language used for the project
+   detail facts strip elsewhere on the site. */
+.ceo-letter__envelope {
+  display: grid;
+  place-items: center;
+  width: 3.5rem;
+  height: 3.5rem;
+  margin: 0 auto 2rem;
+  border-radius: 999px;
+  background: var(--primary-subtle);
+  color: var(--primary);
+}
+
+/* Two columns from 64rem: the portrait column is *exactly* the portrait's
+   width (a token, not a fraction) so the letter starts right beside it with
+   no dead gap — the misalignment this section had before. */
+.ceo-letter__grid {
+  display: grid;
+  gap: 2.5rem;
+}
+
+@media (min-width: 64rem) {
+  .ceo-letter__grid {
+    grid-template-columns: var(--layout-ceo-portrait) minmax(0, 1fr);
+    gap: clamp(3rem, 5vw, 5rem);
+    align-items: start;
+  }
+}
+
 .ceo-letter__portrait {
   position: relative;
+  width: 100%;
+  max-width: var(--layout-ceo-portrait);
+  margin: 0;
+  aspect-ratio: 3 / 4;
   overflow: hidden;
   border-radius: var(--shape-panel);
   background: var(--muted);
-  box-shadow: var(--card-shadow);
-  clip-path: inset(0 0 0 0);
+  box-shadow: var(--elevation-service-panel);
+}
+
+@media (min-width: 64rem) {
+  .ceo-letter__portrait {
+    position: sticky;
+    top: 7rem;
+    max-width: none;
+  }
 }
 
 .ceo-letter__portrait img {
   object-fit: cover;
+  object-position: center 12%;
 }
 
-/* A deliberately paper-toned plaque so the signature reads the same in both
-   themes — a scanned ink signature can't be recoloured reliably, and a bare
-   PNG would vanish (or box) on the dark surface. */
-.ceo-letter__plaque {
-  display: inline-flex;
+.ceo-letter__portrait-fallback {
+  display: grid;
+  height: 100%;
+  place-items: center;
+  padding: 1.5rem;
+  font-family: var(--font-display);
+  font-size: 0.9375rem;
+  text-align: center;
+  color: var(--muted-foreground);
+}
+
+.ceo-letter__body {
+  display: flex;
   flex-direction: column;
-  gap: 0.5rem;
-  align-self: start;
-  padding: 1rem 1.5rem;
-  border-radius: var(--shape-panel);
-  background: var(--brand-light);
-  color: var(--brand-dark);
-  box-shadow: var(--control-shadow);
+  gap: 1.75rem;
+  max-width: 40rem;
+}
+
+.ceo-letter__prose {
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+}
+
+.ceo-letter__para {
+  font-family: var(--font-sans);
+  font-size: clamp(0.9375rem, 0.9rem + 0.24vw, 1.0625rem);
+  line-height: 1.75;
+  color: rgb(from var(--foreground) r g b / 0.82);
+  text-wrap: pretty;
+}
+
+/* The opening line carries a little more presence than the rest. */
+.ceo-letter__para:first-child {
+  font-size: clamp(1rem, 0.94rem + 0.34vw, 1.1875rem);
+  line-height: 1.6;
+  color: var(--foreground);
+}
+
+.ceo-letter__kicker {
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border);
+  font-family: var(--font-serif);
+  font-size: var(--type-ceo-kicker);
+  font-weight: 500;
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+  color: var(--foreground);
+  text-wrap: balance;
+}
+
+.ceo-letter__sign {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
 }
 
 .ceo-letter__signature {
   width: auto;
-  height: 3.25rem;
+  max-width: 15rem;
+  height: clamp(3.25rem, 2.5rem + 3vw, 5rem);
   object-fit: contain;
   object-position: left center;
+  /* Light: multiply drops any white box behind the ink. Dark: the scanned
+     dark ink is inverted to a light stroke so it stays visible (see .dark). */
   mix-blend-mode: multiply;
 }
 
-.ceo-letter__kicker {
+.dark .ceo-letter__signature {
+  mix-blend-mode: screen;
+  filter: invert(1) brightness(1.75) contrast(1.05);
+}
+
+.ceo-letter__sign-name {
   font-family: var(--font-display);
-  font-size: var(--type-ceo-kicker);
-  font-weight: 500;
-  line-height: 1.4;
-  text-wrap: balance;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--foreground);
+}
+
+.ceo-letter__sign-title {
+  margin-top: 0.15rem;
+  font-size: 0.8125rem;
+  color: var(--muted-foreground);
 }
 
 /* Mission / Vision statement — the panel's content, prominent but not a
@@ -3075,10 +3202,6 @@ dialog[open]::backdrop {
 
 .about-team__card:hover .about-team__media img {
   transform: scale(1.05);
-}
-
-.dark .ceo-letter__signature {
-  mix-blend-mode: normal;
 }
 
 @media (prefers-reduced-motion: reduce) {

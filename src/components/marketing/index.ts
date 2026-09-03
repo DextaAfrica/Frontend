@@ -1,3 +1,4 @@
+export * from "./contact-map";
 export * from "./cta-band";
 export * from "./dexta-clan-band";
 export * from "./expertise-marquee";

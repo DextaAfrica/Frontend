@@ -1,5 +1,14 @@
-export function isRemoteAsset(source: string) {
-  return source.startsWith("https://") || source.startsWith("http://");
+/**
+ * Whether an image path points at an external origin (so `next/image` should
+ * skip optimisation). Null-safe on purpose: the argument usually comes from
+ * content / an optional field / a CMS payload, and a missing value must never
+ * take down a whole page render — an absent path just isn't "remote".
+ */
+export function isRemoteAsset(source: string | null | undefined): boolean {
+  return (
+    typeof source === "string" &&
+    (source.startsWith("https://") || source.startsWith("http://"))
+  );
 }
 
 /**

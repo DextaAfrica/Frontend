@@ -14,7 +14,11 @@ export const aboutPageContent = {
     eyebrow: "About Dexta Africa",
     titleLines: ["We turn intent", "into *ownership*"],
     lede: "A trusted name in African real estate — delivering value-focused services from land acquisition to development and beyond.",
-    image: "/images/about/hero-people.png",
+    // hero-people.png is a background-removed cutout (transparent above the
+    // roofline) meant to be composited onto something else — used directly
+    // as a full-bleed hero poster it painted as a large flat black void
+    // above the house. This is a plain, fully-painted photo instead.
+    image: "/images/about/residential.png",
     // PLACEHOLDER — drop a dedicated About brand film here when it's ready;
     // until then the hero runs as an image background.
     primary: { label: "Explore our projects", href: "/projects" },
@@ -76,7 +80,7 @@ export const aboutPageContent = {
       "That belief still runs through everything we do. We acquire land with diligence, develop with intent, and stay accountable long after the keys change hands. Whether you're investing from another continent, buying your first plot, or learning how the market works for the very first time, you should feel the same clarity and the same respect.",
       "What we've built so far — the estates, the partnerships, the families now settled on land we serviced — is proof that this way of working holds. But it's a foundation, not a finish line.",
     ],
-    kicker: "We're not done yet. We're just getting started.",
+    kicker: "We're not done yet. We're just *getting started*.",
     name: "Mr. Olamide Ojo",
     // PLACEHOLDER TITLE — confirm exact wording with the client.
     title: "Founder & Chief Executive Officer",

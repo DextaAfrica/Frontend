@@ -71,7 +71,9 @@ export const aboutPageContentSchema = z.object({
     // photo file exists at this path.
     portrait: nonEmptyString.optional(),
     signature: nonEmptyString,
-    background: nonEmptyString,
+    // Optional: a faint full-bleed texture behind the letter. Renders at
+    // 5% opacity, so its absence is never visually obvious either way.
+    background: nonEmptyString.optional(),
   }),
   dextaClan: z.object({
     eyebrow: nonEmptyString,
