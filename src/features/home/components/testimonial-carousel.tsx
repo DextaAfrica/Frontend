@@ -327,17 +327,15 @@ export function TestimonialSection({
                 </blockquote>
                 <figcaption
                   data-slide-caption
-                  className="mt-testimonial-meta text-testimonial-author leading-none font-light tracking-testimonial-author uppercase"
+                  className="text-testimonial-author leading-none font-light tracking-testimonial-author uppercase"
                 >
                   <p>{testimonial.author}</p>
                   <p className="mt-2 text-text-subtle">{testimonial.role}</p>
                 </figcaption>
               </figure>
             ))}
-          </div>
 
-          {canCarousel && (
-            <div className="testimonial-controls">
+            {canCarousel && (
               <div
                 ref={dotsRef}
                 className="testimonial-dots"
@@ -379,8 +377,8 @@ export function TestimonialSection({
                   />
                 ))}
               </div>
-            </div>
-          )}
+            )}
+          </div>
         </div>
       </Reveal>
     </Section>

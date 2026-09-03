@@ -11,6 +11,7 @@ import {
   HardHat,
   LandPlot,
   LineChart,
+  MessagesSquare,
   Monitor,
   Mail,
   MapPin,
@@ -31,6 +32,7 @@ import {
   FacebookIcon,
   InstagramIcon,
   LinkedInIcon,
+  WhatsAppIcon,
   YouTubeIcon,
 } from "./brand-icons";
 
@@ -50,11 +52,13 @@ export type IconName =
   | "play"
   | "pause"
   | "badge-check"
+  | "chat"
   | "chevron-down"
   | "clock"
   | "facebook"
   | "instagram"
   | "linkedin"
+  | "whatsapp"
   | "youtube"
   | "land-plot"
   | "development"
@@ -96,11 +100,13 @@ const icons: Record<IconName, ComponentType<GlyphProps>> = {
   play: Play,
   pause: Pause,
   "badge-check": BadgeCheck,
+  chat: MessagesSquare,
   "chevron-down": ChevronDown,
   clock: Clock,
   facebook: FacebookIcon,
   instagram: InstagramIcon,
   linkedin: LinkedInIcon,
+  whatsapp: WhatsAppIcon,
   youtube: YouTubeIcon,
   "land-plot": LandPlot,
   development: HardHat,

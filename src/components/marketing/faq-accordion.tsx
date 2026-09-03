@@ -1,5 +1,5 @@
 import { Grid, Section, Stack } from "@/components/layout";
-import { Badge, EditorialHeading, Icon, Text } from "@/components/ui";
+import { Badge, ButtonLink, Icon, SectionHeading, Text } from "@/components/ui";
 import { Reveal, RevealGroup, RevealItem } from "./reveal";
 
 export interface FaqItem {
@@ -10,27 +10,41 @@ export interface FaqItem {
 export interface FaqAccordionProps {
   items: readonly FaqItem[];
   title?: string;
+  description?: string;
 }
 
 /**
- * The "Got Questions?" section repeated across every page. Built on native
- * <details>/<summary> so it's keyboard- and screen-reader-accessible, and
- * works even before hydration.
+ * The FAQ section. Built on native <details>/<summary> so it's keyboard- and
+ * screen-reader-accessible and works before hydration. The heading is the sans
+ * `SectionHeading` (the whole thing was Playfair before and read poorly); the
+ * `*word*` accent still renders in the shared red Playfair-italic treatment,
+ * the same as every other section heading on the page.
  */
 export function FaqAccordion({
   items,
-  title = "Got *Questions*?",
+  title = "Your questions, *answered*.",
+  description = "Everything you need to know about buying land and property with Dexta. Can't find your answer here?",
 }: FaqAccordionProps) {
   return (
     <Section tone="surface" aria-labelledby="faq-heading">
       <Grid columns="two" gap="xl" className="items-start">
         <Reveal>
-          <Stack gap="md" className="lg:sticky lg:top-28">
+          <Stack gap="lg" className="lg:sticky lg:top-28">
             <Badge variant="outline" className="w-fit gap-1.5">
               <Icon name="quote" size={12} />
               FAQ
             </Badge>
-            <EditorialHeading id="faq-heading">{title}</EditorialHeading>
+            <SectionHeading id="faq-heading">{title}</SectionHeading>
+            <Text className="max-w-sm">{description}</Text>
+            <ButtonLink
+              href="/contact"
+              variant="secondary"
+              size="md"
+              className="w-fit"
+            >
+              Talk to our team
+              <Icon name="arrow-right" />
+            </ButtonLink>
           </Stack>
         </Reveal>
 

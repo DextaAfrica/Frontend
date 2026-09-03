@@ -34,6 +34,18 @@
   --control-pressed: #e2e0da;
   --control-disabled: #f0efec;
   --control-disabled-foreground: #9c988f;
+  /* Bordered buttons (secondary): the outline is near-black on the light
+     theme (matching the neutral palette) and brand red under dark — see the
+     .dark override. */
+  --control-border: rgb(from var(--foreground) r g b / 0.3);
+  --control-border-hover: rgb(from var(--foreground) r g b / 0.6);
+  /* Header nav links. Light theme reads as editorial — muted grey text that
+     firms to near-black on hover/active, with brand red kept to the animated
+     underline. Dark theme leans into the red: the text itself goes red on
+     hover/active (see the .dark override, and the [data-overlays-hero]
+     override in the .site-header block for links sitting over the hero). */
+  --nav-fg: var(--muted-foreground);
+  --nav-fg-strong: var(--foreground);
   --control-shadow: 0 1px 2px rgb(20 18 14 / 0.07);
   --control-shadow-hover: 0 10px 24px rgb(20 18 14 / 0.13);
   --control-shadow-glow: 0 8px 22px oklch(from var(--primary) l c h / 0.3);
@@ -92,6 +104,7 @@
   /* -- Typography: fonts, plus small global type/tracking values --------- */
   --type-control: clamp(0.75rem, 0.73rem + 0.09vw, 0.8125rem);
   --type-control-compact: 0.6875rem;
+  --type-nav-link: clamp(0.8125rem, 0.78rem + 0.16vw, 0.875rem);
   --type-status: 0.6875rem;
   --type-body-small: clamp(0.8125rem, 0.75rem + 0.28vw, 1rem);
   --type-navigation-display: clamp(1.375rem, 1.2rem + 0.75vw, 1.875rem);
@@ -120,6 +133,9 @@
   --brand-light: #f8f8f7;
   --text-subtle: #666666;
   --stat-value-glow: none;
+  /* The drifting fog tint on the statistics cards — a warm paper-smoke on the
+     light theme, swapped for a cooler blue-grey under dark (see `.dark`). */
+  --stat-fog-tint: #ece7dd;
   /* There is one brand red: the semantic `--primary` scale below. Raw CSS that
      needs it references `var(--primary)` directly — no separate accent token. */
 
@@ -129,7 +145,7 @@
    * designs. Grouped here so the component classes further down stay small;
    * most are mapped to a utility in the @theme block and consumed as e.g.
    * `min-h-service-panel`, `max-w-editorial-heading`, `py-section-editorial`.  */
-  --section-intro-height: clamp(26rem, 35vw, 32rem);
+  --section-intro-height: clamp(24rem, 38vh, 32rem);
   --scroll-copy-size: clamp(1rem, 0.91rem + 0.38vw, 1.25rem);
   /* Floor lowered from 2.25rem: at ~375px the old floor left roughly 335px
      of column width (after Container's padding) against a longer slide
@@ -137,7 +153,7 @@
      it would wrap inside the hero's single-line reveal mask and clip.
      3.8vw overtakes this floor well before it'd ever visibly shrink a
      wider viewport, so this only changes narrow phones. */
-  --type-hero: clamp(1.5rem, 1.15rem + 1.5vw, 2.5rem);
+  --type-hero: clamp(1.875rem, 1.3rem + 2.2vw, 3.25rem);
   --letter-spacing-hero: -0.02em;
   --letter-spacing-heading: -0.04em;
   --line-height-heading: 1.02;
@@ -243,7 +259,12 @@
   --elevation-service-panel: 0 12px 32px rgb(20 18 14 / 0.12);
   --elevation-service-row: 0 6px 20px rgb(20 18 14 / 0.1);
   --layer-header: 70;
+  /* Chat launcher: above page content, below the consent notice (you don't
+     need chat during the consent moment) and below the mobile nav. Its open
+     panel bumps itself to --layer-chat-open. */
+  --layer-chat: 75;
   --layer-notice: 80;
+  --layer-chat-open: 85;
   /* Above the header and the consent notice: while the mobile menu is open
      it is the only thing on screen, full-bleed and opaque. */
   --layer-navigation: 90;
@@ -275,6 +296,9 @@
   --control-pressed: #383129;
   --control-disabled: #211e1a;
   --control-disabled-foreground: #756d64;
+  /* Bordered buttons go brand red under dark (near-black outline on light). */
+  --control-border: rgb(from var(--primary) r g b / 0.6);
+  --control-border-hover: var(--primary);
   --control-shadow: 0 1px 2px rgb(0 0 0 / 0.4);
   --control-shadow-hover: 0 14px 30px rgb(0 0 0 / 0.5);
   --control-shadow-glow: 0 10px 26px oklch(from var(--primary) l c h / 0.45);
@@ -291,6 +315,8 @@
     var(--surface);
   --text-subtle: #909090;
   --hero-copy: #eef2f6;
+  --nav-fg: rgb(from var(--foreground) r g b / 0.72);
+  --nav-fg-strong: var(--primary);
 
   --primary: oklch(0.64 0.225 25);
   --primary-hover: oklch(0.7 0.205 25);
@@ -303,6 +329,7 @@
   --warning: oklch(0.78 0.15 80);
   --warning-subtle: oklch(0.27 0.05 70);
   --stat-value-glow: 0 0 28px oklch(from var(--primary) l c h / 0.55);
+  --stat-fog-tint: #cdd3dd;
 }
 
 /* ===========================================================================
@@ -324,6 +351,8 @@
   --color-control-pressed: var(--control-pressed);
   --color-control-disabled: var(--control-disabled);
   --color-control-disabled-foreground: var(--control-disabled-foreground);
+  --color-control-border: var(--control-border);
+  --color-control-border-hover: var(--control-border-hover);
   --color-primary: var(--primary);
   --color-primary-hover: var(--primary-hover);
   --color-primary-foreground: var(--primary-foreground);
@@ -370,6 +399,7 @@
   --text-service-tab-number: var(--type-service-tab-number);
   --text-control: var(--type-control);
   --text-control-compact: var(--type-control-compact);
+  --text-nav-link: var(--type-nav-link);
   --text-status: var(--type-status);
   --text-body-small: var(--type-body-small);
   --text-navigation-display: var(--type-navigation-display);
@@ -571,28 +601,88 @@ body {
   }
 }
 
-.stat-mist-primary {
-  top: -20%;
-  left: 10%;
-  background: var(--mist-strong);
+/* --- Statistics cards -------------------------------------------------- *
+ * Each card is its own photo (stat.image), held to a rich cinematic dark on
+ * either theme so the value + copy always read; only the section around them
+ * follows the theme. Over the photo: a very slow push-in, then two soft
+ * gradient "fog" fields drifting on their own long loops — atmosphere, like
+ * haze on a lens, rather than the hard white blobs this used to have. */
+.stat-card__image {
+  animation: stat-card-drift 34s var(--motion-ease-premium) alternate infinite;
 }
 
-.stat-mist-secondary {
-  top: 30%;
-  right: -10%;
-  background: var(--mist-medium);
+.stat-card__scrim {
+  background:
+    linear-gradient(
+      to top,
+      rgb(8 8 8 / 0.9) 0%,
+      rgb(8 8 8 / 0.56) 42%,
+      rgb(8 8 8 / 0.22) 78%,
+      rgb(8 8 8 / 0.36) 100%
+    ),
+    radial-gradient(130% 90% at 50% 118%, transparent 42%, rgb(8 8 8 / 0.4));
 }
 
-.stat-mist-tertiary {
-  bottom: -15%;
-  left: 35%;
-  background: var(--mist-soft);
+.stat-card__fog {
+  mix-blend-mode: screen;
+  opacity: 0.5;
+  transition: opacity 900ms var(--motion-ease-premium);
 }
 
-.stat-mist-quaternary {
-  top: 10%;
-  right: 20%;
-  background: var(--mist-medium);
+.stat-fog {
+  position: absolute;
+  inset: -32%;
+  border-radius: 42%;
+  filter: blur(38px);
+  will-change: transform;
+}
+
+.stat-fog--a {
+  background:
+    radial-gradient(
+      46% 56% at 24% 30%,
+      rgb(from var(--stat-fog-tint) r g b / 0.55),
+      transparent 70%
+    ),
+    radial-gradient(
+      40% 46% at 72% 66%,
+      rgb(from var(--stat-fog-tint) r g b / 0.4),
+      transparent 72%
+    );
+  animation: stat-fog-a 26s ease-in-out infinite alternate;
+}
+
+.stat-fog--b {
+  opacity: 0.82;
+  background:
+    radial-gradient(
+      50% 46% at 66% 24%,
+      rgb(from var(--stat-fog-tint) r g b / 0.46),
+      transparent 72%
+    ),
+    radial-gradient(
+      40% 52% at 28% 72%,
+      rgb(from var(--stat-fog-tint) r g b / 0.3),
+      transparent 70%
+    );
+  animation: stat-fog-b 35s ease-in-out infinite alternate;
+}
+
+.stat-card:hover .stat-card__fog {
+  opacity: 0.72;
+}
+
+@media (max-width: 47.999rem) {
+  .stat-fog {
+    filter: blur(26px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stat-card__image,
+  .stat-fog {
+    animation: none;
+  }
 }
 
 @media (min-width: 40rem) {
@@ -741,20 +831,17 @@ dialog[open]::backdrop {
 
 /* The hero's opening slide ("Welcome to Dexta Africa") reads as the site's
    statement of intent, so it carries more weight than the slides that
-   follow it — heavier, tighter, a touch larger. An attribute selector on
+   follow it — heavier and a touch tighter. It stays the SAME size as every
+   other slide (only ~0.2rem larger, and at every viewport, not just wide
+   ones) so cycling between slides never lurches. An attribute selector on
    the element itself (rather than another utility class) beats
    HeroHeading's own font-semibold/text-hero on specificity alone, no
    !important needed, regardless of which rule the stylesheet declares
    later — see the cn()-isn't-a-merge notes elsewhere in this file. */
 .dexta-hero h1[data-commanding] {
+  font-size: clamp(2rem, 1.45rem + 2.3vw, 3.5rem);
   font-weight: 800;
   letter-spacing: -0.03em;
-}
-
-@media (min-width: 40rem) {
-  .dexta-hero h1[data-commanding] {
-    font-size: clamp(1.75rem, 1.35rem + 1.69vw, 2.875rem);
-  }
 }
 
 /* Hero eyebrow badge: a recurring diagonal light sweep, independent of the
@@ -861,9 +948,11 @@ dialog[open]::backdrop {
 }
 
 /* The "Now Selling" chip: a glass shimmer, reused wherever a project's live
-   status needs to sit directly on top of its photography. */
+   status needs to sit directly on top of its photography. The caller owns
+   `position` (always an `absolute` utility) — declaring `position: relative`
+   here is unlayered and silently beat that utility, dropping the chip into
+   normal flow at the top-left where `right-*` then shoved it off the edge. */
 .project-badge {
-  position: relative;
   overflow: hidden;
   isolation: isolate;
 }
@@ -899,10 +988,39 @@ dialog[open]::backdrop {
   animation: hero-kenburns 24s var(--motion-ease-premium) alternate infinite;
 }
 
+/* Pre-JS / reduced-motion resting state: only the first photo shows. Once
+   the component sets `data-armed`, GSAP owns every layer's opacity. */
+.project-stage:not([data-armed]) [data-stage-image] {
+  opacity: 0;
+}
+
+.project-stage:not([data-armed]) [data-stage-image]:first-child {
+  opacity: 1;
+}
+
+/* Belt-and-braces: the photo always covers the stage, whatever its ratio. */
+.project-stage [data-stage-image] img {
+  object-fit: cover;
+  object-position: center;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .project-stage-media {
     animation: none;
   }
+}
+
+/* Mobile project carousel (featured-projects-section.tsx): a horizontal
+   snap-scroller with the scrollbar hidden — the peeking next card and the
+   dot indicators below are the affordance. */
+.project-carousel {
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+  scroll-padding-inline: 0;
+}
+
+.project-carousel::-webkit-scrollbar {
+  display: none;
 }
 
 .project-index-row {
@@ -910,7 +1028,7 @@ dialog[open]::backdrop {
   display: flex;
   align-items: center;
   gap: 1.25rem;
-  padding-block: 1.5rem;
+  padding-block: 1.15rem;
   border-bottom: 1px solid var(--border);
 }
 
@@ -1058,11 +1176,12 @@ dialog[open]::backdrop {
 
 .site-header {
   --header-progress: 0;
+  --header-base-height: 4.5rem;
   position: fixed;
   inset-inline: 0;
   top: 0;
   z-index: var(--layer-header);
-  height: calc(5rem - var(--header-progress) * 1.1rem);
+  height: calc(var(--header-base-height) - var(--header-progress) * 0.9rem);
   color: var(--foreground);
   background: rgb(
     from var(--background) r g b / calc(var(--header-progress) * 0.82)
@@ -1070,6 +1189,12 @@ dialog[open]::backdrop {
   backdrop-filter: blur(calc(var(--header-progress) * 14px));
   -webkit-backdrop-filter: blur(calc(var(--header-progress) * 14px));
   transition: --header-progress 340ms var(--motion-ease-premium);
+}
+
+@media (min-width: 40rem) {
+  .site-header {
+    --header-base-height: 5rem;
+  }
 }
 
 .site-header::after {
@@ -1091,9 +1216,12 @@ dialog[open]::backdrop {
   --header-progress: 1;
 }
 
-/* Over the hero video: light text, chrome fades in only on scroll. */
+/* Over the hero video: light text, chrome fades in only on scroll, and the
+   nav links switch to a light-on-media palette (the red underline stays). */
 .site-header[data-overlays-hero="true"] {
   color: var(--brand-light);
+  --nav-fg: rgb(from var(--brand-light) r g b / 0.78);
+  --nav-fg-strong: var(--brand-light);
 }
 
 .site-header__logo {
@@ -1101,9 +1229,61 @@ dialog[open]::backdrop {
   transition: color 300ms var(--motion-ease-premium);
 }
 
+/* --- Header nav links --------------------------------------------------- *
+ * Colour is theme-driven (`--nav-fg` / `--nav-fg-strong`, see the token
+ * defs + the .dark and [data-overlays-hero] overrides). The underline is a
+ * child span animated on `transform` only — compositor-cheap — growing from
+ * the centre on hover/focus and held open on the current page. */
+.site-header__link {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  padding-block: 0.35rem;
+  font-size: var(--type-nav-link);
+  font-weight: 500;
+  letter-spacing: -0.005em;
+  white-space: nowrap;
+  color: var(--nav-fg);
+  transition: color 240ms var(--motion-ease-premium);
+}
+
+.site-header__link:hover,
+.site-header__link:focus-visible,
+.site-header__link[aria-current="page"] {
+  color: var(--nav-fg-strong);
+}
+
+.site-header__link:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 4px;
+  border-radius: 2px;
+}
+
+.site-header__underline {
+  position: absolute;
+  inset-inline: 0;
+  bottom: -0.15rem;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--primary);
+  transform: scaleX(0);
+  transform-origin: 50% 50%;
+  transition: transform 260ms var(--motion-ease-premium);
+  pointer-events: none;
+}
+
+.site-header__link:hover .site-header__underline,
+.site-header__link:focus-visible .site-header__underline,
+.site-header__link[aria-current="page"] .site-header__underline {
+  transform: scaleX(1);
+}
+
 @media (prefers-reduced-motion: reduce) {
   .site-header {
     transition-duration: 1ms;
+  }
+  .site-header__underline {
+    transition: none;
   }
   .hero-video-media video {
     animation: none;
@@ -1257,6 +1437,73 @@ dialog[open]::backdrop {
 @media (prefers-reduced-motion: reduce) {
   .theme-toggle__thumb {
     transition-duration: 1ms;
+  }
+}
+
+/* --- Theme toggle: compact variant (header bar) ----------------------------
+ * A single square icon button that cycles light → dark → system. Same
+ * bordered chrome language as the segmented control; the icon swaps with a
+ * quick rotate-in on every change (keyed off `data-theme` in the markup). */
+.theme-toggle-compact {
+  display: grid;
+  place-items: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border: 1px solid rgb(from var(--foreground) r g b / 0.14);
+  border-radius: var(--control-radius);
+  background: rgb(from var(--foreground) r g b / 0.05);
+  color: var(--foreground);
+  transition:
+    background-color 220ms var(--motion-ease-premium),
+    border-color 220ms var(--motion-ease-premium),
+    color 220ms var(--motion-ease-premium);
+}
+
+.theme-toggle-compact:hover {
+  border-color: rgb(from var(--foreground) r g b / 0.28);
+  background: rgb(from var(--foreground) r g b / 0.09);
+}
+
+.theme-toggle-compact:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+.theme-toggle-compact__glyph {
+  display: grid;
+  place-items: center;
+  animation: theme-glyph-in 320ms var(--motion-ease-premium);
+}
+
+.theme-toggle-compact[data-on-media="true"] {
+  border-color: rgb(from var(--brand-light) r g b / 0.28);
+  background: rgb(from var(--brand-light) r g b / 0.1);
+  color: var(--brand-light);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+
+.theme-toggle-compact[data-on-media="true"]:hover {
+  border-color: rgb(from var(--brand-light) r g b / 0.5);
+  background: rgb(from var(--brand-light) r g b / 0.18);
+}
+
+@keyframes theme-glyph-in {
+  from {
+    opacity: 0;
+    transform: rotate(-90deg) scale(0.6);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .theme-toggle-compact,
+  .theme-toggle-compact__glyph {
+    transition: none;
+    animation: none;
   }
 }
 
@@ -1540,8 +1787,17 @@ dialog[open]::backdrop {
   display: grid;
 }
 
+/* Every slide is a flex column so its caption can be pinned to the bottom
+   (`margin-top: auto`) — that's the band the dots align to from 40rem up. */
 .testimonial-stage > [data-slide] {
   grid-area: 1 / 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.testimonial-stage > [data-slide] [data-slide-caption] {
+  margin-top: auto;
+  padding-top: var(--space-testimonial-meta);
 }
 
 .testimonial-stage:not([data-animated]) > [data-slide][data-active="false"] {
@@ -1560,23 +1816,29 @@ dialog[open]::backdrop {
   letter-spacing: 0.02em;
 }
 
-.testimonial-controls {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: clamp(1rem, 3vw, 2rem);
-  margin-top: var(--space-testimonial-meta);
-}
-
+/* The dots are a grid child of .testimonial-stage. Default (narrow screens):
+   a centred row below the slides. From 40rem up: overlaid at the bottom-right
+   of the stage, inline with the author/role caption on the opposite side. */
 .testimonial-dots {
   --testimonial-progress: 0;
   --dot-size: 0.5rem;
-  --dot-gap: clamp(1.75rem, 5vw, 3rem);
+  --dot-gap: clamp(1.25rem, 4vw, 2.25rem);
   position: relative;
   display: flex;
   align-items: center;
   gap: var(--dot-gap);
   padding-block: 0.75rem;
+  justify-self: center;
+  margin-top: var(--space-testimonial-meta);
+}
+
+@media (min-width: 40rem) {
+  .testimonial-dots {
+    grid-area: 1 / 1;
+    align-self: end;
+    justify-self: end;
+    margin-top: 0;
+  }
 }
 
 .testimonial-track,
@@ -1746,7 +2008,7 @@ dialog[open]::backdrop {
    never loses the spaces the way adjacent margined inline-blocks would. */
 .scroll-reveal-word {
   display: inline-block;
-  will-change: opacity, transform, filter;
+  will-change: opacity, transform;
 }
 
 @media (max-width: 767px) {
@@ -1898,97 +2160,149 @@ dialog[open]::backdrop {
   }
 }
 
-/* --- Press logos ("As featured in") ---------------------------------------
- * Deliberately not a text ticker: one quiet label, then a row of real logo
- * tiles built on the site's own `Card` surface. See press-logos.tsx for the
- * DOM structure and the entrance/hover choreography. */
-.press-logos {
+/* --- Press marquee ("As featured in") -----------------------------------
+ * A slim credibility strip directly under the hero: one quiet mono label,
+ * then a continuously scrolling row of press marks. Same seamless-loop
+ * mechanism as the expertise marquee (real list + aria-hidden copies,
+ * track translated exactly -50%), pure CSS scroll, edges masked. Kept
+ * deliberately short — it earns its place by being glanceable, not tall. */
+.press-marquee {
   position: relative;
   isolation: isolate;
+  overflow: hidden;
+  padding-block: clamp(1.75rem, 3vw, 2.5rem);
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+}
+
+.press-marquee__inner {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 2.25rem;
-  padding-block: clamp(3rem, 5vw, 4rem);
-  background: var(--surface);
+  gap: 1.25rem;
 }
 
-.press-logos__signal {
-  display: flex;
+.press-marquee__signal {
+  display: inline-flex;
   align-items: center;
-  justify-content: center;
-  gap: 0.625rem;
+  gap: 0.5rem;
 }
 
-.press-logos__dot {
+.press-marquee__dot {
   flex-shrink: 0;
-  width: 0.5rem;
-  height: 0.5rem;
+  width: 0.4375rem;
+  height: 0.4375rem;
   border-radius: 999px;
   background: var(--primary);
-  box-shadow: 0 0 0 4px rgb(from var(--primary) r g b / 0.2);
+  box-shadow: 0 0 0 3px rgb(from var(--primary) r g b / 0.2);
   animation: expertise-pulse 2.2s ease-in-out infinite;
 }
 
-.press-logos__label {
+.press-marquee__label {
   font-family: var(--font-mono);
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   font-weight: 600;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.14em;
   color: var(--muted-foreground);
   text-transform: uppercase;
 }
 
-.press-logos__grid {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: stretch;
-  justify-content: center;
-  gap: 1rem;
+.press-marquee__viewport {
+  position: relative;
   width: 100%;
+  overflow: hidden;
+  mask-image: linear-gradient(
+    to right,
+    transparent,
+    black 10%,
+    black 90%,
+    transparent
+  );
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent,
+    black 10%,
+    black 90%,
+    transparent
+  );
 }
 
-.press-logos__tile {
-  width: 9.5rem;
+/* No flex `gap` here on purpose: the seamless -50% loop needs the track's
+   second half to be a pixel-exact copy of the first, so the spacing lives
+   as symmetric padding on each item instead (same reason the expertise
+   marquee spaces its items this way). */
+.press-marquee__track {
+  display: flex;
+  width: max-content;
+  align-items: center;
+  animation: press-marquee-scroll 42s linear infinite;
+}
+
+.press-marquee:hover .press-marquee__track {
+  animation-play-state: paused;
+}
+
+.press-marquee__item {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  padding-inline: clamp(1.5rem, 3.2vw, 2.75rem);
+}
+
+.press-marquee__logo {
+  width: auto;
+  height: 1.375rem;
+  object-fit: contain;
+  filter: grayscale(1);
+  opacity: 0.5;
+  transition:
+    opacity 300ms var(--motion-ease-premium),
+    filter 300ms var(--motion-ease-premium);
 }
 
 @media (min-width: 40rem) {
-  .press-logos__tile {
-    width: 10.5rem;
+  .press-marquee__logo {
+    height: 1.625rem;
   }
 }
 
-.press-logos__card {
-  display: flex;
-  height: 6rem;
-  width: 100%;
-  align-items: center;
-  justify-content: center;
-  padding: 1.25rem;
-}
-
-.press-logos__mark {
-  position: relative;
-  width: 100%;
-  height: 100%;
-}
-
-.press-logos__image {
-  filter: grayscale(1);
-  opacity: 0.6;
-  transition:
-    opacity 400ms var(--motion-ease-premium),
-    filter 400ms var(--motion-ease-premium);
-}
-
-.press-logos__card:hover .press-logos__image {
+.press-marquee__item:hover .press-marquee__logo {
   filter: grayscale(0);
   opacity: 1;
 }
 
+/* Black source files need inverting to stay legible on the dark theme. */
+.dark .press-marquee__logo {
+  filter: grayscale(1) invert(1) brightness(1.7);
+  opacity: 0.68;
+}
+
+.dark .press-marquee__item:hover .press-marquee__logo {
+  filter: invert(1) brightness(2);
+  opacity: 1;
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .press-logos__dot {
+  .press-marquee__track {
     animation: none;
+    flex-wrap: wrap;
+    justify-content: center;
+    row-gap: 1.25rem;
+  }
+  .press-marquee__track [data-duplicate] {
+    display: none;
+  }
+  .press-marquee__dot {
+    animation: none;
+  }
+}
+
+@keyframes press-marquee-scroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
   }
 }
 
@@ -2310,6 +2624,357 @@ dialog[open]::backdrop {
   animation: expertise-pulse 2.2s ease-in-out infinite;
 }
 
+/* --- Chat concierge widget (src/components/chat/chat-widget.tsx) --------- *
+ * Floating launcher, bottom-right on every page, with a non-modal panel.
+ * Every colour is a semantic token, so light and dark both work untouched;
+ * the one exception is a faint WhatsApp green on that action, which is a
+ * recognised brand mark rather than a theme colour. The panel width is a
+ * `min()` of a fixed size and the viewport, so it's responsive with no
+ * breakpoint — near-full-width on a phone, a 22rem card on desktop. */
+.chat-widget {
+  position: fixed;
+  right: max(1rem, env(safe-area-inset-right));
+  bottom: max(1rem, env(safe-area-inset-bottom));
+  z-index: var(--layer-chat);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.75rem;
+}
+
+.chat-widget--open {
+  z-index: var(--layer-chat-open);
+}
+
+.chat-launcher {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 3.5rem;
+  height: 3.5rem;
+  border-radius: 999px;
+  background: var(--primary);
+  color: var(--primary-foreground);
+  box-shadow:
+    var(--control-shadow-glow),
+    0 10px 28px rgb(0 0 0 / 0.2);
+  transition:
+    transform 240ms var(--motion-ease-premium),
+    background-color 240ms var(--motion-ease-premium);
+  /* Bounces in a beat after the page settles; `backwards` holds it hidden
+     during the delay, then it hands `transform` back so hover/press work. */
+  animation: chat-launcher-in 760ms var(--motion-ease-premium) 400ms backwards;
+}
+
+.chat-launcher:hover {
+  transform: translateY(-2px) scale(1.03);
+  background: var(--primary-hover);
+}
+
+.chat-launcher:active {
+  transform: scale(0.96);
+}
+
+.chat-launcher:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 3px;
+}
+
+/* First-visit attention: the whole button hops a few times (decaying), with
+   a rest between runs. `--nudge` is dropped the moment the pointer nears the
+   widget or on any interaction, so this never fights the hover transform. */
+.chat-widget--nudge .chat-launcher {
+  animation: chat-bounce 2.9s var(--motion-ease-premium) infinite;
+}
+
+.chat-launcher__ring {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  border: 2px solid var(--primary);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.chat-widget--nudge .chat-launcher__ring {
+  animation: chat-ping 2.9s var(--motion-ease-premium) infinite;
+}
+
+.chat-panel {
+  display: flex;
+  flex-direction: column;
+  width: min(22rem, calc(100vw - 2rem));
+  max-height: min(34rem, calc(100dvh - 5.5rem));
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: var(--shape-panel);
+  background: var(--surface-elevated);
+  color: var(--foreground);
+  box-shadow: 0 24px 60px rgb(0 0 0 / 0.24);
+  transform-origin: bottom right;
+  animation: chat-panel-in 220ms var(--motion-ease-premium);
+}
+
+.chat-panel__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 1.125rem;
+  background: var(--primary);
+  color: var(--primary-foreground);
+}
+
+.chat-panel__title {
+  font-family: var(--font-display);
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.chat-panel__meta {
+  margin-top: 0.2rem;
+  font-size: 0.7rem;
+  line-height: 1.35;
+  opacity: 0.82;
+}
+
+.chat-panel__close {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: 999px;
+  color: inherit;
+  transition: background-color 200ms var(--motion-ease-premium);
+}
+
+.chat-panel__close:hover {
+  background: rgb(255 255 255 / 0.16);
+}
+
+.chat-panel__body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.875rem;
+  padding: 1rem 1.125rem 1.125rem;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.chat-panel__row {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.chat-action {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  padding: 0.75rem 0.875rem;
+  border: 1px solid var(--border);
+  border-radius: calc(var(--shape-panel) + 0.2rem);
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--foreground);
+  transition:
+    border-color 200ms var(--motion-ease-premium),
+    background-color 200ms var(--motion-ease-premium);
+}
+
+.chat-action:hover {
+  border-color: var(--primary);
+  background: var(--primary-subtle);
+}
+
+.chat-action__go {
+  margin-left: auto;
+  color: var(--primary);
+}
+
+.chat-action--wa {
+  border-color: rgb(37 211 102 / 0.45);
+  background: rgb(37 211 102 / 0.08);
+}
+
+.chat-action--wa:hover {
+  border-color: rgb(37 211 102 / 0.85);
+  background: rgb(37 211 102 / 0.14);
+}
+
+/* The WhatsApp mark keeps its own brand green so it's recognisable at a
+   glance — a trust cue, not a theme colour. */
+.chat-action__wa {
+  color: #25d366;
+}
+
+.chat-action--sm {
+  flex: 1;
+  justify-content: center;
+  gap: 0.375rem;
+  padding-inline: 0.5rem;
+  font-size: 0.78rem;
+}
+
+.chat-panel__label {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted-foreground);
+}
+
+.chat-panel__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.chat-chip {
+  padding: 0.35rem 0.7rem;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  font-size: 0.72rem;
+  color: var(--muted-foreground);
+  transition:
+    border-color 200ms var(--motion-ease-premium),
+    color 200ms var(--motion-ease-premium);
+}
+
+.chat-chip:hover {
+  border-color: var(--primary);
+  color: var(--foreground);
+}
+
+.chat-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.chat-input {
+  width: 100%;
+  padding: 0.6rem 0.75rem;
+  border: 1px solid var(--input);
+  border-radius: calc(var(--shape-panel) + 0.15rem);
+  background: var(--background);
+  font-size: 0.85rem;
+  color: var(--foreground);
+}
+
+.chat-input::placeholder {
+  color: var(--muted-foreground);
+}
+
+.chat-input:focus-visible {
+  border-color: transparent;
+  outline: 2px solid var(--ring);
+  outline-offset: 1px;
+}
+
+.chat-input--area {
+  min-height: 3.5rem;
+  resize: vertical;
+}
+
+.chat-form__hp {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.chat-form__feedback {
+  font-size: 0.78rem;
+  line-height: 1.4;
+}
+
+@keyframes chat-ping {
+  0% {
+    opacity: 0.6;
+    transform: scale(1);
+  }
+  70%,
+  100% {
+    opacity: 0;
+    transform: scale(1.65);
+  }
+}
+
+@keyframes chat-panel-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes chat-launcher-in {
+  0% {
+    opacity: 0;
+    transform: translateY(20px) scale(0.3);
+  }
+  55% {
+    opacity: 1;
+    transform: translateY(-9px) scale(1.14);
+  }
+  72% {
+    transform: translateY(4px) scale(0.93);
+  }
+  86% {
+    transform: translateY(-2px) scale(1.03);
+  }
+  100% {
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes chat-bounce {
+  0%,
+  44%,
+  100% {
+    transform: translateY(0);
+  }
+  10% {
+    transform: translateY(-38%);
+  }
+  21% {
+    transform: translateY(0);
+  }
+  28% {
+    transform: translateY(-16%);
+  }
+  35% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-5%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .chat-panel,
+  .chat-launcher,
+  .chat-widget--nudge .chat-launcher,
+  .chat-widget--nudge .chat-launcher__ring {
+    animation: none;
+  }
+  .chat-launcher,
+  .chat-launcher:hover,
+  .chat-launcher:active {
+    transform: none;
+    transition: none;
+  }
+}
+
 /* ===========================================================================
    4c. KEYFRAMES
    =========================================================================== */
@@ -2319,6 +2984,34 @@ dialog[open]::backdrop {
   }
   to {
     transform: scale(1.08);
+  }
+}
+
+/* Statistics-card fog: transform-only drift so it stays on the compositor. */
+@keyframes stat-card-drift {
+  from {
+    transform: scale(1);
+  }
+  to {
+    transform: scale(1.07);
+  }
+}
+
+@keyframes stat-fog-a {
+  from {
+    transform: translate3d(-4%, 3%, 0) scale(1) rotate(0deg);
+  }
+  to {
+    transform: translate3d(6%, -5%, 0) scale(1.18) rotate(8deg);
+  }
+}
+
+@keyframes stat-fog-b {
+  from {
+    transform: translate3d(5%, -3%, 0) scale(1.1) rotate(0deg);
+  }
+  to {
+    transform: translate3d(-6%, 5%, 0) scale(1) rotate(-6deg);
   }
 }
 

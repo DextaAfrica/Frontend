@@ -75,9 +75,11 @@ const variants: Record<ButtonVariant, string> = {
     "bg-primary text-primary-foreground shadow-[var(--control-shadow)] hover:-translate-y-0.5 hover:bg-primary-hover hover:shadow-[var(--control-shadow-glow)] active:translate-y-0 active:shadow-[var(--control-shadow)]",
   // Bordered, not filled — the secondary action beside a primary one.
   // Transparent at rest so it never competes with the fill next to it;
-  // hover firms the border and lifts a soft fill in behind it.
+  // hover firms the border and lifts a soft fill in behind it. The border
+  // colour is theme-driven (`--control-border`): near-black on the light
+  // theme, brand red under dark.
   secondary:
-    "border border-border bg-transparent text-foreground hover:-translate-y-0.5 hover:border-foreground/25 hover:bg-control-hover hover:shadow-[var(--control-shadow-hover)] active:translate-y-0 active:bg-control-pressed",
+    "border border-control-border bg-transparent text-foreground hover:-translate-y-0.5 hover:border-control-border-hover hover:bg-control-hover hover:shadow-[var(--control-shadow-hover)] active:translate-y-0 active:bg-control-pressed",
   // Inverted fill — near-black on paper / near-white on ink.
   neutral:
     "bg-foreground text-background shadow-[var(--control-shadow)] hover:-translate-y-0.5 hover:bg-foreground/90 hover:shadow-[var(--control-shadow-hover)] active:translate-y-0 active:shadow-[var(--control-shadow)]",

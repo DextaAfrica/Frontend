@@ -4,11 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import * as React from "react";
 import { Section } from "@/components/layout";
-import {
-  EditorialSectionHeading,
-  RevealGroup,
-  RevealItem,
-} from "@/components/marketing";
+import { EditorialSectionHeading, Reveal } from "@/components/marketing";
 import { ButtonLink, Icon } from "@/components/ui";
 import { gsap, useGSAP } from "@/lib/gsap";
 import { isRemoteAsset } from "@/lib/media";
@@ -31,8 +27,8 @@ function reducedMotion() {
  *
  * The numbered rows and the closing rule + "view all" link at the bottom of
  * the list give the section an obvious start and end, rather than just
- * trailing off into whatever comes next. Every animated property here is
- * transform/opacity/filter — compositor-only — and every interaction has a
+ * trailing off into whatever comes next. Everything animates transform +
+ * opacity only (no blur on the photo container), and every interaction has a
  * static, fully visible resting state so a failed or skipped animation never
  * leaves the section stuck hidden.
  */
@@ -173,56 +169,68 @@ export function FeaturedProjectsSection({
     };
   }, []);
 
-  // Heavy entrance: the stage settles out of a soft blur/zoom, the index
-  // rows rise and sharpen in a stagger a beat behind it. Every start value
-  // is set only once this actually runs, under a matchMedia gate — the
-  // resting DOM (see the mobile stack below, and the plain CSS classes here)
-  // is already fully visible, so a skipped or interrupted animation can
-  // never strand the section hidden.
+  // Entrance: the stage lifts + fades in, the index rows follow in a stagger
+  // a beat behind. Every start value is set only once this runs, under a
+  // matchMedia gate — the resting DOM is already fully visible, so a skipped
+  // or interrupted animation can never strand the section hidden.
   useGSAP(
     () => {
       const mm = gsap.matchMedia();
       mm.add("(prefers-reduced-motion: no-preference)", () => {
+        const stage = stageRef.current;
         const rows = gsap.utils.toArray<HTMLElement>(
           rootRef.current?.querySelectorAll("[data-index-row]") ?? [],
         );
-        if (!rows.length || !stageRef.current) return;
+        if (!rows.length || !stage) return;
 
-        gsap.set(stageRef.current, {
-          opacity: 0,
-          scale: 1.08,
-          filter: "blur(18px)",
+        // Hand each crossfade layer to GSAP. `data-armed` on the stage flips
+        // the CSS that held the first layer visible pre-JS off, so a React
+        // re-render can never fight a running opacity tween.
+        const layers = gsap.utils.toArray<HTMLElement>(
+          stage.querySelectorAll("[data-stage-image]"),
+        );
+        gsap.set(layers, {
+          autoAlpha: (index) => (index === activeIndexRef.current ? 1 : 0),
         });
-        gsap.set(rows, { opacity: 0, y: 56, filter: "blur(10px)" });
+        stage.dataset.armed = "true";
+
+        // Entrance: opacity + a small lift only — no blur/heavy zoom on the
+        // photo container (a filter animation on an image box is a paint
+        // every frame and can render oddly mid-tween).
+        gsap.set(stage, { opacity: 0, y: 24 });
+        gsap.set(rows, { opacity: 0, y: 40 });
 
         const timeline = gsap.timeline({
           scrollTrigger: {
             trigger: rootRef.current,
-            start: "top 78%",
+            start: "top 80%",
             once: true,
           },
         });
         timeline
-          .to(stageRef.current, {
+          .to(stage, {
             opacity: 1,
-            scale: 1,
-            filter: "blur(0px)",
-            duration: 1.2,
+            y: 0,
+            duration: 0.9,
             ease: "power3.out",
+            clearProps: "transform",
           })
           .to(
             rows,
             {
               opacity: 1,
               y: 0,
-              filter: "blur(0px)",
-              duration: 0.9,
-              stagger: 0.12,
+              duration: 0.8,
+              stagger: 0.1,
               ease: "power3.out",
-              clearProps: "filter,transform",
+              clearProps: "transform",
             },
-            "-=0.9",
+            "-=0.7",
           );
+
+        return () => {
+          delete stage.dataset.armed;
+        };
       });
       return () => mm.revert();
     },
@@ -245,7 +253,7 @@ export function FeaturedProjectsSection({
         />
 
         {/* Desktop: index list + sticky crossfading stage. */}
-        <div className="mt-14 hidden gap-16 lg:grid lg:grid-cols-[1fr_1.15fr] lg:items-start">
+        <div className="mt-10 hidden gap-12 lg:grid lg:grid-cols-[1fr_1.1fr] lg:items-start">
           <div ref={listRef} className="relative">
             <span
               ref={indicatorRef}
@@ -285,7 +293,7 @@ export function FeaturedProjectsSection({
               {heading.cardCtaLabel}
             </div>
 
-            <div className="mt-10 flex items-center justify-between gap-6 border-t border-border pt-8">
+            <div className="mt-8 flex items-center justify-between gap-6 border-t border-border pt-6">
               <span className="font-mono text-xs tracking-project-index text-muted-foreground uppercase">
                 {String(projects.length).padStart(2, "0")} developments and
                 counting
@@ -299,34 +307,33 @@ export function FeaturedProjectsSection({
 
           <div
             ref={stageRef}
-            className="project-stage relative aspect-[4/3] overflow-hidden rounded-panel bg-muted lg:sticky lg:top-28"
+            className="project-stage relative h-[clamp(20rem,26vw,26rem)] overflow-hidden rounded-panel bg-muted lg:sticky lg:top-28"
           >
             {projects.map((project, index) => (
               <div
                 key={project.id}
                 data-stage-image
                 className="absolute inset-0"
-                style={{ opacity: index === 0 ? 1 : 0 }}
               >
                 <Image
                   src={project.image}
                   alt={project.name}
                   fill
                   priority={index === 0}
-                  sizes="(min-width: 1024px) 50vw, 100vw"
+                  sizes="(min-width: 1024px) 55vw, 100vw"
                   unoptimized={isRemoteAsset(project.image)}
-                  className="project-stage-media object-cover"
+                  className="project-stage-media object-cover object-center"
                 />
                 <span
                   aria-hidden
-                  className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/5 to-transparent"
+                  className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/10 to-black/15"
                 />
-                <span className="project-badge absolute top-5 right-5 inline-flex items-center gap-1.5 rounded-full border border-on-media-border bg-on-media-surface px-3 py-1.5 text-status tracking-project-status text-on-media uppercase backdrop-blur-md">
+                <span className="project-badge absolute top-4 left-4 inline-flex items-center gap-1.5 rounded-full border border-on-media-border bg-on-media-surface px-2.5 py-1 text-status tracking-project-status text-on-media uppercase backdrop-blur-md">
                   <Icon name="badge-check" size={12} />
                   {project.status}
                 </span>
                 <div className="absolute inset-x-0 bottom-0 p-project-card text-on-media">
-                  <p className="max-w-md text-sm text-on-media/85">
+                  <p className="max-w-md text-sm leading-snug text-on-media/85">
                     {project.description}
                   </p>
                 </div>
@@ -335,62 +342,139 @@ export function FeaturedProjectsSection({
           </div>
         </div>
 
-        {/* Mobile / no fine pointer: a plain stacked list, each with its own
-            strong scroll-reveal entrance — no hover to drive here, so the
-            crossfade stage and follow pill simply don't apply. */}
-        <RevealGroup className="mt-14 flex flex-col gap-12 lg:hidden">
-          {projects.map((project, index) => (
-            <RevealItem as="article" key={project.id}>
-              <Link href={project.href} className="group block">
-                <div className="relative aspect-[4/3] overflow-hidden rounded-panel bg-muted">
-                  <Image
-                    src={project.image}
-                    alt={project.name}
-                    fill
-                    sizes="100vw"
-                    unoptimized={isRemoteAsset(project.image)}
-                    className={cn(
-                      "object-cover transition-transform duration-700 ease-premium",
-                      "group-hover:scale-105",
-                    )}
-                  />
-                  <span
-                    aria-hidden
-                    className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/10"
-                  />
-                  <span className="project-badge absolute top-4 right-4 inline-flex items-center gap-1.5 rounded-full border border-on-media-border bg-on-media-surface px-3 py-1.5 text-status tracking-project-status text-on-media uppercase backdrop-blur-md">
-                    <Icon name="badge-check" size={12} />
-                    {project.status}
-                  </span>
-                  <span className="absolute top-4 left-4 font-mono text-xs tracking-project-index text-on-media/70">
-                    {String(index + 1).padStart(2, "0")}
-                  </span>
-                </div>
-                <h3 className="mt-5 font-display text-xl font-semibold tracking-tight">
-                  {project.name}
-                </h3>
-                <p className="mt-1 text-sm text-muted-foreground">
-                  {project.location}
-                </p>
-                <p className="mt-3 text-sm text-muted-foreground">
-                  {project.description}
-                </p>
-                <span className="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-primary">
-                  {heading.cardCtaLabel}
-                  <Icon name="arrow-right" size={16} />
-                </span>
-              </Link>
-            </RevealItem>
-          ))}
-
-          <div className="flex justify-center border-t border-border pt-8">
-            <ButtonLink href={heading.ctaHref} variant="neutral" size="lg">
-              {heading.ctaLabel}
-              <Icon name="arrow-right" />
-            </ButtonLink>
-          </div>
-        </RevealGroup>
+        {/* Mobile / no fine pointer: a horizontal snap carousel — one project
+            at a time with the next peeking, the touch equivalent of the
+            desktop "one preview at a time" idea. The hover crossfade + follow
+            pill are mouse-only and simply don't apply here. */}
+        <ProjectsCarousel projects={projects} heading={heading} />
       </div>
     </Section>
+  );
+}
+
+function ProjectsCarousel({
+  projects,
+  heading,
+}: {
+  projects: readonly ProjectContent[];
+  heading: HomePageContent["projectsSection"];
+}) {
+  const scrollerRef = React.useRef<HTMLDivElement>(null);
+  const [active, setActive] = React.useState(0);
+
+  React.useEffect(() => {
+    const el = scrollerRef.current;
+    if (!el) return;
+    let frame = 0;
+    const onScroll = () => {
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(() => {
+        const card = el.querySelector<HTMLElement>("[data-carousel-card]");
+        if (!card) return;
+        const step =
+          card.offsetWidth + parseFloat(getComputedStyle(el).gap || "0");
+        setActive(
+          Math.max(
+            0,
+            Math.min(projects.length - 1, Math.round(el.scrollLeft / step)),
+          ),
+        );
+      });
+    };
+    el.addEventListener("scroll", onScroll, { passive: true });
+    return () => {
+      el.removeEventListener("scroll", onScroll);
+      cancelAnimationFrame(frame);
+    };
+  }, [projects.length]);
+
+  const goTo = (index: number) => {
+    scrollerRef.current
+      ?.querySelectorAll<HTMLElement>("[data-carousel-card]")
+      [index]?.scrollIntoView({
+        behavior: "smooth",
+        inline: "start",
+        block: "nearest",
+      });
+  };
+
+  return (
+    <Reveal className="mt-10 lg:hidden">
+      <div
+        ref={scrollerRef}
+        className="project-carousel flex snap-x snap-mandatory gap-4 overflow-x-auto overscroll-x-contain pb-1"
+      >
+        {projects.map((project, index) => (
+          <Link
+            key={project.id}
+            href={project.href}
+            data-carousel-card
+            className="group flex w-[82vw] max-w-[22rem] shrink-0 snap-start flex-col focus-visible:outline-none"
+          >
+            <div className="relative aspect-[4/3] overflow-hidden rounded-panel bg-muted group-focus-visible:ring-2 group-focus-visible:ring-ring">
+              <Image
+                src={project.image}
+                alt={project.name}
+                fill
+                sizes="82vw"
+                unoptimized={isRemoteAsset(project.image)}
+                className="object-cover"
+              />
+              <span
+                aria-hidden
+                className="absolute inset-0 bg-gradient-to-t from-black/55 via-transparent to-black/10"
+              />
+              <span className="project-badge absolute top-3 right-3 inline-flex items-center gap-1.5 rounded-full border border-on-media-border bg-on-media-surface px-2.5 py-1 text-status tracking-project-status text-on-media uppercase backdrop-blur-md">
+                <Icon name="badge-check" size={11} />
+                {project.status}
+              </span>
+              <span className="absolute top-3 left-3 font-mono text-xs tracking-project-index text-on-media/70">
+                {String(index + 1).padStart(2, "0")}
+              </span>
+            </div>
+            <h3 className="mt-4 font-display text-lg font-semibold tracking-tight">
+              {project.name}
+            </h3>
+            <p className="mt-1 text-sm text-muted-foreground">
+              {project.location}
+            </p>
+            <p className="mt-2 line-clamp-3 text-sm text-pretty text-muted-foreground">
+              {project.description}
+            </p>
+            <span className="mt-3 inline-flex items-center gap-1.5 text-sm font-semibold text-primary">
+              {heading.cardCtaLabel}
+              <Icon name="arrow-right" size={16} />
+            </span>
+          </Link>
+        ))}
+      </div>
+
+      <div className="mt-6 flex items-center justify-between gap-4">
+        <div
+          className="flex items-center gap-1.5"
+          role="tablist"
+          aria-label="Projects"
+        >
+          {projects.map((project, index) => (
+            <button
+              key={project.id}
+              type="button"
+              role="tab"
+              aria-selected={index === active}
+              aria-label={`Show ${project.name}`}
+              onClick={() => goTo(index)}
+              className={cn(
+                "h-1.5 rounded-full transition-[width,background-color] duration-300 ease-premium",
+                index === active ? "w-5 bg-primary" : "w-1.5 bg-border",
+              )}
+            />
+          ))}
+        </div>
+        <ButtonLink href={heading.ctaHref} variant="link">
+          {heading.ctaLabel}
+          <Icon name="arrow-right" size={16} />
+        </ButtonLink>
+      </div>
+    </Reveal>
   );
 }

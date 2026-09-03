@@ -28,6 +28,12 @@ export const siteConfig = {
     supportLabel: "X Support",
     availability: "Our lines are available 24/7",
   },
+  chat: {
+    // Digits only, country code first — used to build a wa.me link.
+    whatsapp: "2348114000480",
+    availability: "Typically replies within minutes · Mon–Sat, 9am–6pm WAT",
+    greeting: "Hi Dexta 👋 I have a question about a property.",
+  },
   footer: {
     groups: [
       {

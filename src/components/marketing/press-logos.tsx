@@ -1,28 +1,52 @@
-"use client";
-
 import Image from "next/image";
 import * as React from "react";
 import { Container } from "@/components/layout";
-import { Card } from "@/components/ui";
-import { gsap, useGSAP } from "@/lib/gsap";
 import { isRemoteAsset } from "@/lib/media";
 import { Reveal } from "./reveal";
 
 export interface PressLogo {
   name: string;
-  /** Path under /public, e.g. "/images/press/the-guardian.png". */
+  /** Path under /public. */
   src: string;
+  /** Intrinsic pixel size of the source file — used only for aspect ratio;
+   *  the logo renders at a fixed display height (see `.press-marquee__logo`). */
+  width: number;
+  height: number;
 }
 
-// Drop the real files at these exact paths (public/images/press/) and this
-// section picks them up with no code changes — PNG or SVG, transparent
-// background, logo roughly 400-600px wide is plenty for the tile size here.
+// The files in public/images/press/. Drop a new PNG/SVG here and add a line —
+// no other change needed.
 const DEFAULT_PRESS_LOGOS: readonly PressLogo[] = [
-  { name: "BusinessDay", src: "/images/press/businessday.png" },
-  { name: "Punch", src: "/images/press/punch.png" },
-  { name: "The Guardian", src: "/images/press/the-guardian.png" },
-  { name: "Yahoo", src: "/images/press/yahoo.png" },
-  { name: "Medium", src: "/images/press/medium.png" },
+  {
+    name: "Medium",
+    src: "/images/press/logo-medium-removebg-preview.png",
+    width: 165,
+    height: 61,
+  },
+  {
+    name: "Punch",
+    src: "/images/press/logo-punch-removebg-preview.png",
+    width: 106,
+    height: 61,
+  },
+  {
+    name: "Reuters",
+    src: "/images/press/logo-reuters-removebg-preview.png",
+    width: 133,
+    height: 61,
+  },
+  {
+    name: "The Guardian",
+    src: "/images/press/logo-the-guardian-removebg-preview.png",
+    width: 125,
+    height: 61,
+  },
+  {
+    name: "Yahoo",
+    src: "/images/press/logo-yahoo-removebg-preview.png",
+    width: 116,
+    height: 61,
+  },
 ];
 
 export interface PressLogosProps {
@@ -31,80 +55,59 @@ export interface PressLogosProps {
 }
 
 /**
- * "As featured in" — rebuilt as a quiet row of premium logo tiles, not a
- * text ticker: one small label, then the marks themselves carry the
- * section. Each tile reuses the site's own `Card` (the same bordered,
- * hover-lift surface used everywhere else) so this reads as part of the
- * same design system, not a bespoke one-off.
+ * "As featured in" — a slim, continuously-scrolling strip of press marks, the
+ * same mechanism as the expertise marquee: one accessible list followed by
+ * `aria-hidden` copies, the whole track translated exactly -50% so the loop
+ * has no seam. Pure CSS scroll (no JS, no hydration cost); only the once-per
+ * -visit entrance goes through `<Reveal>`. Edges dissolve via `mask-image`.
  *
- * Every tile pops in with a spring (`back.out`) as the row scrolls into
- * view — layered on top of `Reveal`'s own fade/rise on the section itself,
- * never fighting it (different properties). Logos sit desaturated at rest
- * and resolve to full colour with a lift on hover, matching `Card`'s own
- * hover language.
+ * Logos sit monochrome and dimmed at rest and resolve to full strength on
+ * hover (which also pauses the scroll). The mark colour is inverted under the
+ * dark theme so the black source files stay legible either way.
  */
 export function PressLogos({
   eyebrow = "As featured in",
   items = DEFAULT_PRESS_LOGOS,
 }: PressLogosProps) {
   const headingId = React.useId();
-  const gridRef = React.useRef<HTMLDivElement>(null);
-
-  useGSAP(
-    () => {
-      const mm = gsap.matchMedia();
-      mm.add("(prefers-reduced-motion: no-preference)", () => {
-        const tiles = gsap.utils.toArray<HTMLElement>(
-          gridRef.current?.querySelectorAll("[data-press-tile]") ?? [],
-        );
-        if (!tiles.length) return;
-
-        gsap.set(tiles, { scale: 0.84, transformOrigin: "50% 50%" });
-        gsap.to(tiles, {
-          scale: 1,
-          duration: 0.9,
-          ease: "back.out(1.7)",
-          stagger: 0.08,
-          scrollTrigger: {
-            trigger: gridRef.current,
-            start: "top 85%",
-            once: true,
-          },
-        });
-      });
-      return () => mm.revert();
-    },
-    { scope: gridRef, dependencies: [items] },
-  );
+  // Four copies: two make one seamless set wider than any viewport, the other
+  // two are what -50% scrolls into. Copies past the first are inert to AT.
+  const loop = [...items, ...items, ...items, ...items];
 
   return (
-    <section aria-labelledby={headingId} className="press-logos">
-      <Container>
-        <Reveal className="press-logos__signal">
-          <span aria-hidden className="press-logos__dot" />
-          <span id={headingId} className="press-logos__label">
+    <section aria-labelledby={headingId} className="press-marquee">
+      <Container className="press-marquee__inner">
+        <Reveal as="div" className="press-marquee__signal">
+          <span aria-hidden className="press-marquee__dot" />
+          <span id={headingId} className="press-marquee__label">
             {eyebrow}
           </span>
         </Reveal>
 
-        <div ref={gridRef} className="press-logos__grid">
-          {items.map((logo) => (
-            <div key={logo.name} data-press-tile className="press-logos__tile">
-              <Card className="press-logos__card">
-                <div className="press-logos__mark">
+        <Reveal as="div" delay={0.1} className="press-marquee__viewport">
+          <ul className="press-marquee__track">
+            {loop.map((logo, index) => {
+              const duplicate = index >= items.length;
+              return (
+                <li
+                  key={`${logo.name}-${index}`}
+                  aria-hidden={duplicate || undefined}
+                  data-duplicate={duplicate || undefined}
+                  className="press-marquee__item"
+                >
                   <Image
                     src={logo.src}
-                    alt={logo.name}
-                    fill
-                    sizes="180px"
+                    alt={duplicate ? "" : `${logo.name} logo`}
+                    width={logo.width}
+                    height={logo.height}
                     unoptimized={isRemoteAsset(logo.src)}
-                    className="press-logos__image object-contain"
+                    className="press-marquee__logo"
                   />
-                </div>
-              </Card>
-            </div>
-          ))}
-        </div>
+                </li>
+              );
+            })}
+          </ul>
+        </Reveal>
       </Container>
     </section>
   );

@@ -1,5 +1,5 @@
 import { Container, Section } from "@/components/layout";
-import { Badge, Icon, type IconName } from "@/components/ui";
+import { Badge, Icon, renderWithAccents, type IconName } from "@/components/ui";
 import { InlineNewsletterForm } from "@/features/newsletter/components/inline-newsletter-form";
 import { Reveal } from "./reveal";
 
@@ -19,14 +19,14 @@ export interface NewsletterSectionProps {
  * The homepage newsletter ask — a split, card-led layout (copy + benefit
  * chips on one side, a standalone signup card on the other) rather than the
  * centered editorial-heading treatment used for content sections: this is a
- * conversion moment, not an article intro, so it skips the serif/Playfair
- * voice entirely and leans on the same bold sans, pulsing "signal" dot, and
- * primary-tinted glow already established by the expertise marquee and
- * Dexta Clan band elsewhere on the page.
+ * conversion moment, not an article intro. The heading stays in the bold sans
+ * (never a full Playfair headline), but its `*word*` accent renders in the
+ * same red Playfair-italic treatment as every other section heading, for
+ * consistency across the page.
  */
 export function NewsletterSection({
   eyebrow = "Join the insider list",
-  title = "The insights investors act on — before everyone else does.",
+  title = "The insights investors act on — *before* everyone else does.",
   description = "Off-market listings, market intelligence and expert analysis — delivered straight to your inbox. No noise, no spam.",
 }: NewsletterSectionProps) {
   return (
@@ -36,7 +36,7 @@ export function NewsletterSection({
       aria-labelledby="newsletter-heading"
     >
       <Container>
-        <div className="grid gap-10 lg:grid-cols-[1.1fr_0.9fr] lg:items-center lg:gap-16">
+        <div className="grid gap-10 lg:grid-cols-2 lg:items-center lg:gap-12">
           <Reveal className="flex flex-col gap-6">
             <span className="inline-flex w-fit items-center gap-2.5 font-mono text-xs font-bold tracking-[0.24em] text-muted-foreground uppercase">
               <span aria-hidden className="newsletter-cta__dot" />
@@ -46,7 +46,7 @@ export function NewsletterSection({
               id="newsletter-heading"
               className="max-w-xl font-display text-[clamp(1.25rem,1.07rem_+_0.75vw,1.75rem)] leading-[1.2] font-semibold tracking-section-heading text-balance"
             >
-              {title}
+              {renderWithAccents(title)}
             </h2>
             <p className="max-w-md text-body-small leading-5 text-pretty text-muted-foreground">
               {description}
@@ -73,7 +73,7 @@ export function NewsletterSection({
               aria-hidden
               className="pointer-events-none absolute -inset-6 -z-10 rounded-full bg-primary/10 blur-3xl"
             />
-            <div className="rounded-panel border border-border bg-surface-elevated p-8 shadow-[var(--card-shadow)] sm:p-10">
+            <div className="rounded-panel border border-border bg-surface-elevated p-6 shadow-[var(--card-shadow)] sm:p-8">
               <Badge variant="brand" className="w-fit">
                 Weekly briefing
               </Badge>

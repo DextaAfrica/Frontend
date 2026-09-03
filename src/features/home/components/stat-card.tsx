@@ -47,16 +47,13 @@ export function StatCard({
   priority: boolean;
 }) {
   const cardRef = useRef<HTMLDivElement>(null);
-  const mistRef = useRef<HTMLDivElement>(null);
   const valueRef = useRef<HTMLParagraphElement>(null);
   const runCountRef = useRef<() => void>(() => {});
-  const mistHoverRef = useRef<(entering: boolean) => void>(() => {});
 
   useGSAP(
     () => {
       const card = cardRef.current;
       const el = valueRef.current;
-      const mist = mistRef.current;
       const parsed = parseStatValue(stat.value);
       if (!card || !el || !parsed) return;
       const { target, width, suffix } = parsed;
@@ -112,69 +109,23 @@ export function StatCard({
             onEnter: runCount,
           },
         });
-
-        // --- Smoke: slow, continuous, independent drift per layer — a
-        // living cloud at rest, not a static blob that only reacts to
-        // hover. Long, staggered, yoyo'd tweens so no two layers ever move
-        // in lockstep.
-        if (mist) {
-          const layers = gsap.utils.toArray<HTMLElement>(mist.children);
-          layers.forEach((layer, index) => {
-            gsap.to(layer, {
-              x: index % 2 === 0 ? 22 : -18,
-              y: index % 2 === 0 ? -16 : 20,
-              scale: 1.12,
-              duration: 7 + index * 1.6,
-              ease: "sine.inOut",
-              yoyo: true,
-              repeat: -1,
-              delay: index * 0.4,
-            });
-          });
-        }
       });
-
-      // --- Smoke hover intensity: ambient at rest (CSS opacity-15), thick
-      // and clouded the moment the pointer's on the card.
-      mistHoverRef.current = (entering) => {
-        if (!mist) return;
-        const allowMotion = window.matchMedia(
-          "(prefers-reduced-motion: no-preference)",
-        ).matches;
-
-        if (!allowMotion) {
-          gsap.set(mist.children, { opacity: entering ? 0.75 : 0.15 });
-          return;
-        }
-
-        gsap.to(mist.children, {
-          opacity: entering ? 0.85 : 0.15,
-          scale: entering ? 1.2 : 1,
-          duration: entering ? 1.6 : 1.1,
-          stagger: entering ? 0.1 : 0,
-          ease: entering ? "power2.out" : "power2.inOut",
-          overwrite: "auto",
-        });
-      };
 
       return () => mm.revert();
     },
     { scope: cardRef, dependencies: [stat.value] },
   );
 
-  const handleHover = (entering: boolean) => {
-    mistHoverRef.current(entering);
-    // "Anytime the mouse enters, the counter starts" — replays the climb
-    // from zero on every hover, not just the first scroll-into-view.
-    if (entering) runCountRef.current();
-  };
+  // Replays the climb from zero on every hover, not just the first
+  // scroll-into-view. The drifting fog and its hover intensity are pure CSS
+  // (see `.stat-card__fog` in globals.css).
+  const replayCounter = () => runCountRef.current();
 
   return (
     <div
       ref={cardRef}
-      onMouseEnter={() => handleHover(true)}
-      onMouseLeave={() => handleHover(false)}
-      className="relative flex h-full min-h-56 flex-col justify-between gap-10 overflow-hidden px-6 py-7 sm:px-8 md:min-h-stat-card"
+      onMouseEnter={replayCounter}
+      className="stat-card relative flex h-full min-h-56 flex-col justify-between gap-10 overflow-hidden px-6 py-7 sm:px-8 md:min-h-stat-card"
     >
       <Image
         src={stat.image}
@@ -183,21 +134,15 @@ export function StatCard({
         priority={priority}
         sizes="(min-width: 768px) 34vw, 100vw"
         unoptimized={isRemoteAsset(stat.image)}
-        className="object-cover"
+        className="stat-card__image object-cover"
       />
-      <span
-        aria-hidden
-        className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/35 to-black/5"
-      />
+      <span aria-hidden className="stat-card__scrim absolute inset-0" />
       <div
-        ref={mistRef}
         aria-hidden
-        className="pointer-events-none absolute inset-0 mix-blend-screen"
+        className="stat-card__fog pointer-events-none absolute inset-0"
       >
-        <span className="stat-mist-primary absolute size-64 rounded-full opacity-15 blur-[70px]" />
-        <span className="stat-mist-secondary absolute size-72 rounded-full opacity-15 blur-[80px]" />
-        <span className="stat-mist-tertiary absolute size-80 rounded-full opacity-15 blur-[90px]" />
-        <span className="stat-mist-quaternary absolute size-56 rounded-full opacity-15 blur-[60px]" />
+        <span className="stat-fog stat-fog--a" />
+        <span className="stat-fog stat-fog--b" />
       </div>
 
       <MetricValue
@@ -206,7 +151,7 @@ export function StatCard({
       >
         {stat.value}
       </MetricValue>
-      <p className="relative max-w-stat-copy text-base leading-[1.4] font-normal text-brand-light/80">
+      <p className="relative max-w-stat-copy text-base leading-[1.4] font-normal text-brand-light/85">
         <StatCopy copy={stat.copy} highlight={stat.highlight} />
       </p>
     </div>
