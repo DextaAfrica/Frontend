@@ -11,6 +11,7 @@ import {
   HardHat,
   LandPlot,
   LineChart,
+  MessagesSquare,
   Monitor,
   Mail,
   MapPin,
@@ -50,6 +51,7 @@ export type IconName =
   | "play"
   | "pause"
   | "badge-check"
+  | "chat"
   | "chevron-down"
   | "clock"
   | "facebook"
@@ -96,6 +98,7 @@ const icons: Record<IconName, ComponentType<GlyphProps>> = {
   play: Play,
   pause: Pause,
   "badge-check": BadgeCheck,
+  chat: MessagesSquare,
   "chevron-down": ChevronDown,
   clock: Clock,
   facebook: FacebookIcon,

@@ -4,11 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import * as React from "react";
 import { Section } from "@/components/layout";
-import {
-  EditorialSectionHeading,
-  RevealGroup,
-  RevealItem,
-} from "@/components/marketing";
+import { EditorialSectionHeading, Reveal } from "@/components/marketing";
 import { ButtonLink, Icon } from "@/components/ui";
 import { gsap, useGSAP } from "@/lib/gsap";
 import { isRemoteAsset } from "@/lib/media";
@@ -346,62 +342,139 @@ export function FeaturedProjectsSection({
           </div>
         </div>
 
-        {/* Mobile / no fine pointer: a plain stacked list, each with its own
-            strong scroll-reveal entrance — no hover to drive here, so the
-            crossfade stage and follow pill simply don't apply. */}
-        <RevealGroup className="mt-10 flex flex-col gap-10 lg:hidden">
-          {projects.map((project, index) => (
-            <RevealItem as="article" key={project.id}>
-              <Link href={project.href} className="group block">
-                <div className="relative aspect-[3/2] overflow-hidden rounded-panel bg-muted">
-                  <Image
-                    src={project.image}
-                    alt={project.name}
-                    fill
-                    sizes="100vw"
-                    unoptimized={isRemoteAsset(project.image)}
-                    className={cn(
-                      "object-cover transition-transform duration-700 ease-premium",
-                      "group-hover:scale-105",
-                    )}
-                  />
-                  <span
-                    aria-hidden
-                    className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/10"
-                  />
-                  <span className="project-badge absolute top-4 right-4 inline-flex items-center gap-1.5 rounded-full border border-on-media-border bg-on-media-surface px-3 py-1.5 text-status tracking-project-status text-on-media uppercase backdrop-blur-md">
-                    <Icon name="badge-check" size={12} />
-                    {project.status}
-                  </span>
-                  <span className="absolute top-4 left-4 font-mono text-xs tracking-project-index text-on-media/70">
-                    {String(index + 1).padStart(2, "0")}
-                  </span>
-                </div>
-                <h3 className="mt-5 font-display text-xl font-semibold tracking-tight">
-                  {project.name}
-                </h3>
-                <p className="mt-1 text-sm text-muted-foreground">
-                  {project.location}
-                </p>
-                <p className="mt-3 text-sm text-muted-foreground">
-                  {project.description}
-                </p>
-                <span className="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-primary">
-                  {heading.cardCtaLabel}
-                  <Icon name="arrow-right" size={16} />
-                </span>
-              </Link>
-            </RevealItem>
-          ))}
-
-          <div className="flex justify-center border-t border-border pt-8">
-            <ButtonLink href={heading.ctaHref} variant="neutral" size="lg">
-              {heading.ctaLabel}
-              <Icon name="arrow-right" />
-            </ButtonLink>
-          </div>
-        </RevealGroup>
+        {/* Mobile / no fine pointer: a horizontal snap carousel — one project
+            at a time with the next peeking, the touch equivalent of the
+            desktop "one preview at a time" idea. The hover crossfade + follow
+            pill are mouse-only and simply don't apply here. */}
+        <ProjectsCarousel projects={projects} heading={heading} />
       </div>
     </Section>
+  );
+}
+
+function ProjectsCarousel({
+  projects,
+  heading,
+}: {
+  projects: readonly ProjectContent[];
+  heading: HomePageContent["projectsSection"];
+}) {
+  const scrollerRef = React.useRef<HTMLDivElement>(null);
+  const [active, setActive] = React.useState(0);
+
+  React.useEffect(() => {
+    const el = scrollerRef.current;
+    if (!el) return;
+    let frame = 0;
+    const onScroll = () => {
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(() => {
+        const card = el.querySelector<HTMLElement>("[data-carousel-card]");
+        if (!card) return;
+        const step =
+          card.offsetWidth + parseFloat(getComputedStyle(el).gap || "0");
+        setActive(
+          Math.max(
+            0,
+            Math.min(projects.length - 1, Math.round(el.scrollLeft / step)),
+          ),
+        );
+      });
+    };
+    el.addEventListener("scroll", onScroll, { passive: true });
+    return () => {
+      el.removeEventListener("scroll", onScroll);
+      cancelAnimationFrame(frame);
+    };
+  }, [projects.length]);
+
+  const goTo = (index: number) => {
+    scrollerRef.current
+      ?.querySelectorAll<HTMLElement>("[data-carousel-card]")
+      [index]?.scrollIntoView({
+        behavior: "smooth",
+        inline: "start",
+        block: "nearest",
+      });
+  };
+
+  return (
+    <Reveal className="mt-10 lg:hidden">
+      <div
+        ref={scrollerRef}
+        className="project-carousel flex snap-x snap-mandatory gap-4 overflow-x-auto overscroll-x-contain pb-1"
+      >
+        {projects.map((project, index) => (
+          <Link
+            key={project.id}
+            href={project.href}
+            data-carousel-card
+            className="group flex w-[82vw] max-w-[22rem] shrink-0 snap-start flex-col focus-visible:outline-none"
+          >
+            <div className="relative aspect-[4/3] overflow-hidden rounded-panel bg-muted group-focus-visible:ring-2 group-focus-visible:ring-ring">
+              <Image
+                src={project.image}
+                alt={project.name}
+                fill
+                sizes="82vw"
+                unoptimized={isRemoteAsset(project.image)}
+                className="object-cover"
+              />
+              <span
+                aria-hidden
+                className="absolute inset-0 bg-gradient-to-t from-black/55 via-transparent to-black/10"
+              />
+              <span className="project-badge absolute top-3 right-3 inline-flex items-center gap-1.5 rounded-full border border-on-media-border bg-on-media-surface px-2.5 py-1 text-status tracking-project-status text-on-media uppercase backdrop-blur-md">
+                <Icon name="badge-check" size={11} />
+                {project.status}
+              </span>
+              <span className="absolute top-3 left-3 font-mono text-xs tracking-project-index text-on-media/70">
+                {String(index + 1).padStart(2, "0")}
+              </span>
+            </div>
+            <h3 className="mt-4 font-display text-lg font-semibold tracking-tight">
+              {project.name}
+            </h3>
+            <p className="mt-1 text-sm text-muted-foreground">
+              {project.location}
+            </p>
+            <p className="mt-2 line-clamp-3 text-sm text-pretty text-muted-foreground">
+              {project.description}
+            </p>
+            <span className="mt-3 inline-flex items-center gap-1.5 text-sm font-semibold text-primary">
+              {heading.cardCtaLabel}
+              <Icon name="arrow-right" size={16} />
+            </span>
+          </Link>
+        ))}
+      </div>
+
+      <div className="mt-6 flex items-center justify-between gap-4">
+        <div
+          className="flex items-center gap-1.5"
+          role="tablist"
+          aria-label="Projects"
+        >
+          {projects.map((project, index) => (
+            <button
+              key={project.id}
+              type="button"
+              role="tab"
+              aria-selected={index === active}
+              aria-label={`Show ${project.name}`}
+              onClick={() => goTo(index)}
+              className={cn(
+                "h-1.5 rounded-full transition-[width,background-color] duration-300 ease-premium",
+                index === active ? "w-5 bg-primary" : "w-1.5 bg-border",
+              )}
+            />
+          ))}
+        </div>
+        <ButtonLink href={heading.ctaHref} variant="link">
+          {heading.ctaLabel}
+          <Icon name="arrow-right" size={16} />
+        </ButtonLink>
+      </div>
+    </Reveal>
   );
 }
