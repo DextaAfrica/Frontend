@@ -280,8 +280,9 @@
   --layer-navigation: 90;
 
   /* -- About page ------------------------------------------------------- */
-  --type-about-statement: clamp(1.125rem, 0.95rem + 0.75vw, 1.625rem);
-  --type-ceo-kicker: clamp(1.0625rem, 1rem + 0.28vw, 1.25rem);
+  /* Closing "pull-lines" — a calm editorial size, well below a headline. */
+  --type-about-statement: clamp(1.0625rem, 0.98rem + 0.4vw, 1.375rem);
+  --type-ceo-kicker: clamp(0.9375rem, 0.9rem + 0.15vw, 1.0625rem);
   --layout-ceo-portrait: clamp(17rem, 32vw, 25rem);
   --space-about: clamp(3.5rem, 6.5vw, 6rem);
 }
@@ -2659,13 +2660,13 @@ dialog[open]::backdrop {
   }
 }
 
-/* The "About Us" closing line — set apart from the reveal-copy body above it,
-   larger and in the editorial serif, carrying the italic accent. */
+/* The "About Us" closing line — a quiet editorial pull-line set apart from the
+   reveal-copy body above it, carrying the italic accent. Not a headline. */
 .about-statement__kicker {
   font-family: var(--font-display);
   font-size: var(--type-about-statement);
-  font-weight: 600;
-  line-height: 1.25;
+  font-weight: 500;
+  line-height: 1.35;
   letter-spacing: -0.01em;
   text-wrap: balance;
 }
@@ -2730,7 +2731,39 @@ dialog[open]::backdrop {
   color: rgb(from var(--primary) r g b / 0.5);
 }
 
-/* --- Our journey (dark band) --------------------------------------------- */
+/* --- Our journey (dark band, ambient YouTube backdrop) ------------------ *
+ * Same construction as `.dexta-clan--video`: a full-bleed muted loop behind
+ * the whole band, with a scrim doing all the contrast work so the milestone
+ * copy stays legible over any frame of the video. The section keeps its
+ * `bg-brand-dark` base so a blocked embed / reduced motion just reads as the
+ * original dark band. */
+.about-journey__video {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+}
+
+.about-journey__scrim {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    linear-gradient(
+      to bottom,
+      rgb(from var(--brand-dark) r g b / 0.55) 0%,
+      transparent 20%,
+      transparent 68%,
+      rgb(from var(--brand-dark) r g b / 0.72) 100%
+    ),
+    linear-gradient(
+      105deg,
+      rgb(from var(--brand-dark) r g b / 0.92) 0%,
+      rgb(from var(--brand-dark) r g b / 0.8) 42%,
+      rgb(from var(--brand-dark) r g b / 0.62) 100%
+    );
+}
+
 .about-journey__rail {
   position: relative;
   flex: none;
@@ -2818,9 +2851,21 @@ dialog[open]::backdrop {
 .ceo-letter__kicker {
   font-family: var(--font-display);
   font-size: var(--type-ceo-kicker);
-  font-weight: 600;
-  line-height: 1.3;
+  font-weight: 500;
+  line-height: 1.4;
   text-wrap: balance;
+}
+
+/* Mission / Vision statement — the panel's content, prominent but not a
+   headline: display face, medium weight, one editorial step above body. */
+.mission-vision__statement {
+  font-family: var(--font-display);
+  font-size: clamp(1.0625rem, 1rem + 0.3vw, 1.3125rem);
+  font-weight: 500;
+  line-height: 1.4;
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+  color: var(--foreground);
 }
 
 /* --- Dexta Clan band --------------------------------------------------- */
@@ -2864,13 +2909,24 @@ dialog[open]::backdrop {
   position: absolute;
   inset: 0;
   z-index: -1;
-  background: linear-gradient(
-    100deg,
-    rgb(from var(--brand-dark) r g b / 0.94) 0%,
-    rgb(from var(--brand-dark) r g b / 0.82) 32%,
-    rgb(from var(--brand-dark) r g b / 0.35) 68%,
-    rgb(from var(--brand-dark) r g b / 0.55) 100%
-  );
+  background:
+    /* Vertical vignette: a cinematic frame, darkest at the top/bottom
+       edges, so the eye settles centre rather than the crop feeling like
+       a flat rectangle of video. */
+    linear-gradient(
+      to bottom,
+      rgb(from var(--brand-dark) r g b / 0.5) 0%,
+      transparent 22%,
+      transparent 78%,
+      rgb(from var(--brand-dark) r g b / 0.6) 100%
+    ),
+    linear-gradient(
+      100deg,
+      rgb(from var(--brand-dark) r g b / 0.94) 0%,
+      rgb(from var(--brand-dark) r g b / 0.82) 32%,
+      rgb(from var(--brand-dark) r g b / 0.35) 68%,
+      rgb(from var(--brand-dark) r g b / 0.55) 100%
+    );
   pointer-events: none;
 }
 

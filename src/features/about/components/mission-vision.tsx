@@ -32,7 +32,7 @@ export function MissionVision({ content }: { content: MissionVisionContent }) {
                 <Icon name={item.icon as IconName} size={26} />
               </span>
               <Eyebrow>{item.label}</Eyebrow>
-              <p className="font-display text-editorial leading-[1.2] font-semibold tracking-tight text-balance text-foreground">
+              <p className="mission-vision__statement">
                 {renderWithAccents(item.text)}
               </p>
             </RevealItem>

@@ -42,34 +42,30 @@ export const aboutPageContent = {
   },
   journey: {
     eyebrow: "Our journey",
-    title: "Built step by step, and still building.",
-    background: "/images/about/journey-bg.png",
+    title: "Built step by step, and *still building*.",
     video: {
+      // Shares the Dexta Clan brand film; swap for a dedicated one if made.
+      id: "Bh60Ut_d0Bo",
       poster: "/images/about/journey-video.png",
-      // PLACEHOLDER — point this at the real brand film when it's ready.
-      href: "https://www.youtube.com/@dextaafrica",
     },
+    // Three years in — the timeline below compresses the story into that
+    // span. Confirm the exact months with the client.
     milestones: [
       {
-        // PLACEHOLDER YEARS — confirm the real dates with the client.
-        year: "2018",
+        year: "2023",
         text: "Dexta Africa is founded in Lagos with a single mandate: real estate that people can trust, end to end.",
       },
       {
-        year: "2020",
-        text: "First fully serviced estate handed over; the company is registered with LASERA.",
-      },
-      {
-        year: "2022",
-        text: "The portfolio expands across Ogun State, and a diaspora client base takes root.",
-      },
-      {
         year: "2024",
-        text: "Over 150 clients served, and the Dexta Clan learning community opens its doors.",
+        text: "The first fully serviced estate is handed over, the company is registered with LASERA, and the portfolio begins expanding across Ogun State.",
+      },
+      {
+        year: "2025",
+        text: "A diaspora client base takes root, over 150 clients are served, and the Dexta Clan learning community opens its doors.",
       },
       {
         year: "Today",
-        text: "Multiple active developments in progress — and a standard we keep raising with every one.",
+        text: "Multiple active developments in progress — and *a standard we keep raising* with every one.",
       },
     ],
   },
@@ -103,7 +99,7 @@ export const aboutPageContent = {
   },
   team: {
     eyebrow: "The people behind it",
-    title: "A team that holds delivery to the drawing.",
+    title: "A team that holds delivery *to the drawing*.",
     members: [
       // PLACEHOLDER NAMES + ROLES — swap for the real team roster.
       {
