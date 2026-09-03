@@ -93,17 +93,17 @@ export function AboutTeaser({ content }: { content: AboutTeaserContent }) {
       <div aria-hidden className="about-teaser__waves">
         <svg
           className="about-teaser__wave about-teaser__wave--back"
-          viewBox="0 0 2400 200"
+          viewBox="0 0 2400 300"
           preserveAspectRatio="none"
         >
-          <path d="M0,90 C150,75 300,105 600,90 C750,75 900,105 1200,90 C1350,75 1500,105 1800,90 C1950,75 2100,105 2400,90 L2400,200 L0,200 Z" />
+          <path d="M0,170 C300,50 900,50 1200,170 C1500,50 2100,50 2400,170 L2400,300 L0,300 Z" />
         </svg>
         <svg
           className="about-teaser__wave about-teaser__wave--front"
-          viewBox="0 0 2400 200"
+          viewBox="0 0 2400 300"
           preserveAspectRatio="none"
         >
-          <path d="M0,108 C200,98 400,122 700,110 C900,98 1100,122 1400,110 C1600,98 1800,122 2100,110 C2300,98 2350,118 2400,108 L2400,200 L0,200 Z" />
+          <path d="M0,230 C300,130 900,130 1200,230 C1500,130 2100,130 2400,230 L2400,300 L0,300 Z" />
         </svg>
       </div>
       <div ref={dropletsRef} aria-hidden className="about-teaser__droplets">
