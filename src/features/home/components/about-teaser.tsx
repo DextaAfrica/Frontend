@@ -92,6 +92,17 @@ export function AboutTeaser({ content }: { content: AboutTeaserContent }) {
       </div>
 
       <Container>
+        {/* Three grid items, not two — the CTA is its own item rather than
+            nested inside the copy block, specifically so it can land in a
+            different place on a narrow screen than it does beside the copy
+            on a wide one. Stacked (below `md`), plain DOM/auto-placement
+            order already puts it last: copy, then the image, then the CTA
+            — read the pitch, see the visual, then act, instead of the CTA
+            interrupting between the heading and the image. At `md` and up,
+            with two real columns, the same three items auto-place into
+            copy top-left / CTA bottom-left / image spanning both rows on
+            the right (`md:row-span-2` on the figure) — no `order` utilities
+            or explicit grid-area wiring needed for either layout. */}
         <RevealGroup
           as="div"
           className="relative grid gap-10 md:grid-cols-[1fr_0.8fr] md:items-center md:gap-16"
@@ -101,15 +112,11 @@ export function AboutTeaser({ content }: { content: AboutTeaserContent }) {
             <EditorialHeading id="about-teaser-heading">
               {content.title}
             </EditorialHeading>
-            <ButtonLink href={content.cta.href} variant="secondary" size="lg">
-              {content.cta.label}
-              <Icon name="arrow-right" />
-            </ButtonLink>
           </div>
 
           <figure
             data-reveal-item
-            className="relative m-0 aspect-[5/4] overflow-hidden rounded-panel border border-border bg-muted"
+            className="relative m-0 aspect-[5/4] overflow-hidden rounded-panel border border-border bg-muted md:row-span-2"
           >
             <Image
               src={content.image}
@@ -127,6 +134,13 @@ export function AboutTeaser({ content }: { content: AboutTeaserContent }) {
               className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent"
             />
           </figure>
+
+          <div data-reveal-item>
+            <ButtonLink href={content.cta.href} variant="secondary" size="lg">
+              {content.cta.label}
+              <Icon name="arrow-right" />
+            </ButtonLink>
+          </div>
         </RevealGroup>
       </Container>
     </Section>

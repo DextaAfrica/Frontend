@@ -424,9 +424,6 @@ function ProjectsCarousel({
                   className="project-m-card__img"
                 />
                 <span aria-hidden className="project-m-card__scrim" />
-                <span aria-hidden className="project-m-card__index">
-                  {String(index + 1).padStart(2, "0")}
-                </span>
                 <span className="project-badge project-m-card__badge">
                   <Icon name="badge-check" size={11} />
                   {project.status}
@@ -467,15 +464,6 @@ function ProjectsCarousel({
       </div>
 
       <div className="project-m-controls">
-        <span className="project-m-controls__count">
-          <span className="project-m-controls__current">
-            {String(active + 1).padStart(2, "0")}
-          </span>
-          <span className="project-m-controls__total">
-            {" / "}
-            {String(projects.length).padStart(2, "0")}
-          </span>
-        </span>
         <div
           className="project-m-controls__dots"
           role="tablist"
@@ -494,7 +482,12 @@ function ProjectsCarousel({
             />
           ))}
         </div>
-        <ButtonLink href={heading.ctaHref} variant="link">
+        <ButtonLink
+          href={heading.ctaHref}
+          variant="secondary"
+          size="lg"
+          fullWidth
+        >
           {heading.ctaLabel}
           <Icon name="arrow-right" size={16} />
         </ButtonLink>

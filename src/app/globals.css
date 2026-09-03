@@ -1363,16 +1363,6 @@ dialog[open]::backdrop {
   pointer-events: none;
 }
 
-.project-m-card__index {
-  position: absolute;
-  top: 0.9rem;
-  left: 1rem;
-  font-family: var(--font-mono);
-  font-size: 0.75rem;
-  letter-spacing: var(--letter-spacing-project-index);
-  color: rgb(from var(--on-media) r g b / 0.7);
-}
-
 .project-m-card__badge {
   position: absolute;
   top: 0.8rem;
@@ -1474,28 +1464,14 @@ dialog[open]::backdrop {
   outline-offset: 3px;
 }
 
-/* Controls row: an oversized position counter, refined dots, the "all
-   projects" link. */
+/* Controls: refined position dots, then the "all projects" button sitting
+   full-width beneath the carousel. */
 .project-m-controls {
-  margin-top: 1.5rem;
+  margin-top: 1.75rem;
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-}
-
-.project-m-controls__count {
-  font-family: var(--font-mono);
-  font-size: 0.75rem;
-  letter-spacing: var(--letter-spacing-project-index);
-}
-
-.project-m-controls__current {
-  color: var(--primary);
-}
-
-.project-m-controls__total {
-  color: var(--muted-foreground);
+  gap: 1.5rem;
 }
 
 .project-m-controls__dots {
