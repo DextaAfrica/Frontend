@@ -15,8 +15,13 @@ import type { CeoLetterContent } from "../types/about-page";
  * then a fixed-width portrait column (sits sticky beside the letter on
  * desktop, so it never drifts out of alignment) and the letter itself:
  * eyebrow, staggered paragraphs, then the closing line as an oversized serif
- * pull-line, then the signature + typed attribution. Envelope pops in
- * first, then the portrait wipes open, on first view.
+ * pull-line, then the signature + typed attribution.
+ *
+ * On first view: the envelope pops in, then the portrait and the letter
+ * body slide in together from their own outer edge and converge toward the
+ * centre — the same mechanism the homepage's about-teaser uses for its
+ * copy/media pair (see about-teaser.tsx) — before the paragraphs, closing
+ * line, and signature stagger in on their own.
  */
 export function CeoLetter({ content }: { content: CeoLetterContent }) {
   const rootRef = React.useRef<HTMLElement>(null);
@@ -27,7 +32,7 @@ export function CeoLetter({ content }: { content: CeoLetterContent }) {
       mm.add(aboutMotion.enabledMedia, () => {
         const root = rootRef.current;
         if (!root) return;
-        const { portrait, letter } = aboutMotion.ceo;
+        const { slideIn, letter } = aboutMotion.ceo;
 
         const envelopeEl = root.querySelector<HTMLElement>(
           "[data-ceo-envelope]",
@@ -48,28 +53,32 @@ export function CeoLetter({ content }: { content: CeoLetterContent }) {
           );
         }
 
+        // Portrait and letter body converge toward the centre from their
+        // own outer edge — the exact mechanism the homepage's about-teaser
+        // uses for its copy/media pair: both start pushed past their column
+        // and hidden (gsap.set, not fromTo — the resting DOM is already
+        // fully visible, so a skipped/interrupted tween never strands
+        // either half off-screen), then animate together on one timeline so
+        // they visibly arrive from opposite sides at the same moment.
         const portraitEl = root.querySelector<HTMLElement>(
           "[data-ceo-portrait]",
         );
-        if (portraitEl) {
-          gsap.fromTo(
-            portraitEl,
-            {
-              clipPath: `inset(${portrait.clipFrom}% 0% 0% 0%)`,
-              scale: portrait.scaleFrom,
+        const bodyEl = root.querySelector<HTMLElement>("[data-ceo-body]");
+        if (portraitEl && bodyEl) {
+          gsap.set(portraitEl, { x: -slideIn.offset, opacity: 0 });
+          gsap.set(bodyEl, { x: slideIn.offset, opacity: 0 });
+
+          gsap.to([portraitEl, bodyEl], {
+            x: 0,
+            opacity: 1,
+            duration: slideIn.duration,
+            ease: "back.out(1.6)",
+            scrollTrigger: {
+              trigger: root,
+              start: slideIn.start,
+              once: true,
             },
-            {
-              clipPath: "inset(0% 0% 0% 0%)",
-              scale: 1,
-              duration: portrait.duration,
-              ease: "power3.out",
-              scrollTrigger: {
-                trigger: portraitEl,
-                start: portrait.start,
-                once: true,
-              },
-            },
-          );
+          });
         }
 
         const paragraphs = gsap.utils.toArray<HTMLElement>(
@@ -155,7 +164,10 @@ export function CeoLetter({ content }: { content: CeoLetterContent }) {
         </div>
 
         <div className="ceo-letter__grid">
-          <figure data-ceo-portrait className="ceo-letter__portrait">
+          <figure
+            data-ceo-portrait
+            className="ceo-letter__portrait will-change-transform"
+          >
             {content.portrait ? (
               <Image
                 src={content.portrait}
@@ -171,7 +183,7 @@ export function CeoLetter({ content }: { content: CeoLetterContent }) {
             )}
           </figure>
 
-          <div className="ceo-letter__body">
+          <div data-ceo-body className="ceo-letter__body will-change-transform">
             <EditorialEyebrow id="ceo-heading" className="text-primary">
               {content.eyebrow}
             </EditorialEyebrow>

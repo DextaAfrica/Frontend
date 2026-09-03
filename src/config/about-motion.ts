@@ -15,12 +15,16 @@ export const aboutMotion = {
   },
 
   ceo: {
-    // Portrait wipes open (and settles from a slight zoom) once on first view.
-    portrait: {
-      clipFrom: 16,
-      scaleFrom: 1.06,
-      duration: 1,
-      start: "top 80%",
+    // Portrait and letter body converge toward the centre from their own
+    // outer edge, each starting off past its column — the same mechanism as
+    // the homepage's about-teaser (see about-teaser.tsx): opposite starting
+    // sides, one shared timeline, a `back.out` ease so both overshoot their
+    // resting spot by a few pixels before settling rather than sliding to a
+    // dead stop.
+    slideIn: {
+      offset: 72,
+      duration: 1.3,
+      start: "top 78%",
     },
     // Letter paragraphs, closing line, then signature — staggered on first view.
     letter: {
