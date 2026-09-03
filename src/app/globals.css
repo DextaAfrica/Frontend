@@ -296,8 +296,8 @@
 
   --background: #0d0c0b;
   --foreground: #f4efe7;
-  --surface: #151310;
-  --surface-elevated: #1d1a16;
+  --surface: #1a1714;
+  --surface-elevated: #221e19;
   --muted: #24201b;
   --muted-foreground: #aaa197;
   --border: #39332c;
@@ -543,17 +543,50 @@ body {
  * than relying on the background-colour step between adjacent sections —
  * that step is the same *absolute* delta in both themes, but reads as
  * near-invisible in the dark theme's low-luminance range even though it's
- * clearly visible in light. A foreground-tinted hairline at a fixed opacity
- * sidesteps that: --foreground is already dark in light mode and light in
- * dark mode, so this is always a soft, legible line regardless of theme. */
+ * clearly visible in light.
+ *
+ * A brand-red gradient line, brightest at the centre and fading to nothing
+ * at both edges, with the same pulsing "signal" dot already used at the
+ * expertise marquee, the press logos and the Dexta Clan band — marking
+ * every section boundary in the site's own accent language rather than a
+ * generic reset-style rule. Both pieces are intensity/opacity only, so they
+ * hold up in both themes without a separate dark-mode override. */
 .section-divider::before {
   content: "";
   position: absolute;
   inset-inline: 0;
   top: 0;
   height: 1px;
-  background: rgb(from var(--foreground) r g b / 0.08);
+  background: linear-gradient(
+    to right,
+    transparent,
+    rgb(from var(--primary) r g b / 0.5) 50%,
+    transparent
+  );
   pointer-events: none;
+}
+
+.section-divider::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 0.5rem;
+  height: 0.5rem;
+  translate: -50% -50%;
+  border-radius: 999px;
+  background: var(--primary);
+  box-shadow:
+    0 0 0 4px rgb(from var(--primary) r g b / 0.2),
+    0 0 18px 3px rgb(from var(--primary) r g b / 0.55);
+  animation: expertise-pulse 2.2s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .section-divider::after {
+    animation: none;
+  }
 }
 
 .editorial-hero-glow {
