@@ -201,6 +201,27 @@ export function SiteHeader() {
     setOpen(false);
   }
 
+  // The logo always points home. When you're already there, a Next.js
+  // <Link> to the current route is a no-op — so glide back to the top
+  // instead, the way arriving at the site fresh would land you.
+  function handleLogoClick(event: React.MouseEvent<HTMLAnchorElement>) {
+    closeMenu();
+    if (
+      pathname === "/" &&
+      event.button === 0 &&
+      !event.metaKey &&
+      !event.ctrlKey &&
+      !event.shiftKey &&
+      !event.altKey
+    ) {
+      event.preventDefault();
+      const reduce = window.matchMedia(
+        "(prefers-reduced-motion: reduce)",
+      ).matches;
+      window.scrollTo({ top: 0, behavior: reduce ? "auto" : "smooth" });
+    }
+  }
+
   return (
     <>
       <header
@@ -229,7 +250,7 @@ export function SiteHeader() {
           >
             <Link
               href="/"
-              onClick={closeMenu}
+              onClick={handleLogoClick}
               aria-label={`${siteConfig.name} home`}
               data-header-side
               className="site-header__logo shrink-0 justify-self-start"
@@ -302,7 +323,7 @@ export function SiteHeader() {
         <Container size="wide" className="mobile-nav__bar">
           <Link
             href="/"
-            onClick={closeMenu}
+            onClick={handleLogoClick}
             aria-label={`${siteConfig.name} home`}
             tabIndex={open ? 0 : -1}
           >
