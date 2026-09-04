@@ -38,6 +38,7 @@ export function ProjectScreen({ project }: { project: Project }) {
         title={project.tagline ?? fallbackTagline(project.status)}
         description={project.description}
         image={project.heroImage ?? project.image ?? ""}
+        imagePosition={project.heroImagePosition}
         primary={{ label: "Register your interest", href: "/contact" }}
         secondary={
           hasGallery ? { label: "View gallery", href: "#gallery" } : undefined

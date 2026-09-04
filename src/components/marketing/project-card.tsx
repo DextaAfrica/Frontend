@@ -31,6 +31,10 @@ export interface Project {
   /** The detail page's hero background. Falls back to `image` when unset —
    *  most projects only have the one photo today. */
   heroImage?: string;
+  /** `object-position` override for `heroImage` — see `HeroVideoProps.position`.
+   *  Leave unset for a photo with room to spare on both axes; only needed
+   *  when the hero's subject sits close to an edge for a centred crop. */
+  heroImagePosition?: string;
   /** The detail page's product-listing-style photo galleries, grouped the
    *  way a real estate listing actually groups finishes — interior and
    *  exterior are two separate sets a visitor switches between, not one

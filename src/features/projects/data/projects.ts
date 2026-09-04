@@ -23,6 +23,12 @@ export const projects: Project[] = [
     image: "/images/project-dlodge.jpg",
     // D1 — the detail page's hero background: the campaign key-drop poster.
     heroImage: "/images/dlodge/d1.webp",
+    // A tall poster with its own baked-in text top and bottom — a centred
+    // crop on this wide hero frame lands on the hanging-keys silhouettes,
+    // not the shot's actual subject. Biased toward the reaching hand and
+    // gold pendant instead, and away from the poster's own price/feature
+    // text, which this hero already repeats in its own type below.
+    heroImagePosition: "center 55%",
     priceFrom: "Starting from ₦15M initial deposit",
     features: [
       "Ultra-premium 1 & 2 bedroom apartments",
@@ -45,14 +51,26 @@ export const projects: Project[] = [
       },
       { src: "/images/dlodge/d8.webp", alt: "D'Lodge master bedroom" },
     ],
-    // No real exterior set yet — one placeholder rather than none, so the
-    // toggle and gallery are already live. Add the real front/rear/side/
-    // approach views here as they're supplied, each as its own entry with
-    // an alt naming the actual view (e.g. "D'Lodge — front view").
+    // No real exterior set yet — three placeholders from the existing
+    // catalogue, tagged by elevation, rather than none, so the toggle and
+    // gallery are already live. Only the front one is an honest match — a
+    // real front-on render of this building. The other two are stand-ins
+    // borrowed from elsewhere in the catalogue (a lifestyle/pool shot, a
+    // generic site-visit photo) and don't actually show a building
+    // elevation at all; swap them the moment real photography exists,
+    // rather than leaving a client looking at a pool photo labeled "Rear
+    // Elevation". "Side Elevation" is one entry for now — split it into
+    // separate "Left Side Elevation" / "Right Side Elevation" entries once
+    // there are two real side shots to tell apart.
     exteriorGallery: [
+      { src: "/images/project-dlodge.jpg", alt: "D'Lodge — Front Elevation" },
       {
-        src: "/images/dexta-residential.jpg",
-        alt: "D'Lodge exterior — placeholder, real views pending",
+        src: "/images/project-olumo.jpg",
+        alt: "D'Lodge — Side Elevation (placeholder, not the real building)",
+      },
+      {
+        src: "/images/service-site-and-service.png",
+        alt: "D'Lodge — Rear Elevation (placeholder, not the real building)",
       },
     ],
   },
