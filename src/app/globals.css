@@ -523,6 +523,11 @@ body {
   font-weight: 400;
   line-height: 1.6;
   text-rendering: optimizeLegibility;
+  /* Site-wide guard: no full-bleed section, marquee, or oversized decorative
+     layer can ever produce a horizontal scrollbar on a phone. `clip` (not
+     `hidden`) so it never becomes a scroll container and `position: sticky`
+     keeps working for the header, the services stage and the CEO portrait. */
+  overflow-x: clip;
   transition:
     color 240ms var(--motion-ease-premium),
     background-color 240ms var(--motion-ease-premium);
@@ -1279,6 +1284,14 @@ dialog[open]::backdrop {
   50% {
     opacity: 0.75;
     transform: translateY(0.15rem);
+  }
+}
+
+/* Short viewports (landscape phones): the hero copy + CTAs already fill the
+   frame — the cue would collide with them, so it steps aside. */
+@media (max-height: 40rem) {
+  .hero-scroll-cue {
+    display: none;
   }
 }
 
