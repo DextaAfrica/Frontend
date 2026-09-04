@@ -36,6 +36,15 @@ export function DextaClanBand({
   cta,
   video,
 }: DextaClanBandProps) {
+  const ctaElement = (
+    <Reveal delay={video ? 0.35 : 0}>
+      <ButtonLink href={cta.href} size="lg" variant="onMedia" className="mt-2">
+        {cta.label}
+        <Icon name="arrow-right" />
+      </ButtonLink>
+    </Reveal>
+  );
+
   return (
     <section
       className={cn("dexta-clan py-about", video && "dexta-clan--video")}
@@ -83,34 +92,41 @@ export function DextaClanBand({
             </ScrollFadeGroup>
           )}
 
-          <Reveal delay={video ? 0.35 : 0}>
-            <ButtonLink
-              href={cta.href}
-              size="lg"
-              variant="onMedia"
-              className="mt-2"
-            >
-              {cta.label}
-              <Icon name="arrow-right" />
-            </ButtonLink>
-          </Reveal>
+          {/* With a video, this band never stacks — it's one centred
+              column over the backdrop — so the CTA stays right here, last
+              in reading order. */}
+          {video && ctaElement}
         </ScrollFade>
 
+        {/* Without a video: three grid items, not two — the CTA is its own
+            item rather than nested in the copy block, so it can land
+            somewhere different on a narrow screen than it does beside the
+            copy on a wide one. Stacked (below `lg`), plain DOM order
+            already puts it last: copy, then the benefits list, then the
+            CTA — never sandwiched between them. At `lg` and up, the
+            benefits list spans both rows (`lg:row-span-2`) so the same
+            three items auto-place into copy top-left / CTA bottom-left /
+            benefits spanning the right column — the original two-column
+            look, with no `order` utilities or explicit grid-area wiring
+            needed for either layout. */}
         {!video && (
-          <ScrollFadeGroup>
-            <ul className="flex flex-col">
-              {benefits.map((benefit) => (
-                <RevealItem
-                  as="li"
-                  key={benefit}
-                  className="dexta-clan__benefit"
-                >
-                  <Icon name="badge-check" size={20} />
-                  <span className="text-brand-light/85">{benefit}</span>
-                </RevealItem>
-              ))}
-            </ul>
-          </ScrollFadeGroup>
+          <>
+            <ScrollFadeGroup className="lg:row-span-2">
+              <ul className="flex flex-col">
+                {benefits.map((benefit) => (
+                  <RevealItem
+                    as="li"
+                    key={benefit}
+                    className="dexta-clan__benefit"
+                  >
+                    <Icon name="badge-check" size={20} />
+                    <span className="text-brand-light/85">{benefit}</span>
+                  </RevealItem>
+                ))}
+              </ul>
+            </ScrollFadeGroup>
+            {ctaElement}
+          </>
         )}
       </Container>
     </section>

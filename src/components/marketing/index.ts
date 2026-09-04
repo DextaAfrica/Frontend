@@ -1,3 +1,4 @@
+export * from "./contact-map";
 export * from "./cta-band";
 export * from "./dexta-clan-band";
 export * from "./expertise-marquee";
@@ -9,8 +10,10 @@ export * from "./lite-youtube";
 export * from "./media-frame";
 export * from "./media-panel";
 export * from "./newsletter-section";
+export * from "./page-not-ready";
 export * from "./press-logos";
 export * from "./project-card";
+export * from "./project-finishes-gallery";
 export * from "./project-gallery";
 export * from "./quote-block";
 export * from "./reveal";

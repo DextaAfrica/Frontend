@@ -26,10 +26,16 @@ export interface MediaHeroProps {
   mobileVideo?: string;
   primary?: CtaLink;
   secondary?: CtaLink;
-  /** `"full"` fills the viewport (home + about); `"compact"` (the default) is
-   *  a shorter interior-page banner that still lets the page's content show
-   *  just below the fold. */
+  /** `"compact"` (the default) is the height every page uses today — a
+   *  shorter interior-page banner that still lets the page's content show
+   *  just below the fold. `"full"` fills the viewport instead, for a page
+   *  that wants the homepage's own scale. */
   size?: "full" | "compact";
+  /** See `HeroVideoProps.position` — an `object-position` override for the
+   *  rare photo whose subject sits too close to an edge for a centred crop
+   *  (e.g. a building whose roofline is only a few percent from the top of
+   *  the frame). Leave unset for anything with room to spare on both axes. */
+  imagePosition?: string;
 }
 
 /**
@@ -59,6 +65,7 @@ export function MediaHero({
   primary,
   secondary,
   size = "compact",
+  imagePosition,
 }: MediaHeroProps) {
   const introRef = React.useRef<HTMLDivElement>(null);
   const badgeRef = React.useRef<HTMLSpanElement>(null);
@@ -136,7 +143,12 @@ export function MediaHero({
         size === "compact" && "dexta-hero--compact",
       )}
     >
-      <HeroVideo video={video} mobileVideo={mobileVideo} poster={image} />
+      <HeroVideo
+        video={video}
+        mobileVideo={mobileVideo}
+        poster={image}
+        position={imagePosition}
+      />
       <span
         aria-hidden
         className="absolute inset-x-0 top-0 h-36 bg-gradient-to-b from-black/45 via-black/10 to-transparent"

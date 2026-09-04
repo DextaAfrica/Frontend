@@ -36,7 +36,23 @@ jobs:
       - name: Install locked dependencies
         run: npm ci
       - name: Audit dependencies
-        run: npm audit --omit=dev --audit-level=high
+        # registry.npmjs.org's audit endpoint returns a bare 503 now and
+        # then — an outage on npm's side, not a finding about this repo —
+        # and `npm audit` treats that the same as a real high/critical
+        # result: non-zero exit, no distinction in the exit code alone.
+        # Retrying rides out the transient case; a genuine vulnerability
+        # doesn't go away on retry, so it still fails, just after a few
+        # extra seconds rather than a wasted CI run over an npm outage.
+        run: |
+          for attempt in 1 2 3; do
+            if npm audit --omit=dev --audit-level=high; then
+              exit 0
+            fi
+            echo "npm audit attempt ${attempt} failed" >&2
+            [ "$attempt" -lt 3 ] && sleep $((attempt * 15))
+          done
+          echo "npm audit failed after 3 attempts" >&2
+          exit 1
       - name: Run quality gates
         run: npm run check
 

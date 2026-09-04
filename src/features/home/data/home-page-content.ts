@@ -82,6 +82,14 @@ export const homePageContent = {
       description:
         "Ultra-premium 1 & 2 bedroom apartments in the heart of Lekki, built around smart-home technology, world-class amenities, and a genuinely prime address.",
       image: "/images/project-dlodge.jpg",
+      // PLACEHOLDER SET — architectural renders already in the repo, standing
+      // in until D'Lodge's real photo set is supplied. Lead shot first.
+      images: [
+        "/images/project-dlodge.jpg",
+        "/images/residence-exterior.png",
+        "/images/residence-interior.png",
+        "/images/residence-rooftop.png",
+      ],
       href: "/projects/dlodge-apartment",
     },
     {
@@ -92,6 +100,13 @@ export const homePageContent = {
       description:
         "Fully serviced plots inside a secured, master-planned estate — roads, drainage, and utilities already in place before you break ground.",
       image: "/images/project-olumo.jpg",
+      // PLACEHOLDER SET — see note on D'Lodge above.
+      images: [
+        "/images/project-olumo.jpg",
+        "/images/figma-pages/project-olumo.png",
+        "/images/figma-pages/kingsway-plan.png",
+        "/images/figma-pages/project-villa.png",
+      ],
       href: "/projects/olumo-county-estate",
     },
     {
@@ -102,6 +117,14 @@ export const homePageContent = {
       description:
         "A gated residential estate built around wide roads, green spaces, and long-term value for families and investors alike.",
       image: "/images/project-kingsway.jpg",
+      // PLACEHOLDER SET — see note on D'Lodge above. The second shot is the
+      // Kingsway gate render (filed under a misleading name in figma-pages).
+      images: [
+        "/images/project-kingsway.jpg",
+        "/images/figma-pages/project-dlodge.png",
+        "/images/figma-pages/project-kingsway.png",
+        "/images/dexta-residential.jpg",
+      ],
       href: "/projects/kingsway-estate",
     },
   ],

@@ -28,8 +28,20 @@ export interface Project {
   priceFrom?: string;
   /** Headline selling points, shown as a facts strip on the detail page. */
   features?: readonly string[];
-  /** The detail page's product-listing-style photo gallery. */
-  gallery?: readonly { src: string; alt: string }[];
+  /** The detail page's hero background. Falls back to `image` when unset —
+   *  most projects only have the one photo today. */
+  heroImage?: string;
+  /** `object-position` override for `heroImage` — see `HeroVideoProps.position`.
+   *  Leave unset for a photo with room to spare on both axes; only needed
+   *  when the hero's subject sits close to an edge for a centred crop. */
+  heroImagePosition?: string;
+  /** The detail page's product-listing-style photo galleries, grouped the
+   *  way a real estate listing actually groups finishes — interior and
+   *  exterior are two separate sets a visitor switches between, not one
+   *  undifferentiated pile of photos. Either (or both) may be empty while
+   *  a project's photo set is still being put together. */
+  interiorGallery?: readonly { src: string; alt: string }[];
+  exteriorGallery?: readonly { src: string; alt: string }[];
 }
 export function ProjectCard({ project }: { project: Project }) {
   const href = `/projects/${project.slug}`;

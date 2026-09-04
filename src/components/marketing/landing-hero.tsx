@@ -69,6 +69,7 @@ export function LandingHero({
   poster,
 }: LandingHeroProps) {
   const [activeIndex, setActiveIndex] = React.useState(0);
+  const [pastTop, setPastTop] = React.useState(false);
   const introRef = React.useRef<HTMLDivElement>(null);
   const badgeRef = React.useRef<HTMLSpanElement>(null);
   const headingRef = React.useRef<HTMLDivElement>(null);
@@ -206,6 +207,26 @@ export function LandingHero({
     { scope: introRef, dependencies: [activeIndex] },
   );
 
+  // The "scroll to explore" cue lives only while the visitor is still at the
+  // very top — the first flick of the wheel retires it, and it returns if
+  // they come all the way back up (e.g. via the logo).
+  React.useEffect(() => {
+    const onScroll = () => setPastTop(window.scrollY > 24);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  const scrollToContent = () => {
+    const reduce = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
+    window.scrollTo({
+      top: window.innerHeight * 0.92,
+      behavior: reduce ? "auto" : "smooth",
+    });
+  };
+
   // Auto-advance — paused on hover/focus, off entirely under reduced motion.
   React.useEffect(() => {
     if (slides.length < 2) return;
@@ -313,6 +334,26 @@ export function LandingHero({
           </Reveal>
         </div>
       </Container>
+
+      <button
+        type="button"
+        onClick={scrollToContent}
+        data-hidden={pastTop || undefined}
+        className="hero-scroll-cue"
+        aria-label="Scroll to explore"
+      >
+        <span aria-hidden className="hero-scroll-cue__label">
+          Scroll to explore
+        </span>
+        <span aria-hidden className="hero-scroll-cue__mouse">
+          <span className="hero-scroll-cue__wheel" />
+        </span>
+        <Icon
+          name="chevron-down"
+          size={16}
+          className="hero-scroll-cue__chevron"
+        />
+      </button>
 
       <span
         aria-hidden

@@ -12,9 +12,13 @@ import type { AboutPageContent } from "../types/about-page";
 export const aboutPageContent = {
   hero: {
     eyebrow: "About Dexta Africa",
-    titleLines: ["We turn intent", "into *ownership*"],
+    titleLines: ["Building tomorrow,", "*today*"],
     lede: "A trusted name in African real estate — delivering value-focused services from land acquisition to development and beyond.",
-    image: "/images/about/hero-people.png",
+    // hero-people.png is a background-removed cutout (transparent above the
+    // roofline) meant to be composited onto something else — used directly
+    // as a full-bleed hero poster it painted as a large flat black void
+    // above the house. This is a plain, fully-painted photo instead.
+    image: "/images/about/residential.png",
     // PLACEHOLDER — drop a dedicated About brand film here when it's ready;
     // until then the hero runs as an image background.
     primary: { label: "Explore our projects", href: "/projects" },
@@ -26,7 +30,6 @@ export const aboutPageContent = {
       "Dexta Africa delivers value-focused real estate services that meet the diverse needs of our clients — from land acquisition, through development, and every step beyond.",
       "We turn intent into ownership, and ownership into lasting wealth, holding every project to the same standard of integrity and craft — whatever its size, wherever it stands.",
     ],
-    kicker: "We're not done yet. We're just *getting started*.",
   },
   missionVision: {
     mission: {
@@ -70,13 +73,13 @@ export const aboutPageContent = {
     ],
   },
   ceo: {
-    eyebrow: "A note from our CEO",
+    eyebrow: "Why we do this",
     paragraphs: [
       "When we started Dexta Africa, the goal was simple: make real estate in Africa something people could trust — not just the finished building, but every step that leads to it. The search. The paperwork. The promises. The handover.",
       "That belief still runs through everything we do. We acquire land with diligence, develop with intent, and stay accountable long after the keys change hands. Whether you're investing from another continent, buying your first plot, or learning how the market works for the very first time, you should feel the same clarity and the same respect.",
       "What we've built so far — the estates, the partnerships, the families now settled on land we serviced — is proof that this way of working holds. But it's a foundation, not a finish line.",
     ],
-    kicker: "We're not done yet. We're just getting started.",
+    kicker: "We're not done yet. We're just *getting started*.",
     name: "Mr. Olamide Ojo",
     // PLACEHOLDER TITLE — confirm exact wording with the client.
     title: "Founder & Chief Executive Officer",
@@ -98,39 +101,42 @@ export const aboutPageContent = {
     cta: { label: "Join the Dexta Clan", href: "/contact" },
   },
   team: {
-    eyebrow: "The people behind it",
-    title: "A team that holds delivery *to the drawing*.",
+    eyebrow: "Board and Management Team",
+    title: "Meet our *professionals*",
+    lede: "The people leading our vision — driven by a passion for sustainable growth and committed to transforming rural Africa through forward-thinking real estate development.",
+    // The real roster is being added one confirmed profile at a time.
+    // Members without an `image` render an initials monogram until their
+    // portrait is supplied; `socials` links light up as they're confirmed.
     members: [
-      // PLACEHOLDER NAMES + ROLES — swap for the real team roster.
       {
-        name: "Team Member One",
-        role: "Head of Development",
-        image: "/images/about/team-1.png",
+        name: "Dr. Muibi Kehinde",
+        role: "Non-Executive Director",
+        image: "/images/DR-MKH-DEXTA-AFRICA.png",
       },
       {
-        name: "Team Member Two",
-        role: "Head of Sales & Client Relations",
-        image: "/images/about/team-2.png",
+        name: "Mr. Tejumola Taiwo",
+        role: "Company Secretary",
+        image: "/images/TEJU-DEXTA-AFRICA.png",
       },
       {
-        name: "Team Member Three",
-        role: "Head of Legal & Documentation",
-        image: "/images/about/team-3.png",
+        name: "Mr. Olufemi Akinrefe",
+        role: "General Manager",
+        image: "/images/OLUFEMI-DEXTA-AFRICA.png",
       },
       {
-        name: "Team Member Four",
-        role: "Project Delivery Lead",
-        image: "/images/about/team-4.png",
+        name: "Ms. Mercy Aligbeh",
+        role: "HR Manager",
+        image: "/images/SADIA-DEXTA-AFRICA.png",
       },
       {
-        name: "Team Member Five",
-        role: "Head of Community",
-        image: "/images/about/team-5.png",
+        name: "Ms. Adeola Bello",
+        role: "Head of Account",
+        image: "/images/ADEOLA-DEXTA-AFRICA.png",
       },
       {
-        name: "Team Member Six",
-        role: "Head of Finance",
-        image: "/images/about/team-6.png",
+        name: "Ms. Adegoke Itunu",
+        role: "Head of Operations",
+        image: "/images/ITUNU-DEXTA-AFRICA.png",
       },
     ],
   },

@@ -42,9 +42,6 @@ export const aboutPageContentSchema = z.object({
   statement: z.object({
     heading: nonEmptyString,
     paragraphs: nonEmptyStringArray,
-    // The closing line, held apart from the body so it can be set as its own
-    // oversized pull-line ("We're not done yet. We're just getting started.").
-    kicker: nonEmptyString,
   }),
   missionVision: z.object({
     mission: framedStatementSchema,
@@ -71,7 +68,9 @@ export const aboutPageContentSchema = z.object({
     // photo file exists at this path.
     portrait: nonEmptyString.optional(),
     signature: nonEmptyString,
-    background: nonEmptyString,
+    // Optional: a faint full-bleed texture behind the letter. Renders at
+    // 5% opacity, so its absence is never visually obvious either way.
+    background: nonEmptyString.optional(),
   }),
   dextaClan: z.object({
     eyebrow: nonEmptyString,
@@ -83,12 +82,26 @@ export const aboutPageContentSchema = z.object({
   team: z.object({
     eyebrow: nonEmptyString,
     title: nonEmptyString,
+    // Optional standfirst under the heading.
+    lede: nonEmptyString.optional(),
     members: z
       .array(
         z.object({
           name: nonEmptyString,
           role: nonEmptyString,
-          image: nonEmptyString,
+          // Optional: members without a photo yet render an initials
+          // monogram until a real portrait is added.
+          image: nonEmptyString.optional(),
+          // Optional per-person profile links. The hover panel always shows
+          // all three glyphs; each becomes a real link only once its URL is
+          // set here.
+          socials: z
+            .object({
+              instagram: nonEmptyString.optional(),
+              linkedin: nonEmptyString.optional(),
+              facebook: nonEmptyString.optional(),
+            })
+            .optional(),
         }),
       )
       .min(1),

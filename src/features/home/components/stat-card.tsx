@@ -4,7 +4,7 @@ import { useRef } from "react";
 import Image from "next/image";
 import { MetricValue } from "@/components/ui";
 import { gsap, useGSAP } from "@/lib/gsap";
-import { isRemoteAsset } from "@/lib/media";
+import { IMAGE_PLACEHOLDER, isRemoteAsset } from "@/lib/media";
 import type { StatisticContent } from "../types/home-page";
 
 const COUNT_UP_DURATION = 2.6;
@@ -33,7 +33,7 @@ function StatCopy({ copy, highlight }: { copy: string; highlight: string }) {
   return (
     <>
       {copy.slice(0, index)}
-      <strong className="font-bold text-brand-light">{highlight}</strong>
+      <strong className="stat-card__mark">{highlight}</strong>
       {copy.slice(index + highlight.length)}
     </>
   );
@@ -133,6 +133,8 @@ export function StatCard({
         fill
         priority={priority}
         sizes="(min-width: 768px) 34vw, 100vw"
+        placeholder="blur"
+        blurDataURL={IMAGE_PLACEHOLDER}
         unoptimized={isRemoteAsset(stat.image)}
         className="stat-card__image object-cover"
       />

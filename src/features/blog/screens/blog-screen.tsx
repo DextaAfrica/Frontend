@@ -1,62 +1,14 @@
-import { Grid, Page, Section, Stack } from "@/components/layout";
-import {
-  MarketingHeading,
-  MediaHero,
-  MediaPanel,
-} from "@/components/marketing";
-import {
-  ButtonLink,
-  Card,
-  CardContent,
-  CardHeading,
-  Eyebrow,
-  Text,
-} from "@/components/ui";
-import { articles } from "../data/articles";
+import { Page } from "@/components/layout";
+import { PageNotReady } from "@/components/marketing";
 
 export function BlogScreen() {
   return (
     <Page>
-      <MediaHero
+      <PageNotReady
         eyebrow="Blog"
-        title={["Ideas for a more", "considered *world*."]}
-        description="Perspectives on architecture, material, place, culture, and the evolving meaning of home."
-        image="/images/residence-interior.png"
+        title="Our blog isn't ready yet"
+        description="We're getting our first pieces together — insights on African real estate, buying with confidence, and building wealth through property."
       />
-      <Section tone="surface">
-        <Stack gap="2xl">
-          <MarketingHeading
-            eyebrow="Latest perspectives"
-            title="From the studio and beyond."
-          />
-          <Grid columns="two" gap="lg">
-            {articles.map((article) => (
-              <Card key={article.title} className="group overflow-hidden">
-                <MediaPanel
-                  label={article.title}
-                  tone={article.tone}
-                  className="min-h-72 rounded-none"
-                />
-                <CardContent className="p-6">
-                  <Stack gap="sm">
-                    <Eyebrow>
-                      {article.category} · {article.date}
-                    </Eyebrow>
-                    <CardHeading size="lg">{article.title}</CardHeading>
-                    <Text className="text-sm">
-                      Exploring the decisions and ideas that shape enduring
-                      places and more meaningful daily experiences.
-                    </Text>
-                    <ButtonLink href={`/blog/${article.slug}`} variant="link">
-                      Read perspective
-                    </ButtonLink>
-                  </Stack>
-                </CardContent>
-              </Card>
-            ))}
-          </Grid>
-        </Stack>
-      </Section>
     </Page>
   );
 }

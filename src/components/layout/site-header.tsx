@@ -201,29 +201,57 @@ export function SiteHeader() {
     setOpen(false);
   }
 
+  // The logo always points home. When you're already there, a Next.js
+  // <Link> to the current route is a no-op — so glide back to the top
+  // instead, the way arriving at the site fresh would land you.
+  function handleLogoClick(event: React.MouseEvent<HTMLAnchorElement>) {
+    closeMenu();
+    if (
+      pathname === "/" &&
+      event.button === 0 &&
+      !event.metaKey &&
+      !event.ctrlKey &&
+      !event.shiftKey &&
+      !event.altKey
+    ) {
+      event.preventDefault();
+      const reduce = window.matchMedia(
+        "(prefers-reduced-motion: reduce)",
+      ).matches;
+      window.scrollTo({ top: 0, behavior: reduce ? "auto" : "smooth" });
+    }
+  }
+
   return (
     <>
       <header
         ref={headerRef}
         data-sticky={!overlayHeroRoute}
         data-scrolled={solid}
+        data-condensed={scrolled || undefined}
         data-overlays-hero={overlaysHero}
         className="site-header"
       >
         <Container size="wide" className="h-full">
-          {/* A 3-column grid, not flex justify-between: with justify-between,
-              a middle child only gets equal *gaps* to its unequal-width
-              neighbors (logo vs. the wider toggle+CTA cluster), which pushes
-              its visual center off the header's true center. Two equal `1fr`
-              side columns guarantee the nav's own column is centered
-              regardless of how wide either side's content is. */}
+          {/* Below `lg`, the nav is hidden entirely — logo and the
+              toggle+CTA+menu cluster are the only two things left, so a
+              plain `justify-between` puts one at the true left edge and the
+              other at the true right, with zero dead space assumed for a
+              middle item that isn't there. From `lg` up, once the nav
+              reappears: a 3-column grid, not flex justify-between — with
+              justify-between, a middle child only gets equal *gaps* to its
+              unequal-width neighbors (logo vs. the wider toggle+CTA
+              cluster), which pushes its visual center off the header's true
+              center. Two equal `1fr` side columns guarantee the nav's own
+              column is centered regardless of how wide either side's
+              content is. */}
           <div
             ref={barRef}
-            className="grid h-full grid-cols-[1fr_auto_1fr] items-center gap-x-6 xl:gap-x-12"
+            className="flex h-full items-center justify-between gap-x-6 lg:grid lg:grid-cols-[1fr_auto_1fr] lg:justify-normal xl:gap-x-12"
           >
             <Link
               href="/"
-              onClick={closeMenu}
+              onClick={handleLogoClick}
               aria-label={`${siteConfig.name} home`}
               data-header-side
               className="site-header__logo shrink-0 justify-self-start"
@@ -233,7 +261,7 @@ export function SiteHeader() {
 
             <nav
               aria-label="Primary"
-              className="hidden min-w-0 items-center gap-x-5 justify-self-center lg:flex xl:gap-x-7"
+              className="site-header__nav hidden min-w-0 items-center gap-x-5 justify-self-center lg:flex xl:gap-x-7"
             >
               {siteConfig.navItems.map((item) => (
                 <HeaderLink key={item.href} item={item} pathname={pathname} />
@@ -269,7 +297,7 @@ export function SiteHeader() {
                 variant="secondary"
                 size="sm"
                 data-on-media={overlaysHero || undefined}
-                className="header-menu-trigger lg:hidden"
+                className="header-menu-trigger"
                 onClick={() => setOpen((current) => !current)}
                 aria-expanded={open}
                 aria-controls="site-navigation"
@@ -296,7 +324,7 @@ export function SiteHeader() {
         <Container size="wide" className="mobile-nav__bar">
           <Link
             href="/"
-            onClick={closeMenu}
+            onClick={handleLogoClick}
             aria-label={`${siteConfig.name} home`}
             tabIndex={open ? 0 : -1}
           >

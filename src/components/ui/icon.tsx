@@ -13,7 +13,6 @@ import {
   LineChart,
   MessagesSquare,
   Monitor,
-  Mail,
   MapPin,
   Menu,
   Moon,
@@ -37,6 +36,35 @@ import {
   WhatsAppIcon,
   YouTubeIcon,
 } from "./brand-icons";
+
+/**
+ * A plain envelope — a rect with a folded-flap chevron, nothing more. Kept
+ * as a hand-drawn glyph rather than lucide's `Mail` (which reads busier at
+ * small sizes) because this simpler shape is the one the site has actually
+ * shipped with.
+ */
+function EnvelopeIcon({
+  size = 20,
+  strokeWidth = 1.75,
+  ...props
+}: LucideProps) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={strokeWidth}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      {...props}
+    >
+      <rect x="3" y="5" width="18" height="14" rx="2" />
+      <path d="m3 7 9 6 9-6" />
+    </svg>
+  );
+}
 
 export type IconName =
   | "arrow-right"
@@ -100,7 +128,7 @@ const icons: Record<IconName, ComponentType<GlyphProps>> = {
   menu: Menu,
   close: X,
   quote: Quote,
-  mail: Mail,
+  mail: EnvelopeIcon,
   phone: Phone,
   pin: MapPin,
   play: Play,

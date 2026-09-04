@@ -2,7 +2,8 @@ import { Grid, Page, Section, Stack } from "@/components/layout";
 import {
   CtaBand,
   MarketingHeading,
-  ProjectGallery,
+  MediaHero,
+  ProjectFinishesGallery,
 } from "@/components/marketing";
 import type { Project } from "@/components/marketing";
 import { Badge, Icon, type IconName } from "@/components/ui";
@@ -14,6 +15,10 @@ const factIcons: readonly IconName[] = [
   "pin",
 ];
 
+// A project without real campaign copy of its own still needs a title for
+// its hero — this is deliberately generic marketing language, never a
+// factual claim, so it's safe to reuse across any project that hasn't
+// supplied a `tagline` yet.
 const fallbackTagline = (status: string) =>
   status === "Completed"
     ? "An enduring expression of *home*."
@@ -22,40 +27,23 @@ const fallbackTagline = (status: string) =>
 export function ProjectScreen({ project }: { project: Project }) {
   const hasFacts =
     Boolean(project.priceFrom) || Boolean(project.features?.length);
-  const hasGallery = Boolean(project.gallery?.length);
+  const hasInterior = Boolean(project.interiorGallery?.length);
+  const hasExterior = Boolean(project.exteriorGallery?.length);
+  const hasGallery = hasInterior || hasExterior;
 
   return (
     <Page>
-      <Section>
-        <Stack gap="lg">
-          <p className="text-sm font-semibold tracking-[0.18em] text-primary uppercase">
-            {project.name} · {project.location}
-          </p>
-          <MarketingHeading
-            title={project.tagline ?? fallbackTagline(project.status)}
-            eyebrow={project.name}
-          />
-          <p className="max-w-2xl text-lg text-muted-foreground">
-            {project.description}
-          </p>
-          <div className="flex flex-wrap items-center gap-4">
-            <a
-              className="inline-flex items-center justify-center rounded-full bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground"
-              href="/contact"
-            >
-              Register your interest
-            </a>
-            {hasGallery && (
-              <a
-                className="inline-flex items-center justify-center rounded-full border border-border px-5 py-3 text-sm font-semibold text-foreground"
-                href="#gallery"
-              >
-                View gallery
-              </a>
-            )}
-          </div>
-        </Stack>
-      </Section>
+      <MediaHero
+        eyebrow={`${project.name} · ${project.location}`}
+        title={project.tagline ?? fallbackTagline(project.status)}
+        description={project.description}
+        image={project.heroImage ?? project.image ?? ""}
+        imagePosition={project.heroImagePosition}
+        primary={{ label: "Register your interest", href: "/contact" }}
+        secondary={
+          hasGallery ? { label: "View gallery", href: "#gallery" } : undefined
+        }
+      />
 
       {hasFacts && (
         <Section tone="surface" spacing="sm">
@@ -89,11 +77,14 @@ export function ProjectScreen({ project }: { project: Project }) {
         </Section>
       )}
 
-      {hasGallery && project.gallery && (
+      {hasGallery && (
         <Section id="gallery">
           <Stack gap="xl">
             <MarketingHeading eyebrow="Gallery" title="Inside the residence." />
-            <ProjectGallery images={project.gallery} />
+            <ProjectFinishesGallery
+              interior={project.interiorGallery ?? []}
+              exterior={project.exteriorGallery ?? []}
+            />
           </Stack>
         </Section>
       )}
@@ -102,7 +93,11 @@ export function ProjectScreen({ project }: { project: Project }) {
         title={`Ready to make *${project.name}* yours?`}
         ctaLabel="Register your interest"
         ctaHref="/contact"
-        image={project.gallery?.[0]?.src ?? project.image}
+        image={
+          project.interiorGallery?.[0]?.src ??
+          project.exteriorGallery?.[0]?.src ??
+          project.image
+        }
       />
     </Page>
   );

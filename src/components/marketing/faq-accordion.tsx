@@ -27,6 +27,16 @@ export function FaqAccordion({
 }: FaqAccordionProps) {
   return (
     <Section tone="surface" aria-labelledby="faq-heading">
+      {/* Three grid items, not two — the CTA is its own item rather than
+          nested inside the intro Stack, so it can land somewhere different
+          on a narrow screen than it does beside the intro on a wide one.
+          Stacked (below `md`), plain DOM order already puts it last: intro
+          copy, then the FAQ list, then the CTA — never sandwiched between
+          them. At `md` and up, the FAQ list spans both rows
+          (`md:row-span-2`) so the same three items auto-place into intro
+          top-left / CTA bottom-left / FAQ list spanning the right column —
+          the original two-column, sticky-intro look, with no `order`
+          utilities or explicit grid-area wiring needed for either layout. */}
       <Grid columns="two" gap="xl" className="items-start">
         <Reveal>
           <Stack gap="lg" className="lg:sticky lg:top-28">
@@ -36,19 +46,13 @@ export function FaqAccordion({
             </Badge>
             <SectionHeading id="faq-heading">{title}</SectionHeading>
             <Text className="max-w-sm">{description}</Text>
-            <ButtonLink
-              href="/contact"
-              variant="secondary"
-              size="md"
-              className="w-fit"
-            >
-              Talk to our team
-              <Icon name="arrow-right" />
-            </ButtonLink>
           </Stack>
         </Reveal>
 
-        <ScrollFadeGroup as="div" className="border-t border-border">
+        <ScrollFadeGroup
+          as="div"
+          className="border-t border-border md:row-span-2"
+        >
           {items.map((item, index) => (
             <RevealItem as="div" key={item.question}>
               <details
@@ -69,6 +73,18 @@ export function FaqAccordion({
             </RevealItem>
           ))}
         </ScrollFadeGroup>
+
+        <Reveal>
+          <ButtonLink
+            href="/contact"
+            variant="secondary"
+            size="md"
+            className="w-fit"
+          >
+            Talk to our team
+            <Icon name="arrow-right" />
+          </ButtonLink>
+        </Reveal>
       </Grid>
     </Section>
   );
