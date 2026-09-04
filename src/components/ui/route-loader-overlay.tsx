@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import * as React from "react";
 import { InfinityLoaderMark } from "./infinity-loader-mark";
@@ -127,6 +128,14 @@ export function RouteLoaderOverlay() {
   return (
     <div className="route-loader-overlay" role="status" aria-live="polite">
       <span aria-hidden className="route-loader-overlay__ambient" />
+      <Image
+        src="/images/dexta-logo-on-dark.svg"
+        alt=""
+        width={132}
+        height={58}
+        priority
+        className="route-loader-overlay__logo"
+      />
       <InfinityLoaderMark className="route-loader-overlay__mark" />
       <span className="sr-only">Loading…</span>
     </div>

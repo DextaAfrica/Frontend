@@ -6,7 +6,45 @@ import {
   RevealItem,
 } from "@/components/marketing";
 import { isRemoteAsset } from "@/lib/media";
-import type { AboutTeamContent } from "../types/about-page";
+import type { AboutTeamContent, TeamMember } from "../types/about-page";
+
+function initials(name: string) {
+  return name
+    .replace(/^(dr|prof|mr|mrs|ms|engr)\.?\s+/i, "")
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((word) => word[0]?.toUpperCase() ?? "")
+    .join("");
+}
+
+function TeamCard({ member }: { member: TeamMember }) {
+  return (
+    <RevealItem as="article" className="about-team__card">
+      <div className="about-team__media">
+        {member.image ? (
+          <Image
+            src={member.image}
+            alt={`Portrait of ${member.name}`}
+            fill
+            sizes="(min-width: 1024px) 22rem, (min-width: 640px) 45vw, 100vw"
+            unoptimized={isRemoteAsset(member.image)}
+          />
+        ) : (
+          <span aria-hidden className="about-team__monogram">
+            {initials(member.name)}
+          </span>
+        )}
+      </div>
+      <div className="flex flex-col gap-1 p-5">
+        <h3 className="font-display text-sm font-semibold tracking-tight">
+          {member.name}
+        </h3>
+        <p className="text-sm text-muted-foreground">{member.role}</p>
+      </div>
+    </RevealItem>
+  );
+}
 
 export function AboutTeam({ content }: { content: AboutTeamContent }) {
   return (
@@ -15,29 +53,9 @@ export function AboutTeam({ content }: { content: AboutTeamContent }) {
         eyebrow={content.eyebrow}
         title={content.title}
       />
-      <RevealGroup className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+      <RevealGroup className="about-team__grid mt-12">
         {content.members.map((member) => (
-          <RevealItem
-            as="article"
-            key={member.name}
-            className="about-team__card"
-          >
-            <div className="about-team__media">
-              <Image
-                src={member.image}
-                alt={`Portrait of ${member.name}`}
-                fill
-                sizes="(min-width: 1024px) 30vw, (min-width: 640px) 45vw, 100vw"
-                unoptimized={isRemoteAsset(member.image)}
-              />
-            </div>
-            <div className="flex flex-col gap-1 p-5">
-              <h3 className="font-display text-sm font-semibold tracking-tight">
-                {member.name}
-              </h3>
-              <p className="text-sm text-muted-foreground">{member.role}</p>
-            </div>
-          </RevealItem>
+          <TeamCard key={member.name} member={member} />
         ))}
       </RevealGroup>
     </Section>

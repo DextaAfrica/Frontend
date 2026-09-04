@@ -90,7 +90,9 @@ export const aboutPageContentSchema = z.object({
         z.object({
           name: nonEmptyString,
           role: nonEmptyString,
-          image: nonEmptyString,
+          // Optional: members without a photo yet render an initials
+          // monogram until a real portrait is added.
+          image: nonEmptyString.optional(),
         }),
       )
       .min(1),

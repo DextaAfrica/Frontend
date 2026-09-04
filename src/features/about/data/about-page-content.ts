@@ -12,7 +12,7 @@ import type { AboutPageContent } from "../types/about-page";
 export const aboutPageContent = {
   hero: {
     eyebrow: "About Dexta Africa",
-    titleLines: ["We turn intent", "into *ownership*"],
+    titleLines: ["Building tomorrow,", "*today*"],
     lede: "A trusted name in African real estate — delivering value-focused services from land acquisition to development and beyond.",
     // hero-people.png is a background-removed cutout (transparent above the
     // roofline) meant to be composited onto something else — used directly
@@ -104,37 +104,14 @@ export const aboutPageContent = {
   team: {
     eyebrow: "The people behind it",
     title: "A team that holds delivery *to the drawing*.",
+    // The real roster is being added one confirmed profile at a time.
+    // Members without an `image` render an initials monogram until their
+    // portrait is supplied.
     members: [
-      // PLACEHOLDER NAMES + ROLES — swap for the real team roster.
       {
-        name: "Team Member One",
-        role: "Head of Development",
-        image: "/images/about/team-1.png",
-      },
-      {
-        name: "Team Member Two",
-        role: "Head of Sales & Client Relations",
-        image: "/images/about/team-2.png",
-      },
-      {
-        name: "Team Member Three",
-        role: "Head of Legal & Documentation",
-        image: "/images/about/team-3.png",
-      },
-      {
-        name: "Team Member Four",
-        role: "Project Delivery Lead",
-        image: "/images/about/team-4.png",
-      },
-      {
-        name: "Team Member Five",
-        role: "Head of Community",
-        image: "/images/about/team-5.png",
-      },
-      {
-        name: "Team Member Six",
-        role: "Head of Finance",
-        image: "/images/about/team-6.png",
+        name: "Dr. Muibi Kehinde",
+        role: "Non-Executive Director",
+        image: "/images/DR-MKH-DEXTA-AFRICA.png",
       },
     ],
   },

@@ -859,7 +859,7 @@ dialog[open]::backdrop {
 }
 
 .app-loader__mark {
-  width: 9rem;
+  width: 5.5rem;
 }
 
 /* --- Infinity loader mark ------------------------------------------------
@@ -946,7 +946,9 @@ dialog[open]::backdrop {
   inset: 0;
   z-index: var(--layer-loader);
   display: grid;
+  place-content: center;
   place-items: center;
+  gap: 2.25rem;
   background: var(--brand-dark);
   animation: route-loader-fade-in 260ms var(--motion-ease-premium) both;
 }
@@ -964,9 +966,16 @@ dialog[open]::backdrop {
   animation: loader-breathe 3.6s ease-in-out infinite alternate;
 }
 
+.route-loader-overlay__logo {
+  position: relative;
+  height: auto;
+  width: 7rem;
+  animation: loader-mark 1.1s var(--motion-ease-premium) both;
+}
+
 .route-loader-overlay__mark {
   position: relative;
-  width: 9rem;
+  width: 5.5rem;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -3511,8 +3520,19 @@ dialog[open]::backdrop {
 }
 
 /* --- Team grid -------------------------------------------------------- */
+/* A centred wrap rather than a fixed column count, so the section reads as
+   deliberate at any roster size — one confirmed profile or a dozen. */
+.about-team__grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1.25rem;
+}
+
 .about-team__card {
   position: relative;
+  width: 100%;
+  max-width: 22rem;
   overflow: hidden;
   border: 1px solid var(--border);
   border-radius: var(--shape-panel);
@@ -3521,6 +3541,36 @@ dialog[open]::backdrop {
     transform 500ms var(--motion-ease-premium),
     border-color 500ms var(--motion-ease-premium),
     box-shadow 500ms var(--motion-ease-premium);
+}
+
+@media (min-width: 40rem) {
+  .about-team__card {
+    width: min(22rem, calc(50% - 0.625rem));
+  }
+}
+
+@media (min-width: 64rem) {
+  .about-team__card {
+    width: min(22rem, calc(33.333% - 0.834rem));
+  }
+}
+
+/* Portrait-less members: an initials monogram on the same 4/5 frame. */
+.about-team__monogram {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(
+    150deg,
+    var(--surface-elevated),
+    rgb(from var(--primary) r g b / 0.12)
+  );
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 1.4rem + 3vw, 3rem);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: rgb(from var(--primary) r g b / 0.75);
 }
 
 .about-team__card:hover {
