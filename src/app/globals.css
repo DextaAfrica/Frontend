@@ -709,6 +709,16 @@ body {
   animation: stat-card-drift 34s var(--motion-ease-premium) alternate infinite;
 }
 
+/* The key word in a stat's copy (Clients, Partners, …): the brand red,
+   lifted a touch so it holds contrast over the dark photo, with a faint
+   glow. Same family as the sentence around it — only weight and colour
+   change, so it reads as emphasis, not a different typeface. */
+.stat-card__mark {
+  font-weight: 700;
+  color: oklch(from var(--primary) calc(l + 0.12) c h);
+  text-shadow: 0 0 18px oklch(from var(--primary) l c h / 0.4);
+}
+
 .stat-card__scrim {
   background:
     linear-gradient(

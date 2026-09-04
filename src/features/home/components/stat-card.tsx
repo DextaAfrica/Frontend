@@ -33,7 +33,7 @@ function StatCopy({ copy, highlight }: { copy: string; highlight: string }) {
   return (
     <>
       {copy.slice(0, index)}
-      <strong className="font-bold text-brand-light">{highlight}</strong>
+      <strong className="stat-card__mark">{highlight}</strong>
       {copy.slice(index + highlight.length)}
     </>
   );

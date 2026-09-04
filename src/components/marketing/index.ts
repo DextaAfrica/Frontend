@@ -10,6 +10,7 @@ export * from "./lite-youtube";
 export * from "./media-frame";
 export * from "./media-panel";
 export * from "./newsletter-section";
+export * from "./page-not-ready";
 export * from "./press-logos";
 export * from "./project-card";
 export * from "./project-finishes-gallery";
