@@ -18,6 +18,7 @@ export * from "./project-gallery";
 export * from "./quote-block";
 export * from "./reveal";
 export * from "./section-heading";
+export * from "./service-line-band";
 export * from "./scroll-reveal-copy";
 export * from "./toc-nav";
 export * from "./youtube-background";

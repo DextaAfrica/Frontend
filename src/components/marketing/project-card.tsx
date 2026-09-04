@@ -1,15 +1,6 @@
-import { Stack } from "@/components/layout";
-import {
-  Badge,
-  ButtonLink,
-  Card,
-  CardContent,
-  CardHeading,
-  Eyebrow,
-  Icon,
-  Text,
-} from "@/components/ui";
-import { MediaPanel } from "./media-panel";
+import Image from "next/image";
+import { ButtonLink, Icon } from "@/components/ui";
+import { isRemoteAsset } from "@/lib/media";
 import { Reveal } from "./reveal";
 
 export interface Project {
@@ -43,31 +34,55 @@ export interface Project {
   interiorGallery?: readonly { src: string; alt: string }[];
   exteriorGallery?: readonly { src: string; alt: string }[];
 }
+
+/**
+ * The `/projects` collection card — a full-bleed photo card with the copy
+ * painted directly onto it under a scrim, not a photo-then-text-below
+ * layout. Same language the homepage's own mobile project carousel already
+ * uses (glass status chip, on-media type, a red arrow-CTA that steps
+ * forward on hover) rather than a third, different card style — reused
+ * deliberately so the two collections read as one considered system.
+ */
 export function ProjectCard({ project }: { project: Project }) {
   const href = `/projects/${project.slug}`;
   return (
     <Reveal>
-      <Card className="group overflow-hidden">
-        <MediaPanel
-          label={`${project.name}, ${project.location}`}
-          tone={project.tone}
-          src={project.image}
-          className="group-hover:scale-project-media min-h-80 rounded-none transition-transform duration-700"
-        />
-        <CardContent className="p-6">
-          <Stack gap="md">
-            <Badge>{project.status}</Badge>
-            <Stack gap="xs">
-              <CardHeading size="lg">{project.name}</CardHeading>
-              <Eyebrow>{project.location}</Eyebrow>
-              <Text className="text-sm">{project.description}</Text>
-            </Stack>
-            <ButtonLink href={href} variant="link">
-              View residence <Icon name="arrow-right" />
-            </ButtonLink>
-          </Stack>
-        </CardContent>
-      </Card>
+      <article className="project-collection-card group">
+        {project.image && (
+          <Image
+            src={project.image}
+            alt={`${project.name}, ${project.location}`}
+            fill
+            sizes="(min-width: 768px) 45vw, 100vw"
+            unoptimized={isRemoteAsset(project.image)}
+            className="project-collection-card__img"
+          />
+        )}
+        <span aria-hidden className="project-collection-card__scrim" />
+
+        <span className="project-badge project-collection-card__badge">
+          <Icon name="badge-check" size={12} />
+          {project.status}
+        </span>
+
+        <div className="project-collection-card__body">
+          <h3 className="project-collection-card__name">{project.name}</h3>
+          <p className="project-collection-card__location">
+            <Icon name="pin" size={13} />
+            {project.location}
+          </p>
+          <p className="project-collection-card__desc">{project.description}</p>
+          <ButtonLink
+            href={href}
+            size="sm"
+            className="project-collection-card__cta"
+            aria-label={`View ${project.name}`}
+          >
+            View residence
+            <Icon name="arrow-right" />
+          </ButtonLink>
+        </div>
+      </article>
     </Reveal>
   );
 }
