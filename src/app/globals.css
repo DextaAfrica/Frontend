@@ -840,12 +840,12 @@ dialog[open]::backdrop {
 
 .app-loader__ambient {
   position: absolute;
-  width: 26rem;
-  height: 26rem;
+  width: 17rem;
+  height: 17rem;
   border-radius: 50%;
   background: radial-gradient(
     circle,
-    oklch(from var(--primary) l c h / 0.22),
+    oklch(from var(--primary) l c h / 0.24),
     transparent 68%
   );
   animation: loader-breathe 3.6s ease-in-out infinite alternate;
@@ -859,7 +859,7 @@ dialog[open]::backdrop {
 }
 
 .app-loader__mark {
-  width: 5.5rem;
+  width: 4rem;
 }
 
 /* --- Infinity loader mark ------------------------------------------------
@@ -881,9 +881,15 @@ dialog[open]::backdrop {
   stroke-width: 3;
 }
 
+/* One shared glow for the whole ring, not 36 individual ones — a single
+   animated `filter` on the group is what makes the red read as one
+   coordinated pulse of light breathing through the mark, rather than a
+   flat, static shadow sitting under each dot. It swells in step with the
+   group's own brightness (loader-dots-breathe): brightest and most lit at
+   the peak of the breath, quietest at rest — a real rhythm, not a decal. */
 .infinity-loader-mark__dots {
   /* Kicks in once the last dot has landed (36 × stagger + pop). */
-  animation: loader-dots-breathe 2.8s ease-in-out 2.2s infinite;
+  animation: loader-dots-breathe 2.6s ease-in-out 2.2s infinite;
 }
 
 .infinity-loader-mark__dot {
@@ -891,7 +897,6 @@ dialog[open]::backdrop {
   opacity: 0;
   transform-box: fill-box;
   transform-origin: center;
-  filter: drop-shadow(0 0 4px oklch(from var(--primary) l c h / 0.55));
   animation: loader-dot-form var(--loader-dot-form) var(--motion-ease-premium)
     both;
   animation-delay: calc(var(--i) * var(--loader-dot-stagger));
@@ -914,10 +919,12 @@ dialog[open]::backdrop {
 @keyframes loader-dots-breathe {
   0%,
   100% {
-    opacity: 1;
+    opacity: 0.78;
+    filter: drop-shadow(0 0 2px oklch(from var(--primary) l c h / 0.35));
   }
   50% {
-    opacity: 0.5;
+    opacity: 1;
+    filter: drop-shadow(0 0 10px oklch(from var(--primary) l c h / 0.85));
   }
 }
 
@@ -927,6 +934,9 @@ dialog[open]::backdrop {
   }
   .infinity-loader-mark__dots {
     animation: none;
+    /* The pulse is gone, but the glow itself shouldn't be — a static
+       version of its resting state, not nothing. */
+    filter: drop-shadow(0 0 4px oklch(from var(--primary) l c h / 0.5));
   }
   .infinity-loader-mark__dot {
     animation: none;
@@ -955,12 +965,12 @@ dialog[open]::backdrop {
 
 .route-loader-overlay__ambient {
   position: absolute;
-  width: 26rem;
-  height: 26rem;
+  width: 17rem;
+  height: 17rem;
   border-radius: 50%;
   background: radial-gradient(
     circle,
-    oklch(from var(--primary) l c h / 0.22),
+    oklch(from var(--primary) l c h / 0.24),
     transparent 68%
   );
   animation: loader-breathe 3.6s ease-in-out infinite alternate;
@@ -975,7 +985,7 @@ dialog[open]::backdrop {
 
 .route-loader-overlay__mark {
   position: relative;
-  width: 5.5rem;
+  width: 4rem;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -3101,15 +3111,21 @@ dialog[open]::backdrop {
   border: 1px solid rgb(from var(--primary) r g b / 0.22);
 }
 
-.mission-vision__index {
-  position: absolute;
-  top: clamp(1.5rem, 1rem + 2vw, 2.25rem);
-  right: clamp(1.5rem, 1rem + 2vw, 2.25rem);
-  font-family: var(--font-display);
-  font-size: 0.8125rem;
-  font-weight: 600;
-  letter-spacing: 0.14em;
-  color: rgb(from var(--primary) r g b / 0.5);
+/* A thin "scroll rod" — the top edge the statement below it unrolls from
+   on scroll-in (see mission-vision.tsx), a light abstract nod to that
+   reference rather than a literal illustrated parchment. Same red-fading-
+   right gradient direction as the panel's own top rule, so the two motifs
+   read as one family. */
+.mission-vision__rod {
+  display: block;
+  width: 2.5rem;
+  height: 3px;
+  border-radius: 999px;
+  background: linear-gradient(
+    to right,
+    var(--primary),
+    rgb(from var(--primary) r g b / 0.25)
+  );
 }
 
 /* --- Our journey (dark band, ambient YouTube backdrop) ------------------ *
@@ -3191,20 +3207,6 @@ dialog[open]::backdrop {
   object-fit: cover;
   opacity: 0.05;
   pointer-events: none;
-}
-
-/* The envelope mark opening the letter — centred, in its own circular
-   badge, matching the icon-in-a-circle language used for the project
-   detail facts strip elsewhere on the site. */
-.ceo-letter__envelope {
-  display: grid;
-  place-items: center;
-  width: 3.5rem;
-  height: 3.5rem;
-  margin: 0 auto 2rem;
-  border-radius: 999px;
-  background: var(--primary-subtle);
-  color: var(--primary);
 }
 
 /* Two columns from 64rem: the portrait column is *exactly* the portrait's
@@ -3520,6 +3522,11 @@ dialog[open]::backdrop {
 }
 
 /* --- Team grid -------------------------------------------------------- */
+.about-team__lede {
+  font-size: clamp(1rem, 0.96rem + 0.2vw, 1.125rem);
+  line-height: 1.65;
+}
+
 /* A centred wrap rather than a fixed column count, so the section reads as
    deliberate at any roster size — one confirmed profile or a dozen. */
 .about-team__grid {
@@ -3584,33 +3591,195 @@ dialog[open]::backdrop {
   aspect-ratio: 4 / 5;
   overflow: hidden;
   background: var(--muted);
+  isolation: isolate;
 }
 
 .about-team__media img {
   object-fit: cover;
-  transition: transform 900ms var(--motion-ease-premium);
+  transition:
+    transform 900ms var(--motion-ease-premium),
+    filter 600ms var(--motion-ease-premium);
 }
 
-.about-team__card:hover .about-team__media img {
-  transform: scale(1.05);
+.about-team__card:hover .about-team__media img,
+.about-team__card:focus-within .about-team__media img {
+  transform: scale(1.055);
+}
+
+/* A brand wash that fades up under the panel — ties the photo to the red
+   container instead of the panel just landing on top of it. */
+.about-team__tint {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(
+    200deg,
+    rgb(from var(--primary) r g b / 0.55),
+    rgb(from var(--primary) r g b / 0.12) 55%,
+    transparent 78%
+  );
+  opacity: 0;
+  transition: opacity 550ms var(--motion-ease-premium);
+  pointer-events: none;
+}
+
+.about-team__card:hover .about-team__tint,
+.about-team__card:focus-within .about-team__tint {
+  opacity: 1;
+}
+
+/* The red container. Rests fully below the frame (clipped by the media's
+   overflow), rides up on hover/focus with a firm premium ease. */
+.about-team__panel {
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0;
+  z-index: 2;
+  padding: 1.15rem 1.25rem 1.3rem;
+  background: var(--primary);
+  color: var(--primary-foreground);
+  border-radius: calc(var(--shape-panel) * 0.9) calc(var(--shape-panel) * 0.9) 0
+    0;
+  transform: translateY(101%);
+  transition: transform 620ms cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform;
+}
+
+.about-team__card:hover .about-team__panel,
+.about-team__card:focus-within .about-team__panel {
+  transform: translateY(0);
+}
+
+/* Contents ride in a beat behind the panel, staggered top to bottom. */
+.about-team__panel-inner > * {
+  opacity: 0;
+  transform: translateY(14px);
+  transition:
+    opacity 480ms var(--motion-ease-premium),
+    transform 480ms var(--motion-ease-premium);
+}
+
+.about-team__card:hover .about-team__panel-inner > *,
+.about-team__card:focus-within .about-team__panel-inner > * {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.about-team__card:hover .about-team__name,
+.about-team__card:focus-within .about-team__name {
+  transition-delay: 140ms;
+}
+
+.about-team__card:hover .about-team__role,
+.about-team__card:focus-within .about-team__role {
+  transition-delay: 200ms;
+}
+
+.about-team__card:hover .about-team__socials,
+.about-team__card:focus-within .about-team__socials {
+  transition-delay: 250ms;
+}
+
+.about-team__name {
+  font-family: var(--font-display);
+  font-size: 1.0625rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  line-height: 1.2;
+}
+
+.about-team__role {
+  margin-top: 0.2rem;
+  font-size: 0.8125rem;
+  color: rgb(from var(--primary-foreground) r g b / 0.82);
+}
+
+.about-team__socials {
+  margin-top: 0.85rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.about-team__social {
+  display: grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 999px;
+  border: 1px solid rgb(from var(--primary-foreground) r g b / 0.35);
+  color: var(--primary-foreground);
+  /* Own micro-reveal on top of the row's, so the glyphs pop in one by one. */
+  opacity: 0;
+  transform: scale(0.6);
+  transition:
+    opacity 360ms var(--motion-ease-premium),
+    transform 360ms var(--motion-ease-premium),
+    background-color 220ms var(--motion-ease-premium),
+    border-color 220ms var(--motion-ease-premium);
+}
+
+.about-team__card:hover .about-team__social,
+.about-team__card:focus-within .about-team__social {
+  opacity: 1;
+  transform: scale(1);
+  transition-delay: calc(300ms + var(--i) * 70ms);
+}
+
+.about-team__social:not(.about-team__social--muted):hover {
+  background: var(--primary-foreground);
+  color: var(--primary);
+  border-color: var(--primary-foreground);
+}
+
+.about-team__social:focus-visible {
+  outline: 2px solid var(--primary-foreground);
+  outline-offset: 2px;
+}
+
+.about-team__social--muted {
+  cursor: default;
+  border-color: rgb(from var(--primary-foreground) r g b / 0.22);
+  color: rgb(from var(--primary-foreground) r g b / 0.7);
+}
+
+/* Touch / no hover: there's no hover to wait for, so the red panel rests in
+   its revealed position over the foot of the photo and the tint stays up. */
+@media (hover: none) {
+  .about-team__panel {
+    transform: translateY(0);
+  }
+  .about-team__panel-inner > *,
+  .about-team__social {
+    opacity: 1;
+    transform: none;
+    transition-delay: 0ms;
+  }
+  .about-team__tint {
+    opacity: 1;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .about-journey__rail::after {
     transform: scaleY(1);
   }
-  .ceo-letter__portrait {
-    clip-path: none;
-  }
   .dexta-clan__dot {
     animation: none;
   }
-  .about-team__card:hover .about-team__media img {
+  .about-team__card:hover .about-team__media img,
+  .about-team__card:focus-within .about-team__media img {
     transform: none;
   }
   .about-team__card:hover,
   .mission-vision__panel:hover {
     transform: none;
+  }
+  .about-team__panel,
+  .about-team__panel-inner > *,
+  .about-team__tint,
+  .about-team__social {
+    transition-duration: 1ms;
   }
   .newsletter-cta__dot {
     animation: none;

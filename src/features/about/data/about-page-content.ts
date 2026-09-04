@@ -30,7 +30,6 @@ export const aboutPageContent = {
       "Dexta Africa delivers value-focused real estate services that meet the diverse needs of our clients — from land acquisition, through development, and every step beyond.",
       "We turn intent into ownership, and ownership into lasting wealth, holding every project to the same standard of integrity and craft — whatever its size, wherever it stands.",
     ],
-    kicker: "We're not done yet. We're just *getting started*.",
   },
   missionVision: {
     mission: {
@@ -74,7 +73,7 @@ export const aboutPageContent = {
     ],
   },
   ceo: {
-    eyebrow: "A note from our CEO",
+    eyebrow: "Why we do this",
     paragraphs: [
       "When we started Dexta Africa, the goal was simple: make real estate in Africa something people could trust — not just the finished building, but every step that leads to it. The search. The paperwork. The promises. The handover.",
       "That belief still runs through everything we do. We acquire land with diligence, develop with intent, and stay accountable long after the keys change hands. Whether you're investing from another continent, buying your first plot, or learning how the market works for the very first time, you should feel the same clarity and the same respect.",
@@ -102,16 +101,42 @@ export const aboutPageContent = {
     cta: { label: "Join the Dexta Clan", href: "/contact" },
   },
   team: {
-    eyebrow: "The people behind it",
-    title: "A team that holds delivery *to the drawing*.",
+    eyebrow: "Board and Management Team",
+    title: "Meet our *professionals*",
+    lede: "The people leading our vision — driven by a passion for sustainable growth and committed to transforming rural Africa through forward-thinking real estate development.",
     // The real roster is being added one confirmed profile at a time.
     // Members without an `image` render an initials monogram until their
-    // portrait is supplied.
+    // portrait is supplied; `socials` links light up as they're confirmed.
     members: [
       {
         name: "Dr. Muibi Kehinde",
         role: "Non-Executive Director",
         image: "/images/DR-MKH-DEXTA-AFRICA.png",
+      },
+      {
+        name: "Mr. Tejumola Taiwo",
+        role: "Company Secretary",
+        image: "/images/TEJU-DEXTA-AFRICA.png",
+      },
+      {
+        name: "Mr. Olufemi Akinrefe",
+        role: "General Manager",
+        image: "/images/OLUFEMI-DEXTA-AFRICA.png",
+      },
+      {
+        name: "Ms. Mercy Aligbeh",
+        role: "HR Manager",
+        image: "/images/SADIA-DEXTA-AFRICA.png",
+      },
+      {
+        name: "Ms. Adeola Bello",
+        role: "Head of Account",
+        image: "/images/ADEOLA-DEXTA-AFRICA.png",
+      },
+      {
+        name: "Ms. Adegoke Itunu",
+        role: "Head of Operations",
+        image: "/images/ITUNU-DEXTA-AFRICA.png",
       },
     ],
   },
