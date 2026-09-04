@@ -26,6 +26,11 @@ const SWAP_DURATION = 0.28;
  * land. Instant under `prefers-reduced-motion`, same rule as everywhere
  * else in this codebase: no motion is ever load-bearing for the content to
  * actually appear.
+ *
+ * The two tabs get different frame shapes on purpose: interior finish
+ * photography is portrait, exterior/elevation photography is landscape —
+ * one fixed ratio for both would letterbox whichever set doesn't match it
+ * down to a sliver in the middle of a mostly-empty frame.
  */
 export function ProjectFinishesGallery({
   interior,
@@ -106,7 +111,11 @@ export function ProjectFinishesGallery({
       )}
 
       <div ref={stageRef} className="mt-8">
-        <ProjectGallery key={tab} images={images} />
+        <ProjectGallery
+          key={tab}
+          images={images}
+          aspectClassName={tab === "interior" ? "aspect-[3/4]" : "aspect-video"}
+        />
       </div>
     </div>
   );

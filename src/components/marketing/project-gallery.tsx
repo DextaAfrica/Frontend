@@ -4,6 +4,7 @@ import Image from "next/image";
 import * as React from "react";
 import { gsap } from "@/lib/gsap";
 import { isRemoteAsset } from "@/lib/media";
+import { cn } from "@/lib/utils";
 
 export interface ProjectGalleryImage {
   src: string;
@@ -19,13 +20,20 @@ const CROSSFADE_DURATION = 0.5;
 const FRAME_WIDTH = "26rem";
 
 /**
- * A product-listing-style gallery, presented as a single bounded portrait
- * frame with a filmstrip of thumbnails beneath it — not a wide panel the
- * width of the page. The source photography here is portrait (roughly
- * 3:4), so the frame's aspect ratio matches it, but that ratio is only ever
- * applied to a *capped* width ({@link FRAME_WIDTH}); the same ratio on an
- * uncapped wide column is what made the frame balloon to an enormous
- * height in the first place.
+ * A product-listing-style gallery, presented as a single bounded frame with
+ * a filmstrip of thumbnails beneath it — not a wide panel the width of the
+ * page. The frame's own aspect ratio ({@link ProjectGalleryProps.aspectClassName},
+ * portrait by default) is only ever applied to a *capped* width
+ * ({@link FRAME_WIDTH}); the same ratio on an uncapped wide column is what
+ * made the frame balloon to an enormous height before this was bounded.
+ *
+ * That aspect ratio should match whatever set of photos is actually being
+ * shown — a portrait ratio sized for portrait interior shots will letterbox
+ * a landscape exterior shot down to a sliver in the middle of a mostly-blank
+ * frame, which is exactly as wrong as the cropping the frame was originally
+ * built to avoid. A caller with a different-shaped photo set (see
+ * `ProjectFinishesGallery`, which passes a landscape ratio for its exterior
+ * tab) should pass its own ratio rather than accept the portrait default.
  *
  * The photo itself never crops (`object-contain`) and never stretches
  * (`fill` + `contain` always preserves the source's own proportions) — full
@@ -45,11 +53,18 @@ const FRAME_WIDTH = "26rem";
  * under `prefers-reduced-motion`, same rule as everywhere else in this
  * codebase: no motion is ever load-bearing for the content to appear.
  */
+export interface ProjectGalleryProps {
+  images: readonly ProjectGalleryImage[];
+  /** Tailwind `aspect-*` class for the frame. Defaults to a portrait ratio
+   *  — pass a landscape one (e.g. `"aspect-video"`) for a photo set that's
+   *  actually landscape, or the frame will letterbox it down to a sliver. */
+  aspectClassName?: string;
+}
+
 export function ProjectGallery({
   images,
-}: {
-  images: readonly ProjectGalleryImage[];
-}) {
+  aspectClassName = "aspect-[3/4]",
+}: ProjectGalleryProps) {
   const [activeIndex, setActiveIndex] = React.useState(0);
   const activeIndexRef = React.useRef(0);
   const isAnimatingRef = React.useRef(false);
@@ -112,7 +127,10 @@ export function ProjectGallery({
       <div
         ref={stageRef}
         style={{ maxWidth: FRAME_WIDTH }}
-        className="project-gallery-stage relative aspect-[3/4] w-full overflow-hidden rounded-panel border border-border bg-muted shadow-[var(--card-shadow)]"
+        className={cn(
+          "project-gallery-stage relative w-full overflow-hidden rounded-panel border border-border bg-muted shadow-[var(--card-shadow)]",
+          aspectClassName,
+        )}
       >
         {images.map((image, index) => (
           <div
