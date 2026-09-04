@@ -228,6 +228,7 @@ export function SiteHeader() {
         ref={headerRef}
         data-sticky={!overlayHeroRoute}
         data-scrolled={solid}
+        data-condensed={scrolled || undefined}
         data-overlays-hero={overlaysHero}
         className="site-header"
       >
@@ -260,7 +261,7 @@ export function SiteHeader() {
 
             <nav
               aria-label="Primary"
-              className="hidden min-w-0 items-center gap-x-5 justify-self-center lg:flex xl:gap-x-7"
+              className="site-header__nav hidden min-w-0 items-center gap-x-5 justify-self-center lg:flex xl:gap-x-7"
             >
               {siteConfig.navItems.map((item) => (
                 <HeaderLink key={item.href} item={item} pathname={pathname} />
@@ -296,7 +297,7 @@ export function SiteHeader() {
                 variant="secondary"
                 size="sm"
                 data-on-media={overlaysHero || undefined}
-                className="header-menu-trigger lg:hidden"
+                className="header-menu-trigger"
                 onClick={() => setOpen((current) => !current)}
                 aria-expanded={open}
                 aria-controls="site-navigation"

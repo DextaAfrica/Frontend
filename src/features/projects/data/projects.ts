@@ -21,6 +21,8 @@ export const projects: Project[] = [
       "Ultra-premium 1 & 2 bedroom apartments in the heart of Lekki, built around smart-home technology, world-class amenities, and a genuinely prime address.",
     tone: "ruby",
     image: "/images/project-dlodge.jpg",
+    // D1 — the detail page's hero background: the campaign key-drop poster.
+    heroImage: "/images/dlodge/d1.webp",
     priceFrom: "Starting from ₦15M initial deposit",
     features: [
       "Ultra-premium 1 & 2 bedroom apartments",
@@ -28,16 +30,30 @@ export const projects: Project[] = [
       "Smart building",
       "Prime location",
     ],
-    gallery: [
-      { src: "/images/dlodge/kitchen.jpg", alt: "D'Lodge fitted kitchen" },
-      { src: "/images/dlodge/living-room.jpg", alt: "D'Lodge living room" },
-      { src: "/images/dlodge/dining.jpg", alt: "D'Lodge dining area" },
-      { src: "/images/dlodge/lounge.jpg", alt: "D'Lodge TV lounge" },
+    // D2–D8 — every interior finish shot, grouped under its own toggle
+    // rather than mixed in with exterior views. Alt text describes what's
+    // actually in each render, not a generic placeholder.
+    interiorGallery: [
+      { src: "/images/dlodge/d2.webp", alt: "D'Lodge fitted kitchen" },
+      { src: "/images/dlodge/d3.webp", alt: "D'Lodge living room" },
+      { src: "/images/dlodge/d4.webp", alt: "D'Lodge bathroom" },
+      { src: "/images/dlodge/d5.webp", alt: "D'Lodge dining area" },
+      { src: "/images/dlodge/d6.webp", alt: "D'Lodge TV lounge" },
       {
-        src: "/images/dlodge/kitchen-dining.jpg",
+        src: "/images/dlodge/d7.webp",
         alt: "D'Lodge open kitchen and dining",
       },
-      { src: "/images/dlodge/bathroom.jpg", alt: "D'Lodge bathroom" },
+      { src: "/images/dlodge/d8.webp", alt: "D'Lodge master bedroom" },
+    ],
+    // No real exterior set yet — one placeholder rather than none, so the
+    // toggle and gallery are already live. Add the real front/rear/side/
+    // approach views here as they're supplied, each as its own entry with
+    // an alt naming the actual view (e.g. "D'Lodge — front view").
+    exteriorGallery: [
+      {
+        src: "/images/dexta-residential.jpg",
+        alt: "D'Lodge exterior — placeholder, real views pending",
+      },
     ],
   },
   {

@@ -1158,11 +1158,12 @@ dialog[open]::backdrop {
 }
 
 .hero-scroll-cue__label {
-  font-size: 0.6875rem;
-  font-weight: 500;
-  letter-spacing: 0.22em;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: rgb(from var(--on-media) r g b / 0.72);
+  color: rgb(from var(--on-media) r g b / 0.85);
+  text-shadow: 0 1px 12px rgb(0 0 0 / 0.45);
   transition: color 0.3s var(--motion-ease-premium);
 }
 
@@ -1812,6 +1813,74 @@ dialog[open]::backdrop {
   outline-color: var(--ring);
 }
 
+/* The ambient backdrop behind a contain-fit stage photo: the same image,
+   blurred and dimmed, filling whatever letterboxing a shape mismatch
+   leaves rather than flat dead space. Scaled up so the blur's own soft
+   edges never peek in from outside the frame. */
+.project-gallery-backdrop {
+  transform: scale(1.15);
+  filter: blur(28px) brightness(0.55) saturate(1.1);
+}
+
+/* --- Project finishes toggle ---------------------------------------------
+   Interior/Exterior, as a segmented pill — the exact sliding-thumb recipe
+   the site's own theme toggle uses (--thumb-index driving a translateX),
+   reused rather than reinvented, so this reads as the same considered
+   control language, not a one-off. */
+.project-finishes-toggle {
+  --thumb-index: 0;
+  position: relative;
+  display: inline-grid;
+  grid-template-columns: repeat(2, minmax(9rem, auto));
+  gap: 0;
+  padding: 0.25rem;
+  border: 1px solid var(--border);
+  border-radius: var(--control-radius);
+  background: var(--muted);
+}
+
+.project-finishes-toggle[data-active="exterior"] {
+  --thumb-index: 1;
+}
+
+.project-finishes-toggle__thumb {
+  position: absolute;
+  top: 0.25rem;
+  left: 0.25rem;
+  width: calc((100% - 0.5rem) / 2);
+  height: calc(100% - 0.5rem);
+  border-radius: calc(var(--control-radius) - 1px);
+  background: var(--primary);
+  box-shadow: var(--control-shadow-glow);
+  transform: translateX(calc(var(--thumb-index) * 100%));
+  transition: transform 340ms var(--motion-ease-premium);
+}
+
+.project-finishes-toggle__option {
+  position: relative;
+  z-index: 1;
+  padding-block: 0.625rem;
+  font-size: var(--type-control);
+  font-weight: 500;
+  color: var(--muted-foreground);
+  text-align: center;
+  transition: color 220ms var(--motion-ease-premium);
+}
+
+.project-finishes-toggle__option:hover {
+  color: var(--foreground);
+}
+
+.project-finishes-toggle__option[aria-selected="true"] {
+  color: var(--primary-foreground);
+}
+
+.project-finishes-toggle__option:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+  border-radius: calc(var(--control-radius) - 1px);
+}
+
 /* --- Contact map -------------------------------------------------------- */
 .contact-map {
   min-height: var(--min-height-contact-map);
@@ -1961,9 +2030,58 @@ dialog[open]::backdrop {
   transform: scaleX(1);
 }
 
+/* Scroll swap: once the page leaves the top, the inline nav eases out and
+   the menu button takes over — opening the same slide-out panel the smaller
+   breakpoints already use. Keeps the nav's layout box (visibility, not
+   display) so nothing else in the bar reflows. */
+.site-header__nav {
+  transition:
+    opacity 280ms var(--motion-ease-premium),
+    transform 280ms var(--motion-ease-premium),
+    visibility 0s;
+}
+
+.site-header[data-condensed] .site-header__nav {
+  opacity: 0;
+  transform: translateY(-0.4rem);
+  visibility: hidden;
+  pointer-events: none;
+  transition:
+    opacity 280ms var(--motion-ease-premium),
+    transform 280ms var(--motion-ease-premium),
+    visibility 0s 280ms;
+}
+
+@media (min-width: 64rem) {
+  .header-menu-trigger {
+    display: none;
+  }
+  .site-header[data-condensed] .header-menu-trigger {
+    display: inline-flex;
+    animation: header-trigger-in 320ms var(--motion-ease-premium) both;
+  }
+}
+
+@keyframes header-trigger-in {
+  from {
+    opacity: 0;
+    transform: scale(0.86);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .site-header {
     transition-duration: 1ms;
+  }
+  .site-header__nav {
+    transition-duration: 1ms;
+  }
+  .site-header[data-condensed] .header-menu-trigger {
+    animation: none;
   }
   .site-header__underline {
     transition: none;

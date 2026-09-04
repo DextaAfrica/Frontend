@@ -3,7 +3,7 @@ import {
   CtaBand,
   MarketingHeading,
   MediaHero,
-  ProjectGallery,
+  ProjectFinishesGallery,
 } from "@/components/marketing";
 import type { Project } from "@/components/marketing";
 import { Badge, Icon, type IconName } from "@/components/ui";
@@ -27,7 +27,9 @@ const fallbackTagline = (status: string) =>
 export function ProjectScreen({ project }: { project: Project }) {
   const hasFacts =
     Boolean(project.priceFrom) || Boolean(project.features?.length);
-  const hasGallery = Boolean(project.gallery?.length);
+  const hasInterior = Boolean(project.interiorGallery?.length);
+  const hasExterior = Boolean(project.exteriorGallery?.length);
+  const hasGallery = hasInterior || hasExterior;
 
   return (
     <Page>
@@ -35,7 +37,7 @@ export function ProjectScreen({ project }: { project: Project }) {
         eyebrow={`${project.name} · ${project.location}`}
         title={project.tagline ?? fallbackTagline(project.status)}
         description={project.description}
-        image={project.gallery?.[0]?.src ?? project.image ?? ""}
+        image={project.heroImage ?? project.image ?? ""}
         primary={{ label: "Register your interest", href: "/contact" }}
         secondary={
           hasGallery ? { label: "View gallery", href: "#gallery" } : undefined
@@ -74,11 +76,14 @@ export function ProjectScreen({ project }: { project: Project }) {
         </Section>
       )}
 
-      {hasGallery && project.gallery && (
+      {hasGallery && (
         <Section id="gallery">
           <Stack gap="xl">
             <MarketingHeading eyebrow="Gallery" title="Inside the residence." />
-            <ProjectGallery images={project.gallery} />
+            <ProjectFinishesGallery
+              interior={project.interiorGallery ?? []}
+              exterior={project.exteriorGallery ?? []}
+            />
           </Stack>
         </Section>
       )}
@@ -87,7 +92,11 @@ export function ProjectScreen({ project }: { project: Project }) {
         title={`Ready to make *${project.name}* yours?`}
         ctaLabel="Register your interest"
         ctaHref="/contact"
-        image={project.gallery?.[0]?.src ?? project.image}
+        image={
+          project.interiorGallery?.[0]?.src ??
+          project.exteriorGallery?.[0]?.src ??
+          project.image
+        }
       />
     </Page>
   );
