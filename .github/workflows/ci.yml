@@ -96,12 +96,20 @@ jobs:
         run: |
           docker compose -f compose.dev.yaml config --quiet
           docker compose -f compose.prod.yaml config --quiet
-      - name: Build production image
+      - name: Build and load production image
         uses: docker/build-push-action@v7
         with:
           context: .
           file: Dockerfile.prod
-          push: false
+          load: true
+          build-args: |
+            NEXT_PUBLIC_APP_URL=http://localhost:3000
+            NEXT_PUBLIC_BACKEND_API_URL=http://localhost:8080
           cache-from: type=gha,scope=production
           cache-to: type=gha,mode=max,scope=production
           tags: dexta-africa-web:ci
+      - name: Verify production image runs and passes healthcheck
+        run: |
+          docker run --rm -d --name test-web -p 3000:3000 dexta-africa-web:ci
+          timeout 30 sh -c 'until docker inspect --format="{{json .State.Health.Status}}" test-web | grep -q "healthy"; do sleep 2; done'
+          docker stop test-web

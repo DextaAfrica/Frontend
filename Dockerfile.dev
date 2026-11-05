@@ -1,11 +1,19 @@
 FROM node:22-alpine
+
+LABEL org.opencontainers.image.title="Dexta Africa Web (Development)" \
+      org.opencontainers.image.description="Containerized development environment for Dexta Africa"
+
 WORKDIR /app
+
 ENV NODE_ENV=development \
     NEXT_TELEMETRY_DISABLED=1 \
     HOSTNAME=0.0.0.0 \
     PORT=3000
 
-RUN apk add --no-cache su-exec
+# Install su-exec for step-down privileges and development runtime tools
+RUN apk add --no-cache su-exec libc6-compat git curl \
+    && mkdir -p /home/node/.npm /app/.next \
+    && chown -R node:node /home/node /app/.next
 
 COPY package.json package-lock.json ./
 RUN npm ci --include=optional \
@@ -13,9 +21,7 @@ RUN npm ci --include=optional \
     && chown -R node:node node_modules
 
 COPY docker/dev-entrypoint.sh /usr/local/bin/dexta-dev-entrypoint
-RUN chmod +x /usr/local/bin/dexta-dev-entrypoint \
-    && mkdir -p /app/.next \
-    && chown -R node:node /app/.next
+RUN chmod +x /usr/local/bin/dexta-dev-entrypoint
 
 EXPOSE 3000
 ENTRYPOINT ["dexta-dev-entrypoint"]

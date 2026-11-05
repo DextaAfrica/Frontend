@@ -4,15 +4,26 @@ services:
       context: .
       dockerfile: Dockerfile.dev
     image: dexta-africa-web:development
+    container_name: dexta-africa-dev
     init: true
+    stdin_open: true
+    tty: true
     ports:
       - "${APP_PORT:-3000}:3000"
+    env_file:
+      - path: .env
+        required: false
     environment:
       NODE_ENV: development
       NEXT_TELEMETRY_DISABLED: "1"
+      PORT: "3000"
+      HOSTNAME: "0.0.0.0"
       WATCHPACK_POLLING: "${WATCHPACK_POLLING:-true}"
       WATCHPACK_POLLING_INTERVAL: "${WATCHPACK_POLLING_INTERVAL:-500}"
       NEXT_PUBLIC_APP_URL: "${NEXT_PUBLIC_APP_URL:-http://localhost:3000}"
+      BACKEND_API_URL: "${BACKEND_API_URL:-http://localhost:8080}"
+      NEXT_PUBLIC_BACKEND_API_URL: "${NEXT_PUBLIC_BACKEND_API_URL:-http://localhost:8080}"
+      NEXT_PUBLIC_GOOGLE_MAPS_API_KEY: "${NEXT_PUBLIC_GOOGLE_MAPS_API_KEY:-}"
       CONTENT_API_URL: "${CONTENT_API_URL:-}"
       CONTENT_API_TOKEN: "${CONTENT_API_TOKEN:-}"
       CONTENT_REVALIDATION_SECRET: "${CONTENT_REVALIDATION_SECRET:-}"
@@ -24,7 +35,7 @@ services:
       - .:/app
       - node_modules:/app/node_modules
     tmpfs:
-      - /app/.next
+      - /app/.next:size=1024m,exec,mode=1777
     healthcheck:
       test:
         [

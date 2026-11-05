@@ -4,7 +4,11 @@ set -eu
 LOCKFILE=/app/package-lock.json
 STAMPFILE=/app/node_modules/.dexta-package-lock.sha256
 
-current_lock_hash="$(sha256sum "$LOCKFILE" | cut -d ' ' -f 1)"
+current_lock_hash=""
+if [ -f "$LOCKFILE" ]; then
+  current_lock_hash="$(sha256sum "$LOCKFILE" | cut -d ' ' -f 1)"
+fi
+
 installed_lock_hash=""
 swc_installed=false
 oxide_installed=false
@@ -36,14 +40,23 @@ for lightningcss_package in /app/node_modules/lightningcss-linux-*-musl; do
 done
 
 if [ ! -d /app/node_modules/next ] || \
-  [ "$current_lock_hash" != "$installed_lock_hash" ] || \
+  [ -n "$current_lock_hash" -a "$current_lock_hash" != "$installed_lock_hash" ] || \
   [ "$swc_installed" != true ] || \
   [ "$oxide_installed" != true ] || \
   [ "$lightningcss_installed" != true ]; then
-  echo "Dependencies changed; synchronizing the development volume..."
+  echo "Dependencies changed or missing native packages; synchronizing the development volume..."
   npm ci --include=optional
-  printf '%s\n' "$current_lock_hash" > "$STAMPFILE"
+  if [ -n "$current_lock_hash" ]; then
+    printf '%s\n' "$current_lock_hash" > "$STAMPFILE"
+  fi
+  chown -R node:node /app/node_modules
 fi
 
-chown -R node:node /app/node_modules /app/.next
+mkdir -p /app/.next
+chown -R node:node /app/.next
+
+if [ "$(stat -c '%u' /app/node_modules 2>/dev/null || true)" != "1000" ]; then
+  chown -R node:node /app/node_modules
+fi
+
 exec su-exec node "$@"
