@@ -4,15 +4,15 @@
   "service": "web",
   "workspaceFolder": "/app",
   "remoteUser": "node",
-  "forwardPorts": [3000, 3001],
+  "forwardPorts": [3001, 3000],
   "portsAttributes": {
-    "3000": {
+    "3001": {
       "label": "Next.js Application",
       "onAutoForward": "notify"
     },
-    "3001": {
-      "label": "Next.js Application (Alt Port)",
-      "onAutoForward": "notify"
+    "3000": {
+      "label": "Next.js Application (Port 3000)",
+      "onAutoForward": "silent"
     }
   },
   "customizations": {

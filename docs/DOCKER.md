@@ -60,7 +60,7 @@ make prod-status
 make prod-down
 ```
 
-The application is available at `http://localhost:3000`. Override the host port when needed:
+The application is available at `http://localhost:3001` (or custom `$APP_PORT`). Override the host port when needed:
 
 ```bash
 APP_PORT=8080 make prod-up
@@ -71,7 +71,7 @@ APP_PORT=8080 make prod-up
 Both the image and Compose service check `/api/health`. Inspect the result directly:
 
 ```bash
-curl --fail http://localhost:3000/api/health
+curl --fail http://localhost:3001/api/health
 make health
 ```
 

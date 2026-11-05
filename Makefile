@@ -5,7 +5,7 @@ SHELL := /bin/sh
 .DEFAULT_GOAL := help
 
 APP_NAME ?= dexta-africa-web
-APP_PORT ?= 3000
+APP_PORT ?= 3001
 IMAGE_NAME ?= $(APP_NAME)
 IMAGE_TAG ?= latest
 
