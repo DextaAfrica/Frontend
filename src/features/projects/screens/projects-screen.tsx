@@ -5,10 +5,18 @@ import {
   ProjectCard,
   ServiceLineBand,
 } from "@/components/marketing";
-import { projects } from "../data/projects";
+import type { Project } from "@/components/marketing";
+import { projects as defaultProjects } from "../data/projects";
 import { serviceLines } from "../data/service-lines";
 
-export function ProjectsScreen() {
+interface ProjectsScreenProps {
+  projects?: Project[];
+}
+
+export function ProjectsScreen({ projects }: ProjectsScreenProps = {}) {
+  const displayProjects =
+    projects && projects.length > 0 ? projects : defaultProjects;
+
   return (
     <Page>
       <MediaHero
@@ -50,7 +58,7 @@ export function ProjectsScreen() {
             title="Now selling and coming soon."
           />
           <Grid columns="two" gap="lg">
-            {projects.map((project) => (
+            {displayProjects.map((project) => (
               <ProjectCard key={project.slug} project={project} />
             ))}
           </Grid>
