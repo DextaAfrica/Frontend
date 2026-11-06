@@ -1,16 +1,39 @@
-# Docker deployment
+# Docker deployment and container development
 
-The production image uses Next.js standalone output and runs as the unprivileged `nextjs` user.
+The production image uses Next.js standalone output and runs as the unprivileged `nextjs` user (`uid: 1001`).
 Only traced server files, optimized static assets, and `public/` media enter the runtime stage.
 
-## Build and run
+## Container development workflows
 
-Ensure Docker Desktop or another compatible Docker daemon is running, then:
+### 1. VS Code / Cursor dev containers (recommended)
 
-Development with hot reload and isolated dependency/cache volumes:
+This repository includes `.devcontainer/devcontainer.json`.
+
+1. Open this repository in VS Code or Cursor with the "Dev Containers" extension installed.
+2. Click **Reopen in Container** when prompted (or via the Command Palette: `Dev Containers: Reopen in Container`).
+3. The environment mounts your code at `/app`, attaches hot-reload ports (`3000`), preconfigures ESLint, Prettier, Tailwind CSS, and runs as the non-root `node` user.
+
+### 2. Docker Compose CLI development
+
+Run the development container with hot-reload and isolated dependency volumes:
 
 ```bash
-docker compose -f compose.dev.yaml up --build
+# Start development container
+make dev-up
+# or: docker compose -f compose.dev.yaml up --build
+
+# Follow development logs
+make dev-logs
+
+# Open an interactive shell inside the development container
+make dev-shell
+
+# Run quality checks inside the container
+make dev-check
+make dev-test
+
+# Stop containers
+make dev-down
 ```
 
 The development container compares the mounted `package-lock.json` with the
@@ -19,61 +42,61 @@ inside the volume before starting Next.js. File polling is enabled by default
 so edits made through Docker Desktop, WSL, or other bind mounts trigger Fast
 Refresh reliably.
 
-The entrypoint also verifies that Next.js's platform-specific Linux SWC binary
-is present and repairs stale volumes when necessary. Dependencies and the build
-cache are owned by the unprivileged runtime user, allowing Next.js to create a
-fallback compiler directory without granting the application root privileges.
+The entrypoint also verifies that Next.js's platform-specific Linux SWC and
+Tailwind Oxide binaries are present and repairs stale volumes when necessary.
 
-Development output under `.next` uses an ephemeral in-memory filesystem. It is
-recreated with the container, preventing stale Turbopack manifests and browser
-chunk URLs from surviving a development-server restart. The dependency volume
-remains persistent, so this does not force packages to reinstall on each run.
+## Production container build and run
 
-Production with the hardened standalone runner:
+Run the hardened standalone runner:
 
 ```bash
-docker compose -f compose.prod.yaml build
-docker compose -f compose.prod.yaml up -d
-docker compose -f compose.prod.yaml ps
+# Build and run production
+make prod
+
+# Inspect running status and healthcheck
+make prod-status
+
+# Stop production containers
+make prod-down
 ```
 
-The application is available at `http://localhost:3000`. Override the host port when needed:
+The application is available at `http://localhost:3001` (or custom `$APP_PORT`). Override the host port when needed:
 
 ```bash
-APP_PORT=8080 docker compose -f compose.prod.yaml up -d
+APP_PORT=8080 make prod-up
 ```
 
-## Health
+## Health check
 
 Both the image and Compose service check `/api/health`. Inspect the result directly:
 
 ```bash
-curl --fail http://localhost:3000/api/health
-docker inspect --format='{{json .State.Health}}' dexta-africa-web-1
+curl --fail http://localhost:3001/api/health
+make health
 ```
 
-## Production environment
+## Environment variables
 
-Set production values through the deployment platform or an uncommitted `.env` file:
+Set runtime values through the deployment platform or an uncommitted `.env` file:
 
 ```env
 NEXT_PUBLIC_APP_URL=https://example.com
+BACKEND_API_URL=http://localhost:8080
+NEXT_PUBLIC_BACKEND_API_URL=http://localhost:8080
+NEXT_PUBLIC_GOOGLE_MAPS_API_KEY=
 APP_PORT=3000
 CONTACT_WEBHOOK_URL=https://crm.example.com/hooks/contact
 NEWSLETTER_WEBHOOK_URL=https://crm.example.com/hooks/newsletter
 ```
 
-Do not bake secrets into the image. Content, contact, and newsletter credentials
-are forwarded by Compose from the runtime environment and remain server-only.
-`NEXT_PUBLIC_APP_URL` is intentionally supplied both as a production build
-argument and at runtime because Next.js embeds public metadata during compilation.
+`NEXT_PUBLIC_*` variables are supplied as build arguments (`ARG`) and runtime environments (`ENV`)
+so that Next.js client bundles embed the correct public endpoints during standalone compilation.
 
-## Security properties
+## Security and performance properties
 
-- non-root UID/GID `1001`
-- all Linux capabilities dropped by Compose
-- `no-new-privileges` enabled
-- signal forwarding through Compose `init`
-- application telemetry disabled
-- health-based runtime monitoring
-- no source tree or development dependencies in the runner stage
+- **Non-root runtime**: UID/GID `1001` (`nextjs`) in production, `1000` (`node`) in dev.
+- **Read-only root filesystem**: `read_only: true` with strict memory-capped tmpfs mounts for `/tmp` and `/app/.next/cache`.
+- **Capability dropping**: `cap_drop: ALL` with `no-new-privileges: true`.
+- **Logging protection**: Production json-file logs capped at 10MB x 3 rotations to avoid host disk exhaustion.
+- **Supply chain attestation**: Multi-platform (linux/amd64, linux/arm64) builds with SLSA provenance and SBOM attestation.
+- **BuildKit caching**: Next.js and npm cache mounts for up to 5x faster container compilation.

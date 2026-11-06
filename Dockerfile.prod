@@ -3,31 +3,48 @@
 FROM node:22-alpine AS dependencies
 WORKDIR /app
 COPY package.json package-lock.json ./
-RUN npm ci --include=optional
+RUN --mount=type=cache,target=/root/.npm \
+    npm ci --include=optional
 
 FROM node:22-alpine AS builder
 WORKDIR /app
+
 ARG NEXT_PUBLIC_APP_URL=http://localhost:3000
+ARG NEXT_PUBLIC_BACKEND_API_URL=http://localhost:8080
+ARG NEXT_PUBLIC_GOOGLE_MAPS_API_KEY=""
+
 ENV NEXT_TELEMETRY_DISABLED=1 \
-    NEXT_PUBLIC_APP_URL=${NEXT_PUBLIC_APP_URL}
+    NEXT_PUBLIC_APP_URL=${NEXT_PUBLIC_APP_URL} \
+    NEXT_PUBLIC_BACKEND_API_URL=${NEXT_PUBLIC_BACKEND_API_URL} \
+    NEXT_PUBLIC_GOOGLE_MAPS_API_KEY=${NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}
+
 COPY --from=dependencies /app/node_modules ./node_modules
 COPY . .
-RUN npm run build
+
+RUN --mount=type=cache,target=/app/.next/cache \
+    npm run build
 
 FROM node:22-alpine AS runner
+
+LABEL org.opencontainers.image.title="Dexta Africa Web" \
+      org.opencontainers.image.description="Dexta Africa high-performance Next.js production web application"
+
 WORKDIR /app
+
 ENV NODE_ENV=production \
     NEXT_TELEMETRY_DISABLED=1 \
     HOSTNAME=0.0.0.0 \
     PORT=3000
 
-# Base-image OS packages (e.g. libssl3/libcrypto3) can carry fixed CVEs that
-# predate this image's own build — upgrade them here rather than waiting on
-# a new node:22-alpine tag, so the published image always ships patched.
-RUN apk --no-cache upgrade
+# Base-image OS packages can carry fixed CVEs — upgrade and add libc6-compat
+# for native compatibility (e.g., sharp/swc musl bindings)
+RUN apk --no-cache upgrade \
+    && apk add --no-cache libc6-compat
 
 RUN addgroup --system --gid 1001 nodejs \
     && adduser --system --uid 1001 --ingroup nodejs nextjs \
+    && mkdir -p /app/.next/cache \
+    && chown -R nextjs:nodejs /app \
     && rm -rf /usr/local/lib/node_modules/npm /usr/local/lib/node_modules/corepack \
        /usr/local/bin/npm /usr/local/bin/npx /usr/local/bin/corepack \
        /opt/yarn-v*
@@ -38,6 +55,8 @@ COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
 USER nextjs
 EXPOSE 3000
+
 HEALTHCHECK --interval=30s --timeout=5s --start-period=15s --retries=3 \
   CMD wget --no-verbose --tries=1 --spider http://127.0.0.1:3000/api/health || exit 1
+
 CMD ["node", "server.js"]

@@ -5,24 +5,25 @@ SHELL := /bin/sh
 .DEFAULT_GOAL := help
 
 APP_NAME ?= dexta-africa-web
-APP_PORT ?= 3000
+APP_PORT ?= 3001
 IMAGE_NAME ?= $(APP_NAME)
 IMAGE_TAG ?= latest
 
 NPM := npm
-DOCKER := docker
-DEV_COMPOSE := $(DOCKER) compose -f compose.dev.yaml
-PROD_COMPOSE := $(DOCKER) compose -f compose.prod.yaml
+DOCKER ?= docker
+DOCKER_COMPOSE ?= $(shell if $(DOCKER) compose version >/dev/null 2>&1; then echo "$(DOCKER) compose"; else echo "docker-compose"; fi)
+DEV_COMPOSE := $(DOCKER_COMPOSE) -f compose.dev.yaml
+PROD_COMPOSE := $(DOCKER_COMPOSE) -f compose.prod.yaml
 
 export APP_PORT IMAGE_NAME IMAGE_TAG
 
 .PHONY: help doctor install hooks dev build start lint typecheck test test-watch format format-check check verify \
-	dev-build dev-up dev-down dev-restart dev-logs dev-shell dev-status \
+	dev-build dev-rebuild dev-up dev-down dev-restart dev-logs dev-shell dev-check dev-test dev-status \
 	prod-build prod-up prod prod-down prod-restart prod-logs prod-shell prod-status \
 	config-dev config-prod health clean clean-all
 
 help: ## Show available commands
-	@awk 'BEGIN {FS = ":.*## "; printf "\nDexta Africa frontend\n\nUsage:\n  make <target> [APP_PORT=3000] [IMAGE_TAG=latest]\n\nTargets:\n"} /^[a-zA-Z0-9_-]+:.*## / {printf "  %-18s %s\n", $$1, $$2} END {printf "\nExamples:\n  make dev\n  make verify\n  make prod IMAGE_TAG=v1.0.0\n  make prod-logs\n\n"}' $(MAKEFILE_LIST)
+	@awk 'BEGIN {FS = ":.*## "; printf "\nDexta Africa frontend\n\nUsage:\n  make <target> [APP_PORT=3000] [IMAGE_TAG=latest]\n\nTargets:\n"} /^[a-zA-Z0-9_-]+:.*## / {printf "  %-18s %s\n", $$1, $$2} END {printf "\nExamples:\n  make dev\n  make dev-up\n  make dev-shell\n  make verify\n  make prod IMAGE_TAG=v1.0.0\n  make prod-logs\n\n"}' $(MAKEFILE_LIST)
 
 doctor: ## Check that local development tools are installed
 	@command -v $(NPM) >/dev/null 2>&1 || { echo "Error: npm is not installed." >&2; exit 1; }
@@ -80,6 +81,9 @@ config-prod: ## Validate the production Compose configuration
 dev-build: config-dev ## Build the development container image
 	$(DEV_COMPOSE) build
 
+dev-rebuild: config-dev ## Rebuild development container from scratch without cache
+	$(DEV_COMPOSE) build --no-cache
+
 dev-up: config-dev ## Start Docker development with hot reload
 	$(DEV_COMPOSE) up --build
 
@@ -93,6 +97,12 @@ dev-logs: ## Follow development container logs
 
 dev-shell: ## Open a shell in the running development container
 	$(DEV_COMPOSE) exec web sh
+
+dev-check: ## Run lint, typecheck and test inside running dev container
+	$(DEV_COMPOSE) exec web npm run check
+
+dev-test: ## Run vitest tests inside running dev container
+	$(DEV_COMPOSE) exec web npm run test
 
 dev-status: ## Show development container and health status
 	$(DEV_COMPOSE) ps

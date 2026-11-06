@@ -4,16 +4,25 @@ services:
       context: .
       dockerfile: Dockerfile.prod
       args:
-        NEXT_PUBLIC_APP_URL: "${NEXT_PUBLIC_APP_URL:-http://localhost:3000}"
+        NEXT_PUBLIC_APP_URL: "${NEXT_PUBLIC_APP_URL:-http://localhost:${APP_PORT:-3001}}"
+        NEXT_PUBLIC_BACKEND_API_URL: "${NEXT_PUBLIC_BACKEND_API_URL:-http://localhost:8080}"
+        NEXT_PUBLIC_GOOGLE_MAPS_API_KEY: "${NEXT_PUBLIC_GOOGLE_MAPS_API_KEY:-}"
     image: "${IMAGE_NAME:-dexta-africa-web}:${IMAGE_TAG:-latest}"
+    container_name: dexta-africa-prod
     init: true
     restart: unless-stopped
     ports:
-      - "${APP_PORT:-3000}:3000"
+      - "${APP_PORT:-3001}:3000"
+    env_file:
+      - path: .env
+        required: false
     environment:
       NODE_ENV: production
       NEXT_TELEMETRY_DISABLED: "1"
-      NEXT_PUBLIC_APP_URL: "${NEXT_PUBLIC_APP_URL:-http://localhost:3000}"
+      NEXT_PUBLIC_APP_URL: "${NEXT_PUBLIC_APP_URL:-http://localhost:${APP_PORT:-3001}}"
+      BACKEND_API_URL: "${BACKEND_API_URL:-http://localhost:8080}"
+      NEXT_PUBLIC_BACKEND_API_URL: "${NEXT_PUBLIC_BACKEND_API_URL:-http://localhost:8080}"
+      NEXT_PUBLIC_GOOGLE_MAPS_API_KEY: "${NEXT_PUBLIC_GOOGLE_MAPS_API_KEY:-}"
       CONTENT_API_URL: "${CONTENT_API_URL:-}"
       CONTENT_API_TOKEN: "${CONTENT_API_TOKEN:-}"
       CONTENT_REVALIDATION_SECRET: "${CONTENT_REVALIDATION_SECRET:-}"
@@ -42,7 +51,12 @@ services:
     read_only: true
     tmpfs:
       - /tmp:size=64m,mode=1777
-      - /app/.next/cache:size=128m,uid=1001,gid=1001
+      - /app/.next/cache:size=256m,uid=1001,gid=1001
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
     networks:
       - frontend
 
