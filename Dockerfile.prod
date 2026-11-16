@@ -38,8 +38,8 @@ ENV NODE_ENV=production \
 
 # Base-image OS packages can carry fixed CVEs — upgrade and add libc6-compat
 # for native compatibility (e.g., sharp/swc musl bindings)
-RUN apk --no-cache upgrade \
-    && apk add --no-cache libc6-compat
+RUN (apk --no-cache upgrade || true) \
+    && (apk add --no-cache libc6-compat || true)
 
 RUN addgroup --system --gid 1001 nodejs \
     && adduser --system --uid 1001 --ingroup nodejs nextjs \
