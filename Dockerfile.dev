@@ -10,8 +10,8 @@ ENV NODE_ENV=development \
     HOSTNAME=0.0.0.0 \
     PORT=3000
 
-# Install su-exec for step-down privileges and development runtime tools
-RUN apk add --no-cache su-exec libc6-compat git curl \
+# Install su-exec for step-down privileges
+RUN (apk add --no-cache su-exec || (sleep 2 && apk add --no-cache su-exec) || (sleep 4 && apk add --no-cache su-exec)) \
     && mkdir -p /home/node/.npm /app/.next \
     && chown -R node:node /home/node /app/.next
 
